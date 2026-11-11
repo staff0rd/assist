@@ -18,7 +18,13 @@ export function syncDesign(
 	const skillsSource = path.join(claudeDir, "skills");
 	const skillsTarget = path.join(targetBase, "skills");
 
-	const entries = fs.readdirSync(skillsSource, { withFileTypes: true });
+	const entries = fs
+		.readdirSync(skillsSource, { withFileTypes: true })
+		.filter(
+			(entry) =>
+				!entry.isDirectory() ||
+				fs.existsSync(path.join(skillsSource, entry.name, "SKILL.md")),
+		);
 	for (const entry of entries) {
 		const source = path.join(skillsSource, entry.name);
 		const target = path.join(skillsTarget, entry.name);
@@ -31,7 +37,5 @@ export function syncDesign(
 
 	console.log(`Synced ${entries.length} skill(s) to ~/.claude/skills`);
 
-	return entries
-		.filter((entry) => entry.isDirectory())
-		.map((entry) => entry.name);
+	return entries.map((entry) => entry.name);
 }

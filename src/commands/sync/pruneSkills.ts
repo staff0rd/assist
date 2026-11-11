@@ -12,7 +12,10 @@ export function pruneSkills(
 		targetDir,
 		skillNames,
 		{
-			nameOf: (entry) => (entry.isDirectory() ? entry.name : undefined),
+			nameOf: (entry) =>
+				entry.isDirectory() || entry.name.endsWith(".md")
+					? entry.name
+					: undefined,
 			ownedPaths: (skillDir) => [skillDir, path.join(skillDir, "SKILL.md")],
 			blockedBy: unexpectedContent,
 		},
@@ -21,6 +24,7 @@ export function pruneSkills(
 }
 
 function unexpectedContent(skillDir: string): string | undefined {
+	if (!fs.statSync(skillDir).isDirectory()) return undefined;
 	const entries = fs.readdirSync(skillDir);
 	const others = entries.filter((entry) => entry !== "SKILL.md");
 	if (others.length > 0) return `contains ${others.sort().join(", ")}`;

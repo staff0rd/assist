@@ -19,7 +19,10 @@ function seedTarget(...entries: string[]): string {
 	return targetDir;
 }
 
-const ownsAll = { owns: () => true, forget: () => {} };
+const ownsAll = {
+	owns: (target: string) => target.endsWith("SKILL.md"),
+	forget: () => {},
+};
 
 describe("pruneSkills", () => {
 	it("reports nothing when every skill dir matches a source name", () => {
@@ -117,6 +120,16 @@ describe("pruneSkills", () => {
 			skipped: [],
 			unmanaged: [],
 		});
+	});
+
+	it("removes a whole skill dir sync copied, scripts and all", () => {
+		const targetDir = seedTarget("retired/SKILL.md", "retired/scripts/x.mjs");
+		const owner = createSyncFiles([join(targetDir, "retired")]);
+
+		const result = pruneSkills(targetDir, [], { force: true, owner });
+
+		expect(result.removed).toEqual(["retired"]);
+		expect(existsSync(join(targetDir, "retired"))).toBe(false);
 	});
 
 	it("never removes a skill dir sync did not write", () => {

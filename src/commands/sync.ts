@@ -3,15 +3,15 @@ import * as path from "node:path";
 import { fileURLToPath } from "node:url";
 import { loadConfig } from "../shared/loadConfig";
 import { createSyncFiles } from "./sync/createSyncFiles";
-import { pruneCommands } from "./sync/pruneCommands";
-import { pruneSkills } from "./sync/pruneSkills";
+import { pruneClaude } from "./sync/pruneClaude";
 import type { PruneOptions } from "./sync/pruneTarget";
-import { reportPrune } from "./sync/reportPrune";
 import { syncClaudeCommands } from "./sync/syncClaudeCommands";
 import { reportRetiredAgentsFiles } from "./sync/reportRetiredAgentsFiles";
+import { retiredOwnedPaths } from "./sync/retiredOwnedPaths";
 import { syncCodex } from "./sync/syncCodex";
 import { syncDesign } from "./sync/syncDesign";
 import { syncPi } from "./sync/syncPi";
+import { syncManifest } from "./sync/syncManifest";
 import { syncSettings } from "./sync/syncSettings";
 
 const __filename = fileURLToPath(import.meta.url);
@@ -27,9 +27,12 @@ export async function sync(
 	const claudeDir = path.join(__dirname, "..", "claude");
 	const targetBase = path.join(os.homedir(), ".claude");
 
-	const files = createSyncFiles();
+	const files = createSyncFiles([
+		...syncManifest.load(),
+		...retiredOwnedPaths(),
+	]);
 	const commandNames = syncClaudeCommands(claudeDir, targetBase, files);
-	const skillDirNames = syncDesign(claudeDir, targetBase, files);
+	const designSkillNames = syncDesign(claudeDir, targetBase, files);
 	await syncSettings(claudeDir, targetBase, {
 		yes,
 		preferences: config.sync.preferences,
@@ -38,26 +41,7 @@ export async function sync(
 	syncPi(claudeDir, files, prune);
 	reportRetiredAgentsFiles();
 
-	if (options?.prune) {
-		const force = options.force ?? false;
-		reportPrune(
-			"~/.claude/skills",
-			pruneSkills(
-				path.join(targetBase, "skills"),
-				[...commandNames, ...skillDirNames],
-				{ force, owner: files },
-			),
-			force,
-		);
-		reportPrune(
-			"~/.claude/commands",
-			pruneCommands(path.join(targetBase, "commands"), [], {
-				force,
-				owner: files,
-			}),
-			force,
-		);
-	}
+	pruneClaude(targetBase, [...commandNames, ...designSkillNames], prune, files);
 
 	await files.finish(yes);
 }

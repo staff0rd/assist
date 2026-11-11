@@ -97,4 +97,25 @@ describe("sync --prune --force", () => {
 		for (const file of retired) expect(existsSync(file), file).toBe(false);
 		expect(existsSync(notes)).toBe(true);
 	});
+
+	it("removes files earlier syncs wrote under retired names", async () => {
+		const retired = [
+			seed(".claude/commands/voice-stop.md"),
+			seed(".claude/skills/strip-code-comments/SKILL.md"),
+			seed(".claude/skills/review-ci/scripts/review.mjs"),
+			seed(".pi/agent/prompts/handover.md"),
+		];
+
+		await sync({ yes: true, prune: true, force: true });
+
+		for (const file of retired) expect(existsSync(file), file).toBe(false);
+		expect(existsSync(join(env.home, ".claude/skills/review-ci"))).toBe(false);
+	});
+
+	it("does not list assist's design files as unmanaged", async () => {
+		await sync({ yes: true, prune: true, force: true });
+
+		const logged = vi.mocked(console.log).mock.calls.flat().join("\n");
+		expect(logged).not.toMatch(/^ {2}wireframe\.md$/m);
+	});
 });

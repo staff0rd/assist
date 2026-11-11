@@ -63,7 +63,7 @@ describe("syncDesign", () => {
 
 		expect(
 			syncDesign(claudeDir, targetBase, createSyncFiles([target])),
-		).toEqual(["deploy-flow"]);
+		).toEqual(["deploy-flow", "polish-pass.md", "wireframe.md"]);
 
 		expect(readFileSync(join(target, "SKILL.md"), "utf8")).toBe("SKILL");
 		expect(readFileSync(join(target, "workflow.yml"), "utf8")).toBe("WORKFLOW");
@@ -71,6 +71,21 @@ describe("syncDesign", () => {
 			"CHECK",
 		);
 		expect(existsSync(join(target, "stale.mjs"))).toBe(false);
+	});
+
+	it("skips a source dir with no SKILL.md", () => {
+		mkdirSync(join(claudeDir, "skills", "leftover", "scripts"), {
+			recursive: true,
+		});
+		writeFileSync(
+			join(claudeDir, "skills", "leftover", "scripts", "x.mjs"),
+			"X",
+		);
+
+		expect(
+			syncDesign(claudeDir, targetBase, createSyncFiles([])),
+		).not.toContain("leftover");
+		expect(existsSync(join(targetBase, "skills", "leftover"))).toBe(false);
 	});
 
 	it("preserves unrelated files already in the target skills directory", () => {

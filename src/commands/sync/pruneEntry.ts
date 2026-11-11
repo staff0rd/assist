@@ -36,7 +36,9 @@ export function pruneEntry(
 
 	result.orphans.push(entry.name);
 
-	const reason = shape.blockedBy?.(entryPath);
+	const reason = options.owner.owns(entryPath)
+		? undefined
+		: shape.blockedBy?.(entryPath);
 	if (reason) {
 		result.skipped.push({ name: entry.name, reason });
 		return;
