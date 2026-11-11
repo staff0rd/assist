@@ -1,3 +1,10 @@
+## [0.1120.2](https://github.com/staff0rd/assist/compare/v0.1120.1...v0.1120.2) (2026-11-11)
+
+
+### Bug Fixes
+
+* deep-merge settings.json on sync ([6080994](https://github.com/staff0rd/assist/commit/60809942fd3c35ad330c2d2d5a94facd9c3ab1db))
+
 ## [0.1120.1](https://github.com/staff0rd/assist/compare/v0.1120.0...v0.1120.1) (2026-11-11)
 
 
