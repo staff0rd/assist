@@ -1,3 +1,10 @@
+# [0.1120.0](https://github.com/staff0rd/assist/compare/v0.1119.0...v0.1120.0) (2026-11-11)
+
+
+### Features
+
+* slash skill type-ahead in phone reply ([cbbad2a](https://github.com/staff0rd/assist/commit/cbbad2aa5ba7e9f522a53300945b1679ae06789d))
+
 # [0.1119.0](https://github.com/staff0rd/assist/compare/v0.1118.2...v0.1119.0) (2026-11-11)
 
 
