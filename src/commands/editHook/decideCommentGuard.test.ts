@@ -38,6 +38,18 @@ describe("decideCommentGuard", () => {
 			expect(decision).toContain("(//)");
 		});
 
+		it("uses the /* */ marker for a block comment", () => {
+			const decision = decideCommentGuard(
+				input("Edit", {
+					file_path: "src/a.ts",
+					old_string: "const a = 1;",
+					new_string: "/**\n * explains a\n */\nconst a = 1;",
+				}),
+			);
+
+			expect(decision).toContain("(/* */)");
+		});
+
 		it("blocks introducing a block comment", () => {
 			const decision = decideCommentGuard(
 				input("Edit", {
@@ -808,7 +820,7 @@ describe("decideCommentGuard", () => {
 			);
 
 			expect(decision).toBeDefined();
-			expect(decision).toContain("(//)");
+			expect(decision).toContain("(@* *@)");
 		});
 
 		it("blocks introducing an html comment", () => {

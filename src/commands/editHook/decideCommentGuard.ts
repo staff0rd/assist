@@ -1,12 +1,13 @@
 import { isCommentGateIgnored } from "../../shared/isCommentGateIgnored";
 import { isGeneratedCsharpFile } from "../../shared/isGeneratedCsharpFile";
+import { commentMarker } from "./commentMarker";
 import { type EditHookInput } from "./decideOverrideGuard";
 import { introducedComments } from "./introducedComments";
 import { partitionStrings } from "./partitionStrings";
 import { selectCommentExtractor } from "./selectCommentExtractor";
 
-function denyReason(marker: string): string {
-	const blockClause = marker === "//" ? ", no block comments" : "";
+function denyReason(marker: string, gateMarker: string): string {
+	const blockClause = gateMarker === "//" ? ", no block comments" : "";
 	return (
 		`This edit introduces a code comment (${marker}), which is blocked by the ` +
 		"comment gate. Comments are a last resort — prefer a clearer name, a smaller " +
@@ -36,5 +37,6 @@ export function decideCommentGuard(
 		added.flatMap(gate.extract),
 		removed.flatMap(gate.extract),
 	);
-	return introduced.length > 0 ? denyReason(gate.marker) : undefined;
+	if (introduced.length === 0) return undefined;
+	return denyReason(commentMarker(introduced[0], gate.marker), gate.marker);
 }
