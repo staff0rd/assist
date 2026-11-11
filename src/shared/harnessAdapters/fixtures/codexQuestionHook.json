@@ -1,0 +1,30 @@
+{
+	"session_id": "probe-session_id",
+	"turn_id": "probe-turn_id",
+	"transcript_path": "/probe/rollout.jsonl",
+	"cwd": "/probe",
+	"hook_event_name": "PreToolUse",
+	"model": "gpt-6.1-sol",
+	"permission_mode": "default",
+	"tool_name": "request_user_input",
+	"tool_input": {
+		"questions": [
+			{
+				"header": "Probe color",
+				"id": "probe_color",
+				"question": "Pick probe color",
+				"options": [
+					{
+						"label": "Red",
+						"description": "Choose Red."
+					},
+					{
+						"label": "Blue",
+						"description": "Choose Blue."
+					}
+				]
+			}
+		]
+	},
+	"tool_use_id": "probe-tool_use_id"
+}

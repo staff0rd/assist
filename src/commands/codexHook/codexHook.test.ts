@@ -1,4 +1,16 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import type * as loadConfigModule from "../../shared/loadConfig";
+import questionHook from "../../shared/harnessAdapters/fixtures/codexQuestionHook.json";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+
+const mockIsLive = vi.fn();
+vi.mock("../sessions/shared/isLiveDaemonSession", () => ({
+	isLiveDaemonSession: () => mockIsLive(),
+}));
+vi.mock("../../shared/loadConfig", async (importOriginal) => ({
+	...(await importOriginal<typeof loadConfigModule>()),
+	loadConfig: () => ({ sessions: { askQuestion: true } }),
+}));
+afterEach(() => vi.unstubAllEnvs());
 
 const mockReadStdin = vi.fn<() => Promise<string>>();
 const mockMatchesConfigDeny = vi.fn();
@@ -128,6 +140,36 @@ describe("codexHook SessionStart", () => {
 });
 
 describe("codexHook PreToolUse", () => {
+	it("redirects the captured native Codex question to the preview form", async () => {
+		vi.stubEnv("ASSIST_SESSION", "1");
+		vi.stubEnv("ASSIST_SESSION_ID", "probe-session");
+		mockIsLive.mockResolvedValue(true);
+		const spy = captureOutput();
+		mockReadStdin.mockResolvedValue(JSON.stringify(questionHook));
+		await codexHook();
+		const output = JSON.parse(
+			spy.mock.calls[0][0] as string,
+		).hookSpecificOutput;
+		expect(output.hookEventName).toBe("PreToolUse");
+		expect(output.permissionDecision).toBe("deny");
+		expect(output.permissionDecisionReason).toContain(
+			"assist ask-question --json - < <file>",
+		);
+		expect(output.permissionDecisionReason).toContain(
+			JSON.stringify({
+				questions: questionHook.tool_input.questions.map(
+					({ header, question, options }) => ({
+						question,
+						header,
+						options,
+						multiSelect: false,
+					}),
+				),
+			}),
+		);
+		spy.mockRestore();
+	});
+
 	it("emits nothing for an approved read command", async () => {
 		const spy = captureOutput();
 		mockReadStdin.mockResolvedValue(makeInput("assist backlog view a1"));

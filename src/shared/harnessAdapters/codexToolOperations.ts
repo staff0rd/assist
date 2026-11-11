@@ -1,36 +1,32 @@
-import { parseApplyPatch } from "./parseApplyPatch";
 import type { NativeToolCall, ToolOperation } from "./types";
+import { patchWrites } from "./patchWrites";
+import { patchText } from "./patchText";
 
 const COMMAND_TOOLS = new Set(["Bash", "PowerShell"]);
 const PATCH_TOOLS = new Set(["apply_patch", "Edit", "Write"]);
 const PATCH_MARKER = "*** Begin Patch";
 
-function patchText(input: Record<string, unknown>): string | undefined {
-	const candidates = [
-		input.command,
-		input.input,
-		input.patch,
-		...(Array.isArray(input.command) ? input.command : []),
-	];
-	return candidates.find(
-		(value): value is string =>
-			typeof value === "string" && value.includes(PATCH_MARKER),
-	);
-}
-
-function patchWrites(tool: string, patch: string): ToolOperation[] {
-	return parseApplyPatch(patch).map(({ path, contents }) => ({
-		kind: "fileWrite",
-		tool,
-		path,
-		contents,
-	}));
-}
-
 export function codexToolOperations({
 	toolName,
 	toolInput,
 }: NativeToolCall): ToolOperation[] {
+	if (toolName === "request_user_input" && Array.isArray(toolInput.questions))
+		return [
+			{
+				kind: "question",
+				tool: toolName,
+				questionsJson: JSON.stringify({
+					questions: toolInput.questions.map(
+						({ question, header, options }) => ({
+							question,
+							header,
+							options,
+							multiSelect: false,
+						}),
+					),
+				}),
+			},
+		];
 	if (COMMAND_TOOLS.has(toolName)) {
 		const { command } = toolInput;
 		if (typeof command !== "string" || !command.trim()) return [];
