@@ -1,3 +1,10 @@
+## [0.1145.2](https://github.com/staff0rd/assist/compare/v0.1145.1...v0.1145.2) (2026-11-13)
+
+
+### Bug Fixes
+
+* route history transcripts to node ([3c449d4](https://github.com/staff0rd/assist/commit/3c449d4319767320c0e6ac6f6178da7a3aee53dc))
+
 ## [0.1145.1](https://github.com/staff0rd/assist/compare/v0.1145.0...v0.1145.1) (2026-11-13)
 
 
