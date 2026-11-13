@@ -1,3 +1,12 @@
+## [0.1143.1](https://github.com/staff0rd/assist/compare/v0.1143.0...v0.1143.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* autofocus the SDK composer ([15ea109](https://github.com/staff0rd/assist/commit/15ea109ce940e67ccbab5f117dc06bc0a1256630))
+* log errors on checked-out pg clients ([3a1f5b8](https://github.com/staff0rd/assist/commit/3a1f5b892effd99d080fb3d78bf7f5d3bb4760b1))
+* render transcript markdown ([a884bf7](https://github.com/staff0rd/assist/commit/a884bf7f99cad4b18fdc4477c4025fa11bc8f36f))
+
 # [0.1143.0](https://github.com/staff0rd/assist/compare/v0.1142.0...v0.1143.0) (2026-11-13)
 
 
