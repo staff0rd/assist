@@ -3,7 +3,9 @@ import type { SessionInfo } from "../../types";
 export function launcherBySession(
 	sessions: SessionInfo[],
 ): Map<SessionInfo, SessionInfo> {
-	const byId = new Map(sessions.map((session) => [session.id, session]));
+	const byId = new Map(
+		sessions.map((session) => [nodeKey(session, session.id), session]),
+	);
 	const runByTree = firstBacklogRunPerTree(sessions);
 	const launcherOf = new Map<SessionInfo, SessionInfo>();
 	for (const session of sessions) {
@@ -31,14 +33,18 @@ function launchingCard(
 	byId: Map<string, SessionInfo>,
 ): SessionInfo | undefined {
 	const launcher = session.launchedFrom
-		? byId.get(session.launchedFrom)
+		? byId.get(nodeKey(session, session.launchedFrom))
 		: undefined;
 	if (!launcher || launcher === session) return undefined;
 	return sharesPath(session, launcher) ? launcher : undefined;
 }
 
 function sharesPath(session: SessionInfo, launcher: SessionInfo): boolean {
-	return session.cwd !== undefined && session.cwd === launcher.cwd;
+	return (
+		session.cwd !== undefined &&
+		session.cwd === launcher.cwd &&
+		session.node === launcher.node
+	);
 }
 
 function runSharingTree(
@@ -58,5 +64,9 @@ function isBacklogRun(session: SessionInfo): boolean {
 function nestableTree(session: SessionInfo): string | undefined {
 	const { cwd, repoGroup } = session;
 	if (!cwd || !repoGroup || repoGroup.clone === cwd) return undefined;
-	return cwd;
+	return nodeKey(session, cwd);
+}
+
+function nodeKey(session: SessionInfo, value: string): string {
+	return JSON.stringify([session.node ?? null, value]);
 }

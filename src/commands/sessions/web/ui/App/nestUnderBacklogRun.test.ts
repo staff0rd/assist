@@ -416,4 +416,117 @@ describe("nestUnderBacklogRun", () => {
 			{ session: sessions[1], children: [sessions[2]] },
 		]);
 	});
+
+	it("keeps a local session sharing a linked node's run worktree path at the top level", () => {
+		const sessions = [
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist-3",
+				repoGroup: group,
+				activity: backlog,
+				node: "ubuntub0x",
+			}),
+			makeSessionInfo({ id: "draft", cwd: "/git/assist-3", repoGroup: group }),
+		];
+
+		expect(nestUnderBacklogRun(sessions)).toEqual([
+			{ session: sessions[0], children: [] },
+			{ session: sessions[1], children: [] },
+		]);
+	});
+
+	it("keeps a linked node's session sharing a local run worktree path at the top level", () => {
+		const sessions = [
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist-3",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({
+				id: "draft",
+				cwd: "/git/assist-3",
+				repoGroup: group,
+				node: "ubuntub0x",
+			}),
+		];
+
+		expect(nestUnderBacklogRun(sessions)).toEqual([
+			{ session: sessions[0], children: [] },
+			{ session: sessions[1], children: [] },
+		]);
+	});
+
+	it("nests sessions sharing a worktree on the same linked node", () => {
+		const sessions = [
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist-3",
+				repoGroup: group,
+				activity: backlog,
+				node: "ubuntub0x",
+			}),
+			makeSessionInfo({
+				id: "review",
+				cwd: "/git/assist-3",
+				repoGroup: group,
+				node: "ubuntub0x",
+			}),
+		];
+
+		expect(nestUnderBacklogRun(sessions)).toEqual([
+			{ session: sessions[0], children: [sessions[1]] },
+		]);
+	});
+
+	it("ignores a launchedFrom card on another node with the same cwd", () => {
+		const sessions = [
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist",
+				repoGroup: group,
+				activity: backlog,
+				node: "ubuntub0x",
+			}),
+			makeSessionInfo({
+				id: "dev",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "run",
+			}),
+		];
+
+		expect(nestUnderBacklogRun(sessions)).toEqual([
+			{ session: sessions[0], children: [] },
+			{ session: sessions[1], children: [] },
+		]);
+	});
+
+	it("resolves launchedFrom to the launcher on the same node when ids collide", () => {
+		const sessions = [
+			makeSessionInfo({
+				id: "1",
+				cwd: "/git/assist",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({
+				id: "1",
+				cwd: "/git/assist",
+				repoGroup: group,
+				node: "ubuntub0x",
+			}),
+			makeSessionInfo({
+				id: "2",
+				cwd: "/git/assist",
+				repoGroup: group,
+				launchedFrom: "1",
+			}),
+		];
+
+		expect(nestUnderBacklogRun(sessions)).toEqual([
+			{ session: sessions[0], children: [sessions[2]] },
+			{ session: sessions[1], children: [] },
+		]);
+	});
 });
