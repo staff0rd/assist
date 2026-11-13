@@ -84,6 +84,7 @@ type DensityTokens = {
 	switch: { width: number; height: number; thumb: number };
 	inputFontSize: number;
 	filterSelectMinWidth: number;
+	suggestionListMaxHeight: number;
 	reviewDialog: { title: number; item: number; option: number };
 	newSessionDialogWidth: number;
 	tabBar: {

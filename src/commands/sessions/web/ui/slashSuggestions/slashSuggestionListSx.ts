@@ -12,7 +12,7 @@ export const slashSuggestionListSx = {
 		mb: 0.75,
 		p: 0.5,
 		listStyle: "none",
-		maxHeight: (t: Theme) => t.tokens.density.listRow * 6.5,
+		maxHeight: (t: Theme) => t.tokens.density.suggestionListMaxHeight,
 		overflowY: "auto",
 		bgcolor: "background.paper",
 		border: 1,
