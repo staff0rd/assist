@@ -1,3 +1,10 @@
+## [0.1140.1](https://github.com/staff0rd/assist/compare/v0.1140.0...v0.1140.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* clean worktree leftovers via Docker ([97de571](https://github.com/staff0rd/assist/commit/97de57149813963baa447e0bd383a5becb1dfd7e))
+
 # [0.1140.0](https://github.com/staff0rd/assist/compare/v0.1139.4...v0.1140.0) (2026-11-13)
 
 
