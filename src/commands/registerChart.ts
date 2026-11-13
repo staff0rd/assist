@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { chart } from "./chart";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerChart(program: Command): void {
 	program
@@ -8,5 +8,5 @@ export function registerChart(program: Command): void {
 			"Chart a label/value series read from stdin, one pair per line (comma, tab or whitespace separated)",
 		)
 		.option("--title <title>", "Chart title")
-		.action(chart);
+		.action(lazyAction(() => import("./chart"), "chart"));
 }

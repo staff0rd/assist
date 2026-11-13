@@ -1,7 +1,5 @@
 import chalk from "chalk";
-
-export const autoConfirmHintCommand =
-	"assist config set sync.autoConfirm true --node";
+import { autoConfirmHintCommand } from "./autoConfirmHintCommand";
 
 export function printAutoConfirmHint(): void {
 	console.log(

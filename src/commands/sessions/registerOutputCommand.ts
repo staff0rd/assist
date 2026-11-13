@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { internalCommand } from "../../shared/internalCommand";
-import { sessionOutput } from "./sessionOutput";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerOutputCommand(cmd: Command): void {
 	internalCommand(
@@ -18,7 +18,7 @@ export function registerOutputCommand(cmd: Command): void {
 				"--server [group]",
 				"Read the live server run for this repo's remote and group (default: default)",
 			)
-			.action(sessionOutput),
+			.action(lazyAction(() => import("./sessionOutput"), "sessionOutput")),
 		"/run-logs",
 	);
 }

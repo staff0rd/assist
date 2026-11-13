@@ -1,8 +1,6 @@
 import type { Command } from "commander";
-import { add as backlogAdd } from "./add";
-import { addPhase as backlogAddPhase } from "./addPhase";
-import { list as backlogList } from "./list";
 import { registerProposeCommand } from "./registerProposeCommand";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerItemCommands(cmd: Command): void {
 	cmd
@@ -16,7 +14,7 @@ export function registerItemCommands(cmd: Command): void {
 		.option("-a, --all", "Include done/wontdo items")
 		.option("--all-repos", "List items across all repositories")
 		.option("-v, --verbose", "Show all item details")
-		.action(backlogList);
+		.action(lazyAction(() => import("./list"), "list"));
 
 	cmd
 		.command("add")
@@ -28,7 +26,7 @@ export function registerItemCommands(cmd: Command): void {
 			String.raw`Item description (Markdown supported; use \n for line breaks)`,
 		)
 		.option("--ac <criterion...>", "Acceptance criteria (repeatable)")
-		.action(backlogAdd);
+		.action(lazyAction(() => import("./add"), "add"));
 
 	registerProposeCommand(cmd);
 
@@ -44,5 +42,5 @@ export function registerItemCommands(cmd: Command): void {
 			"--position <position>",
 			"1-indexed position to insert at (default: append)",
 		)
-		.action(backlogAddPhase);
+		.action(lazyAction(() => import("./addPhase"), "addPhase"));
 }

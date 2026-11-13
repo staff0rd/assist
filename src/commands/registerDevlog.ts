@@ -1,10 +1,8 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { devlogConfigHelp } from "./devlog/devlogConfigHelp";
-import { list as devlogList } from "./devlog/list";
 import { registerDevlogEntryCommands } from "./devlog/registerDevlogEntryCommands";
-import { repos as devlogRepos } from "./devlog/repos";
-import { version as devlogVersion } from "./devlog/version";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerDevlog(program: Command): void {
 	const devlogCommand = program
@@ -25,12 +23,12 @@ export function registerDevlog(program: Command): void {
 		)
 		.option("-r, --reverse", "Show earliest weeks first")
 		.option("-v, --verbose", "Show file names for each commit")
-		.action(devlogList);
+		.action(lazyAction(() => import("./devlog/list"), "list"));
 
 	devlogCommand
 		.command("version")
 		.description("Show the repo name, its latest dev entry week and versions")
-		.action(devlogVersion);
+		.action(lazyAction(() => import("./devlog/version"), "version"));
 
 	registerDevlogEntryCommands(devlogCommand);
 
@@ -43,7 +41,7 @@ export function registerDevlog(program: Command): void {
 			Number.parseInt,
 		)
 		.option("--all", "Show all non-archived repos regardless of push date")
-		.action(devlogRepos);
+		.action(lazyAction(() => import("./devlog/repos"), "repos"));
 
 	configHelp(devlogCommand, devlogConfigHelp);
 }

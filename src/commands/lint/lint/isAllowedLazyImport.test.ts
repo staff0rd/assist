@@ -6,7 +6,9 @@ const call = (specifier: string) => `await ${"import"}(${specifier});`;
 
 describe("isAllowedLazyImport", () => {
 	it("allows a relative literal import in the CLI entry", () => {
-		expect(isAllowedLazyImport("src/index.ts", call('"./runCli"'))).toBe(true);
+		expect(
+			isAllowedLazyImport("src/runCli.ts", call('"./reportCliError"')),
+		).toBe(true);
 	});
 
 	it("allows a relative literal import in a register file", () => {

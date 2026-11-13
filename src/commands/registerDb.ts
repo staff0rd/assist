@@ -1,44 +1,6 @@
 import type { Command } from "commander";
-import { toDatabaseConnectionError } from "../shared/db/DatabaseConnectionError";
-import { applyMigrations } from "../shared/db/migrations/applyMigrations";
-import { getMigrationStatus } from "../shared/db/migrations/getMigrationStatus";
 import { latestMigrationId } from "../shared/db/migrations";
-import { pgExecutor } from "../shared/db/migrations/MigrationExecutor";
-import { findRetiredTables } from "../shared/db/retired/findRetiredTables";
-import { dropRetiredTables } from "./db/dropRetiredTables";
-import { reportRetiredTables } from "./db/reportRetiredTables";
-import {
-	reportApplied,
-	reportMigrationStatus,
-} from "./db/reportMigrationStatus";
-import { createPool } from "../shared/db/createPool";
-
-async function withPool(
-	fn: (exec: ReturnType<typeof pgExecutor>) => Promise<void>,
-): Promise<void> {
-	const pool = createPool();
-	try {
-		await fn(pgExecutor(pool));
-	} catch (error) {
-		throw toDatabaseConnectionError(error);
-	} finally {
-		await pool.end();
-	}
-}
-
-async function migrate(): Promise<void> {
-	await withPool(async (exec) => {
-		reportApplied(await applyMigrations(exec));
-		reportRetiredTables(await findRetiredTables(exec));
-	});
-}
-
-async function status(): Promise<void> {
-	await withPool(async (exec) => {
-		reportMigrationStatus(await getMigrationStatus(exec));
-		reportRetiredTables(await findRetiredTables(exec));
-	});
-}
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerDb(program: Command): void {
 	const db = program
@@ -49,17 +11,21 @@ export function registerDb(program: Command): void {
 		.description(
 			`Apply pending migrations in order (build ships up to migration ${latestMigrationId})`,
 		)
-		.action(migrate);
+		.action(lazyAction(() => import("./db/migrate"), "migrate"));
 
 	db.command("status")
 		.description(
 			"Report whether the database is in sync, behind, or ahead of this build",
 		)
-		.action(status);
+		.action(lazyAction(() => import("./db/status"), "status"));
 
 	db.command("drop-retired")
 		.description(
 			"Drop retired tables left by removed features, after confirming each",
 		)
-		.action(() => withPool(dropRetiredTables));
+		.action(async () => {
+			const { withPool } = await import("./db/withPool");
+			const { dropRetiredTables } = await import("./db/dropRetiredTables");
+			return withPool(dropRetiredTables);
+		});
 }

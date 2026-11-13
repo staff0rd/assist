@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { linkNode } from "./linkNode";
+import { lazyAction } from "../../../shared/lazyAction";
 
 export function registerLinkCommand(nodes: Command): Command {
 	return nodes
@@ -12,5 +12,5 @@ export function registerLinkCommand(nodes: Command): Command {
 			"Dial the peer at https://<host>.<tailnet>.ts.net:<port> (the peer runs tailscale serve for its web server port)",
 		)
 		.option("--port <port>", "The peer's web server port (with --tailscale)")
-		.action(linkNode);
+		.action(lazyAction(() => import("./linkNode"), "linkNode"));
 }

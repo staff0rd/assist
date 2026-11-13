@@ -1,9 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { seqAuth } from "./seq/seqAuth";
 import { seqConfigHelp } from "./seq/seqConfigHelp";
-import { seqQuery } from "./seq/seqQuery";
-import { seqSetConnection } from "./seq/seqSetConnection";
 
 export function registerSeq(program: Command): void {
 	const cmd = program.command("seq").description("Seq log query utilities");
@@ -12,20 +9,24 @@ export function registerSeq(program: Command): void {
 	auth
 		.command("add")
 		.description("Add a new connection")
-		.action(() => seqAuth.add());
+		.action(async () => (await import("./seq/seqAuth")).seqAuth.add());
 	auth
 		.command("list")
 		.description("List configured connections")
-		.action(() => seqAuth.list());
+		.action(async () => (await import("./seq/seqAuth")).seqAuth.list());
 	auth
 		.command("remove <name>")
 		.description("Remove a configured connection")
-		.action((name: string) => seqAuth.remove(name));
+		.action(async (name: string) =>
+			(await import("./seq/seqAuth")).seqAuth.remove(name),
+		);
 
 	cmd
 		.command("set-connection <name>")
 		.description("Set the default Seq connection")
-		.action((name: string) => seqSetConnection(name));
+		.action(async (name: string) =>
+			(await import("./seq/seqSetConnection")).seqSetConnection(name),
+		);
 
 	cmd
 		.command("query <filter>")
@@ -41,7 +42,9 @@ export function registerSeq(program: Command): void {
 			"End of query window (UTC date or relative e.g. 5m, 1h, 2d)",
 		)
 		.option("--json", "Output raw JSON")
-		.action((filter: string, options) => seqQuery(filter, options));
+		.action(async (filter: string, options) =>
+			(await import("./seq/seqQuery")).seqQuery(filter, options),
+		);
 
 	configHelp(cmd, seqConfigHelp);
 }

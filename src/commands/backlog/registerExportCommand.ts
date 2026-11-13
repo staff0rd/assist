@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { exportBacklog } from "./exportBacklog";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerExportCommand(cmd: Command): void {
 	cmd
@@ -7,5 +7,5 @@ export function registerExportCommand(cmd: Command): void {
 		.description(
 			"Export every table in the backlog database (discovered by introspection) to a file, or stdout if omitted",
 		)
-		.action(exportBacklog);
+		.action(lazyAction(() => import("./exportBacklog"), "exportBacklog"));
 }

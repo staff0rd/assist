@@ -2,7 +2,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { autoConfirmHintCommand } from "./printAutoConfirmHint";
+import { autoConfirmHintCommand } from "./autoConfirmHintCommand";
 import { syncSettings } from "./syncSettings";
 
 const mockPromptConfirm = vi.fn();

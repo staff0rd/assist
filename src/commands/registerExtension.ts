@@ -1,7 +1,4 @@
 import type { Command } from "commander";
-import { extension } from "./extension/extension";
-import { printExtensionUrl } from "./extension/printExtensionUrl";
-import { signExtension } from "./extension/signExtension";
 
 export function registerExtension(program: Command): void {
 	program
@@ -17,7 +14,11 @@ export function registerExtension(program: Command): void {
 			"--url",
 			"Print the download URL of the latest signed Firefox build, read from the update manifest on main",
 		)
-		.action((options: { sign?: boolean; url?: boolean }) => {
+		.action(async (options: { sign?: boolean; url?: boolean }) => {
+			const { extension } = await import("./extension/extension");
+			const { printExtensionUrl } =
+				await import("./extension/printExtensionUrl");
+			const { signExtension } = await import("./extension/signExtension");
 			if (options.url) return printExtensionUrl();
 			return options.sign ? signExtension() : extension();
 		});

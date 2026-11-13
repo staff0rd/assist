@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
-import { show } from "./show";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerShow(program: Command): void {
 	internalCommand(
@@ -11,7 +11,7 @@ export function registerShow(program: Command): void {
 			)
 			.option("--title <title>", "Pane title")
 			.requiredOption("--body <markdown|->", "Markdown to show, or - for stdin")
-			.action(show),
+			.action(lazyAction(() => import("./show"), "show")),
 		"/show",
 	);
 }

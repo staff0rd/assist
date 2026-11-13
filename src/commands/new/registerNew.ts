@@ -1,6 +1,5 @@
 import type { Command } from "commander";
-import { newCli } from "./registerNew/newCli";
-import { newProject } from "./registerNew/newProject";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerNew(program: Command): void {
 	const newCommand = program
@@ -10,10 +9,10 @@ export function registerNew(program: Command): void {
 	newCommand
 		.command("vite")
 		.description("Initialize a new Vite React TypeScript project")
-		.action(newProject);
+		.action(lazyAction(() => import("./registerNew/newProject"), "newProject"));
 
 	newCommand
 		.command("cli")
 		.description("Initialize a new tsup CLI project")
-		.action(newCli);
+		.action(lazyAction(() => import("./registerNew/newCli"), "newCli"));
 }

@@ -1,8 +1,7 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
-import { indexRules } from "./rules/indexRules";
-import { listRules } from "./rules/listRules";
 import { registerRulesAdd } from "./rules/registerRulesAdd";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerRules(program: Command): void {
 	const rulesCommand = program
@@ -15,8 +14,8 @@ export function registerRules(program: Command): void {
 			"List the rules from the `## Rules` section of every CLAUDE.md from a path's directory up to the repo root (default: cwd)",
 		)
 		.option("--full", "Show each rule's full description as well as its title")
-		.action((target: string | undefined, options: { full?: boolean }) =>
-			listRules(target, options),
+		.action(async (target: string | undefined, options: { full?: boolean }) =>
+			(await import("./rules/listRules")).listRules(target, options),
 		);
 
 	registerRulesAdd(rulesCommand);
@@ -27,7 +26,7 @@ export function registerRules(program: Command): void {
 			.description(
 				"Record the directories that carry their own `## Rules` in the repo root's CLAUDE.md, so scoped rules are discoverable from the root. Always repo-wide, resolved from the cwd",
 			)
-			.action(() => indexRules()),
+			.action(lazyAction(() => import("./rules/indexRules"), "indexRules")),
 		"/fix-rules",
 	);
 }

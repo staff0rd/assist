@@ -1,9 +1,7 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
 import { registerWatchWait } from "./watch/registerWatchWait";
-import { simulateDivergence } from "./watch/simulateDivergence";
-import { watchLoop } from "./watch/watchLoop";
-import { watchReport } from "./watch/watchReport";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerWatch(program: Command): void {
 	const watchCommand = program
@@ -18,7 +16,7 @@ export function registerWatch(program: Command): void {
 			.description(
 				"Run assist watch wait --pull --build as a fresh child per lap, relaunching after exit 0, 2 or 4 or a signal kill, and exit with the child's code on 1, 3 or 130",
 			)
-			.action(() => watchLoop()),
+			.action(lazyAction(() => import("./watch/watchLoop"), "watchLoop")),
 		"debugging auto-update",
 	);
 
@@ -28,7 +26,12 @@ export function registerWatch(program: Command): void {
 			.description(
 				"Make the next assist watch wait poll in this repo exit 3 as if the branch had diverged, to test the watcher's divergence escalation",
 			)
-			.action(() => simulateDivergence()),
+			.action(
+				lazyAction(
+					() => import("./watch/simulateDivergence"),
+					"simulateDivergence",
+				),
+			),
 		"debugging auto-update",
 	);
 
@@ -42,7 +45,9 @@ export function registerWatch(program: Command): void {
 				"--from <sha>",
 				"Mark commits reachable from HEAD but not <sha> as new, and derive the restart and sync advice from the files they changed",
 			)
-			.action((options: { from?: string }) => watchReport(options)),
+			.action(async (options: { from?: string }) =>
+				(await import("./watch/watchReport")).watchReport(options),
+			),
 		"debugging auto-update",
 	);
 }

@@ -1,9 +1,5 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
-import { fixed as prsFixed } from "./prs/fixed";
-import { readBodyArgument } from "./prs/readBodyArgument";
-import { reply as prsReply } from "./prs/reply";
-import { wontfix as prsWontfix } from "./prs/wontfix";
 
 export function registerPrsThreadReplies(
 	prsCommand: Command,
@@ -13,7 +9,8 @@ export function registerPrsThreadReplies(
 		prsCommand
 			.command("fixed <comment-id> <sha>")
 			.description("Reply with commit link and resolve thread")
-			.action((commentId: string, sha: string) => {
+			.action(async (commentId: string, sha: string) => {
+				const { fixed: prsFixed } = await import("./prs/fixed");
 				prsFixed(Number.parseInt(commentId, 10), sha);
 			}),
 		calledBy,
@@ -26,6 +23,8 @@ export function registerPrsThreadReplies(
 				"Reply with reason and resolve thread (reason of - reads it from stdin)",
 			)
 			.action(async (commentId: string, reason: string) => {
+				const { readBodyArgument } = await import("./prs/readBodyArgument");
+				const { wontfix: prsWontfix } = await import("./prs/wontfix");
 				await prsWontfix(
 					Number.parseInt(commentId, 10),
 					await readBodyArgument(reason),
@@ -41,6 +40,8 @@ export function registerPrsThreadReplies(
 				"Reply to a comment thread without resolving it (body of - reads it from stdin)",
 			)
 			.action(async (commentId: string, body: string) => {
+				const { readBodyArgument } = await import("./prs/readBodyArgument");
+				const { reply: prsReply } = await import("./prs/reply");
 				await prsReply(
 					Number.parseInt(commentId, 10),
 					await readBodyArgument(body),

@@ -1,8 +1,8 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { internalCommand } from "../shared/internalCommand";
-import { askCheck } from "./askCheck";
 import { askQuestionConfigHelp } from "./askQuestion/askQuestionConfigHelp";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerAskCheck(program: Command): void {
 	internalCommand(
@@ -20,7 +20,7 @@ export function registerAskCheck(program: Command): void {
 					"--check <n>",
 					"1-based index of the current backlog phase's manual check this covers; lets the user move it to a later phase",
 				)
-				.action(askCheck),
+				.action(lazyAction(() => import("./askCheck"), "askCheck")),
 			askQuestionConfigHelp,
 		),
 		"Claude when asking the user to test a change",

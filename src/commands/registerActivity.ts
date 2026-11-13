@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { activity } from "./activity";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerActivity(program: Command): void {
 	program
@@ -9,5 +9,5 @@ export function registerActivity(program: Command): void {
 			"--since <date>",
 			"Start date (YYYY-MM-DD), defaults to 30 days ago",
 		)
-		.action(activity);
+		.action(lazyAction(() => import("./activity"), "activity"));
 }

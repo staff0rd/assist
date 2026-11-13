@@ -1,7 +1,6 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
-import { prsSlackChannel } from "./prs/prsSlackChannel";
-import { prsStatus } from "./prs/prsStatus";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerPrsStatus(prsCommand: Command): void {
 	internalCommand(
@@ -11,7 +10,7 @@ export function registerPrsStatus(prsCommand: Command): void {
 				"Report every open pull request in each owner/repo, grouped by repo",
 			)
 			.option("--json", "Output as JSON")
-			.action(prsStatus),
+			.action(lazyAction(() => import("./prs/prsStatus"), "prsStatus")),
 		"/prs-status",
 	);
 
@@ -21,7 +20,9 @@ export function registerPrsStatus(prsCommand: Command): void {
 			.description(
 				"Print the Slack channel PRs are announced to (prs.slack, else slack.channel)",
 			)
-			.action(prsSlackChannel),
+			.action(
+				lazyAction(() => import("./prs/prsSlackChannel"), "prsSlackChannel"),
+			),
 		"/prs-slack",
 	);
 }

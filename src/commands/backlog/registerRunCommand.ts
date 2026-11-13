@@ -1,11 +1,7 @@
 import type { Command } from "commander";
 import { configHelp } from "../../shared/configHelp";
-import { pullIfConfigured } from "../../shared/pullIfConfigured";
 import { harnessConfigHelp } from "./harnessConfigHelp";
 import { harnessDefaultsConfigHelp } from "./harnessDefaultsConfigHelp";
-import { resolveHarness } from "./resolveHarness";
-import { resolveModel } from "./resolveModel";
-import { run as backlogRun } from "./run";
 
 export function registerRunCommand(cmd: Command): void {
 	const command = cmd
@@ -36,6 +32,11 @@ export function registerRunCommand(cmd: Command): void {
 					resumeSession?: string;
 				},
 			) => {
+				const { pullIfConfigured } =
+					await import("../../shared/pullIfConfigured");
+				const { resolveHarness } = await import("./resolveHarness");
+				const { resolveModel } = await import("./resolveModel");
+				const { run: backlogRun } = await import("./run");
 				/* why: a daemon restore relaunches with --resume-session to resume an
 				 * interrupted phase; pulling would move the working tree out from
 				 * under that in-flight conversation, and a pull failure would abort

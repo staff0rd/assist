@@ -1,10 +1,6 @@
 import type { Command } from "commander";
 import { internalCommand } from "../../shared/internalCommand";
-import { next } from "./next";
-import { posted } from "./posted/posted";
-import { skip } from "./skip";
-import { slack } from "./slack/slack";
-import { write } from "./write";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerDevlogEntryCommands(devlogCommand: Command): void {
 	devlogCommand
@@ -13,14 +9,14 @@ export function registerDevlogEntryCommands(devlogCommand: Command): void {
 			"Show commits for the next completed ISO week after the last dev entry",
 		)
 		.option("-v, --verbose", "Show file names for each commit")
-		.action(next);
+		.action(lazyAction(() => import("./next"), "next"));
 
 	devlogCommand
 		.command("skip <week>")
 		.description(
 			"Add an ISO week (YYYY-Www) to this repo's repo (db) devlog.skipWeeks",
 		)
-		.action((week: string) => skip(week));
+		.action(async (week: string) => (await import("./skip")).skip(week));
 
 	internalCommand(
 		devlogCommand
@@ -28,7 +24,7 @@ export function registerDevlogEntryCommands(devlogCommand: Command): void {
 			.description(
 				"Write a dev entry from JSON on stdin (week, title, versions, aiGenerated, added/changed/fixed, lede)",
 			)
-			.action(write),
+			.action(lazyAction(() => import("./write"), "write")),
 		"/devlog",
 	);
 
@@ -38,7 +34,9 @@ export function registerDevlogEntryCommands(devlogCommand: Command): void {
 			.description(
 				"List un-posted dev entries oldest first, or preview one week as a Slack parent message plus a threaded Added/Changed/Fixed reply, printing the channel and approved paths",
 			)
-			.action((week?: string) => slack(week)),
+			.action(async (week?: string) =>
+				(await import("./slack/slack")).slack(week),
+			),
 		"/devlog",
 	);
 
@@ -49,10 +47,10 @@ export function registerDevlogEntryCommands(devlogCommand: Command): void {
 		)
 		.option("--skip", "Mark the entry as not to be posted")
 		.action(
-			(
+			async (
 				week: string,
 				permalink: string | undefined,
 				options: { skip?: boolean },
-			) => posted(week, permalink, options),
+			) => (await import("./posted/posted")).posted(week, permalink, options),
 		);
 }

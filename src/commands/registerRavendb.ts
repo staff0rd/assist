@@ -1,34 +1,21 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { ravendbAuth } from "./ravendb/ravendbAuth";
-import { ravendbCollections } from "./ravendb/ravendbCollections";
+import { registerRavendbAuth } from "./ravendb/registerRavendbAuth";
 import { ravendbConfigHelp } from "./ravendb/ravendbConfigHelp";
-import { ravendbQuery } from "./ravendb/ravendbQuery";
-import { ravendbSetConnection } from "./ravendb/ravendbSetConnection";
 
 export function registerRavendb(program: Command): void {
 	const cmd = program.command("ravendb").description("RavenDB query utilities");
 
-	const auth = cmd
-		.command("auth")
-		.description("Configure a named RavenDB connection");
-	auth
-		.command("add")
-		.description("Add a new connection")
-		.action(() => ravendbAuth.add());
-	auth
-		.command("list")
-		.description("List configured connections")
-		.action(() => ravendbAuth.list());
-	auth
-		.command("remove <name>")
-		.description("Remove a configured connection")
-		.action((name: string) => ravendbAuth.remove(name));
+	registerRavendbAuth(cmd);
 
 	cmd
 		.command("set-connection <name>")
 		.description("Set the default connection")
-		.action((name: string) => ravendbSetConnection(name));
+		.action(async (name: string) =>
+			(await import("./ravendb/ravendbSetConnection")).ravendbSetConnection(
+				name,
+			),
+		);
 
 	cmd
 		.command("query [connection] [collection]")
@@ -42,17 +29,26 @@ export function registerRavendb(program: Command): void {
 		.option("--query <lucene>", "Lucene filter query")
 		.option("--limit <n>", "Max total documents to fetch")
 		.action(
-			(
+			async (
 				connection: string | undefined,
 				collection: string | undefined,
 				options,
-			) => ravendbQuery(connection, collection, options),
+			) =>
+				(await import("./ravendb/ravendbQuery")).ravendbQuery(
+					connection,
+					collection,
+					options,
+				),
 		);
 
 	cmd
 		.command("collections [connection]")
 		.description("List collections in a RavenDB database")
-		.action((connection?: string) => ravendbCollections(connection));
+		.action(async (connection?: string) =>
+			(await import("./ravendb/ravendbCollections")).ravendbCollections(
+				connection,
+			),
+		);
 
 	configHelp(cmd, ravendbConfigHelp);
 }

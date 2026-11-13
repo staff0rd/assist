@@ -1,7 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../../shared/configHelp";
 import { miroConfigHelp } from "./miroConfigHelp";
-import { runExtract } from "./runExtract";
 import type { MiroExtractOptions } from "./types";
 
 export function registerMiro(program: Command): void {
@@ -47,8 +46,8 @@ export function registerMiro(program: Command): void {
 			"-r, --repo [name]",
 			"Save the extract to repo (db), a repo's shared db override (defaults to the current repo)",
 		)
-		.action((name: string | undefined, options: MiroExtractOptions) =>
-			runExtract(name, options),
+		.action(async (name: string | undefined, options: MiroExtractOptions) =>
+			(await import("./runExtract")).runExtract(name, options),
 		);
 
 	configHelp(

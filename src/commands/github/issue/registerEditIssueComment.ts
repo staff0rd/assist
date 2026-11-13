@@ -1,7 +1,5 @@
 import type { Command } from "commander";
-import { readBodyArgument } from "../../prs/readBodyArgument";
 import { internalCommand } from "../../../shared/internalCommand";
-import { editIssueComment } from "./editIssueComment";
 
 export function registerEditIssueComment(issueCommand: Command): void {
 	const editCommentCommand = issueCommand
@@ -20,6 +18,8 @@ export function registerEditIssueComment(issueCommand: Command): void {
 		)
 		.action(
 			async (commentId: string, options: { body?: string; repo?: string }) => {
+				const { readBodyArgument } = await import("../../prs/readBodyArgument");
+				const { editIssueComment } = await import("./editIssueComment");
 				await editIssueComment(commentId, {
 					...options,
 					body: options.body ? await readBodyArgument(options.body) : undefined,

@@ -1,8 +1,6 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
-import { docsConfirm } from "./docs/docsConfirm";
-import { docsUnlock } from "./docs/docsUnlock";
-
+import { lazyAction } from "../shared/lazyAction";
 const calledBy = "agents whose docs edit the docs lock blocked";
 
 export function registerDocs(parent: Command): void {
@@ -18,7 +16,7 @@ export function registerDocs(parent: Command): void {
 			.description(
 				"Page a human with a pin to unlock docs changes for this session's backlog item phase",
 			)
-			.action(docsUnlock),
+			.action(lazyAction(() => import("./docs/docsUnlock"), "docsUnlock")),
 		calledBy,
 	);
 
@@ -29,7 +27,7 @@ export function registerDocs(parent: Command): void {
 				"Confirm a pin from 'docs unlock' to approve docs changes for that backlog item phase",
 			)
 			.argument("<pin>", "Pin issued by 'docs unlock'")
-			.action(docsConfirm),
+			.action(lazyAction(() => import("./docs/docsConfirm"), "docsConfirm")),
 		calledBy,
 	);
 }

@@ -1,6 +1,5 @@
 import type { Command } from "commander";
-import { init as deployInit } from "./deploy/init";
-import { redirect as deployRedirect } from "./deploy/redirect";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerDeploy(program: Command): void {
 	const deployCommand = program
@@ -10,10 +9,10 @@ export function registerDeploy(program: Command): void {
 	deployCommand
 		.command("init")
 		.description("Initialize Netlify project and configure deployment")
-		.action(deployInit);
+		.action(lazyAction(() => import("./deploy/init"), "init"));
 
 	deployCommand
 		.command("redirect")
 		.description("Add trailing slash redirect script to index.html")
-		.action(deployRedirect);
+		.action(lazyAction(() => import("./deploy/redirect"), "redirect"));
 }

@@ -1,7 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { internalCommand } from "../shared/internalCommand";
-import { branch } from "./branch/branch";
 import { branchConfigHelp } from "./branch/branchConfigHelp";
 
 export function registerBranch(program: Command): void {
@@ -15,8 +14,8 @@ export function registerBranch(program: Command): void {
 			"--from <ref>",
 			"base the branch off <ref> verbatim (local branch, tag, or origin/*) instead of the fresh remote default",
 		)
-		.action((slug: string, options: { jira?: string; from?: string }) =>
-			branch(slug, options),
+		.action(async (slug: string, options: { jira?: string; from?: string }) =>
+			(await import("./branch/branch")).branch(slug, options),
 		);
 
 	internalCommand(branchCommand, "/branch");

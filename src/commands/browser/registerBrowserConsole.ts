@@ -1,9 +1,9 @@
 import type { Command } from "commander";
 import { CONSOLE_DEFAULT_LIMIT } from "../extension/consoleCapture/types";
 import { parseTopCount } from "../github/parseTopCount";
-import { browserConsole } from "./browserConsole";
 import { parseSinceDuration } from "./parseSinceDuration";
 import { withTargetOptions } from "./withTargetOptions";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerBrowserConsole(browser: Command): void {
 	withTargetOptions(
@@ -28,5 +28,5 @@ export function registerBrowserConsole(browser: Command): void {
 				parseTopCount,
 				CONSOLE_DEFAULT_LIMIT,
 			),
-	).action(browserConsole);
+	).action(lazyAction(() => import("./browserConsole"), "browserConsole"));
 }

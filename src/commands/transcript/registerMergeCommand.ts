@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { merge } from "./merge";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerMergeCommand(cmd: Command): void {
 	cmd
@@ -20,5 +20,5 @@ export function registerMergeCommand(cmd: Command): void {
 			"--widen-audience",
 			"delete the casual asides that fit the people in the call but not a reader who was not there: intensifiers, emphasis after a wh-word, standalone interjections and cues that are nothing but one",
 		)
-		.action(merge);
+		.action(lazyAction(() => import("./merge"), "merge"));
 }

@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { updatePhase } from "./updatePhase";
+import { lazyAction } from "../../shared/lazyAction";
 
 function collect(value: string, previous: string[]): string[] {
 	return [...previous, value];
@@ -27,5 +27,5 @@ export function registerUpdatePhaseCommand(cmd: Command): void {
 			"Replace manual check n (1-based) in place",
 		)
 		.option("--remove-check <n>", "Remove manual check n (1-based)")
-		.action(updatePhase);
+		.action(lazyAction(() => import("./updatePhase"), "updatePhase"));
 }

@@ -1,10 +1,8 @@
 import type { Command } from "commander";
 import { internalCommand } from "../../shared/internalCommand";
-import { movePhase } from "./movePhase";
 import { registerUpdatePhaseCommand } from "./registerUpdatePhaseCommand";
-import { removePhase } from "./removePhase";
 import { registerUpdateFieldCommand } from "./registerUpdateFieldCommand";
-import { updatePlan } from "./updatePlan";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerUpdateCommands(cmd: Command): void {
 	registerUpdateFieldCommand(cmd);
@@ -13,7 +11,7 @@ export function registerUpdateCommands(cmd: Command): void {
 	cmd
 		.command("remove-phase <id> <phase>")
 		.description("Remove a plan phase from a backlog item")
-		.action(removePhase);
+		.action(lazyAction(() => import("./removePhase"), "removePhase"));
 
 	internalCommand(
 		cmd
@@ -25,7 +23,7 @@ export function registerUpdateCommands(cmd: Command): void {
 				"--json <file|->",
 				"Path to a JSON payload of { phases: [{ name, tasks, manualChecks }] }, or - to read it from stdin",
 			)
-			.action(updatePlan),
+			.action(lazyAction(() => import("./updatePlan"), "updatePlan")),
 		"/refine",
 	);
 
@@ -34,5 +32,5 @@ export function registerUpdateCommands(cmd: Command): void {
 		.description(
 			"Reorder a plan phase from one 1-based position to another, moving its tasks with it",
 		)
-		.action(movePhase);
+		.action(lazyAction(() => import("./movePhase"), "movePhase"));
 }

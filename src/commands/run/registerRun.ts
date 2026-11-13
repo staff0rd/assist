@@ -1,9 +1,9 @@
 import type { Command } from "commander";
 import { configHelp } from "../../shared/configHelp";
-import { run } from "../run";
-import { formatConfiguredCommands } from "./formatConfiguredCommands";
+import { lazyHelpText } from "../../shared/lazyHelpText";
 import { registerRunSubcommands } from "./registerRunSubcommands";
 import { runConfigHelp } from "./runConfigHelp";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerRun(program: Command): void {
 	const runCommand = program
@@ -15,9 +15,12 @@ export function registerRun(program: Command): void {
 		.addHelpText(
 			"after",
 			"\nAn a-prefixed item id (e.g. a555) with no matching command is an alias for\n'assist backlog run <id>' (forwards --write/--no-write/-w).",
-		)
-		.addHelpText("after", () => formatConfiguredCommands())
-		.action((name, args) => run(name, args));
+		);
+	lazyHelpText(
+		runCommand,
+		async () =>
+			(await import("./formatConfiguredCommands")).formatConfiguredCommands,
+	).action(lazyAction(() => import("../run"), "run"));
 
 	configHelp(runCommand, runConfigHelp);
 

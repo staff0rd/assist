@@ -1,8 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { internalCommand } from "../shared/internalCommand";
-import { resolveHarness } from "./backlog/resolveHarness";
-import { review } from "./review/review";
 import { addReviewModeOptions } from "./review/addReviewModeOptions";
 import { addReviewRunOptions } from "./review/addReviewRunOptions";
 import type { ReviewOptions } from "./review/ReviewOptions";
@@ -28,12 +26,15 @@ export function registerReview(program: Command): void {
 		);
 	internalCommand(
 		addReviewModeOptions(addReviewRunOptions(reviewCommand)).action(
-			(number: string | undefined, options: ReviewFlags) =>
-				review({
+			async (number: string | undefined, options: ReviewFlags) => {
+				const { resolveHarness } = await import("./backlog/resolveHarness");
+				const { review } = await import("./review/review");
+				return review({
 					...options,
 					number,
 					harness: resolveHarness(options.harness),
-				}),
+				});
+			},
 		),
 		"the Review menu",
 	);

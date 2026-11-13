@@ -1,6 +1,5 @@
 import type { Command } from "commander";
 import { internalCommand } from "../../shared/internalCommand";
-import { watchWait } from "./watchWait";
 
 export function registerWatchWait(watchCommand: Command): void {
 	internalCommand(
@@ -28,12 +27,12 @@ export function registerWatchWait(watchCommand: Command): void {
 				"After a successful pull, run this run entry (default auto-build), then run assist sync --yes when the pulled commits touched the files sync installs; exit 4 with the output of whichever fails",
 			)
 			.action(
-				(options: {
+				async (options: {
 					interval: string;
 					timeout: string;
 					pull?: boolean;
 					build?: boolean | string;
-				}) => watchWait(options),
+				}) => (await import("./watchWait")).watchWait(options),
 			),
 		"auto-update",
 	);

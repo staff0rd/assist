@@ -1,5 +1,4 @@
 import type { Command } from "commander";
-import { moveRepo } from "./moveRepo";
 
 export function registerMoveRepoCommand(cmd: Command): void {
 	cmd
@@ -9,10 +8,10 @@ export function registerMoveRepoCommand(cmd: Command): void {
 		)
 		.option("-y, --yes", "Skip the confirmation prompt")
 		.action(
-			(
+			async (
 				oldOrigin: string,
 				newOrigin: string | undefined,
 				options: { yes?: boolean },
-			) => moveRepo(oldOrigin, newOrigin, options),
+			) => (await import("./moveRepo")).moveRepo(oldOrigin, newOrigin, options),
 		);
 }

@@ -3,7 +3,6 @@ import {
 	bugFeature,
 	draftFeature,
 } from "../shared/harnessAdapters/harnessFeatures";
-import { next as backlogNext } from "./backlog/next";
 import { registerRefineLaunch } from "./backlog/registerRefineLaunch";
 import { registerFixConflict } from "./registerFixConflict";
 import { registerReviewPrComments } from "./registerReviewPrComments";
@@ -18,8 +17,11 @@ function registerNext(program: Command): void {
 		.argument("[id]", "Backlog item ID to run first")
 		.description("Alias for backlog next")
 		.option("--once", "Exit after the first completed item run")
-		.action((id: string | undefined, opts: { once?: boolean }) =>
-			backlogNext({ allowEdits: true, once: opts.once }, id),
+		.action(async (id: string | undefined, opts: { once?: boolean }) =>
+			(await import("./backlog/next")).next(
+				{ allowEdits: true, once: opts.once },
+				id,
+			),
 		);
 }
 

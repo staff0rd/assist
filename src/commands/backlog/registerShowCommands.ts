@@ -1,5 +1,5 @@
 import type { Command } from "commander";
-import { show as backlogShow } from "./show";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerShowCommands(cmd: Command): void {
 	cmd
@@ -10,5 +10,5 @@ export function registerShowCommands(cmd: Command): void {
 			"--all-commits",
 			"Show every commit in Activity instead of the newest 10",
 		)
-		.action(backlogShow);
+		.action(lazyAction(() => import("./show"), "show"));
 }

@@ -1,7 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { adviceConfigHelp } from "./advise/adviceConfigHelp";
-import { advise } from "./advise/advise";
 
 export function registerAdvise(program: Command): void {
 	const adviseCommand = program
@@ -18,6 +17,7 @@ export function registerAdvise(program: Command): void {
 			"list every shipped fragment with whether it was included and why",
 		)
 		.action(async (options: { hook?: boolean; explain?: boolean }) => {
+			const { advise } = await import("./advise/advise");
 			await advise({ hook: options.hook, explain: options.explain });
 		});
 

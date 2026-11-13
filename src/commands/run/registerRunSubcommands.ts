@@ -1,15 +1,15 @@
 import type { Command } from "commander";
-import { listRunConfigs } from "../run";
-import { link } from "./link";
 import { registerRunAdd } from "./registerRunAdd";
-import { remove } from "./remove";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerRunSubcommands(runCommand: Command): void {
 	runCommand
 		.command("list")
 		.description("List configured run commands")
 		.option("-v, --verbose", "Show full command details")
-		.action((opts) => listRunConfigs(!!opts.verbose));
+		.action(async (opts) =>
+			(await import("../run")).listRunConfigs(!!opts.verbose),
+		);
 
 	registerRunAdd(runCommand);
 
@@ -19,7 +19,7 @@ export function registerRunSubcommands(runCommand: Command): void {
 		.argument("<path>", "Relative path to the linked project")
 		.requiredOption("--prefix <prefix>", "Namespace prefix for linked commands")
 		.allowUnknownOption()
-		.action(() => link());
+		.action(lazyAction(() => import("./link"), "link"));
 
 	runCommand
 		.command("remove")
@@ -31,5 +31,5 @@ export function registerRunSubcommands(runCommand: Command): void {
 			"--repo [name]",
 			"Remove from a repo's override in the shared db instead of assist.yml (defaults to the current repo)",
 		)
-		.action((name, opts) => remove(name, opts));
+		.action(lazyAction(() => import("./remove"), "remove"));
 }

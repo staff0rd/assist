@@ -1,6 +1,6 @@
 import type { Command } from "commander";
-import { add } from "./add";
 import { runAddHelpText } from "./runAddHelpText";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerRunAdd(runCommand: Command): void {
 	runCommand
@@ -49,5 +49,5 @@ export function registerRunAdd(runCommand: Command): void {
 		.addHelpText("after", runAddHelpText)
 		.allowUnknownOption()
 		.allowExcessArguments()
-		.action(() => add());
+		.action(lazyAction(() => import("./add"), "add"));
 }

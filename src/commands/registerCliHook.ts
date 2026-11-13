@@ -1,17 +1,15 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { internalCommand } from "../shared/internalCommand";
-import { cliHook } from "./cliHook";
-import { cliHookCheck } from "./cliHook/cliHookCheck";
 import { cliHookConfigHelp } from "./cliHook/cliHookConfigHelp";
-import { permitCliReads } from "./permitCliReads";
 import { registerDeny } from "./registerDeny";
 
 export function registerCliHook(program: Command): void {
 	const cmd = program
 		.command("cli-hook")
 		.description("PreToolUse hook for auto-approving read-only CLI commands")
-		.action(() => {
+		.action(async () => {
+			const { cliHook } = await import("./cliHook");
 			cliHook();
 		});
 
@@ -22,7 +20,8 @@ export function registerCliHook(program: Command): void {
 		.command("check <command>")
 		.description("Check whether a command would be auto-approved")
 		.option("--tool <tool>", "Tool name to check against", "Bash")
-		.action((command: string, options: { tool: string }) => {
+		.action(async (command: string, options: { tool: string }) => {
+			const { cliHookCheck } = await import("./cliHook/cliHookCheck");
 			cliHookCheck(command, options.tool);
 		});
 
@@ -34,7 +33,8 @@ export function registerCliHook(program: Command): void {
 			"CLI binary and optional subcommand (e.g. gh, az, acli jira)",
 		)
 		.option("--no-cache", "Force fresh discovery, ignoring cached results")
-		.action((cli: string[], options: { cache: boolean }) => {
+		.action(async (cli: string[], options: { cache: boolean }) => {
+			const { permitCliReads } = await import("./permitCliReads");
 			permitCliReads(cli.join(" "), { noCache: !options.cache });
 		});
 

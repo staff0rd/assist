@@ -1,9 +1,7 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { acceptanceCriteria } from "./jira/acceptanceCriteria";
-import { jiraAuth } from "./jira/jiraAuth";
 import { jiraConfigHelp } from "./jira/jiraConfigHelp";
-import { viewIssue } from "./jira/viewIssue";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerJira(program: Command): void {
 	const jiraCommand = program.command("jira").description("Jira utilities");
@@ -11,17 +9,21 @@ export function registerJira(program: Command): void {
 	jiraCommand
 		.command("auth")
 		.description("Authenticate with Jira via API token")
-		.action(() => jiraAuth());
+		.action(lazyAction(() => import("./jira/jiraAuth"), "jiraAuth"));
 
 	jiraCommand
 		.command("ac <issue-key>")
 		.description("Print acceptance criteria for a Jira issue")
-		.action((issueKey: string) => acceptanceCriteria(issueKey));
+		.action(async (issueKey: string) =>
+			(await import("./jira/acceptanceCriteria")).acceptanceCriteria(issueKey),
+		);
 
 	jiraCommand
 		.command("view <issue-key>")
 		.description("Print the title and description of a Jira issue")
-		.action((issueKey: string) => viewIssue(issueKey));
+		.action(async (issueKey: string) =>
+			(await import("./jira/viewIssue")).viewIssue(issueKey),
+		);
 
 	configHelp(jiraCommand, jiraConfigHelp);
 }

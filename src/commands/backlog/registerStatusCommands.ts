@@ -1,58 +1,51 @@
 import type { Command } from "commander";
 import { internalCommand } from "../../shared/internalCommand";
-import { del as backlogDel } from "./del";
-import { done as backlogDone } from "./done";
-import { setStatusCommand as backlogSetStatus } from "./setStatusCommand";
-import { star as backlogStar } from "./star";
-import { start as backlogStart } from "./start";
-import { stop as backlogStop } from "./stop";
-import { unstar as backlogUnstar } from "./unstar";
-import { wontdo as backlogWontdo } from "./wontdo";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerStatusCommands(cmd: Command): void {
 	cmd
 		.command("start <id>")
 		.description("Set a backlog item to in-progress")
-		.action(backlogStart);
+		.action(lazyAction(() => import("./start"), "start"));
 
 	cmd
 		.command("stop")
 		.description("Revert all in-progress backlog items to todo")
-		.action(backlogStop);
+		.action(lazyAction(() => import("./stop"), "stop"));
 
 	internalCommand(
 		cmd
 			.command("done <id> [summary]")
 			.description("Set a backlog item to done")
-			.action(backlogDone),
+			.action(lazyAction(() => import("./done"), "done")),
 		"the review phase of a backlog run",
 	);
 
 	cmd
 		.command("wontdo <id> [reason]")
 		.description("Set a backlog item to won't do")
-		.action(backlogWontdo);
+		.action(lazyAction(() => import("./wontdo"), "wontdo"));
 
 	cmd
 		.command("set-status <id> <status>")
 		.description(
 			"Set a backlog item to a specific status (todo, in-progress, done, wontdo)",
 		)
-		.action(backlogSetStatus);
+		.action(lazyAction(() => import("./setStatusCommand"), "setStatusCommand"));
 
 	cmd
 		.command("star <id>")
 		.description("Star a backlog item to pin it in the web view")
-		.action(backlogStar);
+		.action(lazyAction(() => import("./star"), "star"));
 
 	cmd
 		.command("unstar <id>")
 		.description("Remove the star from a backlog item")
-		.action(backlogUnstar);
+		.action(lazyAction(() => import("./unstar"), "unstar"));
 
 	cmd
 		.command("delete <id>")
 		.alias("remove")
 		.description("Delete a backlog item")
-		.action(backlogDel);
+		.action(lazyAction(() => import("./del"), "del"));
 }

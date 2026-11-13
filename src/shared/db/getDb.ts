@@ -1,34 +1,8 @@
 import type { Pool, PoolClient } from "pg";
-import { seedNewsFeeds } from "../../commands/backlog/seedNewsFeeds";
-import { cleanupFalseResetSegments } from "./cleanupFalseResetSegments";
-import { toDatabaseConnectionError } from "./DatabaseConnectionError";
-import { type Db, makeOrmFromPool } from "./Db";
-import { assertMigrationsInSync } from "./migrations/assertMigrationsInSync";
-import { pgExecutor } from "./migrations/MigrationExecutor";
 import { createPool } from "./createPool";
-
-async function runUsagePeakCleanup(orm: Db): Promise<void> {
-	try {
-		await cleanupFalseResetSegments(orm);
-	} catch (error) {
-		// why: a one-off data fix must never block connecting, so swallow and log.
-		console.error(
-			`${new Date().toISOString()} usage-peaks cleanup failed: ${String(error)}`,
-		);
-	}
-}
-
-async function initDb(pool: Pool): Promise<Db> {
-	try {
-		await assertMigrationsInSync(pgExecutor(pool));
-	} catch (error) {
-		throw toDatabaseConnectionError(error);
-	}
-	const orm = makeOrmFromPool(pool);
-	await seedNewsFeeds(orm);
-	await runUsagePeakCleanup(orm);
-	return orm;
-}
+import type { Db } from "./Db";
+import { initDb } from "./initDb";
+import { loadedDb } from "./loadedDb";
 
 let _connecting: Promise<Db> | undefined;
 let _pool: Pool | undefined;
@@ -50,6 +24,7 @@ export function getDb(): Promise<Db> {
 	if (_connecting) return _connecting;
 	try {
 		_pool = createPool();
+		loadedDb.close = closeDb;
 	} catch (error) {
 		return Promise.reject(error);
 	}

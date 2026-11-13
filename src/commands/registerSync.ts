@@ -1,7 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { rootConfigHelp } from "./rootConfigHelp";
-import { sync } from "./sync";
 
 export function registerSync(program: Command): void {
 	const syncCommand = program
@@ -18,7 +17,8 @@ export function registerSync(program: Command): void {
 			"--force",
 			"With --prune, remove the listed orphaned files; a claude or codex skill directory is removed only when SKILL.md is its sole content. Errors without --prune",
 		)
-		.action((options) => {
+		.action(async (options) => {
+			const { sync } = await import("./sync");
 			if (options.force && !options.prune) {
 				console.error("--force requires --prune.");
 				process.exit(1);

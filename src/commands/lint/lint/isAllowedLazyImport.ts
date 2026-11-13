@@ -2,10 +2,11 @@ import path from "node:path";
 
 const LAZY_IMPORT_PATTERN = /\bimport\s*\(\s*["']\.{1,2}\/[^"']+["']\s*\)/g;
 const ANY_IMPORT_PATTERN = /\bimport\s*\(/g;
+const CLI_ENTRY = "src/runCli.ts";
 
 function isLazyLoadFile(filePath: string): boolean {
 	const normalized = filePath.split(path.sep).join("/");
-	if (normalized === "src/index.ts" || normalized.endsWith("/src/index.ts")) {
+	if (normalized === CLI_ENTRY || normalized.endsWith(`/${CLI_ENTRY}`)) {
 		return true;
 	}
 	return /^register[A-Z]\w*\.ts$/.test(path.basename(filePath));

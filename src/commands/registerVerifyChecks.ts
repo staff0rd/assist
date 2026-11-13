@@ -1,59 +1,56 @@
 import type { Command } from "commander";
-import { adviceFragments } from "./verify/adviceFragments";
-import { blockCodeComments } from "./verify/blockCodeComments";
-import { configKeys } from "./verify/configKeys";
-import { forbiddenStrings } from "./verify/forbiddenStrings";
-import { hardcodedColors } from "./verify/hardcodedColors";
-import { harnessFollowUps } from "./verify/harnessFollowUps";
-import { migrations } from "./verify/migrations";
-import { noVenv } from "./verify/noVenv";
 
 const checks = [
 	{
 		name: "hardcoded-colors",
 		description: "Check for hardcoded hex colors in src/",
-		action: hardcodedColors,
+		load: async () =>
+			(await import("./verify/hardcodedColors")).hardcodedColors,
 	},
 	{
 		name: "block-code-comments",
 		description:
 			"Fail on any comment on a changed line, whether added or edited",
-		action: blockCodeComments,
+		load: async () =>
+			(await import("./verify/blockCodeComments")).blockCodeComments,
 	},
 	{
 		name: "no-venv",
 		description: "Check that no venv folders exist in the repo",
-		action: noVenv,
+		load: async () => (await import("./verify/noVenv")).noVenv,
 	},
 	{
 		name: "forbidden-strings",
 		description:
 			"Check configured JSON files for values matching forbiddenStrings rules",
-		action: forbiddenStrings,
+		load: async () =>
+			(await import("./verify/forbiddenStrings")).forbiddenStrings,
 	},
 	{
 		name: "config-keys",
 		description:
 			"Check every assistConfigSchema key is surfaced in some command's --help via configHelp",
-		action: configKeys,
+		load: async () => (await import("./verify/configKeys")).configKeys,
 	},
 	{
 		name: "advice-fragments",
 		description:
 			"Check adviceFragmentNames matches the fragments shipped in agent/advice, so advice.sections can name every one",
-		action: adviceFragments,
+		load: async () =>
+			(await import("./verify/adviceFragments")).adviceFragments,
 	},
 	{
 		name: "migrations",
 		description:
 			"Check DB migrations are sequentially numbered, append-only, and gate destructive DDL behind an acknowledgement marker",
-		action: migrations,
+		load: async () => (await import("./verify/migrations")).migrations,
 	},
 	{
 		name: "harness-follow-ups",
 		description:
 			"Check every follow-up item named by an unsupported harness capability exists and is still open",
-		action: harnessFollowUps,
+		load: async () =>
+			(await import("./verify/harnessFollowUps")).harnessFollowUps,
 	},
 ];
 
@@ -62,6 +59,9 @@ export function registerVerifyChecks(verifyCommand: Command): void {
 		verifyCommand
 			.command(check.name)
 			.description(check.description)
-			.action(check.action);
+			.action(async () => {
+				const action = await check.load();
+				await action();
+			});
 	}
 }

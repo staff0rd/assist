@@ -1,7 +1,7 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
-import { edit as prsEdit } from "./prs/edit";
 import { editHelpText } from "./prs/editHelpText";
+import { lazyAction } from "../shared/lazyAction";
 
 function collect(value: string, previous: string[]): string[] {
 	return previous.concat([value]);
@@ -30,6 +30,6 @@ export function registerPrsEdit(prsCommand: Command): void {
 			[],
 		)
 		.addHelpText("after", () => editHelpText())
-		.action(prsEdit);
+		.action(lazyAction(() => import("./prs/edit"), "edit"));
 	internalCommand(editCommand, "agents revising their pull request");
 }

@@ -1,8 +1,8 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { internalCommand } from "../shared/internalCommand";
-import { commit } from "./commit";
 import { rootConfigHelp } from "./rootConfigHelp";
+import { lazyAction } from "../shared/lazyAction";
 
 function collectRef(value: string, previous: string[]): string[] {
 	return [...previous, value];
@@ -19,7 +19,7 @@ export function registerCommit(program: Command): void {
 			collectRef,
 			[],
 		)
-		.action(commit);
+		.action(lazyAction(() => import("./commit"), "commit"));
 
 	internalCommand(commitCommand, "/commit");
 	configHelp(commitCommand, rootConfigHelp.commit);

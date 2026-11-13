@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
-import { ask } from "./ask";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerAsk(program: Command): void {
 	internalCommand(
@@ -14,7 +14,7 @@ export function registerAsk(program: Command): void {
 				"--body <markdown|->",
 				"Markdown to review, or - for stdin",
 			)
-			.action(ask),
+			.action(lazyAction(() => import("./ask"), "ask")),
 		"/ask",
 	);
 }

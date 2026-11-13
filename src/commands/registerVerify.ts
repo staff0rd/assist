@@ -1,18 +1,8 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { registerVerifyChecks } from "./registerVerifyChecks";
-import { init as verifyInit } from "./verify/init";
-import { list as verifyList } from "./verify/list";
-import { run as verifyRun } from "./verify/run";
 import { verifyConfigHelp } from "./verify/verifyConfigHelp";
-
-function runScope(scope: string | undefined, options: object): void {
-	if (scope && scope !== "all") {
-		console.error(`Unknown scope: "${scope}". Use "all" to run all checks.`);
-		process.exit(1);
-	}
-	verifyRun({ ...options, all: scope === "all" });
-}
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerVerify(program: Command): void {
 	const verifyCommand = program
@@ -27,12 +17,12 @@ export function registerVerify(program: Command): void {
 			"Print a summary table of each command's status and duration after the run",
 		)
 		.option("--verbose", "Show all output (bypass CLAUDECODE suppression)")
-		.action(runScope);
+		.action(lazyAction(() => import("./verify/runScope"), "runScope"));
 
 	verifyCommand
 		.command("list")
 		.description("List configured verify commands")
-		.action(verifyList);
+		.action(lazyAction(() => import("./verify/list"), "list"));
 
 	verifyCommand
 		.command("init")
@@ -41,7 +31,7 @@ export function registerVerify(program: Command): void {
 			"--package-json",
 			"Write scripts to package.json instead of assist.yml",
 		)
-		.action(verifyInit);
+		.action(lazyAction(() => import("./verify/init"), "init"));
 
 	registerVerifyChecks(verifyCommand);
 

@@ -1,18 +1,16 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { analyze as complexityAnalyze } from "./complexity/analyze";
 import { complexityConfigHelp } from "./complexity/complexityConfigHelp";
-import { cyclomatic as complexityCyclomatic } from "./complexity/cyclomatic";
-import { halstead as complexityHalstead } from "./complexity/halstead";
-import { maintainability as complexityMaintainability } from "./complexity/maintainability";
-import { sloc as complexitySloc } from "./complexity/sloc";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerComplexity(program: Command): void {
 	const complexityCommand = program
 		.command("complexity")
 		.description("Analyze TypeScript code complexity metrics")
 		.argument("[pattern]")
-		.action((pattern?: string) => {
+		.action(async (pattern?: string) => {
+			const { analyze: complexityAnalyze } =
+				await import("./complexity/analyze");
 			if (!pattern) {
 				complexityCommand.help();
 				return;
@@ -24,13 +22,13 @@ export function registerComplexity(program: Command): void {
 		.command("cyclomatic [pattern]")
 		.description("Calculate cyclomatic complexity per function")
 		.option("--threshold <number>", "Max complexity threshold", Number.parseInt)
-		.action(complexityCyclomatic);
+		.action(lazyAction(() => import("./complexity/cyclomatic"), "cyclomatic"));
 
 	complexityCommand
 		.command("halstead [pattern]")
 		.description("Calculate Halstead metrics per function")
 		.option("--threshold <number>", "Max volume threshold", Number.parseInt)
-		.action(complexityHalstead);
+		.action(lazyAction(() => import("./complexity/halstead"), "halstead"));
 
 	complexityCommand
 		.command("maintainability [pattern]")
@@ -46,13 +44,18 @@ export function registerComplexity(program: Command): void {
 			(value: string, previous: string[]) => previous.concat([value]),
 			[],
 		)
-		.action(complexityMaintainability);
+		.action(
+			lazyAction(
+				() => import("./complexity/maintainability"),
+				"maintainability",
+			),
+		);
 
 	complexityCommand
 		.command("sloc [pattern]")
 		.description("Count source lines of code per file")
 		.option("--threshold <number>", "Max lines threshold", Number.parseInt)
-		.action(complexitySloc);
+		.action(lazyAction(() => import("./complexity/sloc"), "sloc"));
 
 	configHelp(complexityCommand, complexityConfigHelp);
 }

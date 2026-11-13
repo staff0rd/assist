@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { type MermaidExportOptions, mermaidExport } from "./mermaidExport";
+import type { MermaidExportOptions } from "./mermaidExport";
 import { mermaidConfigHelp } from "./mermaid/mermaidConfigHelp";
 
 export function registerMermaid(program: Command): void {
@@ -19,8 +19,8 @@ export function registerMermaid(program: Command): void {
 			"Render only the nth mermaid block (1-based)",
 			(value) => Number.parseInt(value, 10),
 		)
-		.action((file: string | undefined, options: MermaidExportOptions) =>
-			mermaidExport(file, options),
+		.action(async (file: string | undefined, options: MermaidExportOptions) =>
+			(await import("./mermaidExport")).mermaidExport(file, options),
 		);
 
 	configHelp(cmd, mermaidConfigHelp);

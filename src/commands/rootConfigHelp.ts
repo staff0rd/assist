@@ -1,5 +1,5 @@
 import type { ConfigHelpEntry } from "../shared/configHelp";
-import { autoConfirmHintCommand } from "./sync/printAutoConfirmHint";
+import { autoConfirmHintCommand } from "./sync/autoConfirmHintCommand";
 
 export const rootConfigHelp: Record<string, ConfigHelpEntry[]> = {
 	sync: [

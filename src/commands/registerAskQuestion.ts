@@ -1,8 +1,8 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { internalCommand } from "../shared/internalCommand";
-import { askQuestion } from "./askQuestion";
 import { askQuestionConfigHelp } from "./askQuestion/askQuestionConfigHelp";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerAskQuestion(program: Command): void {
 	internalCommand(
@@ -16,7 +16,7 @@ export function registerAskQuestion(program: Command): void {
 					"--json <file|->",
 					"AskUserQuestion input JSON ({questions: [...]}), or - for stdin",
 				)
-				.action(askQuestion),
+				.action(lazyAction(() => import("./askQuestion"), "askQuestion")),
 			askQuestionConfigHelp,
 		),
 		"Claude in place of AskUserQuestion",

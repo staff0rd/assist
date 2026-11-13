@@ -1,7 +1,6 @@
 import type { Command } from "commander";
 import { internalCommand } from "../../../shared/internalCommand";
-import { restartNode } from "./restartNode";
-import { updateNode } from "./updateNode";
+import { lazyAction } from "../../../shared/lazyAction";
 
 export function registerPeerActionCommands(nodes: Command, calledBy: string) {
 	internalCommand(
@@ -11,7 +10,7 @@ export function registerPeerActionCommands(nodes: Command, calledBy: string) {
 				"Restart a linked node's daemon and/or web server, wait for its link to reconnect and print its version",
 			)
 			.option("--target <target>", "daemon, webserver or both", "both")
-			.action(restartNode),
+			.action(lazyAction(() => import("./restartNode"), "restartNode")),
 		calledBy,
 	);
 
@@ -21,7 +20,9 @@ export function registerPeerActionCommands(nodes: Command, calledBy: string) {
 			.description(
 				"Run assist update on a linked node, restart it, wait for its link to reconnect and print its version",
 			)
-			.action((name: string) => updateNode(name)),
+			.action(async (name: string) =>
+				(await import("./updateNode")).updateNode(name),
+			),
 		calledBy,
 	);
 }

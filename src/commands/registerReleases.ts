@@ -2,14 +2,15 @@ import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { internalCommand } from "../shared/internalCommand";
 import { releasesConfigHelp } from "./releases/releasesConfigHelp";
-import { releasesConfigure } from "./releases/releasesConfigure";
-import { releasesList } from "./releases/releasesList";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerReleases(parent: Command): void {
 	const releasesCommand = parent
 		.command("releases")
 		.description("Inspect the declared release promotion streams")
-		.action(releasesList);
+		.action(
+			lazyAction(() => import("./releases/releasesList"), "releasesList"),
+		);
 
 	configHelp(
 		releasesCommand,
@@ -20,7 +21,9 @@ export function registerReleases(parent: Command): void {
 	releasesCommand
 		.command("list")
 		.description("List the declared release streams, their nodes and edges")
-		.action(releasesList);
+		.action(
+			lazyAction(() => import("./releases/releasesList"), "releasesList"),
+		);
 
 	internalCommand(
 		releasesCommand
@@ -37,7 +40,12 @@ export function registerReleases(parent: Command): void {
 				"repo (git), the repo's assist.yml, or repo (db), this repo's shared db override",
 				"git",
 			)
-			.action(releasesConfigure),
+			.action(
+				lazyAction(
+					() => import("./releases/releasesConfigure"),
+					"releasesConfigure",
+				),
+			),
 		"/releases-configure",
 	);
 }

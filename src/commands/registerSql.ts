@@ -1,40 +1,25 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { sqlAuth } from "./sql/sqlAuth";
-import { sqlColumns } from "./sql/sqlColumns";
+import { registerSqlAuth } from "./sql/registerSqlAuth";
 import { sqlConfigHelp } from "./sql/sqlConfigHelp";
-import { sqlMutate } from "./sql/sqlMutate";
-import { sqlQuery } from "./sql/sqlQuery";
-import { sqlSetConnection } from "./sql/sqlSetConnection";
-import { sqlTables } from "./sql/sqlTables";
 
 export function registerSql(program: Command): void {
 	const cmd = program.command("sql").description("MSSQL query utilities");
 
-	const auth = cmd.command("auth").description("Configure a SQL connection");
-	auth
-		.command("add")
-		.description("Add a new connection")
-		.action(() => sqlAuth.add());
-	auth
-		.command("list")
-		.description("List configured connections")
-		.action(() => sqlAuth.list());
-	auth
-		.command("remove <name>")
-		.description("Remove a configured connection")
-		.action((name: string) => sqlAuth.remove(name));
+	registerSqlAuth(cmd);
 
 	cmd
 		.command("set-connection <name>")
 		.description("Set the default SQL connection")
-		.action((name: string) => sqlSetConnection(name));
+		.action(async (name: string) =>
+			(await import("./sql/sqlSetConnection")).sqlSetConnection(name),
+		);
 
 	cmd
 		.command("query <sql> [connection]")
 		.description("Execute a read-only SQL query (rejects mutating statements)")
-		.action((query: string, connection?: string) =>
-			sqlQuery(query, connection),
+		.action(async (query: string, connection?: string) =>
+			(await import("./sql/sqlQuery")).sqlQuery(query, connection),
 		);
 
 	cmd
@@ -42,22 +27,24 @@ export function registerSql(program: Command): void {
 		.description(
 			"Execute a mutating SQL statement (rejects non-mutating statements)",
 		)
-		.action((query: string, connection?: string) =>
-			sqlMutate(query, connection),
+		.action(async (query: string, connection?: string) =>
+			(await import("./sql/sqlMutate")).sqlMutate(query, connection),
 		);
 
 	cmd
 		.command("tables [connection]")
 		.description("List tables in the connected database")
-		.action((connection?: string) => sqlTables(connection));
+		.action(async (connection?: string) =>
+			(await import("./sql/sqlTables")).sqlTables(connection),
+		);
 
 	cmd
 		.command("columns <table> [connection]")
 		.description(
 			"List columns for a table (use schema.table for non-default schema)",
 		)
-		.action((table: string, connection?: string) =>
-			sqlColumns(table, connection),
+		.action(async (table: string, connection?: string) =>
+			(await import("./sql/sqlColumns")).sqlColumns(table, connection),
 		);
 
 	configHelp(cmd, sqlConfigHelp);

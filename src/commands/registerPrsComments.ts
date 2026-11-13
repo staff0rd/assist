@@ -1,9 +1,5 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
-import { comment as prsComment } from "./prs/comment";
-import { listComments as prsListComments } from "./prs/listComments";
-import { printComments as prsPrintComments } from "./prs/listComments/printComments";
-import { readBodyArgument } from "./prs/readBodyArgument";
 import { registerPrsThreadReplies } from "./registerPrsThreadReplies";
 
 const reviewComments = "/review-pr-comments";
@@ -13,7 +9,11 @@ export function registerPrsComments(prsCommand: Command): void {
 		prsCommand
 			.command("list-comments")
 			.description("List all comments on the current branch's pull request")
-			.action(() => {
+			.action(async () => {
+				const { listComments: prsListComments } =
+					await import("./prs/listComments");
+				const { printComments: prsPrintComments } =
+					await import("./prs/listComments/printComments");
 				prsListComments().then(prsPrintComments);
 			}),
 		reviewComments,
@@ -28,6 +28,8 @@ export function registerPrsComments(prsCommand: Command): void {
 				"Add a line comment to the pending review (body of - reads it from stdin)",
 			)
 			.action(async (path: string, line: string, body: string) => {
+				const { comment: prsComment } = await import("./prs/comment");
+				const { readBodyArgument } = await import("./prs/readBodyArgument");
 				await prsComment(
 					path,
 					Number.parseInt(line, 10),

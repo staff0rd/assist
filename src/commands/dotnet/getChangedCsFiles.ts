@@ -1,16 +1,16 @@
 import { execSync } from "node:child_process";
+import {
+	SCOPE_ALL,
+	SCOPE_BASE,
+	SCOPE_COMMIT,
+	scopeHelpText,
+} from "./scopeHelpText";
 
 type Scope =
 	| { mode: "working-copy" }
 	| { mode: "full" }
 	| { mode: "base"; ref: string }
 	| { mode: "commit"; ref: string };
-
-const SCOPE_ALL = "all";
-const SCOPE_BASE = "base:";
-const SCOPE_COMMIT = "commit:";
-
-export const scopeHelpText = `${SCOPE_ALL} | ${SCOPE_BASE}<ref> | ${SCOPE_COMMIT}<ref>`;
 
 export function parseScope(raw: string | undefined): Scope {
 	if (!raw) return { mode: "working-copy" };

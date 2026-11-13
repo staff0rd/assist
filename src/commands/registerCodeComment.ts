@@ -1,8 +1,6 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
-import { codeCommentConfirm } from "./codeComment/codeCommentConfirm";
-import { codeCommentSet } from "./codeComment/codeCommentSet";
-
+import { lazyAction } from "../shared/lazyAction";
 const calledBy = "agents whose edit the comment gate blocked";
 
 export function registerCodeComment(parent: Command): void {
@@ -24,7 +22,12 @@ export function registerCodeComment(parent: Command): void {
 				"<text>",
 				"Single-line comment text (max 50 chars, no block comments)",
 			)
-			.action(codeCommentSet),
+			.action(
+				lazyAction(
+					() => import("./codeComment/codeCommentSet"),
+					"codeCommentSet",
+				),
+			),
 		calledBy,
 	);
 
@@ -35,7 +38,12 @@ export function registerCodeComment(parent: Command): void {
 				"Confirm a pin to insert its comment and clear the pin state",
 			)
 			.argument("<pin>", "Pin issued by 'code-comment set'")
-			.action(codeCommentConfirm),
+			.action(
+				lazyAction(
+					() => import("./codeComment/codeCommentConfirm"),
+					"codeCommentConfirm",
+				),
+			),
 		calledBy,
 	);
 }

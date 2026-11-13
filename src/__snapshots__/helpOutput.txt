@@ -1,0 +1,4050 @@
+=== assist --help
+Usage: assist [options] [command]
+
+CLI application
+
+Options:
+  -V, --version                          output the version number
+  --no-open                              Do not open a browser on startup
+  -h, --help                             display help for command
+
+Commands:
+  sync [options]                         Install commands as ~/.agent/skills/<name>/SKILL.md, so
+                                         they take precedence over a project skill of the same name,
+                                         and delete any ~/.agent/commands/<name>.md an earlier sync
+                                         copied; when codex is detected, also install commands as
+                                         ~/.codex/skills/<name>/SKILL.md and register the assist
+                                         codex-hook in ~/.codex/config.toml, which auto-approves
+                                         read-only commands and injects the repo's composed advice
+                                         on SessionStart; when pi is detected, also install commands
+                                         as ~/.pi/agent/prompts/<name>.md and install the assist
+                                         extensions into ~/.pi/agent/extensions, which gate
+                                         permissions and inject the same advice. No global
+                                         instructions file is written — every harness composes its
+                                         own from assist advise at session start, and any
+                                         ~/.claude/CLAUDE.md, ~/.codex/AGENTS.md or
+                                         ~/.pi/agent/AGENTS.md an earlier sync left behind is named
+                                         so you can remove it. A target that exists and was not
+                                         written by sync is never overwritten or deleted without
+                                         confirmation; with --yes it is left in place and reported.
+                                         With --prune, also report files an earlier sync wrote that
+                                         assist no longer ships, and with --prune --force remove
+                                         them
+  init                                   Initialize VS Code and verify configurations
+  lint [options]                         Run lint checks for conventions not enforced by oxlint
+  vscode                                 VS Code configuration utilities
+  status-line                            Format Claude Code status line from JSON stdin
+  notify                                 Show notification from Claude Code hook (reads JSON from
+                                         stdin)
+  update                                 Update assist to the latest version and sync commands
+  coverage                               Print global statement coverage percentage
+  screenshot <process>                   Capture a screenshot of a running application window
+  commit [options] <args...>             Create a git commit with validation
+  config                                 View and modify assist.yml configuration
+  run [name] [args...]                   Run a configured command from assist.yml
+  new                                    Scaffold a new project
+  activity [options]                     Chart GitHub commit activity per day
+  advise [options]                       Print the advice fragments that apply to this repo,
+                                         composed from config and repo facts
+  backup [options]                       Write a backlog database dump and record it in the backups
+                                         table
+  chart [options]                        Chart a label/value series read from stdin, one pair per
+                                         line (comma, tab or whitespace separated)
+  db                                     Inspect and apply the backlog database migrations
+  schema                                 Human-in-the-loop approval to unlock database schema files
+                                         for a backlog item phase or Claude session
+  cli-hook                               PreToolUse hook for auto-approving read-only CLI commands
+  code-comment                           Escape hatch for the rare code comment that genuinely
+                                         belongs
+  codex-hook                             Codex hook: auto-approves read-only CLI commands
+                                         (PreToolUse/PermissionRequest) and reports session status
+                                         (running/waiting) to the sessions daemon
+  codex-hook-trust                       Record Codex trust for exactly Assist's installed
+                                         codex-hook definitions, so Codex starts without a hook
+                                         review; any other hook still needs Codex's normal review
+  pi-hook                                pi tool-call permission gate: reads pi's tool-call JSON
+                                         from stdin and emits an allow/deny/gate decision,
+                                         auto-approving read-only CLI commands via the shared
+                                         cli-hook allowlist
+  edit-hook                              PreToolUse hook that blocks edits to the maintainability
+                                         override marker and edits that introduce code comments
+  github                                 GitHub organisation utilities
+  inbox                                  Triage Gmail and Slack for human messages needing a reply
+  jira                                   Jira utilities
+  mermaid                                Render mermaid diagrams from markdown files
+  miro                                   Miro board utilities
+  prs [options]                          Pull request utilities
+  read-time [options] <target>           Estimate how long a document takes to read (target is a
+                                         pull request number, a GitHub pull request URL, - for
+                                         stdin, or a file path)
+  releases                               Inspect the declared release promotion streams
+  roam                                   Roam Research utilities
+  backlog [options]                      Manage a backlog of work items
+  branch [options] <slug>                Create and switch to a branch off the fresh remote default
+                                         branch
+  list|ls [options]                      Alias for backlog list
+  verify [options] [scope]               Run all verify:* commands in parallel
+  refactor                               Run refactoring checks for code quality
+  review [options] [number]              Run the Claude and Codex reviewers in parallel on the
+                                         current branch's PR and synthesise their findings, or check
+                                         out a PR by number first when given; --checkout-only just
+                                         checks the PR out and leaves an idle session in the
+                                         checkout tree
+  rules                                  Read and write the CLAUDE.md rules in scope for a path
+  devlog                                 Development log utilities
+  docs                                   Human-in-the-loop approval to unlock docs pages and
+                                         screenshots for a backlog item phase
+  deploy                                 Netlify deployment utilities
+  complexity [pattern]                   Analyze TypeScript code complexity metrics
+  dotnet                                 .NET project utilities
+  news                                   Manage RSS news feeds
+  netcap [options]                       Start a local receiver that captures browser network
+                                         traffic (fetch/XHR) to a JSONL file via the netcap browser
+                                         extension
+  extension [options]                    Print the directory to load the assist browser extension
+                                         from (load unpacked)
+  browser                                Probe the live browser tab through the assist extension,
+                                         relayed by the assist web server
+  litellm                                LiteLLM proxy utilities
+  ravendb                                RavenDB query utilities
+  seq                                    Seq log query utilities
+  show [options]                         Open markdown in the session's web preview pane so long
+                                         links, paths and snippets can be clicked and copied
+                                         unbroken; prints it outside a web session
+  ask [options]                          Open markdown in the session's web preview pane for the
+                                         user to approve or reject, with inline comments, and wait
+                                         for the decision; prints it outside a web session
+  ask-question [options]                 Ask the AskUserQuestion questions in the session's web
+                                         preview pane and wait for the answers; prints the same
+                                         result text as the built-in tool
+  ask-check [options]                    Ask the user to perform a manual check in the session's web
+                                         preview pane and wait for Works / Doesn't work plus an
+                                         optional note
+  ask-design [options]                   Open a claude.ai design artifact in the session's web
+                                         preview pane for the user to approve or reject, with inline
+                                         comments, and wait for the decision; prints the link
+                                         outside a web session, and exits with the reasons when
+                                         design review is unavailable on the running harness (it
+                                         needs artifact publishing)
+  slack                                  Slack utilities
+  sql                                    MSSQL query utilities
+  testflight                             Manage TestFlight testers via the App Store Connect API
+  transcript                             Meeting transcript utilities
+  watch                                  Wait on upstream movement for the current branch
+  sessions [options]                     Web dashboard for coding agent sessions
+  daemon                                 Long-lived daemon that owns web session PTYs
+  prompts                                Show top denied tool calls by frequency
+  deny                                   Manage command deny rules
+  next [options] [id]                    Alias for backlog next
+  draft|feat [options] [description]     Launch a coding harness in /draft mode, chain into next on
+                                         /next signal
+  bug [options] [description]            Launch a coding harness in /bug mode, chain into next on
+                                         /next signal
+  review-pr-comments [options] [number]  Launch a coding harness in /review-pr-comments mode (single
+                                         session)
+  fix-conflict [options] [number]        Launch a coding harness in /fix-conflict mode (single
+                                         session)
+  refine [options] [id]                  Launch a coding harness in /refine mode to refine a backlog
+                                         item
+  signal                                 Write an assist signal file
+
+=== assist sync --help
+Usage: assist sync [options]
+
+Install commands as ~/.agent/skills/<name>/SKILL.md, so they take precedence over a project skill of
+the same name, and delete any ~/.agent/commands/<name>.md an earlier sync copied; when codex is
+detected, also install commands as ~/.codex/skills/<name>/SKILL.md and register the assist
+codex-hook in ~/.codex/config.toml, which auto-approves read-only commands and injects the repo's
+composed advice on SessionStart; when pi is detected, also install commands as
+~/.pi/agent/prompts/<name>.md and install the assist extensions into ~/.pi/agent/extensions, which
+gate permissions and inject the same advice. No global instructions file is written — every harness
+composes its own from assist advise at session start, and any ~/.claude/CLAUDE.md,
+~/.codex/AGENTS.md or ~/.pi/agent/AGENTS.md an earlier sync left behind is named so you can remove
+it. A target that exists and was not written by sync is never overwritten or deleted without
+confirmation; with --yes it is left in place and reported. With --prune, also report files an
+earlier sync wrote that assist no longer ships, and with --prune --force remove them
+
+Options:
+  -y, --yes   Overwrite settings.json without prompting
+  --prune     After syncing, list files an earlier sync wrote (recorded in
+              ~/.assist/sync-manifest.json) whose name is no longer in the repo's
+              agent/commands/*.md set; files sync did not write are listed separately and never
+              removed
+  --force     With --prune, remove the listed orphaned files; a claude or codex skill directory is
+              removed only when SKILL.md is its sole content. Errors without --prune
+  -h, --help  display help for command
+
+Config:
+  assist config set sync.autoConfirm true --node # skip the settings.json overwrite prompt
+  assist config set sync.preferences true --node # also merge assist's author preferences (claude/preferences.json) into settings.json
+
+=== assist init --help
+Usage: assist init [options]
+
+Initialize VS Code and verify configurations
+
+Options:
+  -h, --help  display help for command
+
+=== assist lint --help
+Usage: assist lint [options] [command]
+
+Run lint checks for conventions not enforced by oxlint
+
+Options:
+  -f, --fix   Auto-fix violations where possible
+  -h, --help  display help for command
+
+Commands:
+  init        Initialize oxlint with baseline linter config
+
+=== assist lint init --help
+Usage: assist lint init [options]
+
+Initialize oxlint with baseline linter config
+
+Options:
+  -h, --help  display help for command
+
+=== assist vscode --help
+Usage: assist vscode [options] [command]
+
+VS Code configuration utilities
+
+Options:
+  -h, --help      display help for command
+
+Commands:
+  init            Add VS Code configuration files
+  help [command]  display help for command
+
+=== assist vscode init --help
+Usage: assist vscode init [options]
+
+Add VS Code configuration files
+
+Options:
+  -h, --help  display help for command
+
+=== assist status-line --help
+Usage: assist status-line [options]
+
+Format Claude Code status line from JSON stdin
+
+Options:
+  -h, --help  display help for command
+
+=== assist notify --help
+Usage: assist notify [options]
+
+Show notification from Claude Code hook (reads JSON from stdin)
+
+Options:
+  -h, --help  display help for command
+
+Config:
+  assist config set notify.enabled false # enable or disable desktop notifications (default: enabled)
+
+=== assist update --help
+Usage: assist update [options]
+
+Update assist to the latest version and sync commands
+
+Options:
+  -h, --help  display help for command
+
+=== assist coverage --help
+Usage: assist coverage [options]
+
+Print global statement coverage percentage
+
+Options:
+  -h, --help  display help for command
+
+=== assist screenshot --help
+Usage: assist screenshot [options] <process>
+
+Capture a screenshot of a running application window
+
+Arguments:
+  process     Name of the running process (e.g. notepad, code)
+
+Options:
+  -h, --help  display help for command
+
+Config:
+  assist config set screenshot.outputDir ./screenshots # directory screenshots are written to (default: ./screenshots)
+
+=== assist commit --help
+Usage: assist commit [options] <args...>
+
+Create a git commit with validation
+
+Arguments:
+  args         status | <message> [files...]
+
+Options:
+  --ref <ref>  Add a Ref: trailer carrying free text with a URL (repeatable) (default: [])
+  -h, --help   display help for command
+
+Config:
+  assist config set commit.conventional true   # enforce conventional commit message format
+  assist config set commit.pull true           # pull before committing
+  assist config set commit.push true           # push after committing
+  assist config set commit.expectedBranch main # warn when committing off this branch
+
+=== assist config --help
+Usage: assist config [options] [command]
+
+View and modify assist.yml configuration
+
+Options:
+  -h, --help                   display help for command
+
+Commands:
+  set [options] <key> [value]  Set a config value (e.g. commit.push true); with no scope flag it
+                               writes repo (git), this repo's assist.yml
+  unset [options] [key]        Remove a config value (e.g. commit.push); with no scope flag it
+                               removes it from repo (git), this repo's assist.yml
+  import-repos                 Move this machine's ~/.assist.yml repos: overrides into the shared
+                               db, showing a per-key diff and asking first
+  import-user [keys...]        Move keys (default advice.rules) from this node's ~/.assist.yml into
+                               user (db), the shared db applied to every repo on every node, showing
+                               a diff and asking first. Array keys append the entries user (db)
+                               lacks
+  get [options] <key>          Get a config value (secrets print as <hidden>)
+  list                         List the config values that are set (secrets print as <hidden>); see
+                               'config keys' for every key
+  keys [filter]                List every config key with its default, note and setter (filter
+                               narrows by key substring)
+  help [command]               display help for command
+
+Run 'assist config keys [filter]' to list every config key with its default,
+what it does, and the command that sets it.
+
+Config:
+  assist config set worktree.enabled true --repo # repo (db): per-repo overrides stored in the shared db, keyed by repo identity and seen by every node that uses it; written by 'config set --repo [name]' or the web /config repo (db) scope, and a yml repos: entry applies only until 'config import-repos' moves it
+
+=== assist config set --help
+Usage: assist config set [options] <key> [value]
+
+Set a config value (e.g. commit.push true); with no scope flag it writes repo (git), this repo's
+assist.yml
+
+Options:
+  -r, --repo [name]  Write to repo (db): a repo's override in the shared db, seen by every node
+                     (defaults to the current repo)
+  --node             Write to user (node): this node's ~/.assist.yml
+  -u, --user         Write to user (db): the shared db, applied to every repo on every node
+  -h, --help         display help for command
+
+=== assist config unset --help
+Usage: assist config unset [options] [key]
+
+Remove a config value (e.g. commit.push); with no scope flag it removes it from repo (git), this
+repo's assist.yml
+
+Options:
+  -r, --repo [name]  Remove from repo (db): a repo's override in the shared db (defaults to the
+                     current repo)
+  --node             Remove from user (node): this node's ~/.assist.yml
+  -u, --user         Remove from user (db) in the shared db
+  -h, --help         display help for command
+
+=== assist config import-repos --help
+Usage: assist config import-repos [options]
+
+Move this machine's ~/.assist.yml repos: overrides into the shared db, showing a per-key diff and
+asking first
+
+Options:
+  -h, --help  display help for command
+
+=== assist config import-user --help
+Usage: assist config import-user [options] [keys...]
+
+Move keys (default advice.rules) from this node's ~/.assist.yml into user (db), the shared db
+applied to every repo on every node, showing a diff and asking first. Array keys append the entries
+user (db) lacks
+
+Options:
+  -h, --help  display help for command
+
+=== assist config get --help
+Usage: assist config get [options] <key>
+
+Get a config value (secrets print as <hidden>)
+
+Options:
+  --reveal    Print the raw value of a secret, undecorated
+  -h, --help  display help for command
+
+=== assist config list --help
+Usage: assist config list [options]
+
+List the config values that are set (secrets print as <hidden>); see 'config keys' for every key
+
+Options:
+  -h, --help  display help for command
+
+=== assist config keys --help
+Usage: assist config keys [options] [filter]
+
+List every config key with its default, note and setter (filter narrows by key substring)
+
+Options:
+  -h, --help  display help for command
+
+=== assist run --help
+Usage: assist run [options] [command] [name] [args...]
+
+Run a configured command from assist.yml
+
+Arguments:
+  name                                      Name of the configured command
+  args                                      Arguments to pass to the command
+
+Options:
+  -h, --help                                display help for command
+
+Commands:
+  list [options]                            List configured run commands
+  add [options] <name> <command> [args...]  Add a new run configuration to assist.yml, or with
+                                            --repo to the shared db
+  link [options] <path>                     Link run configurations from another project's
+                                            assist.yml
+  remove [options] <name>                   Remove a run configuration from assist.yml, or with
+                                            --repo from the shared db
+
+An a-prefixed item id (e.g. a555) with no matching command is an alias for
+'assist backlog run <id>' (forwards --write/--no-write/-w).
+
+<configured commands>
+
+Config:
+  assist run add <name> <command> [--env KEY=VALUE] [--pre <cmd>] [--param <spec>] [--server [group]] [--repo] (see --help) # configured commands runnable via assist run <name>
+
+=== assist run list --help
+Usage: assist run list [options]
+
+List configured run commands
+
+Options:
+  -v, --verbose  Show full command details
+  -h, --help     display help for command
+
+=== assist run add --help
+Usage: assist run add [options] <name> <command> [args...]
+
+Add a new run configuration to assist.yml, or with --repo to the shared db
+
+Arguments:
+  name                     Name for the run configuration
+  command                  Command to execute
+  args                     Static args to pass to the command
+
+Options:
+  --cwd <dir>              Working directory (resolved relative to the config file)
+  --server [group]         Mark as a singleton dev server, optionally in a named group (default
+                           group: default)
+  --port <port>            Display-only port shown on the serving card
+  --protocol <http|https>  Protocol for the serving card's port link (default: http)
+  --path <path>            Path for the serving card's port link, e.g. /swagger (default: /)
+  --env <KEY=VALUE>        Environment variable for the command (repeatable)
+  --pre <command>          Shell command run first (repeatable)
+  --filter <glob>          Only run a verify: entry when a changed file matches
+  --quiet                  Suppress output unless the command fails
+  --param <spec>           Positional param: <name>, <name>! (required) or <name>=<default>
+                           (repeatable)
+  --repo [name]            Write to a repo's override in the shared db, seen by every node, instead
+                           of assist.yml (defaults to the current repo; no command file is created)
+  -h, --help               display help for command
+
+Run entry properties:
+  name      <name>                   what you type after assist run
+  command   <command>                executable to spawn
+  args      [args...]                static args appended to the command
+  cwd       --cwd <dir>              working directory, relative to the config file
+  env       --env KEY=VALUE          environment variable for the command (repeatable)
+  server    --server [group]         singleton dev server, optionally grouped
+  port      --port <port>            display-only port on the serving card
+  protocol  --protocol <http|https>  protocol of the serving card's port link (default: http)
+  path      --path <path>            path of the serving card's port link, e.g. /swagger (default: /)
+  pre       --pre <command>          shell command run before this one (repeatable, runs in order)
+  filter    --filter <glob>          verify: entries only run when a changed file matches this glob
+  quiet     --quiet                  suppress the command's output unless it fails
+  params    --param <spec>           positional param filled from assist run args (repeatable, see below)
+
+The command is spawned without a shell, so "FOO=bar cmd", "&&", pipes and redirects do not work; use --env for environment variables and --pre for setup steps (--pre commands do run in a shell).
+
+Options go after <command>. --server and --repo take the next argument as their value unless it starts with "-", so put them last or before another option:
+  assist run add dev npm run dev --env PORT=3000 --server --port 3000 --repo
+These flags are taken from anywhere after <command>; to pass one to the command itself, quote the whole command:
+  assist run add build "pnpm --filter web build"
+
+--param <spec> appends params in order; each fills the next arg given to assist run:
+  <name>            optional, omitted when not given
+  <name>!           required, assist run fails when it is missing
+  <name>=<default>  used when not given
+  assist run add deploy ./deploy.sh --param env! --param tag=latest   # assist run deploy prod → "./deploy.sh prod latest"
+A param's description is set in config.
+
+=== assist run link --help
+Usage: assist run link [options] <path>
+
+Link run configurations from another project's assist.yml
+
+Arguments:
+  path               Relative path to the linked project
+
+Options:
+  --prefix <prefix>  Namespace prefix for linked commands
+  -h, --help         display help for command
+
+=== assist run remove --help
+Usage: assist run remove [options] <name>
+
+Remove a run configuration from assist.yml, or with --repo from the shared db
+
+Arguments:
+  name           Name of the run configuration to remove
+
+Options:
+  --repo [name]  Remove from a repo's override in the shared db instead of assist.yml (defaults to
+                 the current repo)
+  -h, --help     display help for command
+
+=== assist new --help
+Usage: assist new [options] [command]
+
+Scaffold a new project
+
+Options:
+  -h, --help      display help for command
+
+Commands:
+  vite            Initialize a new Vite React TypeScript project
+  cli             Initialize a new tsup CLI project
+  help [command]  display help for command
+
+=== assist new vite --help
+Usage: assist new vite [options]
+
+Initialize a new Vite React TypeScript project
+
+Options:
+  -h, --help  display help for command
+
+=== assist new cli --help
+Usage: assist new cli [options]
+
+Initialize a new tsup CLI project
+
+Options:
+  -h, --help  display help for command
+
+=== assist activity --help
+Usage: assist activity [options]
+
+Chart GitHub commit activity per day
+
+Options:
+  --since <date>  Start date (YYYY-MM-DD), defaults to 30 days ago
+  -h, --help      display help for command
+
+=== assist advise --help
+Usage: assist advise [options]
+
+Print the advice fragments that apply to this repo, composed from config and repo facts
+
+Options:
+  --hook      emit the advice as SessionStart hook JSON (additionalContext)
+  --explain   list every shipped fragment with whether it was included and why
+  -h, --help  display help for command
+
+Config:
+  assist config set advice.sections.verify false         # force a section on (true) or off (false) whatever its condition says; 'assist advise --explain' lists every name
+  assist config set advice.extra "Deploy from main only" # free text appended as a "Repo notes" section
+  assist config set advice.verify "Run make check"       # replaces the verify fragment's text and forces it in
+  assist rules add '<text>' --title '<title>' --user     # listed under "Your rules"; user (db), user (node), repo (db) and repo (git) entries are concatenated in that order. --node writes ~/.assist.yml instead; 'assist config import-user' moves those into user (db)
+
+=== assist backup --help
+Usage: assist backup [options] [command]
+
+Write a backlog database dump and record it in the backups table
+
+Options:
+  -o, --out <dir>     Directory to write the dump to (overrides the backup.dir config)
+  -h, --help          display help for command
+
+Commands:
+  schedule [options]  Manage a recurring crontab entry that runs assist backup
+
+Config:
+  assist config set backup.dir ~/.assist/backups # directory dumps are written to (default: ~/.assist/backups)
+  assist config set backup.staleAfter 32h        # age (s, m or h) after which the web header warns the last backup is overdue (default: 32h)
+
+=== assist backup schedule --help
+Usage: assist backup schedule [options] [command]
+
+Manage a recurring crontab entry that runs assist backup
+
+Options:
+  --every <duration>  Cadence to run the backup (e.g. 5m, 6h)
+  -h, --help          display help for command
+
+Commands:
+  status              Show the active backup schedule, or report that none is set
+  remove              Remove the marked backup schedule block, leaving other crontab lines intact
+
+=== assist backup schedule status --help
+Usage: assist backup schedule status [options]
+
+Show the active backup schedule, or report that none is set
+
+Options:
+  -h, --help  display help for command
+
+=== assist backup schedule remove --help
+Usage: assist backup schedule remove [options]
+
+Remove the marked backup schedule block, leaving other crontab lines intact
+
+Options:
+  -h, --help  display help for command
+
+=== assist chart --help
+Usage: assist chart [options]
+
+Chart a label/value series read from stdin, one pair per line (comma, tab or whitespace separated)
+
+Options:
+  --title <title>  Chart title
+  -h, --help       display help for command
+
+=== assist db --help
+Usage: assist db [options] [command]
+
+Inspect and apply the backlog database migrations
+
+Options:
+  -h, --help      display help for command
+
+Commands:
+  migrate         Apply pending migrations in order (build ships up to migration 11)
+  status          Report whether the database is in sync, behind, or ahead of this build
+  drop-retired    Drop retired tables left by removed features, after confirming each
+  help [command]  display help for command
+
+=== assist db migrate --help
+Usage: assist db migrate [options]
+
+Apply pending migrations in order (build ships up to migration 11)
+
+Options:
+  -h, --help  display help for command
+
+=== assist db status --help
+Usage: assist db status [options]
+
+Report whether the database is in sync, behind, or ahead of this build
+
+Options:
+  -h, --help  display help for command
+
+=== assist db drop-retired --help
+Usage: assist db drop-retired [options]
+
+Drop retired tables left by removed features, after confirming each
+
+Options:
+  -h, --help  display help for command
+
+=== assist schema --help
+Usage: assist schema [options] [command]
+
+Human-in-the-loop approval to unlock database schema files for a backlog item phase or Claude
+session
+
+Options:
+  -h, --help      display help for command
+
+Commands:
+  unlock          Page a human with a pin to unlock schema changes for this session's backlog item
+                  phase, or this Claude session when there is no item
+  confirm <pin>   Confirm a pin from 'schema unlock' to approve schema changes for that item phase
+                  or Claude session
+  help [command]  display help for command
+
+=== assist schema unlock --help
+Usage: assist schema unlock [options]
+
+Page a human with a pin to unlock schema changes for this session's backlog item phase, or this
+Claude session when there is no item
+
+Options:
+  -h, --help  display help for command
+
+=== assist schema confirm --help
+Usage: assist schema confirm [options] <pin>
+
+Confirm a pin from 'schema unlock' to approve schema changes for that item phase or Claude session
+
+Arguments:
+  pin         Pin issued by 'schema unlock'
+
+Options:
+  -h, --help  display help for command
+
+=== assist cli-hook --help
+Usage: assist cli-hook [options] [command]
+
+PreToolUse hook for auto-approving read-only CLI commands
+
+Options:
+  -h, --help                 display help for command
+
+Commands:
+  check [options] <command>  Check whether a command would be auto-approved
+  add [options] <cli...>     Discover a CLI's commands and auto-permit read-only ones
+  deny                       Manage command deny rules
+
+Config:
+  assist config set cliHook.blockNpmRun false # when true (default), the hook denies 'npm run' and redirects to 'assist run'
+
+=== assist cli-hook check --help
+Usage: assist cli-hook check [options] <command>
+
+Check whether a command would be auto-approved
+
+Options:
+  --tool <tool>  Tool name to check against (default: "Bash")
+  -h, --help     display help for command
+
+=== assist cli-hook add --help
+Usage: assist cli-hook add [options] <cli...>
+
+Discover a CLI's commands and auto-permit read-only ones
+
+Arguments:
+  cli         CLI binary and optional subcommand (e.g. gh, az, acli jira)
+
+Options:
+  --no-cache  Force fresh discovery, ignoring cached results
+  -h, --help  display help for command
+
+=== assist cli-hook deny --help
+Usage: assist cli-hook deny [options] [command]
+
+Manage command deny rules
+
+Options:
+  -h, --help                         display help for command
+
+Commands:
+  add [options] <pattern> <message>  Add a deny rule for a command pattern
+  remove [options] <pattern>         Remove a deny rule by pattern
+  list                               List all deny rules
+
+Config:
+  assist deny add <pattern> <message> # command patterns blocked with a correction message
+
+=== assist cli-hook deny add --help
+Usage: assist cli-hook deny add [options] <pattern> <message>
+
+Add a deny rule for a command pattern
+
+Arguments:
+  pattern     Command prefix to deny
+  message     Correction message shown to the agent
+
+Options:
+  --node      Write to user (node): this node's ~/.assist.yml
+  -h, --help  display help for command
+
+=== assist cli-hook deny remove --help
+Usage: assist cli-hook deny remove [options] <pattern>
+
+Remove a deny rule by pattern
+
+Arguments:
+  pattern     Command prefix to remove
+
+Options:
+  --node      Remove from user (node): this node's ~/.assist.yml
+  -h, --help  display help for command
+
+=== assist cli-hook deny list --help
+Usage: assist cli-hook deny list [options]
+
+List all deny rules
+
+Options:
+  -h, --help  display help for command
+
+=== assist code-comment --help
+Usage: assist code-comment [options] [command]
+
+Escape hatch for the rare code comment that genuinely belongs
+
+Options:
+  -h, --help                display help for command
+
+Commands:
+  set <file> <line> <text>  Validate a single-line comment and issue a pin to confirm its insertion
+  confirm <pin>             Confirm a pin to insert its comment and clear the pin state
+  help [command]            display help for command
+
+=== assist code-comment set --help
+Usage: assist code-comment set [options] <file> <line> <text>
+
+Validate a single-line comment and issue a pin to confirm its insertion
+
+Arguments:
+  file        File the comment belongs in
+  line        1-based line number to insert the comment at
+  text        Single-line comment text (max 50 chars, no block comments)
+
+Options:
+  -h, --help  display help for command
+
+=== assist code-comment confirm --help
+Usage: assist code-comment confirm [options] <pin>
+
+Confirm a pin to insert its comment and clear the pin state
+
+Arguments:
+  pin         Pin issued by 'code-comment set'
+
+Options:
+  -h, --help  display help for command
+
+=== assist codex-hook --help
+Usage: assist codex-hook [options]
+
+Codex hook: auto-approves read-only CLI commands (PreToolUse/PermissionRequest) and reports session
+status (running/waiting) to the sessions daemon
+
+Options:
+  -h, --help  display help for command
+
+=== assist codex-hook-trust --help
+Usage: assist codex-hook-trust [options]
+
+Record Codex trust for exactly Assist's installed codex-hook definitions, so Codex starts without a
+hook review; any other hook still needs Codex's normal review
+
+Options:
+  -h, --help  display help for command
+
+=== assist pi-hook --help
+Usage: assist pi-hook [options]
+
+pi tool-call permission gate: reads pi's tool-call JSON from stdin and emits an allow/deny/gate
+decision, auto-approving read-only CLI commands via the shared cli-hook allowlist
+
+Options:
+  -h, --help  display help for command
+
+=== assist edit-hook --help
+Usage: assist edit-hook [options]
+
+PreToolUse hook that blocks edits to the maintainability override marker and edits that introduce
+code comments
+
+Options:
+  -h, --help  display help for command
+
+=== assist github --help
+Usage: assist github [options] [command]
+
+GitHub organisation utilities
+
+Options:
+  -h, --help               display help for command
+
+Commands:
+  commits [options] <org>  Report commit activity across an organisation
+  issue                    GitHub issue utilities
+  help [command]           display help for command
+
+=== assist github commits --help
+Usage: assist github commits [options] <org>
+
+Report commit activity across an organisation
+
+Options:
+  --since <date>  start of the window as YYYY-MM-DD (default: 30 days ago)
+  --top <n>       only report the top <n> repos by commit count
+  --json          Output as JSON
+  -h, --help      display help for command
+
+=== assist github issue --help
+Usage: assist github issue [options] [command]
+
+GitHub issue utilities
+
+Options:
+  -h, --help                           display help for command
+
+Commands:
+  create [options]                     Create a GitHub issue
+  edit [options] <number>              Edit an existing GitHub issue's body in the preview pane
+  comment [options] <number>           Comment on a GitHub issue (body of - reads it from stdin)
+  edit-comment [options] <comment-id>  Replace the body of a posted GitHub issue comment (body of -
+                                       reads it from stdin)
+  started [options] <number>           Assign a GitHub issue to yourself and move its project boards
+                                       to In Progress
+  unassign [options] <number>          Remove yourself, or the named logins, from a GitHub issue's
+                                       assignees
+  fix-structure [options] <target>     Normalise the issue types across one issue subtree
+  help [command]                       display help for command
+
+=== assist github issue create --help
+Usage: assist github issue create [options]
+
+Create a GitHub issue
+
+Options:
+  --title <title>          Issue title
+  --body <body>            Issue body
+  -R, --repo <owner/repo>  Target repository (defaults to the current repo)
+  --type <name>            Native issue type to set on the new issue (e.g. Epic)
+  --parent <issue>         Parent issue to file the new issue under, as owner/repo#number, a
+                           github.com issue URL, or a bare number
+  --project <number>       Number of the repo owner's GitHub Project to add the new issue to
+  --status <name>          Status option to set on the project item (requires --project)
+  --label <name>           Label to apply (repeat the flag, or pass a comma-separated list)
+                           (default: [])
+  --milestone <name>       Open milestone of the target repo to put the new issue on, by title
+  -h, --help               display help for command
+
+There is no What/Why/How template: an issue reports a problem, and the target repo's own issue template is unknowable from here. Write the body as the repo's maintainers would expect.
+In an assist web session the title and body are previewed for approve/reject first (with inline comments); nothing is created until it is approved.
+The reviewer may also drop or paste screenshots or video into the pane; on approval gh attaches them (gh 2.99.0+) under a ## Screenshots section of the issue body automatically, and on rejection they stay attached and reappear in the preview you re-propose — so never author that section yourself.
+--type, --parent, --project, --status, --label and --milestone are all resolved before the preview, so an unknown name, an unreadable parent, a missing project scope or --status without --project creates nothing.
+A bare --parent number is read against --repo, or the current repo; a parent in another repository is allowed.
+The project scope is needed for --project: gh auth refresh -h github.com -s project
+
+=== assist github issue edit --help
+Usage: assist github issue edit [options] <number>
+
+Edit an existing GitHub issue's body in the preview pane
+
+Options:
+  -R, --repo <owner/repo>  Target repository (defaults to the current repo)
+  --body <body>            Proposed replacement body to preview instead of the current one (- reads
+                           it from stdin)
+  --fresh                  Discard any working file for the issue and re-fetch its body from GitHub
+  --fetch                  Write the issue's current body to its working file and print the path,
+                           without previewing
+  --parent <issue>         Make the issue a sub-issue of this one, as owner/repo#number, a
+                           github.com issue URL, or a bare number
+  -h, --help               display help for command
+
+Fetches the issue's current body and opens it in the assist web preview pane, where it can be reworked before it is pushed back.
+When you already know the body you want, pass it with --body (--body - reads stdin): the first preview then shows that proposal instead of the current body, replacing any working file.
+To make a targeted change to the current body (strike items out, tick a box), run with --fetch first: it writes the current body to the working file and prints its path without opening a preview. Edit that file in place, then re-run without --fetch or --body so the first preview shows your revision. Never run without --fetch just to get the body.
+Approving pushes the pane's markdown to the issue; nothing is pushed if the issue moved on GitHub after it was fetched, or outside a web session.
+Rejecting writes the pane's markdown to a working file and names it: revise that file in place and re-run to preview the revision, which keeps any collapses already applied. A re-run resumes from the working file while the issue has not moved on GitHub; --fresh discards it and re-fetches.
+Only the body is touched — the title, labels, assignees and state are left alone.
+--parent sets the issue's parent instead of editing the body: nothing is previewed and no web session is needed. A bare number is read against --repo, or the current repo; a parent in another repository is allowed.
+
+=== assist github issue comment --help
+Usage: assist github issue comment [options] <number>
+
+Comment on a GitHub issue (body of - reads it from stdin)
+
+Options:
+  --body <body>            Comment body (- reads it from stdin)
+  -R, --repo <owner/repo>  Target repository (defaults to the current repo)
+  -h, --help               display help for command
+
+The comment is outward-facing: write it for the repo's readers, not the team. It is rejected if it references Claude or an assist backlog item.
+In an assist web session the body is previewed for approve/reject first (with inline comments); nothing is posted until it is approved.
+
+=== assist github issue edit-comment --help
+Usage: assist github issue edit-comment [options] <comment-id>
+
+Replace the body of a posted GitHub issue comment (body of - reads it from stdin)
+
+Options:
+  --body <body>            Replacement comment body (- reads it from stdin)
+  -R, --repo <owner/repo>  Target repository (defaults to the current repo)
+  -h, --help               display help for command
+
+The comment id is the numeric id from the comment's API url or the #issuecomment-<id> anchor on github.com, not the issue number.
+The replacement is outward-facing: write it for the repo's readers, not the team. It is rejected if it references Claude or an assist backlog item.
+In an assist web session the replacement is previewed for approve/reject first (with inline comments); the published comment is left alone until it is approved. The replacement is the whole body — what is there now is overwritten, so fetch it first if it should be built on.
+
+=== assist github issue started --help
+Usage: assist github issue started [options] <number>
+
+Assign a GitHub issue to yourself and move its project boards to In Progress
+
+Options:
+  -R, --repo <owner/repo>  Target repository (defaults to the current repo)
+  -h, --help               display help for command
+
+The boards are discovered from the issue itself: every ProjectV2 item the issue sits on whose Status field offers an In Progress option (matched case-insensitively) is moved.
+The assignment is applied first and is never blocked by the board work — an issue on no board, a Status field with no In Progress option, and a gh token without the project scope are each reported and exit 0.
+The project scope is needed to read or move a board: gh auth refresh -h github.com -s project
+
+=== assist github issue unassign --help
+Usage: assist github issue unassign [options] <number>
+
+Remove yourself, or the named logins, from a GitHub issue's assignees
+
+Options:
+  -R, --repo <owner/repo>  Target repository (defaults to the current repo)
+  --assignee <login>       Login to remove instead of @me (repeatable) (default: [])
+  -h, --help               display help for command
+
+=== assist github issue fix-structure --help
+Usage: assist github issue fix-structure [options] <target>
+
+Normalise the issue types across one issue subtree
+
+Options:
+  -R, --repo <owner/repo>  Repository a bare issue number belongs to
+  --level <level>          The target's own position in the type chain, when it cannot be inferred
+                           from its type
+  --type-chain <names>     Comma-separated issue type chain, parent level first (default:
+                           Epic,Story,Subtask)
+  --strip-label <label>    Legacy marker label to remove from every issue in the subtree that
+                           carries it (repeatable) (default: [])
+  --apply                  Write the planned changes instead of reporting them
+  -h, --help               display help for command
+
+Walks the subtree reachable from <target> via sub-issues and reports the type each issue should carry: every level below the target is typed to the next level down the chain. Nothing outside the subtree is ever read or written.
+The chain defaults to Epic > Story > Subtask and --type-chain replaces it, so a backlog on other type names is normalised the same way; every level named must already exist as an issue type on the organisation, or the run fails listing the ones that do.
+The target's own level is inferred from its issue type, so aiming at a story types its children as subtasks. When the target's type is not in the chain the level cannot be inferred, and --level epic|story|subtask (or whichever levels --type-chain names) asserts it instead — which also plans the target's own type.
+No label is touched unless --strip-label names it; each one is repeatable, matched case-insensitively, and removed by the label id found on that issue, since label ids differ per repository.
+The target is owner/repo#number, a github.com issue URL, or a bare number with --repo.
+Without --apply nothing is written. With --apply each write is announced before it is issued, and the subtree is re-walked afterwards so any residual drift fails the run.
+Anything nested below the leaf level fails the run before a single write, naming the offender and its parent.
+
+=== assist inbox --help
+Usage: assist inbox [options] [command]
+
+Triage Gmail and Slack for human messages needing a reply
+
+Options:
+  -h, --help      display help for command
+
+Commands:
+  scan [options]  Scan unread Gmail inbox threads and Slack DMs and @mentions since the last scan
+                  with a read-only headless harness, storing flagged messages
+  list            List flagged inbox messages, newest first
+  help [command]  display help for command
+
+Config:
+  assist config set inbox.intervalMinutes <n> --node # minutes between scheduled inbox scans run by this machine's daemon (picked up within a minute); read from ~/.assist.yml only, so a repo's assist.yml or shared overrides can't enable it. Unset by default: no scheduled scans
+
+=== assist inbox scan --help
+Usage: assist inbox scan [options]
+
+Scan unread Gmail inbox threads and Slack DMs and @mentions since the last scan with a read-only
+headless harness, storing flagged messages
+
+Options:
+  --harness <kind>  Harness to scan with; defaults to Claude. Exits with the reasons, before
+                    spawning, when the inbox scan is unavailable on it (it needs read-only Gmail and
+                    Slack connectors and a tool allow-list) (choices: "claude", "claude-sdk",
+                    "codex", "pi")
+  -h, --help        display help for command
+
+=== assist inbox list --help
+Usage: assist inbox list [options]
+
+List flagged inbox messages, newest first
+
+Options:
+  -h, --help  display help for command
+
+=== assist jira --help
+Usage: assist jira [options] [command]
+
+Jira utilities
+
+Options:
+  -h, --help        display help for command
+
+Commands:
+  auth              Authenticate with Jira via API token
+  ac <issue-key>    Print acceptance criteria for a Jira issue
+  view <issue-key>  Print the title and description of a Jira issue
+  help [command]    display help for command
+
+Config:
+  assist config set jira.acField customfield_11937 # custom field holding acceptance criteria (default: customfield_11937)
+
+=== assist jira auth --help
+Usage: assist jira auth [options]
+
+Authenticate with Jira via API token
+
+Options:
+  -h, --help  display help for command
+
+=== assist jira ac --help
+Usage: assist jira ac [options] <issue-key>
+
+Print acceptance criteria for a Jira issue
+
+Options:
+  -h, --help  display help for command
+
+=== assist jira view --help
+Usage: assist jira view [options] <issue-key>
+
+Print the title and description of a Jira issue
+
+Options:
+  -h, --help  display help for command
+
+=== assist mermaid --help
+Usage: assist mermaid [options] [command]
+
+Render mermaid diagrams from markdown files
+
+Options:
+  -h, --help               display help for command
+
+Commands:
+  export [options] [file]  Render fenced mermaid blocks as SVG via Kroki. With no file, scans *.md
+                           in cwd.
+  help [command]           display help for command
+
+Config:
+  assist config set mermaid.krokiUrl https://kroki.io # Kroki server used to render diagrams (default: https://kroki.io)
+
+=== assist mermaid export --help
+Usage: assist mermaid export [options] [file]
+
+Render fenced mermaid blocks as SVG via Kroki. With no file, scans *.md in cwd.
+
+Options:
+  --out <dir>  Output directory (default: cwd)
+  --index <n>  Render only the nth mermaid block (1-based)
+  -h, --help   display help for command
+
+=== assist miro --help
+Usage: assist miro [options] [command]
+
+Miro board utilities
+
+Options:
+  -h, --help                display help for command
+
+Commands:
+  extract [options] [name]  Print the text of every box inside a rectangle on a board
+  help [command]            display help for command
+
+=== assist miro extract --help
+Usage: assist miro extract [options] [name]
+
+Print the text of every box inside a rectangle on a board
+
+Arguments:
+  name                 Named extract from config supplying every field; any flag overrides its field
+
+Options:
+  --items <file>       File of raw board_list_items response pages
+  --top-left <id>      Widget id or ?moveToWidget=<id> link of the top-left box (omit both anchors
+                       to pick them in the assist web UI)
+  --bottom-right <id>  Widget id or ?moveToWidget=<id> link of the bottom-right box
+  --ignore <file>      YAML list of box texts to drop from the output
+  --out <file>         Write the YAML to this file instead of stdout
+  --board <id>         Board id for the --out header (else read from the items)
+  --frame <id>         Frame id for the --out header (else read from the items)
+  --save <name>        Save the selection as this named extract without asking
+  --node               Save the extract to user (node), this node's ~/.assist.yml
+  -r, --repo [name]    Save the extract to repo (db), a repo's shared db override (defaults to the
+                       current repo)
+  -h, --help           display help for command
+
+Paths in a saved extract are resolved from the repo root.
+
+Config:
+  assist miro extract --save <name> # named box selections (board, frame, anchors, items, ignore, out) replayed by miro extract <name>
+
+=== assist prs --help
+Usage: assist prs [options] [command]
+
+Pull request utilities
+
+Options:
+  --open                         List only open pull requests
+  --closed                       List only closed pull requests
+  -h, --help                     display help for command
+
+Commands:
+  raise [options]                Raise a pull request, assembling the body from discrete sections
+  status [options] <repo...>     Report every open pull request in each owner/repo, grouped by repo
+  slack-channel                  Print the Slack channel PRs are announced to (prs.slack, else
+                                 slack.channel)
+  edit [options]                 Update individual sections of the current branch's pull request
+  list-comments                  List all comments on the current branch's pull request
+  fixed <comment-id> <sha>       Reply with commit link and resolve thread
+  wontfix <comment-id> <reason>  Reply with reason and resolve thread (reason of - reads it from
+                                 stdin)
+  reply <comment-id> <body>      Reply to a comment thread without resolving it (body of - reads it
+                                 from stdin)
+  comment <path> <line> <body>   Add a line comment to the pending review (body of - reads it from
+                                 stdin)
+  read-time [options] <target>   Estimate how long a document takes to read (target is a pull
+                                 request number, a GitHub pull request URL, - for stdin, or a file
+                                 path)
+
+Config:
+  assist config set prs.slack "#pull-requests" # Slack channel PRs are announced to, falling back to slack.channel (read by 'assist prs slack-channel', used by /prs-slack)
+  assist config set prs.required false         # require a branch when running a backlog item (default true; set false to opt out)
+  assist config set prs.promptJira true        # 'assist prs raise' help asks the user for a Jira key to --resolves (default false)
+  assist config set prs.promptGithub true      # 'assist prs raise' help asks the user for a GitHub issue to --resolves (default false)
+  assist config set prs.draft true             # 'assist prs raise' creates a draft PR when neither --draft nor --no-draft is passed (default false)
+  assist config set prs.reviewAfterRaise false # the PR preview pane's Review PR toggle starts checked (default true)
+
+=== assist prs raise --help
+Usage: assist prs raise [options]
+
+Raise a pull request, assembling the body from discrete sections
+
+Options:
+  -t, --title <title>      Title for the pull request
+  --what <what>            What the change does (## What section)
+  --why <why>              Why the change is needed (## Why section)
+  --how <how>              How the change works (optional ## How section)
+  --resolves <ref>         Jira issue key or GitHub issue reference resolved by this PR, appended to
+                           ## Why (repeatable) (default: [])
+  --screenshot <spec>      Attach a screenshot as '[Group/]Caption=path' under ## Screenshots
+                           (repeatable) (default: [])
+  --force                  Overwrite the title and body of an existing pull request
+  -B, --base <branch>      Branch into which the pull request merges
+  -H, --head <branch>      Branch that contains the commits
+  -d, --draft              Mark the pull request as a draft
+  --no-draft               Create a ready-for-review pull request, overriding prs.draft
+  -w, --web                Open the browser to create the pull request
+  -l, --label <label>      Add a label (repeatable) (default: [])
+  -a, --assignee <login>   Assign a person by login (repeatable) (default: [])
+  -r, --reviewer <handle>  Request a review (repeatable) (default: [])
+  -m, --milestone <name>   Add the pull request to a milestone
+  -h, --help               display help for command
+
+Raise a pull request for the current branch. Use a concise description with no
+headers, and do not reference Claude or any AI assistance in the title or body.
+
+This repo leaves prs.draft off, so a raise creates a ready-for-review pull
+request unless --draft is passed.
+
+The body is assembled from discrete section options; supply at minimum --title,
+--what, and --why:
+
+  --title <title>   short PR title.
+  --what <what>     what the change does (rendered as ## What).
+  --why <why>       why the change is needed (rendered as ## Why).
+  --how <how>       optional; how the change works (rendered as ## How). Omit it
+                    unless the approach genuinely needs explaining.
+  --resolves <key>  Jira issue key resolved by this PR; repeatable. Each key's
+                    browse URL is appended inline to ## Why. Pass it when a Jira
+                    key is known from the session or supplied by the user; omit
+                    it otherwise.
+
+Screenshots: pass --screenshot '[Group/]Caption=path' once per image or video
+(png, jpg, jpeg, gif, webp, svg, mp4, webm, mov). gh 2.99.0+ uploads each
+file and the body gets a ## Screenshots section: one ### Group heading per group
+with its images in a 2-column captioned table (so light/dark pairs sit side by
+side), then any ungrouped images as plain images. The spec splits on the first '=' (label vs
+path), then the label on the first '/' (group vs caption); a missing caption
+falls back to the file name. A missing file or unsupported extension fails the
+command before anything is previewed or sent. Never author ## Screenshots in a
+section option yourself.
+
+  --screenshot 'Profile/Career Connect light=shots/profile-light.png'
+  --screenshot 'Profile/Career Connect dark=shots/profile-dark.png'
+
+Wrap symbols, file paths, function names, class names, variable names, config
+keys, CLI commands, and flag names in backticks.
+
+One section, one question. Each section answers exactly one thing, and
+implementation detail lives only in ## How:
+
+  ## What  what is observably different for someone using or calling this, and
+           nothing else. Not how it's built, not which functions/files changed.
+  ## Why   the problem or motivation that made the change worth doing. Not how
+           the solution works.
+  ## How   only the non-obvious decisions the diff alone won't explain: a
+           deliberate trade-off, a workaround, a reason the obvious approach was
+           rejected. Omit it entirely by default. Never restate ## What as
+           mechanism, and never walk through the diff.
+
+The most common failure is altitude bleed: an implementation detail gets sprayed
+into whichever section is being written — ## What narrates the diff, ## How
+restates ## What, ## Why smuggles in mechanism. If a sentence describes a
+mechanism, it belongs in ## How, and probably shouldn't exist at all unless it's
+a genuine non-obvious decision. Litmus — a sentence is almost certainly mechanism
+(so ## How, or cut it) if it contains "by …ing", "so that it can", "because the
+X filters/needs/uses", or names an internal component, property, function, or
+file.
+
+Brevity budget — one paragraph per section, and these are ceilings, not targets:
+
+  ## What  2–3 sentences.
+  ## Why   1–2 sentences.
+  ## How   omit by default; a sentence or two, only for non-obvious decisions.
+
+The budget is a total, not a per-paragraph allowance. Splitting a section across
+two paragraphs buys no extra room. The whole body should read in well under a
+minute — roughly 6 sentences and 900 characters of prose for a typical change,
+counting every section together. A body that is long-winded overall is wrong even
+when each paragraph is individually short.
+
+Terse technical register. Write like a commit message, not a report. Short
+declarative sentences, one clause each: state the fact and stop. Cut
+scene-setting, restatements of the heading, "this change …", "in order to", "it
+is worth noting", hedges ("essentially", "fairly", "somewhat"), and adverbs that
+carry no information. Present tense, active voice. If a sentence can lose half
+its words and still say the same thing, it is too long.
+
+  Wordy: This change introduces a new validation step so that the command is
+         able to reject pull request bodies which exceed the configured limit.
+  Terse: Rejects bodies over the limit.
+
+Sentence count is a floor on brevity, not the whole of it — a body inside the
+budget can still be too verbose, and then it needs cutting rather than reflowing.
+Prefer deleting a sentence to shortening it.
+
+Write prose. A short paragraph is the natural form for ## What and ## Why —
+bullets in ## What are a smell. Use bullets only when there are genuinely several
+independent, parallel items (3+); a single bullet is never right. A single
+non-list paragraph over ~600 characters or ~4 sentences is a wall of text and
+will be rejected.
+
+If a pull request already exists for the branch, this command errors — pass
+--force to fully overwrite its title and body, or use 'assist prs edit' to update
+only individual sections (every other section of the existing body is preserved).
+
+You are running inside an assist web session. When you run this command the
+drafted title and body are shown automatically in a preview pane beside the
+terminal in the web UI, for the user to approve or reject there — do NOT display
+the title and body or ask for confirmation in the terminal. The command blocks
+until the user decides: on approval it creates or updates the PR and reports it;
+on rejection it exits non-zero with the reason. The reviewer may also attach
+inline comments to specific spans of the preview; on rejection these are printed
+as numbered quoted-span + note pairs on stderr. Address every comment (and the
+reason), then run the command again to re-preview the revised PR. Repeat until it
+is approved. To revise the PR while its preview is still pending, re-run the
+command directly — do not stop the earlier task; it exits 0 printing "Superseded
+by a newer preview — no decision; ignore this result." without raising anything:
+ignore it. When the session captured screenshots, supply them yourself with
+--screenshot rather than asking the reviewer to drag them in. The reviewer may
+also drop or paste more screenshots or video into the pane; on approval gh
+attaches them (gh 2.99.0+) as ungrouped images after yours in the
+## Screenshots section; on rejection they stay attached and reappear in the
+preview you re-propose. Just compose the sections and run the command.
+
+
+Config:
+  assist config set prs.promptJira true        # 'assist prs raise' help asks the user for a Jira key to --resolves (default false)
+  assist config set prs.promptGithub true      # 'assist prs raise' help asks the user for a GitHub issue to --resolves (default false)
+  assist config set prs.draft true             # 'assist prs raise' creates a draft PR when neither --draft nor --no-draft is passed (default false)
+  assist config set prs.reviewAfterRaise false # the PR preview pane's Review PR toggle starts checked (default true)
+
+=== assist prs status --help
+Usage: assist prs status [options] <repo...>
+
+Report every open pull request in each owner/repo, grouped by repo
+
+Options:
+  --json      Output as JSON
+  -h, --help  display help for command
+
+=== assist prs slack-channel --help
+Usage: assist prs slack-channel [options]
+
+Print the Slack channel PRs are announced to (prs.slack, else slack.channel)
+
+Options:
+  -h, --help  display help for command
+
+=== assist prs edit --help
+Usage: assist prs edit [options]
+
+Update individual sections of the current branch's pull request
+
+Options:
+  -t, --title <title>  New title for the pull request
+  --what <what>        Replace the ## What section
+  --why <why>          Replace the ## Why section
+  --how <how>          Replace the ## How section
+  --resolves <ref>     Jira issue key or GitHub issue reference resolved by this PR, appended to ##
+                       Why (repeatable) (default: [])
+  --screenshot <spec>  Attach a screenshot as '[Group/]Caption=path', replacing the ## Screenshots
+                       section (repeatable) (default: [])
+  -h, --help           display help for command
+
+Update individual sections of the current branch's pull request. Only the sections
+you pass are replaced; every other section of the existing body is preserved.
+
+Do not reference Claude or any AI assistance in the title or body. Wrap symbols,
+file paths, function names, class names, variable names, config keys, CLI
+commands, and flag names in backticks.
+
+A replacement section is held to the same standard as one written by
+'assist prs raise', and the budget applies to the resulting body as a whole — an
+edit must not push the body over it. Read the sections you are not touching first:
+if the section you are replacing was the concise one, trimming it further will not
+rescue a body that is already long-winded.
+
+  ## What  what is observably different for someone using or calling this.
+  ## Why   the problem or motivation that made the change worth doing.
+  ## How   only non-obvious decisions the diff alone won't explain; omit by
+           default.
+
+Screenshots: pass --screenshot '[Group/]Caption=path' once per image or video
+(png, jpg, jpeg, gif, webp, svg, mp4, webm, mov). gh 2.99.0+ uploads each
+file and the body gets a ## Screenshots section: one ### Group heading per group
+with its images in a 2-column captioned table (so light/dark pairs sit side by
+side), then any ungrouped images as plain images. The spec splits on the first '=' (label vs
+path), then the label on the first '/' (group vs caption); a missing caption
+falls back to the file name. A missing file or unsupported extension fails the
+command before anything is previewed or sent. Never author ## Screenshots in a
+section option yourself.
+
+  --screenshot 'Profile/Career Connect light=shots/profile-light.png'
+  --screenshot 'Profile/Career Connect dark=shots/profile-dark.png' On edit, any supplied screenshots replace the existing
+## Screenshots section rather than adding a second one, so pass the full set.
+
+Brevity budget — one paragraph per section, and these are ceilings, not targets:
+
+  ## What  2–3 sentences.
+  ## Why   1–2 sentences.
+  ## How   omit by default; a sentence or two, only for non-obvious decisions.
+
+The budget is a total, not a per-paragraph allowance. Splitting a section across
+two paragraphs buys no extra room. The whole body should read in well under a
+minute — roughly 6 sentences and 900 characters of prose for a typical change,
+counting every section together. A body that is long-winded overall is wrong even
+when each paragraph is individually short.
+
+Terse technical register. Write like a commit message, not a report. Short
+declarative sentences, one clause each: state the fact and stop. Cut
+scene-setting, restatements of the heading, "this change …", "in order to", "it
+is worth noting", hedges ("essentially", "fairly", "somewhat"), and adverbs that
+carry no information. Present tense, active voice. If a sentence can lose half
+its words and still say the same thing, it is too long.
+
+  Wordy: This change introduces a new validation step so that the command is
+         able to reject pull request bodies which exceed the configured limit.
+  Terse: Rejects bodies over the limit.
+
+Sentence count is a floor on brevity, not the whole of it — a body inside the
+budget can still be too verbose, and then it needs cutting rather than reflowing.
+Prefer deleting a sentence to shortening it.
+
+Write prose. A short paragraph is the natural form for ## What and ## Why —
+bullets in ## What are a smell. Use bullets only when there are genuinely several
+independent, parallel items (3+); a single bullet is never right. A single
+non-list paragraph over ~600 characters or ~4 sentences is a wall of text and
+will be rejected.
+
+
+=== assist prs list-comments --help
+Usage: assist prs list-comments [options]
+
+List all comments on the current branch's pull request
+
+Options:
+  -h, --help  display help for command
+
+=== assist prs fixed --help
+Usage: assist prs fixed [options] <comment-id> <sha>
+
+Reply with commit link and resolve thread
+
+Options:
+  -h, --help  display help for command
+
+=== assist prs wontfix --help
+Usage: assist prs wontfix [options] <comment-id> <reason>
+
+Reply with reason and resolve thread (reason of - reads it from stdin)
+
+Options:
+  -h, --help  display help for command
+
+=== assist prs reply --help
+Usage: assist prs reply [options] <comment-id> <body>
+
+Reply to a comment thread without resolving it (body of - reads it from stdin)
+
+Options:
+  -h, --help  display help for command
+
+=== assist prs comment --help
+Usage: assist prs comment [options] <path> <line> <body>
+
+Add a line comment to the pending review (body of - reads it from stdin)
+
+Options:
+  -h, --help  display help for command
+
+=== assist prs read-time --help
+Usage: assist prs read-time [options] <target>
+
+Estimate how long a document takes to read (target is a pull request number, a GitHub pull request
+URL, - for stdin, or a file path)
+
+Options:
+  --budget <duration>  read-time budget the estimate is judged against, e.g. 45s, 1m30s, 2m (default
+                       1m)
+  -h, --help           display help for command
+
+Config:
+  assist config set readTime.wordsPerMinute 250   # nominal prose reading speed 'assist read-time' estimates with (default 200); the effective rate decays with length, so a 500-word document reads at ~70 wpm, and fenced code counts double
+  assist config set prs.readingWordsPerMinute 250 # same speed under the command's former name, read only when readTime.wordsPerMinute is unset
+
+=== assist read-time --help
+Usage: assist read-time [options] <target>
+
+Estimate how long a document takes to read (target is a pull request number, a GitHub pull request
+URL, - for stdin, or a file path)
+
+Options:
+  --budget <duration>  read-time budget the estimate is judged against, e.g. 45s, 1m30s, 2m (default
+                       1m)
+  -h, --help           display help for command
+
+Config:
+  assist config set readTime.wordsPerMinute 250   # nominal prose reading speed 'assist read-time' estimates with (default 200); the effective rate decays with length, so a 500-word document reads at ~70 wpm, and fenced code counts double
+  assist config set prs.readingWordsPerMinute 250 # same speed under the command's former name, read only when readTime.wordsPerMinute is unset
+
+=== assist releases --help
+Usage: assist releases [options] [command]
+
+Inspect the declared release promotion streams
+
+Options:
+  -h, --help           display help for command
+
+Commands:
+  list                 List the declared release streams, their nodes and edges
+  configure [options]  Validate release streams and write them to releases.streams for the current
+                       repo
+
+Streams are declared by '/releases-configure', which derives them from the repo's workflows and writes them with 'assist releases configure', and rendered by the /releases page of the sessions dashboard.
+
+Config:
+  assist releases configure --streams <file> # promotion streams the /releases page draws; each names a repo, its release workflow, its nodes and the edges between them
+
+=== assist releases list --help
+Usage: assist releases list [options]
+
+List the declared release streams, their nodes and edges
+
+Options:
+  -h, --help  display help for command
+
+=== assist releases configure --help
+Usage: assist releases configure [options]
+
+Validate release streams and write them to releases.streams for the current repo
+
+Options:
+  --streams <file>  JSON or YAML array of streams to declare; '-' reads stdin
+  --scope <git|db>  repo (git), the repo's assist.yml, or repo (db), this repo's shared db override
+                    (default: "git")
+  -h, --help        display help for command
+
+=== assist roam --help
+Usage: assist roam [options] [command]
+
+Roam Research utilities
+
+Options:
+  -h, --help             display help for command
+
+Commands:
+  show-claude-code-icon  Forward Claude Code hook activity to Roam local API
+  stop-claude-code-icon  Signal Claude Code session stop to Roam local API
+  show-codex-icon        Forward Codex hook activity to Roam local API
+  stop-codex-icon        Signal Codex session stop to Roam local API
+  help [command]         display help for command
+
+=== assist roam show-claude-code-icon --help
+Usage: assist roam show-claude-code-icon [options]
+
+Forward Claude Code hook activity to Roam local API
+
+Options:
+  -h, --help  display help for command
+
+=== assist roam stop-claude-code-icon --help
+Usage: assist roam stop-claude-code-icon [options]
+
+Signal Claude Code session stop to Roam local API
+
+Options:
+  -h, --help  display help for command
+
+=== assist roam show-codex-icon --help
+Usage: assist roam show-codex-icon [options]
+
+Forward Codex hook activity to Roam local API
+
+Options:
+  -h, --help  display help for command
+
+=== assist roam stop-codex-icon --help
+Usage: assist roam stop-codex-icon [options]
+
+Signal Codex session stop to Roam local API
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog --help
+Usage: assist backlog [options] [command]
+
+Manage a backlog of work items
+
+Options:
+  --dir <path>                                    Override directory for backlog file discovery
+  --no-open                                       Do not open a browser on startup
+  -h, --help                                      display help for command
+
+Commands:
+  list|ls [options]                               List all backlog items
+  add [options]                                   Add a new backlog item
+  propose [options]                               Preview a complete backlog item for approval, then
+                                                  create it on approval
+  add-phase [options] <id> <name>                 Add a phase to an existing backlog item
+  show|view [options] <id>                        Show full detail for a backlog item
+  start <id>                                      Set a backlog item to in-progress
+  stop                                            Revert all in-progress backlog items to todo
+  done <id> [summary]                             Set a backlog item to done
+  wontdo <id> [reason]                            Set a backlog item to won't do
+  set-status <id> <status>                        Set a backlog item to a specific status (todo,
+                                                  in-progress, done, wontdo)
+  star <id>                                       Star a backlog item to pin it in the web view
+  unstar <id>                                     Remove the star from a backlog item
+  delete|remove <id>                              Delete a backlog item
+  web [options]                                   Open the backlog tab in the web dashboard
+  comment <id> <text>                             Add a comment to a backlog item
+  comments <id>                                   List comments and summaries for a backlog item
+  delete-comment <id> <comment-id>                Delete a comment from a backlog item
+  link [options] <from> <to>                      Link two backlog items
+  unlink <from> <to>                              Remove a link between two backlog items
+  plan <id>                                       Display the plan for a backlog item
+  phase-done <id> <phase> <summary>               Signal that a plan phase is complete
+  rewind [options] <id> <phase>                   Rewind a backlog item to an earlier phase
+  next [options] [id]                             Pick and run the next backlog item, or open /draft
+                                                  if none
+  refine [options] [id]                           Alias for refine
+  refresh-docs                                    Create a Refresh docs item now for every done
+                                                  story not yet swept, without waiting for
+                                                  docs.refreshAfter (refused when docs.refreshAfter
+                                                  is unset: Refresh docs is off)
+  run [options] <id>                              Run a backlog item's plan phase-by-phase
+  search <query>                                  Search backlog items by keyword
+  update-field [options] <id>                     Update fields on a backlog item
+  update-phase|edit-phase [options] <id> <phase>  Modify a plan phase on a backlog item
+  remove-phase <id> <phase>                       Remove a plan phase from a backlog item
+  update-plan [options] <id>                      Replace an item's whole plan from a JSON payload,
+                                                  previewed and applied in one approval
+  move-phase <id> <from> <to>                     Reorder a plan phase from one 1-based position to
+                                                  another, moving its tasks with it
+  export [file]                                   Export every table in the backlog database
+                                                  (discovered by introspection) to a file, or stdout
+                                                  if omitted
+  import [options] [file]                         Restore every table in a dump back into the
+                                                  backlog database, in foreign-key-safe order, from
+                                                  a file or stdin if omitted (destructive)
+  move-repo [options] <old-origin> [new-origin]   Retag all items from one origin to another after a
+                                                  repo rename (new origin defaults to the current
+                                                  repo's remote)
+  clone <origin>                                  Clone a repo over SSH into the configured base
+                                                  directory, deriving the SSH remote from a stored
+                                                  origin (host/org/repo -> git@host:org/repo.git);
+                                                  local: origins are not clonable
+  associate-jira [options] <id> [key]             Associate a Jira ticket with a backlog item
+  associate-github [options] <id> [issue]         Associate a GitHub issue with a backlog item
+  add-activity [options] <id> <kind> <ref>        Attach an activity ref
+                                                  (branch|commit|pr|slack|session|design) to a
+                                                  backlog item
+  record-slack [options] <url>                    Attach a Slack thread permalink to the current
+                                                  session's backlog item
+
+Config:
+  assist config set database.url postgresql://... # Postgres connection string for backlog storage (or ASSIST_DATABASE_URL)
+  assist config set clone.baseDir ~/git           # base directory 'backlog clone' clones repos into (default: ~/git)
+  assist config set docs.refreshAfter 5           # queue a 'Refresh docs' item once this many done stories are unswept (unset: Refresh docs is off — no button, no refresh-docs, no docs locking)
+
+=== assist backlog list --help
+Usage: assist backlog list|ls [options]
+
+List all backlog items
+
+Options:
+  --status <type>  Filter by status (todo, in-progress, done, wontdo)
+  -a, --all        Include done/wontdo items
+  --all-repos      List items across all repositories
+  -v, --verbose    Show all item details
+  -h, --help       display help for command
+
+=== assist backlog add --help
+Usage: assist backlog add [options]
+
+Add a new backlog item
+
+Options:
+  --name <name>         Item name
+  --type <type>         Item type (story or bug)
+  --desc <description>  Item description (Markdown supported; use \n for line breaks)
+  --ac <criterion...>   Acceptance criteria (repeatable)
+  -h, --help            display help for command
+
+=== assist backlog propose --help
+Usage: assist backlog propose [options]
+
+Preview a complete backlog item for approval, then create it on approval
+
+Options:
+  --json <file|->  Path to a JSON payload describing the item, or - to read it from stdin
+  --confirmed      Create the item after its draft has been reviewed in chat (agent use outside a
+                   web session)
+  -h, --help       display help for command
+
+The payload is strict JSON: { name, type, description?, acceptanceCriteria?, phases? }.
+Each phase is { name, tasks, manualChecks? } and needs at least one task.
+
+The Review phase is owned by the runner and appended to every plan automatically,
+so it must not be authored: a phase named "Review" is rejected. Do not add a final
+phase for verifying acceptance criteria, confirming manual checks, committing or
+marking the item done — that is what the appended Review phase does.
+
+=== assist backlog add-phase --help
+Usage: assist backlog add-phase [options] <id> <name>
+
+Add a phase to an existing backlog item
+
+Options:
+  --task <task...>           Task description (repeatable)
+  --manual-check <check...>  Manual check description (repeatable)
+  --position <position>      1-indexed position to insert at (default: append)
+  -h, --help                 display help for command
+
+=== assist backlog show --help
+Usage: assist backlog show|view [options] <id>
+
+Show full detail for a backlog item
+
+Options:
+  --all-commits  Show every commit in Activity instead of the newest 10
+  -h, --help     display help for command
+
+=== assist backlog start --help
+Usage: assist backlog start [options] <id>
+
+Set a backlog item to in-progress
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog stop --help
+Usage: assist backlog stop [options]
+
+Revert all in-progress backlog items to todo
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog done --help
+Usage: assist backlog done [options] <id> [summary]
+
+Set a backlog item to done
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog wontdo --help
+Usage: assist backlog wontdo [options] <id> [reason]
+
+Set a backlog item to won't do
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog set-status --help
+Usage: assist backlog set-status [options] <id> <status>
+
+Set a backlog item to a specific status (todo, in-progress, done, wontdo)
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog star --help
+Usage: assist backlog star [options] <id>
+
+Star a backlog item to pin it in the web view
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog unstar --help
+Usage: assist backlog unstar [options] <id>
+
+Remove the star from a backlog item
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog delete --help
+Usage: assist backlog delete|remove [options] <id>
+
+Delete a backlog item
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog web --help
+Usage: assist backlog web [options]
+
+Open the backlog tab in the web dashboard
+
+Options:
+  -p, --port <number>  Port to listen on (default: "3100")
+  --no-open            Do not open a browser on startup
+  -h, --help           display help for command
+
+=== assist backlog comment --help
+Usage: assist backlog comment [options] <id> <text>
+
+Add a comment to a backlog item
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog comments --help
+Usage: assist backlog comments [options] <id>
+
+List comments and summaries for a backlog item
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog delete-comment --help
+Usage: assist backlog delete-comment [options] <id> <comment-id>
+
+Delete a comment from a backlog item
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog link --help
+Usage: assist backlog link [options] <from> <to>
+
+Link two backlog items
+
+Options:
+  --type <type>  Link type (relates-to or depends-on) (default: "relates-to")
+  -h, --help     display help for command
+
+=== assist backlog unlink --help
+Usage: assist backlog unlink [options] <from> <to>
+
+Remove a link between two backlog items
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog plan --help
+Usage: assist backlog plan [options] <id>
+
+Display the plan for a backlog item
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog phase-done --help
+Usage: assist backlog phase-done [options] <id> <phase> <summary>
+
+Signal that a plan phase is complete
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog rewind --help
+Usage: assist backlog rewind [options] <id> <phase>
+
+Rewind a backlog item to an earlier phase
+
+Options:
+  --reason <reason>  Reason for rewinding
+  -h, --help         display help for command
+
+=== assist backlog next --help
+Usage: assist backlog next [options] [id]
+
+Pick and run the next backlog item, or open /draft if none
+
+Arguments:
+  id           Backlog item ID to run first
+
+Options:
+  -w, --write  Run Claude with auto permission mode (default)
+  --no-write   Run Claude without auto permission mode
+  --once       Exit after the first completed item run
+  -h, --help   display help for command
+
+=== assist backlog refine --help
+Usage: assist backlog refine [options] [id]
+
+Alias for refine
+
+Arguments:
+  id                Backlog item ID
+
+Options:
+  --once            Exit when the initial task completes
+  --harness <kind>  Coding harness to launch (claude|codex|pi); defaults to the configured
+                    harness.engine. Exits with the reasons, without launching, when Refine is
+                    unavailable on it
+  -h, --help        display help for command
+
+=== assist backlog refresh-docs --help
+Usage: assist backlog refresh-docs [options]
+
+Create a Refresh docs item now for every done story not yet swept, without waiting for
+docs.refreshAfter (refused when docs.refreshAfter is unset: Refresh docs is off)
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog run --help
+Usage: assist backlog run [options] <id>
+
+Run a backlog item's plan phase-by-phase
+
+Options:
+  -w, --write            Run the harness with write access (default)
+  --no-write             Run the harness without write access
+  --harness <harness>    Coding harness to launch (claude|codex|pi); defaults to the configured
+                         harness.defaults.run.harness, then harness.engine, then an installed
+                         harness when neither is configured
+  --model <model>        Model to launch the harness with; defaults to harness.defaults.run.model
+                         while the run type's harness is used
+  --no-model             Launch with the harness's own default model
+  --resume-session <id>  Resume an interrupted Claude session for the current phase (used by the
+                         sessions daemon on restart)
+  -h, --help             display help for command
+
+Config:
+  assist config set harness.engine <claude|claude-sdk|codex|pi>       # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key)
+  assist config set harness.exposeCodexActions <true|false>           # force the web UI 'with Codex' actions off even when codex is on PATH
+  assist config set harness.exposePiActions <true|false>              # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.codexModel <model>                        # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
+  assist config set harness.defaults.draft.harness <claude|codex|pi>  # harness for draft sessions (assist draft, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.draft.model <model>              # model for draft sessions (assist draft, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.bug.harness <claude|codex|pi>    # harness for bug sessions (assist bug, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.bug.model <model>                # model for bug sessions (assist bug, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.prompt.harness <claude|codex|pi> # harness for prompt sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.prompt.model <model>             # model for prompt sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.design.harness <claude|codex|pi> # harness for design sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.design.model <model>             # model for design sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.run.harness <claude|codex|pi>    # harness for backlog runs (assist backlog run, web Start buttons) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.run.model <model>                # model for backlog runs (assist backlog run, web Start buttons) on the type's harness; unset uses the harness's own default
+
+=== assist backlog search --help
+Usage: assist backlog search [options] <query>
+
+Search backlog items by keyword
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog update-field --help
+Usage: assist backlog update-field [options] <id>
+
+Update fields on a backlog item
+
+Options:
+  --name <name>            New item name
+  --desc <description>     New description (Markdown supported; use \n for line breaks)
+  --type <type>            New type (story or bug)
+  --ac <criterion...>      Replace acceptance criteria (repeatable)
+  --add-ac <text>          Append one acceptance criterion (repeatable) (default: [])
+  --edit-ac <n> <text...>  Replace acceptance criterion n (1-based) in place
+  --remove-ac <n>          Remove acceptance criterion n (1-based)
+  --origin [origin]        Retag the item to a different repo (origin URL or key, normalized); with
+                           no value, retags to the current repo's origin
+  -h, --help               display help for command
+
+=== assist backlog update-phase --help
+Usage: assist backlog update-phase|edit-phase [options] <id> <phase>
+
+Modify a plan phase on a backlog item
+
+Options:
+  --name <name>               New phase name
+  --task <task...>            Replace tasks (repeatable)
+  --manual-check <check...>   Replace manual checks (repeatable)
+  --add-task <text>           Append one task (repeatable) (default: [])
+  --edit-task <n> <text...>   Replace task n (1-based) in place
+  --remove-task <n>           Remove task n (1-based)
+  --add-check <text>          Append one manual check (repeatable) (default: [])
+  --edit-check <n> <text...>  Replace manual check n (1-based) in place
+  --remove-check <n>          Remove manual check n (1-based)
+  -h, --help                  display help for command
+
+=== assist backlog remove-phase --help
+Usage: assist backlog remove-phase [options] <id> <phase>
+
+Remove a plan phase from a backlog item
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog update-plan --help
+Usage: assist backlog update-plan [options] <id>
+
+Replace an item's whole plan from a JSON payload, previewed and applied in one approval
+
+Options:
+  --json <file|->  Path to a JSON payload of { phases: [{ name, tasks, manualChecks }] }, or - to
+                   read it from stdin
+  -h, --help       display help for command
+
+=== assist backlog move-phase --help
+Usage: assist backlog move-phase [options] <id> <from> <to>
+
+Reorder a plan phase from one 1-based position to another, moving its tasks with it
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog export --help
+Usage: assist backlog export [options] [file]
+
+Export every table in the backlog database (discovered by introspection) to a file, or stdout if
+omitted
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog import --help
+Usage: assist backlog import [options] [file]
+
+Restore every table in a dump back into the backlog database, in foreign-key-safe order, from a file
+or stdin if omitted (destructive)
+
+Options:
+  -y, --yes   Skip the confirmation prompt
+  -h, --help  display help for command
+
+=== assist backlog move-repo --help
+Usage: assist backlog move-repo [options] <old-origin> [new-origin]
+
+Retag all items from one origin to another after a repo rename (new origin defaults to the current
+repo's remote)
+
+Options:
+  -y, --yes   Skip the confirmation prompt
+  -h, --help  display help for command
+
+=== assist backlog clone --help
+Usage: assist backlog clone [options] <origin>
+
+Clone a repo over SSH into the configured base directory, deriving the SSH remote from a stored
+origin (host/org/repo -> git@host:org/repo.git); local: origins are not clonable
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog associate-jira --help
+Usage: assist backlog associate-jira [options] <id> [key]
+
+Associate a Jira ticket with a backlog item
+
+Options:
+  --clear     Remove the Jira association from the item
+  -h, --help  display help for command
+
+=== assist backlog associate-github --help
+Usage: assist backlog associate-github [options] <id> [issue]
+
+Associate a GitHub issue with a backlog item
+
+Options:
+  --clear     Remove the GitHub association from the item
+  -h, --help  display help for command
+
+=== assist backlog add-activity --help
+Usage: assist backlog add-activity [options] <id> <kind> <ref>
+
+Attach an activity ref (branch|commit|pr|slack|session|design) to a backlog item
+
+Options:
+  --title <title>  Title metadata for the ref
+  --url <url>      URL metadata (auto-filled for branch/commit)
+  --state <state>  State metadata for the ref
+  -h, --help       display help for command
+
+=== assist backlog record-slack --help
+Usage: assist backlog record-slack [options] <url>
+
+Attach a Slack thread permalink to the current session's backlog item
+
+Options:
+  --title <title>  PR title to label the ref with
+  -h, --help       display help for command
+
+=== assist branch --help
+Usage: assist branch [options] <slug>
+
+Create and switch to a branch off the fresh remote default branch
+
+Options:
+  --jira <key>  Jira issue key to include in the branch name
+  --from <ref>  base the branch off <ref> verbatim (local branch, tag, or origin/*) instead of the
+                fresh remote default
+  -h, --help    display help for command
+
+Branch name is assembled as [<prefix>/][<JIRA>-]<slug>, e.g. sw/BAD-671-add-login-form.
+
+Config:
+  assist config set branch.prefix sw          # optional; prepends "<prefix>/" (omitted when unset)
+  assist config set branch.defaultBranch main # optional; overrides the live remote default branch
+
+=== assist list --help
+Usage: assist list|ls [options]
+
+Alias for backlog list
+
+Options:
+  --status <type>  Filter by status (todo, in-progress, done, wontdo)
+  -a, --all        Include done/wontdo items
+  --all-repos      List items across all repositories
+  -v, --verbose    Show all item details
+  --dir <path>     Override directory for backlog file discovery
+  -h, --help       display help for command
+
+=== assist verify --help
+Usage: assist verify [options] [command] [scope]
+
+Run all verify:* commands in parallel
+
+Arguments:
+  scope                Use "all" to run all checks, ignoring diff-based filters
+
+Options:
+  --measure            Print a summary table of each command's status and duration after the run
+  --verbose            Show all output (bypass CLAUDECODE suppression)
+  -h, --help           display help for command
+
+Commands:
+  list                 List configured verify commands
+  init [options]       Add verify scripts to a project
+  hardcoded-colors     Check for hardcoded hex colors in src/
+  block-code-comments  Fail on any comment on a changed line, whether added or edited
+  no-venv              Check that no venv folders exist in the repo
+  forbidden-strings    Check configured JSON files for values matching forbiddenStrings rules
+  config-keys          Check every assistConfigSchema key is surfaced in some command's --help via
+                       configHelp
+  advice-fragments     Check adviceFragmentNames matches the fragments shipped in agent/advice, so
+                       advice.sections can name every one
+  migrations           Check DB migrations are sequentially numbered, append-only, and gate
+                       destructive DDL behind an acknowledgement marker
+  harness-follow-ups   Check every follow-up item named by an unsupported harness capability exists
+                       and is still open
+
+Following MakerXStudio/verify's convention, a verify:<name> / verify:<name>:fix pair runs once: fix mode runs the :fix variant (or verify:<name> when there is none), check mode runs only verify:<name> and skips a :fix with no base. VERIFY_MODE=check|fix picks the mode; otherwise a truthy CI means check, else fix.
+
+Config:
+  assist config set blockCodeComments.ignore "**/*.test.ts" # globs exempt from the block-code-comments check
+  assist config set hardcodedColors.ignore "**/theme.ts"    # globs exempt from the hardcoded-colors check
+  assist config set verify.roots.0 coach-tools              # monorepo package dirs whose package.json verify:* scripts run when files under them change
+  assist config set forbiddenStrings.0.disallowed "secret"  # per-file value rules enforced by the forbidden-strings check
+
+=== assist verify list --help
+Usage: assist verify list [options]
+
+List configured verify commands
+
+Options:
+  -h, --help  display help for command
+
+=== assist verify init --help
+Usage: assist verify init [options]
+
+Add verify scripts to a project
+
+Options:
+  --package-json  Write scripts to package.json instead of assist.yml
+  -h, --help      display help for command
+
+=== assist verify hardcoded-colors --help
+Usage: assist verify hardcoded-colors [options]
+
+Check for hardcoded hex colors in src/
+
+Options:
+  -h, --help  display help for command
+
+=== assist verify block-code-comments --help
+Usage: assist verify block-code-comments [options]
+
+Fail on any comment on a changed line, whether added or edited
+
+Options:
+  -h, --help  display help for command
+
+=== assist verify no-venv --help
+Usage: assist verify no-venv [options]
+
+Check that no venv folders exist in the repo
+
+Options:
+  -h, --help  display help for command
+
+=== assist verify forbidden-strings --help
+Usage: assist verify forbidden-strings [options]
+
+Check configured JSON files for values matching forbiddenStrings rules
+
+Options:
+  -h, --help  display help for command
+
+=== assist verify config-keys --help
+Usage: assist verify config-keys [options]
+
+Check every assistConfigSchema key is surfaced in some command's --help via configHelp
+
+Options:
+  -h, --help  display help for command
+
+=== assist verify advice-fragments --help
+Usage: assist verify advice-fragments [options]
+
+Check adviceFragmentNames matches the fragments shipped in agent/advice, so advice.sections can name
+every one
+
+Options:
+  -h, --help  display help for command
+
+=== assist verify migrations --help
+Usage: assist verify migrations [options]
+
+Check DB migrations are sequentially numbered, append-only, and gate destructive DDL behind an
+acknowledgement marker
+
+Options:
+  -h, --help  display help for command
+
+=== assist verify harness-follow-ups --help
+Usage: assist verify harness-follow-ups [options]
+
+Check every follow-up item named by an unsupported harness capability exists and is still open
+
+Options:
+  -h, --help  display help for command
+
+=== assist refactor --help
+Usage: assist refactor [options] [command]
+
+Run refactoring checks for code quality
+
+Options:
+  -h, --help                                             display help for command
+
+Commands:
+  check [options] [pattern]                              Check for files that exceed the maximum
+                                                         line count
+  extract [options] <file> <functionName> <destination>  Extract a function and its private
+                                                         dependencies to a new file
+  ignore <file>                                          Add a file to the refactor ignore list
+  rename                                                 Rename files or symbols with automatic
+                                                         import updates
+  restructure [options] [root]                           Place every file under root by its import
+                                                         graph: single-importer files nest under
+                                                         their importer, shared files sit at their
+                                                         importers' lowest common folder
+  help [command]                                         display help for command
+
+=== assist refactor check --help
+Usage: assist refactor check [options] [pattern]
+
+Check for files that exceed the maximum line count
+
+Options:
+  --modified            Check only staged and unstaged files
+  --staged              Check only staged files
+  --unstaged            Check only unstaged files
+  --max-lines <number>  Maximum lines allowed per file (default: 100)
+  -h, --help            display help for command
+
+=== assist refactor extract --help
+Usage: assist refactor extract [options] <file> <functionName> <destination>
+
+Extract a function and its private dependencies to a new file
+
+Options:
+  --apply     Execute the extraction (default: dry-run)
+  -h, --help  display help for command
+
+=== assist refactor ignore --help
+Usage: assist refactor ignore [options] <file>
+
+Add a file to the refactor ignore list
+
+Options:
+  -h, --help  display help for command
+
+=== assist refactor rename --help
+Usage: assist refactor rename [options] [command]
+
+Rename files or symbols with automatic import updates
+
+Options:
+  -h, --help                                   display help for command
+
+Commands:
+  file [options] <source> <destination>        Rename/move a TypeScript file and update all imports
+  symbol [options] <file> <oldName> <newName>  Rename a variable, function, class, or type across
+                                               the project
+  help [command]                               display help for command
+
+=== assist refactor rename file --help
+Usage: assist refactor rename file [options] <source> <destination>
+
+Rename/move a TypeScript file and update all imports
+
+Options:
+  --apply     Execute the rename (default: dry-run)
+  -h, --help  display help for command
+
+=== assist refactor rename symbol --help
+Usage: assist refactor rename symbol [options] <file> <oldName> <newName>
+
+Rename a variable, function, class, or type across the project
+
+Options:
+  --apply     Execute the rename (default: dry-run)
+  -h, --help  display help for command
+
+=== assist refactor restructure --help
+Usage: assist refactor restructure [options] [root]
+
+Place every file under root by its import graph: single-importer files nest under their importer,
+shared files sit at their importers' lowest common folder
+
+Options:
+  --apply     Move files, rewrite their imports and vi.mock paths, and remove emptied folders
+              (default: dry-run)
+  --check     List files that drift from the plan and exit non-zero if any do
+  -h, --help  display help for command
+
+Config:
+  assist config set restructure.ignore "src/generated/**" # globs (relative to cwd) of files restructure never moves; files they import are placed beside them
+  assist config set restructure.pin "SessionCard"         # module names (basename without extension) restructure lifts out of deep import chains into the folder of the nearest root or pinned module above them, together with their subtrees
+  assist config set restructure.maxDepth 10               # deepest folder level the plan may place a file at (default 10); deeper plans list their deep chains with pin guidance, and --check fails
+  assist config set restructure.maxPathLength 200         # longest repo-relative path the plan may place a file at (default 200), leaving room for a Windows checkout root under MAX_PATH; longer plans list the paths with pin guidance, and --check fails
+
+=== assist review --help
+Usage: assist review [options] [number]
+
+Run the Claude and Codex reviewers in parallel on the current branch's PR and synthesise their
+findings, or check out a PR by number first when given; --checkout-only just checks the PR out and
+leaves an idle session in the checkout tree
+
+Arguments:
+  number                Optional PR number; when provided, runs `gh pr checkout <number>` before
+                        reviewing
+
+Options:
+  --harness <kind>      Coding harness (claude|codex|pi) for the interactive session that --refine,
+                        --apply, --backlog, --checkout-only or --high-level starts, and for the
+                        Address Comments session --address-comments chains; defaults to the
+                        configured harness.engine. Exits with the reasons, before checking out or
+                        reviewing, when that session is unavailable on it. Reviewers and synthesis
+                        are not affected (see review.synthesisHarness)
+  --no-prompt           Skip confirmation prompts; use flag defaults non-interactively
+  --submit              Default the submit prompt to yes (or auto-submit with --no-prompt)
+  --force               Clear cached claude.md / codex.md / synthesis.md and re-run all phases; with
+                        --high-level, discard the review saved for this head SHA and start fresh
+  --refine              After synthesis, launch an interactive session (on --harness) to walk
+                        through findings instead of posting
+  --apply               After synthesis, launch an interactive session (on --harness) to apply fixes
+                        for each finding; applied findings are removed from synthesis, skipped ones
+                        remain for a later post
+  --backlog             After synthesis, launch an interactive session (on --harness) running the
+                        bug skill to file all findings as a single backlog item with one phase per
+                        finding, instead of posting to the PR
+  --address-comments    After posting and submitting the review, start an Address Comments session
+                        (assist review-pr-comments <n>) for the PR; no-op when nothing was posted or
+                        the review was not submitted, and only inside an assist session
+  --announce            Announce the PR in Slack (/prs-slack <n> --no-confirm) once the chain
+                        finishes: from the Address Comments session when one was started, otherwise
+                        from a session started directly; only inside an assist session
+  --verbose             Disable spinner UI and use per-line log output (per-tool lines,
+                        starting/done lines)
+  --checkout-only       Check the PR out and start an idle interactive session (on --harness) in the
+                        checkout tree instead of reviewing; requires a PR number and cannot be
+                        combined with --refine, --apply, --backlog or --submit
+  --high-level          Check the PR out and open the high-level review checklist in the web UI
+                        preview pane, then post it to the PR as an Approve, Comment or Request
+                        changes review. Outside an agent session it starts one (on --harness)
+                        running the review-high-level skill for <number>. A review saved for the
+                        same head SHA is reopened unless --force is passed. Cannot be combined with
+                        --refine, --apply, --backlog, --submit or --checkout-only
+  --slices <file>       With --high-level, in an assist session: read the PR's slices from a JSON
+                        file of [{title, summary, hunks[]}], where hunks are the path#index labels
+                        printed when the command refuses without slices. Unknown refs are dropped
+                        with a warning, unclaimed hunks go into an "Everything else" slice, and the
+                        slices are saved for this head SHA so a reopen reuses them unless --force is
+                        passed
+  --configure           With --high-level: review nothing and instead ask for
+                        review.highLevel.criticalPaths, uiPaths and descriptionWordCap one at a
+                        time, each prefilled with its current value or, when unset, globs the
+                        configured harness.engine proposes from this repo's own tree (for
+                        criticalPaths, merged with its defaults), then write the answers in one pass
+                        to either this repo's override in the shared assist database or the project
+                        assist.yml. A blank answer leaves that key unset
+  --scope <scope>       With --configure: write to 'db' (repo (db), this repo's override in the
+                        shared assist database) or 'git' (repo (git), the repo's own assist.yml)
+                        instead of asking which
+  --answer <key=value>  With --configure: answer one key without prompting, for an agent that has
+                        already put the choice to the user (repeatable); an empty value leaves that
+                        key unset. Answer all three and nothing is prompted for and no globs are
+                        proposed (default: [])
+  -h, --help            display help for command
+
+With review.codexModel unset or codex-default the codex reviewer runs on the user's own codex auth and configured model (set codex-default in a repo to override an inherited value); when it is set but the LiteLLM proxy is not configured, the reviewer falls back to that plain codex run. A reviewer whose harness is unavailable is skipped with its reason, and the review stops before reviewing when the review.synthesisHarness cannot synthesise.
+
+Config:
+  assist config set review.codexModel gpt-5-codex                                        # optional; runs the codex reviewer on this model via the LiteLLM proxy (needs litellm.baseUrl and litellm.apiKey); codex-default runs it on codex's own configured model, overriding a value inherited from user or global config
+  assist config set review.synthesisHarness <claude|codex>                               # harness that consolidates the two reviews (default claude); when it cannot synthesise (e.g. its CLI is not on PATH) the review exits with the reason before reviewing instead of falling back to another harness
+  assist config set review.highLevel.criticalPaths "**/*.graphql,en-AU/translation.json" # comma-separated globs whose full diffs the high-level review shows; a value replaces the default (**/.github/workflows/**,**/.github/actions/**,**/package.json,**/Dockerfile,**/Dockerfile.*,**/*.Dockerfile,**/CLAUDE.md)
+  assist config set review.highLevel.uiPaths "src/ui/**"                                 # comma-separated globs that make a change a UI change, so --high-level requires a screenshot or video; unset requires none
+  assist config set review.highLevel.descriptionWordCap 300                              # word cap --high-level holds the PR description to (default 300)
+  assist config set review.highLevel.testPaths "**/*.test.ts,e2e/**/*.spec.ts"           # comma-separated globs of test files whose describe/it hierarchy backs the tests item (default **/*.{test,spec}.{ts,tsx,js,jsx})
+  assist config set review.highLevel.collapsedPaths "**/*.test.*,**/generated/**"        # comma-separated globs whose files start collapsed in the high-level changed-files tree; every other file starts expanded (default **/*.test.*,**/generated/**)
+
+=== assist rules --help
+Usage: assist rules [options] [command]
+
+Read and write the CLAUDE.md rules in scope for a path
+
+Options:
+  -h, --help             display help for command
+
+Commands:
+  list [options] [path]  List the rules from the `## Rules` section of every CLAUDE.md from a path's
+                         directory up to the repo root (default: cwd)
+  add [options] <text>   Add a rule to the `## Rules` section of the scope's CLAUDE.md, allocating
+                         the next repo-wide code and creating the section when absent
+  index                  Record the directories that carry their own `## Rules` in the repo root's
+                         CLAUDE.md, so scoped rules are discoverable from the root. Always
+                         repo-wide, resolved from the cwd
+  help [command]         display help for command
+
+=== assist rules list --help
+Usage: assist rules list [options] [path]
+
+List the rules from the `## Rules` section of every CLAUDE.md from a path's directory up to the repo
+root (default: cwd)
+
+Options:
+  --full      Show each rule's full description as well as its title
+  -h, --help  display help for command
+
+=== assist rules add --help
+Usage: assist rules add [options] <text>
+
+Add a rule to the `## Rules` section of the scope's CLAUDE.md, allocating the next repo-wide code
+and creating the section when absent
+
+Options:
+  --title <title>  As few words as possible summarising the rule, shown in the rule picker in place
+                   of the description
+  --scope <path>   File or directory whose nearest CLAUDE.md receives the rule, or a CLAUDE.md path
+                   to write to directly (default: cwd)
+  --user           Append the rule to advice.rules in user (db), the shared db, instead of a
+                   CLAUDE.md: for rules about agent conduct that hold in every repo on every node.
+                   Needs --title; takes no R-code and cannot be combined with --scope
+  --node           As --user, but append to advice.rules in user (node), this node's ~/.assist.yml
+  --repo [name]    As --user, but append to advice.rules in repo (db), the shared per-repo override
+                   every node sees, for the current repo or the named one
+  -h, --help       display help for command
+
+=== assist rules index --help
+Usage: assist rules index [options]
+
+Record the directories that carry their own `## Rules` in the repo root's CLAUDE.md, so scoped rules
+are discoverable from the root. Always repo-wide, resolved from the cwd
+
+Options:
+  -h, --help  display help for command
+
+=== assist devlog --help
+Usage: assist devlog [options] [command]
+
+Development log utilities
+
+Options:
+  -h, --help                           display help for command
+
+Commands:
+  list [options]                       Group git commits by ISO week
+  version                              Show the repo name, its latest dev entry week and versions
+  next [options]                       Show commits for the next completed ISO week after the last
+                                       dev entry
+  skip <week>                          Add an ISO week (YYYY-Www) to this repo's repo (db)
+                                       devlog.skipWeeks
+  write                                Write a dev entry from JSON on stdin (week, title, versions,
+                                       aiGenerated, added/changed/fixed, lede)
+  slack [week]                         List un-posted dev entries oldest first, or preview one week
+                                       as a Slack parent message plus a threaded Added/Changed/Fixed
+                                       reply, printing the channel and approved paths
+  posted [options] <week> [permalink]  Record a dev entry's Slack permalink as slack: in its
+                                       frontmatter, or slack: skipped with --skip
+  repos [options]                      Show repos missing weekly dev entries
+  help [command]                       display help for command
+
+Config:
+  assist config set devlog.dir ~/git/blog/src/content/dev # folder holding <repo>/<yyyy>-wNN.md dev entries
+  assist config set devlog.name my-repo                   # override the project name weekly dev entries are filed under
+  assist config set devlog.ignore "**/*.lock"             # globs excluded when grouping commits
+  assist config set devlog.slack "#devlog"                # Slack channel dev entries are posted to, falling back to slack.channel (used by 'assist devlog slack' and /devlog --slack-post)
+  assist config set devlog.url https://example.com/dev    # base URL of the published dev entries; when set, Slack posts end with a link to <url>/<project>/<yyyy>-wNN
+  assist devlog skip 2026-W33                             # ISO weeks (YYYY-Www) that get no dev entry; skip writes repo (db)
+
+=== assist devlog list --help
+Usage: assist devlog list [options]
+
+Group git commits by ISO week
+
+Options:
+  --weeks <number>     Number of weeks to show, including the current one (default: 6)
+  --since <date|week>  Only show commits since this date (YYYY-MM-DD) or week (YYYY-Www)
+  -r, --reverse        Show earliest weeks first
+  -v, --verbose        Show file names for each commit
+  -h, --help           display help for command
+
+=== assist devlog version --help
+Usage: assist devlog version [options]
+
+Show the repo name, its latest dev entry week and versions
+
+Options:
+  -h, --help  display help for command
+
+=== assist devlog next --help
+Usage: assist devlog next [options]
+
+Show commits for the next completed ISO week after the last dev entry
+
+Options:
+  -v, --verbose  Show file names for each commit
+  -h, --help     display help for command
+
+=== assist devlog skip --help
+Usage: assist devlog skip [options] <week>
+
+Add an ISO week (YYYY-Www) to this repo's repo (db) devlog.skipWeeks
+
+Options:
+  -h, --help  display help for command
+
+=== assist devlog write --help
+Usage: assist devlog write [options]
+
+Write a dev entry from JSON on stdin (week, title, versions, aiGenerated, added/changed/fixed, lede)
+
+Options:
+  -h, --help  display help for command
+
+=== assist devlog slack --help
+Usage: assist devlog slack [options] [week]
+
+List un-posted dev entries oldest first, or preview one week as a Slack parent message plus a
+threaded Added/Changed/Fixed reply, printing the channel and approved paths
+
+Options:
+  -h, --help  display help for command
+
+=== assist devlog posted --help
+Usage: assist devlog posted [options] <week> [permalink]
+
+Record a dev entry's Slack permalink as slack: in its frontmatter, or slack: skipped with --skip
+
+Options:
+  --skip      Mark the entry as not to be posted
+  -h, --help  display help for command
+
+=== assist devlog repos --help
+Usage: assist devlog repos [options]
+
+Show repos missing weekly dev entries
+
+Options:
+  --days <number>  Only show repos pushed within N days (default: 30)
+  --all            Show all non-archived repos regardless of push date
+  -h, --help       display help for command
+
+=== assist docs --help
+Usage: assist docs [options] [command]
+
+Human-in-the-loop approval to unlock docs pages and screenshots for a backlog item phase
+
+Options:
+  -h, --help      display help for command
+
+Commands:
+  unlock          Page a human with a pin to unlock docs changes for this session's backlog item
+                  phase
+  confirm <pin>   Confirm a pin from 'docs unlock' to approve docs changes for that backlog item
+                  phase
+  help [command]  display help for command
+
+=== assist docs unlock --help
+Usage: assist docs unlock [options]
+
+Page a human with a pin to unlock docs changes for this session's backlog item phase
+
+Options:
+  -h, --help  display help for command
+
+=== assist docs confirm --help
+Usage: assist docs confirm [options] <pin>
+
+Confirm a pin from 'docs unlock' to approve docs changes for that backlog item phase
+
+Arguments:
+  pin         Pin issued by 'docs unlock'
+
+Options:
+  -h, --help  display help for command
+
+=== assist deploy --help
+Usage: assist deploy [options] [command]
+
+Netlify deployment utilities
+
+Options:
+  -h, --help      display help for command
+
+Commands:
+  init            Initialize Netlify project and configure deployment
+  redirect        Add trailing slash redirect script to index.html
+  help [command]  display help for command
+
+=== assist deploy init --help
+Usage: assist deploy init [options]
+
+Initialize Netlify project and configure deployment
+
+Options:
+  -h, --help  display help for command
+
+=== assist deploy redirect --help
+Usage: assist deploy redirect [options]
+
+Add trailing slash redirect script to index.html
+
+Options:
+  -h, --help  display help for command
+
+=== assist complexity --help
+Usage: assist complexity [options] [command] [pattern]
+
+Analyze TypeScript code complexity metrics
+
+Options:
+  -h, --help                           display help for command
+
+Commands:
+  cyclomatic [options] [pattern]       Calculate cyclomatic complexity per function
+  halstead [options] [pattern]         Calculate Halstead metrics per function
+  maintainability [options] [pattern]  Calculate maintainability index per file
+  sloc [options] [pattern]             Count source lines of code per file
+
+Config:
+  assist config set complexity.ignore "**/*test.ts*" # globs excluded from maintainability (default: **/*test.ts*)
+
+=== assist complexity cyclomatic --help
+Usage: assist complexity cyclomatic [options] [pattern]
+
+Calculate cyclomatic complexity per function
+
+Options:
+  --threshold <number>  Max complexity threshold
+  -h, --help            display help for command
+
+=== assist complexity halstead --help
+Usage: assist complexity halstead [options] [pattern]
+
+Calculate Halstead metrics per function
+
+Options:
+  --threshold <number>  Max volume threshold
+  -h, --help            display help for command
+
+=== assist complexity maintainability --help
+Usage: assist complexity maintainability [options] [pattern]
+
+Calculate maintainability index per file
+
+Options:
+  --threshold <number>  Min maintainability threshold
+  --ignore <glob>       Glob of files to exclude (repeatable, additive to config) (default: [])
+  -h, --help            display help for command
+
+=== assist complexity sloc --help
+Usage: assist complexity sloc [options] [pattern]
+
+Count source lines of code per file
+
+Options:
+  --threshold <number>  Max lines threshold
+  -h, --help            display help for command
+
+=== assist dotnet --help
+Usage: assist dotnet [options] [command]
+
+.NET project utilities
+
+Options:
+  -h, --help               display help for command
+
+Commands:
+  inspect [options] [sln]  Run JetBrains inspections on changed .cs files to find dead code
+  check-locks              Check if build output files are locked by a debugger
+  deps [options] <csproj>  Show .csproj project dependency tree and solution membership
+  in-sln <csproj>          Check whether a .csproj is referenced by any .sln file
+  help [command]           display help for command
+
+Config:
+  assist config set dotnet.inspect.suppress CSharpWarnings::CS0168 # inspection issue-type IDs suppressed by default
+
+=== assist dotnet inspect --help
+Usage: assist dotnet inspect [options] [sln]
+
+Run JetBrains inspections on changed .cs files to find dead code
+
+Arguments:
+  sln                  Path to a .sln file (auto-detected if omitted)
+
+Options:
+  --scope <mode>       File scope: all | base:<ref> | commit:<ref> (default: working copy diff)
+  --all                Show all issues, not just dead code
+  --only <ids...>      Show only the specified issue type IDs
+  --suppress <ids...>  Suppress specific issue type IDs
+  --swea               Enable solution-wide error analysis
+  --roslyn             Use Roslyn analyzers via msbuild instead of JetBrains
+  -h, --help           display help for command
+
+=== assist dotnet check-locks --help
+Usage: assist dotnet check-locks [options]
+
+Check if build output files are locked by a debugger
+
+Options:
+  -h, --help  display help for command
+
+=== assist dotnet deps --help
+Usage: assist dotnet deps [options] <csproj>
+
+Show .csproj project dependency tree and solution membership
+
+Arguments:
+  csproj      Path to a .csproj file
+
+Options:
+  --json      Output as JSON
+  -h, --help  display help for command
+
+=== assist dotnet in-sln --help
+Usage: assist dotnet in-sln [options] <csproj>
+
+Check whether a .csproj is referenced by any .sln file
+
+Arguments:
+  csproj      Path to a .csproj file
+
+Options:
+  -h, --help  display help for command
+
+=== assist news --help
+Usage: assist news [options] [command]
+
+Manage RSS news feeds
+
+Options:
+  -h, --help      display help for command
+
+Commands:
+  add <url>       Add an RSS feed URL to news.feeds
+  list            List the RSS feed URLs in news.feeds
+  remove <url>    Remove an RSS feed URL from news.feeds
+  help [command]  display help for command
+
+Config:
+  assist config set news.showInNav true      # show the News tab in the web UI top nav (default false); /news stays reachable by URL either way
+  assist config set news.feeds <url1>,<url2> # RSS feed URLs shown on the News page; stored in the database so every machine shares them (assist news add/list/remove edit the same list)
+
+=== assist news add --help
+Usage: assist news add [options] <url>
+
+Add an RSS feed URL to news.feeds
+
+Arguments:
+  url         RSS feed URL
+
+Options:
+  -h, --help  display help for command
+
+=== assist news list --help
+Usage: assist news list [options]
+
+List the RSS feed URLs in news.feeds
+
+Options:
+  -h, --help  display help for command
+
+=== assist news remove --help
+Usage: assist news remove [options] <url>
+
+Remove an RSS feed URL from news.feeds
+
+Arguments:
+  url         RSS feed URL
+
+Options:
+  -h, --help  display help for command
+
+=== assist netcap --help
+Usage: assist netcap [options] [command]
+
+Start a local receiver that captures browser network traffic (fetch/XHR) to a JSONL file via the
+netcap browser extension
+
+Options:
+  -p, --port <port>              Port to listen on (default: "8723")
+  -o, --out <dir>                Directory to write the capture file into (default ~/.assist/netcap)
+  -f, --filter <pattern>         Only forward requests whose URL contains this substring
+  -h, --help                     display help for command
+
+Commands:
+  extract-linkedin-posts [file]  Extract LinkedIn posts (text, author, mentions, links, permalink)
+                                 from a netcap capture file to posts.json
+
+=== assist netcap extract-linkedin-posts --help
+Usage: assist netcap extract-linkedin-posts [options] [file]
+
+Extract LinkedIn posts (text, author, mentions, links, permalink) from a netcap capture file to
+posts.json
+
+Options:
+  -h, --help  display help for command
+
+=== assist extension --help
+Usage: assist extension [options]
+
+Print the directory to load the assist browser extension from (load unpacked)
+
+Options:
+  --sign      Sign the extension on AMO's unlisted channel and print the .xpi to install permanently
+              in Firefox (needs WEB_EXT_API_KEY and WEB_EXT_API_SECRET)
+  --url       Print the download URL of the latest signed Firefox build, read from the update
+              manifest on main
+  -h, --help  display help for command
+
+=== assist browser --help
+Usage: assist browser [options] [command]
+
+Probe the live browser tab through the assist extension, relayed by the assist web server
+
+Options:
+  -h, --help                    display help for command
+
+Commands:
+  status [options]              Print the connected extension's version, the target tab's URL and
+                                whether the assist content script runs there
+  snapshot [options]            Write the target tab's DOM to
+                                ~/.assist/browser/<host>-<timestamp>.html and print its path
+  inspect [options] [selector]  Print the ancestor chain (tag#id.class), text and size of each
+                                element matching a CSS selector or --text, capped
+  run [options]                 Show a script in an approval panel on the target tab and, once the
+                                user clicks Run, print its return value or error. The script is the
+                                body of an async function: `return` the value to print
+  console [options]             Print the target tab's recorded console warnings and errors,
+                                uncaught errors and unhandled rejections, oldest first. Recording is
+                                opt-in on the extension's options page
+  help [command]                display help for command
+
+=== assist browser status --help
+Usage: assist browser status [options]
+
+Print the connected extension's version, the target tab's URL and whether the assist content script
+runs there
+
+Options:
+  --url <substring>  Target the most recently active tab whose URL contains this, instead of the
+                     focused window's active tab
+  --server <url>     assist web server the extension connects to (default: "http://localhost:3100")
+  -h, --help         display help for command
+
+=== assist browser snapshot --help
+Usage: assist browser snapshot [options]
+
+Write the target tab's DOM to ~/.assist/browser/<host>-<timestamp>.html and print its path
+
+Options:
+  --url <substring>  Target the most recently active tab whose URL contains this, instead of the
+                     focused window's active tab
+  --server <url>     assist web server the extension connects to (default: "http://localhost:3100")
+  -h, --help         display help for command
+
+=== assist browser inspect --help
+Usage: assist browser inspect [options] [selector]
+
+Print the ancestor chain (tag#id.class), text and size of each element matching a CSS selector or
+--text, capped
+
+Options:
+  --text <text>      Match elements whose own text contains this, instead of a selector
+  --url <substring>  Target the most recently active tab whose URL contains this, instead of the
+                     focused window's active tab
+  --server <url>     assist web server the extension connects to (default: "http://localhost:3100")
+  -h, --help         display help for command
+
+=== assist browser run --help
+Usage: assist browser run [options]
+
+Show a script in an approval panel on the target tab and, once the user clicks Run, print its return
+value or error. The script is the body of an async function: `return` the value to print
+
+Options:
+  --file <script>    JavaScript file to run
+  --url <substring>  Target the most recently active tab whose URL contains this, instead of the
+                     focused window's active tab
+  --server <url>     assist web server the extension connects to (default: "http://localhost:3100")
+  -h, --help         display help for command
+
+=== assist browser console --help
+Usage: assist browser console [options]
+
+Print the target tab's recorded console warnings and errors, uncaught errors and unhandled
+rejections, oldest first. Recording is opt-in on the extension's options page
+
+Options:
+  --all               Print entries from every tab, not just the target tab
+  --since <duration>  Only entries newer than this (e.g. 30s, 10m, 2h)
+  --grep <text>       Only entries whose message, stack or URL contains this (case-insensitive)
+  --limit <n>         Print at most the newest n matching entries (default: 200)
+  --url <substring>   Target the most recently active tab whose URL contains this, instead of the
+                      focused window's active tab
+  --server <url>      assist web server the extension connects to (default: "http://localhost:3100")
+  -h, --help          display help for command
+
+=== assist litellm --help
+Usage: assist litellm [options] [command]
+
+LiteLLM proxy utilities
+
+Options:
+  -h, --help             display help for command
+
+Commands:
+  list-models [options]  List the models the configured LiteLLM proxy serves
+  help [command]         display help for command
+
+=== assist litellm list-models --help
+Usage: assist litellm list-models [options]
+
+List the models the configured LiteLLM proxy serves
+
+Options:
+  --json      Output the raw /v1/models response body
+  -h, --help  display help for command
+
+Config:
+  assist config set litellm.baseUrl https://... # LiteLLM proxy base URL
+  assist config set litellm.apiKey sk-...       # LiteLLM proxy API key
+
+=== assist ravendb --help
+Usage: assist ravendb [options] [command]
+
+RavenDB query utilities
+
+Options:
+  -h, --help                                 display help for command
+
+Commands:
+  auth                                       Configure a named RavenDB connection
+  set-connection <name>                      Set the default connection
+  query [options] [connection] [collection]  Query a RavenDB collection
+  collections [connection]                   List collections in a RavenDB database
+  help [command]                             display help for command
+
+Config:
+  assist ravendb auth add              # named RavenDB connections (add/list/remove via ravendb auth)
+  assist ravendb set-connection <name> # connection used when none is passed
+
+=== assist ravendb auth --help
+Usage: assist ravendb auth [options] [command]
+
+Configure a named RavenDB connection
+
+Options:
+  -h, --help      display help for command
+
+Commands:
+  add             Add a new connection
+  list            List configured connections
+  remove <name>   Remove a configured connection
+  help [command]  display help for command
+
+=== assist ravendb auth add --help
+Usage: assist ravendb auth add [options]
+
+Add a new connection
+
+Options:
+  -h, --help  display help for command
+
+=== assist ravendb auth list --help
+Usage: assist ravendb auth list [options]
+
+List configured connections
+
+Options:
+  -h, --help  display help for command
+
+=== assist ravendb auth remove --help
+Usage: assist ravendb auth remove [options] <name>
+
+Remove a configured connection
+
+Options:
+  -h, --help  display help for command
+
+=== assist ravendb set-connection --help
+Usage: assist ravendb set-connection [options] <name>
+
+Set the default connection
+
+Options:
+  -h, --help  display help for command
+
+=== assist ravendb query --help
+Usage: assist ravendb query [options] [connection] [collection]
+
+Query a RavenDB collection
+
+Options:
+  --page-size <n>   Documents per page (default: "25")
+  --sort <field>    Sort field (prefix - for descending) (default: "-@metadata.Last-Modified")
+  --query <lucene>  Lucene filter query
+  --limit <n>       Max total documents to fetch
+  -h, --help        display help for command
+
+=== assist ravendb collections --help
+Usage: assist ravendb collections [options] [connection]
+
+List collections in a RavenDB database
+
+Options:
+  -h, --help  display help for command
+
+=== assist seq --help
+Usage: assist seq [options] [command]
+
+Seq log query utilities
+
+Options:
+  -h, --help                display help for command
+
+Commands:
+  auth                      Configure a Seq connection
+  set-connection <name>     Set the default Seq connection
+  query [options] <filter>  Query Seq events with a filter expression
+  help [command]            display help for command
+
+Config:
+  assist seq auth add              # named Seq connections (add/list/remove via seq auth)
+  assist seq set-connection <name> # connection used when none is passed
+
+=== assist seq auth --help
+Usage: assist seq auth [options] [command]
+
+Configure a Seq connection
+
+Options:
+  -h, --help      display help for command
+
+Commands:
+  add             Add a new connection
+  list            List configured connections
+  remove <name>   Remove a configured connection
+  help [command]  display help for command
+
+=== assist seq auth add --help
+Usage: assist seq auth add [options]
+
+Add a new connection
+
+Options:
+  -h, --help  display help for command
+
+=== assist seq auth list --help
+Usage: assist seq auth list [options]
+
+List configured connections
+
+Options:
+  -h, --help  display help for command
+
+=== assist seq auth remove --help
+Usage: assist seq auth remove [options] <name>
+
+Remove a configured connection
+
+Options:
+  -h, --help  display help for command
+
+=== assist seq set-connection --help
+Usage: assist seq set-connection [options] <name>
+
+Set the default Seq connection
+
+Options:
+  -h, --help  display help for command
+
+=== assist seq query --help
+Usage: assist seq query [options] <filter>
+
+Query Seq events with a filter expression
+
+Options:
+  -c, --connection <name>  Connection to use
+  -n, --count <n>          Number of events to fetch (default: "50")
+  --from <date>            Start of query window (UTC date or relative e.g. 5m, 1h, 2d)
+  --to <date>              End of query window (UTC date or relative e.g. 5m, 1h, 2d)
+  --json                   Output raw JSON
+  -h, --help               display help for command
+
+=== assist show --help
+Usage: assist show [options]
+
+Open markdown in the session's web preview pane so long links, paths and snippets can be clicked and
+copied unbroken; prints it outside a web session
+
+Options:
+  --title <title>      Pane title
+  --body <markdown|->  Markdown to show, or - for stdin
+  -h, --help           display help for command
+
+=== assist ask --help
+Usage: assist ask [options]
+
+Open markdown in the session's web preview pane for the user to approve or reject, with inline
+comments, and wait for the decision; prints it outside a web session
+
+Options:
+  --title <title>      Pane title
+  --body <markdown|->  Markdown to review, or - for stdin
+  -h, --help           display help for command
+
+=== assist ask-question --help
+Usage: assist ask-question [options]
+
+Ask the AskUserQuestion questions in the session's web preview pane and wait for the answers; prints
+the same result text as the built-in tool
+
+Options:
+  --json <file|->  AskUserQuestion input JSON ({questions: [...]}), or - for stdin
+  -h, --help       display help for command
+
+Config:
+  assist config set sessions.askQuestion false --node          # assist ask-question answers AskUserQuestion questions from the session's web preview pane; when on, assist cli-hook denies AskUserQuestion in assist sessions and an advice fragment points Claude at assist ask-question; when off it exits non-zero so Claude uses the built-in tool (default on)
+  assist config set sessions.askQuestionAutoSubmit true --node # when on, the question pane submits a form of single-select questions as soon as the completing option is picked, without pressing Answer; toggled from the pane's Auto submit switch (default off)
+
+=== assist ask-check --help
+Usage: assist ask-check [options]
+
+Ask the user to perform a manual check in the session's web preview pane and wait for Works /
+Doesn't work plus an optional note
+
+Options:
+  --json <file|->  Check JSON ({title, steps, before?, changed?}): title ≤60 chars, 1-4 steps ≤90
+                   chars each, ≤4 before chips, changed ≤160 chars; or - for stdin
+  --check <n>      1-based index of the current backlog phase's manual check this covers; lets the
+                   user move it to a later phase
+  -h, --help       display help for command
+
+Config:
+  assist config set sessions.askQuestion false --node          # assist ask-question answers AskUserQuestion questions from the session's web preview pane; when on, assist cli-hook denies AskUserQuestion in assist sessions and an advice fragment points Claude at assist ask-question; when off it exits non-zero so Claude uses the built-in tool (default on)
+  assist config set sessions.askQuestionAutoSubmit true --node # when on, the question pane submits a form of single-select questions as soon as the completing option is picked, without pressing Answer; toggled from the pane's Auto submit switch (default off)
+
+=== assist ask-design --help
+Usage: assist ask-design [options]
+
+Open a claude.ai design artifact in the session's web preview pane for the user to approve or
+reject, with inline comments, and wait for the decision; prints the link outside a web session, and
+exits with the reasons when design review is unavailable on the running harness (it needs artifact
+publishing)
+
+Options:
+  --url <artifact-url>  claude.ai artifact link of the design
+  --title <title>       Pane title
+  --body <markdown|->   Markdown summary, or - for stdin
+  -h, --help            display help for command
+
+=== assist slack --help
+Usage: assist slack [options] [command]
+
+Slack utilities
+
+Options:
+  -h, --help                display help for command
+
+Commands:
+  post [options] [channel]  Preview a markdown message, or a thread of them with --parts, bound for
+                            a Slack channel (body of - reads it from stdin)
+  help [command]            display help for command
+
+=== assist slack post --help
+Usage: assist slack post [options] [channel]
+
+Preview a markdown message, or a thread of them with --parts, bound for a Slack channel (body of -
+reads it from stdin)
+
+Options:
+  --body <body>               Message body (- reads it from stdin)
+  --parts <files...>          Files holding the messages of one thread, in thread order (not with
+                              --body)
+  --thread <ts-or-permalink>  Reply in this thread: a message ts (1712345678.123456) or a Slack
+                              archives permalink
+  -h, --help                  display help for command
+
+The command does not post: Slack is reachable only over MCP, so it previews the message and hands the approved body back for /slack-post to send.
+In an assist web session the body is previewed for approve/reject first (with inline comments). On approval the body is written to a working file under ~/.assist/slack/ and its path printed on the last line, preceded by the resolved thread_ts when --thread was given. On rejection nothing is handed back: the command exits non-zero with the reason and any inline comments, leaving the previewed markdown in the working file to revise in place.
+--parts takes the files holding one thread's messages in thread order, each getting its own working file (channel-1.md, channel-2.md, …) and its own preview pane titled with its position in the batch (2/3). The panes pop in sequence and no path is printed until every part is approved, at which point each path prints prefixed with its position (1/3) under a line naming the target, followed by how to thread them: without --thread part 1 opens the thread and the rest carry the thread_ts it returns, with --thread every part is a reply under the resolved thread_ts. The first rejection halts the batch and exits non-zero naming that part's position, reason, inline comments and working file, with no path handed back. A missing or empty part file, or --parts with --body, is an error before any pane opens.
+Outside a web session there is no preview and the body passes straight through.
+slack_send_message accepts standard markdown as it is — bold, italic, code, blockquotes, lists, links, code blocks, tables and headers — capped at 5000 characters.
+
+Config:
+  assist config set slack.channel "#general" # channel 'assist slack post' targets when no [channel] argument is given
+
+=== assist sql --help
+Usage: assist sql [options] [command]
+
+MSSQL query utilities
+
+Options:
+  -h, --help                    display help for command
+
+Commands:
+  auth                          Configure a SQL connection
+  set-connection <name>         Set the default SQL connection
+  query <sql> [connection]      Execute a read-only SQL query (rejects mutating statements)
+  mutate <sql> [connection]     Execute a mutating SQL statement (rejects non-mutating statements)
+  tables [connection]           List tables in the connected database
+  columns <table> [connection]  List columns for a table (use schema.table for non-default schema)
+  help [command]                display help for command
+
+Config:
+  assist sql auth add              # named MSSQL connections (add/list/remove via sql auth)
+  assist sql set-connection <name> # connection used when none is passed
+
+=== assist sql auth --help
+Usage: assist sql auth [options] [command]
+
+Configure a SQL connection
+
+Options:
+  -h, --help      display help for command
+
+Commands:
+  add             Add a new connection
+  list            List configured connections
+  remove <name>   Remove a configured connection
+  help [command]  display help for command
+
+=== assist sql auth add --help
+Usage: assist sql auth add [options]
+
+Add a new connection
+
+Options:
+  -h, --help  display help for command
+
+=== assist sql auth list --help
+Usage: assist sql auth list [options]
+
+List configured connections
+
+Options:
+  -h, --help  display help for command
+
+=== assist sql auth remove --help
+Usage: assist sql auth remove [options] <name>
+
+Remove a configured connection
+
+Options:
+  -h, --help  display help for command
+
+=== assist sql set-connection --help
+Usage: assist sql set-connection [options] <name>
+
+Set the default SQL connection
+
+Options:
+  -h, --help  display help for command
+
+=== assist sql query --help
+Usage: assist sql query [options] <sql> [connection]
+
+Execute a read-only SQL query (rejects mutating statements)
+
+Options:
+  -h, --help  display help for command
+
+=== assist sql mutate --help
+Usage: assist sql mutate [options] <sql> [connection]
+
+Execute a mutating SQL statement (rejects non-mutating statements)
+
+Options:
+  -h, --help  display help for command
+
+=== assist sql tables --help
+Usage: assist sql tables [options] [connection]
+
+List tables in the connected database
+
+Options:
+  -h, --help  display help for command
+
+=== assist sql columns --help
+Usage: assist sql columns [options] <table> [connection]
+
+List columns for a table (use schema.table for non-default schema)
+
+Options:
+  -h, --help  display help for command
+
+=== assist testflight --help
+Usage: assist testflight [options] [command]
+
+Manage TestFlight testers via the App Store Connect API
+
+Options:
+  -h, --help             display help for command
+
+Commands:
+  add [options] <email>  Add a tester to the external beta group, or with --internal invite them to
+                         the team and add them to the internal group
+  help [command]         display help for command
+
+=== assist testflight add --help
+Usage: assist testflight add [options] <email>
+
+Add a tester to the external beta group, or with --internal invite them to the team and add them to
+the internal group
+
+Options:
+  --internal  Invite to the App Store Connect team; re-run after they accept to add them to the
+              internal group
+  -h, --help  display help for command
+
+Config:
+  assist config set testflight.keyId N5YK6FM442                   # App Store Connect API key id
+  assist config set testflight.issuerId <uuid>                    # App Store Connect API issuer id
+  assist config set testflight.keyRef op://<vault>/<item>/<field> # 1Password reference to the API key .p8 (read via op from whichever signed-in account holds it, never stored)
+  assist config set testflight.bundleId com.staff0rd.assist       # bundle id of the app whose testers are managed
+  assist config set testflight.externalGroup <group name>         # external beta group that new testers are added to
+  assist config set testflight.internalGroup <group name>         # internal beta group for App Store Connect team members
+
+=== assist transcript --help
+Usage: assist transcript [options] [command]
+
+Meeting transcript utilities
+
+Options:
+  -h, --help                 display help for command
+
+Commands:
+  configure                  Configure transcript directories
+  list                       List raw .vtt filenames waiting in the pick-up directory
+  clean [options] <path>     Clean any .vtt file and write the result to stdout
+  merge [options] <path...>  Collapse several .vtt files into one transcript with NOTE provenance
+  move [options] <file>      Convert a raw .vtt to a dated markdown transcript and archive the
+                             original
+  help [command]             display help for command
+
+Collapsing several conversations into one transcript — read, select, merge:
+
+  1. Read   assist transcript clean ./a.vtt --format md --timestamps
+            Each speaker turn is prefixed [hh:mm:ss], so the passages worth keeping
+            can be cited as ranges. Repeat per source.
+
+  2. Select Write the ranges to keep, and a reason per dropped passage:
+              { "keep": [{ "file": "a.vtt", "from": "00:14:22", "to": "00:19:40" }],
+                "removed": ["private", "off-topic"] }
+            from/to are matched against the source times printed in step 1.
+
+  3. Merge  assist transcript merge ./a.vtt ./b.vtt --select ./selection.json --out ./merged.vtt
+            Cue times are rebased onto one continuous timeline; the sources, the
+            removal count and each passage's original start survive as NOTE blocks.
+            Add --no-provenance when the merged file leaves for somewhere the source
+            names and cut points should not follow.
+            Add --widen-audience when the transcript is going to readers who were
+            not in the call: the casual asides pitched at the people who were —
+            intensifiers, emphasis after a wh-word, standalone interjections and
+            cues that are nothing but one — are deleted. Anything carrying meaning
+            is left for you to judge.
+
+Config:
+  assist transcript configure # pick-up directory scanned for raw .vtt files
+  assist transcript configure # directory dated markdown transcripts are written to
+  assist transcript configure # directory generated transcript summaries are written to
+
+=== assist transcript configure --help
+Usage: assist transcript configure [options]
+
+Configure transcript directories
+
+Options:
+  -h, --help  display help for command
+
+=== assist transcript list --help
+Usage: assist transcript list [options]
+
+List raw .vtt filenames waiting in the pick-up directory
+
+Options:
+  -h, --help  display help for command
+
+=== assist transcript clean --help
+Usage: assist transcript clean [options] <path>
+
+Clean any .vtt file and write the result to stdout
+
+Options:
+  --format <md|vtt>  output format (default: "md")
+  --timestamps       prefix each speaker turn with its start time (--format md only)
+  -h, --help         display help for command
+
+=== assist transcript merge --help
+Usage: assist transcript merge [options] <path...>
+
+Collapse several .vtt files into one transcript with NOTE provenance
+
+Options:
+  --out <path>       write the merged transcript to this path
+  --select <file|->  keep/removed JSON naming the passages to keep (- for stdin)
+  --no-provenance    omit every NOTE: the Collapsed-from header, the per-passage source marks and
+                     the removed count
+  --widen-audience   delete the casual asides that fit the people in the call but not a reader who
+                     was not there: intensifiers, emphasis after a wh-word, standalone interjections
+                     and cues that are nothing but one
+  -h, --help         display help for command
+
+=== assist transcript move --help
+Usage: assist transcript move [options] <file>
+
+Convert a raw .vtt to a dated markdown transcript and archive the original
+
+Options:
+  --date <YYYY-MM-DD>  meeting date
+  --client <name>      client name
+  -h, --help           display help for command
+
+=== assist watch --help
+Usage: assist watch [options] [command]
+
+Wait on upstream movement for the current branch
+
+Options:
+  -h, --help           display help for command
+
+Commands:
+  wait [options]       Block until the current branch's upstream gains commits, then exit 0 (2 on
+                       timeout, 3 when --pull hits genuine divergence, 4 when --build or the
+                       post-build sync fails, 5 when git fetch fails, 1 when waiting is impossible,
+                       130 on interrupt)
+  loop                 Run assist watch wait --pull --build as a fresh child per lap, relaunching
+                       after exit 0, 2 or 4 or a signal kill, and exit with the child's code on 1, 3
+                       or 130
+  simulate-divergence  Make the next assist watch wait poll in this repo exit 3 as if the branch had
+                       diverged, to test the watcher's divergence escalation
+  report [options]     Print the built version, the last 10 commits as a markdown table, the
+                       restarts the new commits make necessary, and whether ~/.claude needs a sync
+  help [command]       display help for command
+
+=== assist watch wait --help
+Usage: assist watch wait [options]
+
+Block until the current branch's upstream gains commits, then exit 0 (2 on timeout, 3 when --pull
+hits genuine divergence, 4 when --build or the post-build sync fails, 5 when git fetch fails, 1 when
+waiting is impossible, 130 on interrupt)
+
+Options:
+  --interval <duration>  How often to fetch after the fetch at startup (e.g. 30s, 2m) (default:
+                         "30s")
+  --timeout <duration>   Give up and exit 2 after this long (e.g. 60m, 2h), or none to wait
+                         indefinitely (default: "none")
+  --pull                 On movement, fast-forward with git pull --ff-only, recovering a dirty tree
+                         or a merely-behind branch; exit 3 with git's reason on genuine divergence
+  --build [entry]        After a successful pull, run this run entry (default auto-build), then run
+                         assist sync --yes when the pulled commits touched the files sync installs;
+                         exit 4 with the output of whichever fails
+  -h, --help             display help for command
+
+=== assist watch loop --help
+Usage: assist watch loop [options]
+
+Run assist watch wait --pull --build as a fresh child per lap, relaunching after exit 0, 2 or 4 or a
+signal kill, and exit with the child's code on 1, 3 or 130
+
+Options:
+  -h, --help  display help for command
+
+=== assist watch simulate-divergence --help
+Usage: assist watch simulate-divergence [options]
+
+Make the next assist watch wait poll in this repo exit 3 as if the branch had diverged, to test the
+watcher's divergence escalation
+
+Options:
+  -h, --help  display help for command
+
+=== assist watch report --help
+Usage: assist watch report [options]
+
+Print the built version, the last 10 commits as a markdown table, the restarts the new commits make
+necessary, and whether ~/.claude needs a sync
+
+Options:
+  --from <sha>  Mark commits reachable from HEAD but not <sha> as new, and derive the restart and
+                sync advice from the files they changed
+  -h, --help    display help for command
+
+=== assist sessions --help
+Usage: assist sessions [options] [command]
+
+Web dashboard for coding agent sessions
+
+Options:
+  --no-open                      Do not open a browser on startup
+  -h, --help                     display help for command
+
+Commands:
+  web [options]                  Start the sessions web dashboard
+  close                          Dismiss the current daemon-managed session, ending it and reaping
+                                 its worktree
+  rename <title>                 Retitle the current daemon-managed session, overriding the
+                                 generated title for the rest of its life
+  output [options] [session-id]  Print a snapshot of a session's output with ANSI codes stripped
+  set-status [options] <status>  Report the current session's status to the sessions daemon (used by
+                                 Claude Code and Codex hooks)
+  nodes [options]                List this node and every linked node with its link state
+
+Config:
+  assist config set sessions.nodeName <name> --node                       # this install's node label, shown in the web UI hamburger menu and reported by /api/health (default: OS hostname, with -wsl under WSL)
+  assist config set sessions.includeCommittedChanges false --node         # default on: session card counts, /diff and the diff scope picker span the commits recorded against the session's backlog item as well as uncommitted work, so they survive the agent committing. Set false to show only uncommitted changes
+  assist config set sessions.maxLive 24 --node                            # ceiling on concurrent live sessions one daemon holds; spawning past it is refused, and restore respawns at most this many persisted sessions (default: 24)
+  assist config set sessions.cleanLeftovers false --node                  # default on: reaping a worktree removes Docker containers bind-mounting inside it, and each daemon restart deletes reaped worktree paths that reappeared with no .git (through Docker when root-owned; deferred to the next restart and listed in `assist sessions nodes doctor` while Docker is unreachable). Set false to skip both
+  assist config set sessions.newSessionMode bug --node                    # default mode pre-selected in the Ctrl+N new session dialog: draft | bug | prompt | design (default: draft)
+  assist config set worktree.enabled true --repo                          # opt in per repo: every session spills into a fresh adjacent <clone>-N worktree and the clone itself is never allocated; only inPlace launches (e.g. PR Review) and agents joining a stream stay in their tree (default off)
+  assist config set worktree.trunk true --repo                            # trunk-based: a worktree's branch tracks origin/<the clone's branch> so commits land on the mainline (default off: a worktree starts off the remote default with no mainline tracking, so the session raises its own branch and PR)
+  assist config set worktree.root ~/git --repo                            # optional; parent dir for <clone>-N worktrees (default: the clone's parent)
+  assist config set worktree.install true --repo                          # per-worktree dep install: true auto-detects the package manager (npm ci when a package-lock.json exists), or give an explicit command; false to skip; or a JSON list of paths (e.g. '[".","packages/ui"]') to auto-detect and install in each, in order, stopping at the first failure
+  assist config set worktree.commitBeforePhaseEnd true --repo             # phase prompts run /commit once verify passes — before asking the user to perform manual checks, or before phase-done when the phase has none — so work is not left uncommitted in a reapable worktree (default off)
+  assist config set worktree.copy .env,.claude/settings.local.json --repo # gitignored files copied into a new worktree so it can build/run
+  assist config set harness.defaults.draft.harness <claude|codex|pi>      # harness for draft sessions (assist draft, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.draft.model <model>                  # model for draft sessions (assist draft, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.bug.harness <claude|codex|pi>        # harness for bug sessions (assist bug, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.bug.model <model>                    # model for bug sessions (assist bug, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.prompt.harness <claude|codex|pi>     # harness for prompt sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.prompt.model <model>                 # model for prompt sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.design.harness <claude|codex|pi>     # harness for design sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.design.model <model>                 # model for design sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.run.harness <claude|codex|pi>        # harness for backlog runs (assist backlog run, web Start buttons) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.run.model <model>                    # model for backlog runs (assist backlog run, web Start buttons) on the type's harness; unset uses the harness's own default
+
+=== assist sessions web --help
+Usage: assist sessions web [options]
+
+Start the sessions web dashboard
+
+Options:
+  -p, --port <number>  Port to listen on (default: "3100")
+  --no-open            Do not open a browser on startup
+  -h, --help           display help for command
+
+Config:
+  assist config set next.peers alice,bob --repo                              # GitHub logins whose open, non-draft PRs the web /next view lists for review alongside PRs requesting your review; PRs you approved with no newer commits are hidden
+  assist config set next.repos my-org,other/web --repo                       # GitHub repos the web /next view reads peer PRs and issues assigned to you from: owner/name for one repo, or a bare owner (org or user) for all its unarchived repos (default: the selected repo)
+  assist config set next.projects my-org/3,my-org/5 --repo                   # GitHub Projects (owner/number, from each URL) the web /next view suggests unassigned issues to pick up from; needs the gh project scope
+  assist config set next.pickStatuses Ready,Todo --repo                      # Project Status values whose unassigned items the web /next view offers to pick up (default: Ready, Todo)
+  assist config set next.excludeLabels blocked,spike --repo                  # Labels whose project items the web /next view never offers to pick up (case-insensitive)
+  assist config set next.excludeTypes Epic --repo                            # GitHub issue types whose project items the web /next view never offers to pick up (case-insensitive)
+  assist config set sessions.tailscaleServe false --node                     # default on: the web server exposes its port on the tailnet with tailscale serve when it starts, so other nodes can link it by Tailscale name; set false to keep it off the tailnet
+  assist config set extension.redirects.<owner>/<repo> <owner>/<repo> --node # maps a GitHub owner/repo to the owner/repo whose clone under clone.baseDir hosts the browser extension's issue sessions; the prompt keeps the original link, and PR review sends are not redirected
+  assist config set sessions.hotkeys.navTab Ctrl+Alt --node                  # modifier for the top-level tab digits 1–N (modifiers only, e.g. Ctrl+Alt); default Alt
+  assist config set sessions.hotkeys.focusSidebar Alt+A --node               # focus the active sidebar card; default Alt+A
+  assist config set sessions.hotkeys.focusTerminal Ctrl+Alt+J --node         # focus the active terminal; default Alt+S
+  assist config set sessions.hotkeys.toggleDiff Alt+D --node                 # open / close the diff panel, or focus the preview pane's primary action; default Alt+D
+  assist config set sessions.hotkeys.focusRepoPicker Alt+R --node            # focus the toolbar repo picker; default Alt+R
+  assist config set sessions.hotkeys.openUpdates Alt+Q --node                # open the nodes page (version and updates); default Alt+Q
+  assist config set sessions.hotkeys.openConfig Alt+W --node                 # open the config page; default Alt+W
+  assist config set sessions.hotkeys.openMenu Alt+E --node                   # open the hamburger menu; default Alt+E
+  assist config set sessions.hotkeys.focusAddAgent Alt+Z --node              # focus the top bar's add agent button; default Alt+Z
+  assist config set sessions.hotkeys.focusVsCode Alt+X --node                # focus the top bar's VS Code button; default Alt+X
+  assist config set sessions.hotkeys.focusDone Alt+C --node                  # focus the top bar's done button; default Alt+C
+  assist config set sessions.hotkeys.nextWaiting Mod+. --node                # jump to the next waiting session; default Mod+.
+  assist config set sessions.hotkeys.newSession Mod+N --node                 # open the new-session dialog; default Mod+N / Alt+N
+  assist config set sessions.hotkeys.quickOpen Mod+P --node                  # quick open a file; default Mod+P
+  assist config set sessions.hotkeys.save Mod+S --node                       # save the open file; default Mod+S
+  assist config set sessions.hotkeys.shortcutsSheet Mod+/ --node             # show the keyboard shortcuts sheet; default Mod+/
+
+=== assist sessions close --help
+Usage: assist sessions close [options]
+
+Dismiss the current daemon-managed session, ending it and reaping its worktree
+
+Options:
+  -h, --help  display help for command
+
+=== assist sessions rename --help
+Usage: assist sessions rename [options] <title>
+
+Retitle the current daemon-managed session, overriding the generated title for the rest of its life
+
+Options:
+  -h, --help  display help for command
+
+=== assist sessions output --help
+Usage: assist sessions output [options] [session-id]
+
+Print a snapshot of a session's output with ANSI codes stripped
+
+Arguments:
+  session-id           Local session id, or <node>:<id> for a session on a linked node (read over
+                       the node link)
+
+Options:
+  -n, --lines <count>  Number of lines (default: "200")
+  --server [group]     Read the live server run for this repo's remote and group (default: default)
+  -h, --help           display help for command
+
+=== assist sessions set-status --help
+Usage: assist sessions set-status [options] <status>
+
+Report the current session's status to the sessions daemon (used by Claude Code and Codex hooks)
+
+Options:
+  --source <source>  Originating hook (permission, stop, notification, prompt, pretool, posttool)
+  --ack              Retry delivery until the daemon acknowledges it (without it, a single attempt)
+  -h, --help         display help for command
+
+=== assist sessions nodes --help
+Usage: assist sessions nodes [options] [command]
+
+List this node and every linked node with its link state
+
+Options:
+  --json                       Output as JSON
+  -h, --help                   display help for command
+
+Commands:
+  link [options] <name> [url]  Link a peer node by its web server URL or by its Tailscale name with
+                               --tailscale and --port (name must match the peer's sessions.nodeName)
+  unlink <name>                Remove a linked node
+  doctor [options] [name]      Probe each hop of every link (or one) in order and stop at the first
+                               failure with a remediation
+  logs [options] <name>        Tail a linked node's daemon.log through its web server
+  restart [options] <name>     Restart a linked node's daemon and/or web server, wait for its link
+                               to reconnect and print its version
+  update <name>                Run assist update on a linked node, restart it, wait for its link to
+                               reconnect and print its version
+
+Config:
+  assist sessions nodes link <name> --tailscale <host> --port <port> (or a peer <url>) # linked nodes whose sessions merge into this node's web UI, each dialled at its url (a Tailscale https://<host>.<tailnet>.ts.net:<port> url, or any direct url); each name must match the peer's sessions.nodeName
+  assist config set sessions.linkVersionCheck block --node                             # reaction when a linked node's protocol range doesn't overlap this node's (app versions may differ; never restarts a peer): block (default) holds the link version-blocked until the older node is updated, warn proceeds, off skips the check
+
+=== assist sessions nodes link --help
+Usage: assist sessions nodes link [options] <name> [url]
+
+Link a peer node by its web server URL or by its Tailscale name with --tailscale and --port (name
+must match the peer's sessions.nodeName)
+
+Options:
+  --tailscale <host>  Dial the peer at https://<host>.<tailnet>.ts.net:<port> (the peer runs
+                      tailscale serve for its web server port)
+  --port <port>       The peer's web server port (with --tailscale)
+  -h, --help          display help for command
+
+=== assist sessions nodes unlink --help
+Usage: assist sessions nodes unlink [options] <name>
+
+Remove a linked node
+
+Options:
+  -h, --help  display help for command
+
+=== assist sessions nodes doctor --help
+Usage: assist sessions nodes doctor [options] [name]
+
+Probe each hop of every link (or one) in order and stop at the first failure with a remediation
+
+Options:
+  --json      Output as JSON
+  -h, --help  display help for command
+
+=== assist sessions nodes logs --help
+Usage: assist sessions nodes logs [options] <name>
+
+Tail a linked node's daemon.log through its web server
+
+Options:
+  -n, --lines <lines>  Number of lines (default: "200")
+  --json               Output as JSON
+  -h, --help           display help for command
+
+=== assist sessions nodes restart --help
+Usage: assist sessions nodes restart [options] <name>
+
+Restart a linked node's daemon and/or web server, wait for its link to reconnect and print its
+version
+
+Options:
+  --target <target>  daemon, webserver or both (default: "both")
+  -h, --help         display help for command
+
+=== assist sessions nodes update --help
+Usage: assist sessions nodes update [options] <name>
+
+Run assist update on a linked node, restart it, wait for its link to reconnect and print its version
+
+Options:
+  -h, --help  display help for command
+
+=== assist daemon --help
+Usage: assist daemon [options] [command]
+
+Long-lived daemon that owns web session PTYs
+
+Options:
+  -h, --help       display help for command
+
+Commands:
+  run              Run the sessions daemon in the foreground (auto-spawned by assist sessions)
+  status           Show sessions daemon status, live sessions, and any stray daemon processes
+  stop             Stop the sessions daemon; running claude sessions resume on next start
+  restart          Restart the sessions daemon, resuming previously running claude sessions
+  drain [options]  Remove all sessions from the local daemon for a clean slate (does not affect the
+                   Windows daemon); prompts before closing live sessions, and a session holding
+                   unpushed work is stopped, not removed
+  help [command]   display help for command
+
+Config:
+  assist config set autoUpdate.enabled false --node # when this install is a git clone, the daemon pulls and builds it in the background as origin moves (assist watch wait --pull --build), logging each lap to ~/.assist/watchers/; a branch that cannot fast-forward starts a claude session to reconcile it and the loop resumes once it closes. Set false to stop it (default on)
+  assist config set autoUpdate.restart true --node  # the node's web server applies a ready update itself, restarting the daemon and/or web server once every live agent session has been awaiting the user for a minute (or there are none); skipped while the build is pending, the loop is diverged or paused, and attempted once per built version. Toggle it per node from the Updates page (default off)
+  assist config set autoUpdate.idleMinutes 5 --node # with autoUpdate.restart on, hold the auto-restart until the web UI has seen no pointer, keyboard, wheel or touch input for this many minutes (default 2)
+
+=== assist daemon run --help
+Usage: assist daemon run [options]
+
+Run the sessions daemon in the foreground (auto-spawned by assist sessions)
+
+Options:
+  -h, --help  display help for command
+
+=== assist daemon status --help
+Usage: assist daemon status [options]
+
+Show sessions daemon status, live sessions, and any stray daemon processes
+
+Options:
+  -h, --help  display help for command
+
+=== assist daemon stop --help
+Usage: assist daemon stop [options]
+
+Stop the sessions daemon; running claude sessions resume on next start
+
+Options:
+  -h, --help  display help for command
+
+=== assist daemon restart --help
+Usage: assist daemon restart [options]
+
+Restart the sessions daemon, resuming previously running claude sessions
+
+Options:
+  -h, --help  display help for command
+
+=== assist daemon drain --help
+Usage: assist daemon drain [options]
+
+Remove all sessions from the local daemon for a clean slate (does not affect the Windows daemon);
+prompts before closing live sessions, and a session holding unpushed work is stopped, not removed
+
+Options:
+  --yes       Close live sessions without confirming
+  -h, --help  display help for command
+
+=== assist prompts --help
+Usage: assist prompts [options]
+
+Show top denied tool calls by frequency
+
+Options:
+  -h, --help  display help for command
+
+=== assist deny --help
+Usage: assist deny [options] [command]
+
+Manage command deny rules
+
+Options:
+  -h, --help                         display help for command
+
+Commands:
+  add [options] <pattern> <message>  Add a deny rule for a command pattern
+  remove [options] <pattern>         Remove a deny rule by pattern
+  list                               List all deny rules
+
+Config:
+  assist deny add <pattern> <message> # command patterns blocked with a correction message
+
+=== assist deny add --help
+Usage: assist deny add [options] <pattern> <message>
+
+Add a deny rule for a command pattern
+
+Arguments:
+  pattern     Command prefix to deny
+  message     Correction message shown to the agent
+
+Options:
+  --node      Write to user (node): this node's ~/.assist.yml
+  -h, --help  display help for command
+
+=== assist deny remove --help
+Usage: assist deny remove [options] <pattern>
+
+Remove a deny rule by pattern
+
+Arguments:
+  pattern     Command prefix to remove
+
+Options:
+  --node      Remove from user (node): this node's ~/.assist.yml
+  -h, --help  display help for command
+
+=== assist deny list --help
+Usage: assist deny list [options]
+
+List all deny rules
+
+Options:
+  -h, --help  display help for command
+
+=== assist next --help
+Usage: assist next [options] [id]
+
+Alias for backlog next
+
+Arguments:
+  id          Backlog item ID to run first
+
+Options:
+  --once      Exit after the first completed item run
+  -h, --help  display help for command
+
+=== assist draft --help
+Usage: assist draft|feat [options] [description]
+
+Launch a coding harness in /draft mode, chain into next on /next signal
+
+Arguments:
+  description            Text to forward to the /draft slash command
+
+Options:
+  --once                 Exit when the initial task completes
+  --resume-session <id>  Resume an interrupted harness session by its conversation id (used by the
+                         sessions daemon on restart)
+  --harness <kind>       Coding harness to launch (claude|codex|pi); defaults to the configured
+                         harness.defaults.<command>.harness, then harness.engine. Exits with the
+                         reasons, without launching, when Draft is unavailable on it
+  --model <model>        Model to launch the harness with; defaults to harness.defaults.draft.model
+                         while the draft type's harness is used
+  --no-model             Launch with the harness's own default model
+  -h, --help             display help for command
+
+Config:
+  assist config set harness.engine <claude|claude-sdk|codex|pi>       # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key)
+  assist config set harness.exposeCodexActions <true|false>           # force the web UI 'with Codex' actions off even when codex is on PATH
+  assist config set harness.exposePiActions <true|false>              # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.codexModel <model>                        # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
+  assist config set harness.defaults.draft.harness <claude|codex|pi>  # harness for draft sessions (assist draft, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.draft.model <model>              # model for draft sessions (assist draft, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.bug.harness <claude|codex|pi>    # harness for bug sessions (assist bug, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.bug.model <model>                # model for bug sessions (assist bug, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.prompt.harness <claude|codex|pi> # harness for prompt sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.prompt.model <model>             # model for prompt sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.design.harness <claude|codex|pi> # harness for design sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.design.model <model>             # model for design sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.run.harness <claude|codex|pi>    # harness for backlog runs (assist backlog run, web Start buttons) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.run.model <model>                # model for backlog runs (assist backlog run, web Start buttons) on the type's harness; unset uses the harness's own default
+
+=== assist bug --help
+Usage: assist bug [options] [description]
+
+Launch a coding harness in /bug mode, chain into next on /next signal
+
+Arguments:
+  description            Text to forward to the /bug slash command
+
+Options:
+  --once                 Exit when the initial task completes
+  --resume-session <id>  Resume an interrupted harness session by its conversation id (used by the
+                         sessions daemon on restart)
+  --harness <kind>       Coding harness to launch (claude|codex|pi); defaults to the configured
+                         harness.defaults.<command>.harness, then harness.engine. Exits with the
+                         reasons, without launching, when Bug filing is unavailable on it
+  --model <model>        Model to launch the harness with; defaults to harness.defaults.bug.model
+                         while the bug type's harness is used
+  --no-model             Launch with the harness's own default model
+  -h, --help             display help for command
+
+Config:
+  assist config set harness.engine <claude|claude-sdk|codex|pi>       # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key)
+  assist config set harness.exposeCodexActions <true|false>           # force the web UI 'with Codex' actions off even when codex is on PATH
+  assist config set harness.exposePiActions <true|false>              # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.codexModel <model>                        # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
+  assist config set harness.defaults.draft.harness <claude|codex|pi>  # harness for draft sessions (assist draft, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.draft.model <model>              # model for draft sessions (assist draft, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.bug.harness <claude|codex|pi>    # harness for bug sessions (assist bug, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.bug.model <model>                # model for bug sessions (assist bug, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.prompt.harness <claude|codex|pi> # harness for prompt sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.prompt.model <model>             # model for prompt sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.design.harness <claude|codex|pi> # harness for design sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.design.model <model>             # model for design sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.run.harness <claude|codex|pi>    # harness for backlog runs (assist backlog run, web Start buttons) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.run.model <model>                # model for backlog runs (assist backlog run, web Start buttons) on the type's harness; unset uses the harness's own default
+
+=== assist review-pr-comments --help
+Usage: assist review-pr-comments [options] [number]
+
+Launch a coding harness in /review-pr-comments mode (single session)
+
+Arguments:
+  number                 PR number to check out first
+
+Options:
+  --announce             After every comment thread is processed, announce the PR in Slack via
+                         /prs-slack <number> --no-confirm (requires a PR number)
+  --auto                 Accept the harness's own recommendation for each thread without asking,
+                         falling back to asking only for threads it cannot confidently decide
+  --resume-session <id>  Resume an interrupted harness session by its conversation id (used by the
+                         sessions daemon on restart)
+  --harness <kind>       Coding harness to launch (claude|codex|pi); defaults to the configured
+                         harness.engine. Exits with the reasons, before checking the PR out, when
+                         Address comments is unavailable on it
+  -h, --help             display help for command
+
+Config:
+  assist config set harness.engine <claude|claude-sdk|codex|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key)
+  assist config set harness.exposeCodexActions <true|false>     # force the web UI 'with Codex' actions off even when codex is on PATH
+  assist config set harness.exposePiActions <true|false>        # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.codexModel <model>                  # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
+
+=== assist fix-conflict --help
+Usage: assist fix-conflict [options] [number]
+
+Launch a coding harness in /fix-conflict mode (single session)
+
+Arguments:
+  number                 PR number to check out first
+
+Options:
+  --rebase               Rebase onto the remote default instead of merging
+  --resume-session <id>  Resume an interrupted harness session by its conversation id (used by the
+                         sessions daemon on restart)
+  --harness <kind>       Coding harness to launch (claude|codex|pi); defaults to the configured
+                         harness.engine. Exits with the reasons, before checking the PR out, when
+                         Fix conflicts is unavailable on it
+  -h, --help             display help for command
+
+Config:
+  assist config set harness.engine <claude|claude-sdk|codex|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key)
+  assist config set harness.exposeCodexActions <true|false>     # force the web UI 'with Codex' actions off even when codex is on PATH
+  assist config set harness.exposePiActions <true|false>        # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.codexModel <model>                  # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
+
+=== assist refine --help
+Usage: assist refine [options] [id]
+
+Launch a coding harness in /refine mode to refine a backlog item
+
+Arguments:
+  id                     Backlog item ID
+
+Options:
+  --once                 Exit when the initial task completes
+  --resume-session <id>  Resume an interrupted harness session by its conversation id (used by the
+                         sessions daemon on restart)
+  --harness <kind>       Coding harness to launch (claude|codex|pi); defaults to the configured
+                         harness.engine. Exits with the reasons, without launching, when Refine is
+                         unavailable on it
+  -h, --help             display help for command
+
+Config:
+  assist config set harness.engine <claude|claude-sdk|codex|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key)
+  assist config set harness.exposeCodexActions <true|false>     # force the web UI 'with Codex' actions off even when codex is on PATH
+  assist config set harness.exposePiActions <true|false>        # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.codexModel <model>                  # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
+
+=== assist signal --help
+Usage: assist signal [options] [command]
+
+Write an assist signal file
+
+Options:
+  -h, --help      display help for command
+
+Commands:
+  next [id]       Write a next signal to chain into assist next
+  done [ids...]   Write a done signal to end a --once launch session, once every item it set out to
+                  create exists
+  help [command]  display help for command
+
+=== assist signal next --help
+Usage: assist signal next [options] [id]
+
+Write a next signal to chain into assist next
+
+Arguments:
+  id          Backlog item ID to run directly
+
+Options:
+  -h, --help  display help for command
+
+=== assist signal done --help
+Usage: assist signal done [options] [ids...]
+
+Write a done signal to end a --once launch session, once every item it set out to create exists
+
+Arguments:
+  ids         Backlog item IDs created by the session
+
+Options:
+  -h, --help  display help for command

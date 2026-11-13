@@ -1,11 +1,8 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { checkBuildLocksCommand } from "./dotnet/checkBuildLocks";
-import { deps } from "./dotnet/deps";
 import { dotnetConfigHelp } from "./dotnet/dotnetConfigHelp";
-import { scopeHelpText } from "./dotnet/getChangedCsFiles";
-import { inSln } from "./dotnet/inSln";
-import { inspect } from "./dotnet/inspect";
+import { scopeHelpText } from "./dotnet/scopeHelpText";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerDotnet(program: Command): void {
 	const cmd = program.command("dotnet").description(".NET project utilities");
@@ -25,25 +22,30 @@ export function registerDotnet(program: Command): void {
 		.option("--suppress <ids...>", "Suppress specific issue type IDs")
 		.option("--swea", "Enable solution-wide error analysis")
 		.option("--roslyn", "Use Roslyn analyzers via msbuild instead of JetBrains")
-		.action(inspect);
+		.action(lazyAction(() => import("./dotnet/inspect"), "inspect"));
 
 	cmd
 		.command("check-locks")
 		.description("Check if build output files are locked by a debugger")
-		.action(checkBuildLocksCommand);
+		.action(
+			lazyAction(
+				() => import("./dotnet/checkBuildLocks"),
+				"checkBuildLocksCommand",
+			),
+		);
 
 	cmd
 		.command("deps")
 		.description("Show .csproj project dependency tree and solution membership")
 		.argument("<csproj>", "Path to a .csproj file")
 		.option("--json", "Output as JSON")
-		.action(deps);
+		.action(lazyAction(() => import("./dotnet/deps"), "deps"));
 
 	cmd
 		.command("in-sln")
 		.description("Check whether a .csproj is referenced by any .sln file")
 		.argument("<csproj>", "Path to a .csproj file")
-		.action(inSln);
+		.action(lazyAction(() => import("./dotnet/inSln"), "inSln"));
 
 	configHelp(cmd, dotnetConfigHelp);
 }

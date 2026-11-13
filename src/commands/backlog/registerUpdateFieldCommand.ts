@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { internalCommand } from "../../shared/internalCommand";
-import { update } from "./update/update";
+import { lazyAction } from "../../shared/lazyAction";
 
 function collect(value: string, previous: string[]): string[] {
 	return [...previous, value];
@@ -33,7 +33,7 @@ export function registerUpdateFieldCommand(cmd: Command): void {
 				"--origin [origin]",
 				"Retag the item to a different repo (origin URL or key, normalized); with no value, retags to the current repo's origin",
 			)
-			.action(update),
+			.action(lazyAction(() => import("./update/update"), "update")),
 		"/refine",
 	);
 }

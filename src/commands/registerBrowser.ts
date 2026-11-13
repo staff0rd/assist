@@ -1,10 +1,7 @@
 import type { Command } from "commander";
-import { browserInspect } from "./browser/browserInspect";
-import { browserRun } from "./browser/browserRun";
-import { browserSnapshot } from "./browser/browserSnapshot";
-import { browserStatus } from "./browser/browserStatus";
 import { registerBrowserConsole } from "./browser/registerBrowserConsole";
 import { withTargetOptions } from "./browser/withTargetOptions";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerBrowser(program: Command): void {
 	const browser = program
@@ -19,7 +16,9 @@ export function registerBrowser(program: Command): void {
 			.description(
 				"Print the connected extension's version, the target tab's URL and whether the assist content script runs there",
 			),
-	).action(browserStatus);
+	).action(
+		lazyAction(() => import("./browser/browserStatus"), "browserStatus"),
+	);
 
 	withTargetOptions(
 		browser
@@ -27,7 +26,9 @@ export function registerBrowser(program: Command): void {
 			.description(
 				"Write the target tab's DOM to ~/.assist/browser/<host>-<timestamp>.html and print its path",
 			),
-	).action(browserSnapshot);
+	).action(
+		lazyAction(() => import("./browser/browserSnapshot"), "browserSnapshot"),
+	);
 
 	withTargetOptions(
 		browser
@@ -39,7 +40,9 @@ export function registerBrowser(program: Command): void {
 				"--text <text>",
 				"Match elements whose own text contains this, instead of a selector",
 			),
-	).action(browserInspect);
+	).action(
+		lazyAction(() => import("./browser/browserInspect"), "browserInspect"),
+	);
 
 	withTargetOptions(
 		browser
@@ -48,7 +51,7 @@ export function registerBrowser(program: Command): void {
 				"Show a script in an approval panel on the target tab and, once the user clicks Run, print its return value or error. The script is the body of an async function: `return` the value to print",
 			)
 			.requiredOption("--file <script>", "JavaScript file to run"),
-	).action(browserRun);
+	).action(lazyAction(() => import("./browser/browserRun"), "browserRun"));
 
 	registerBrowserConsole(browser);
 }

@@ -1,5 +1,4 @@
 import type { Command } from "commander";
-import { next as backlogNext } from "./next";
 
 export function registerNextCommand(cmd: Command): void {
 	cmd
@@ -10,7 +9,13 @@ export function registerNextCommand(cmd: Command): void {
 		.option("--no-write", "Run Claude without auto permission mode")
 		.option("--once", "Exit after the first completed item run")
 		.action(
-			(id: string | undefined, opts: { write?: boolean; once?: boolean }) =>
-				backlogNext({ allowEdits: opts.write !== false, once: opts.once }, id),
+			async (
+				id: string | undefined,
+				opts: { write?: boolean; once?: boolean },
+			) =>
+				(await import("./next")).next(
+					{ allowEdits: opts.write !== false, once: opts.once },
+					id,
+				),
 		);
 }

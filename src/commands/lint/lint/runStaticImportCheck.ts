@@ -42,7 +42,7 @@ export function runStaticImportCheck(): boolean {
 	return reportViolations(
 		checkStaticImports(),
 		"Static import check",
-		"Dynamic imports are not allowed outside lazy command loading in src/index.ts and register*.ts files (relative string literal only). Use static imports instead.",
+		"Dynamic imports are not allowed outside lazy command loading in src/runCli.ts and register*.ts files (relative string literal only). Use static imports instead.",
 		"Static import check passed. No dynamic imports found.",
 	);
 }

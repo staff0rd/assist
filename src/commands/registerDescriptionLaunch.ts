@@ -3,10 +3,6 @@ import type { HarnessFeature } from "../shared/harnessAdapters/types";
 import { configHelp } from "../shared/configHelp";
 import { harnessConfigHelp } from "./backlog/harnessConfigHelp";
 import { harnessDefaultsConfigHelp } from "./backlog/harnessDefaultsConfigHelp";
-import { launchMode } from "./backlog/launchMode";
-import { resolveHarness } from "./backlog/resolveHarness";
-import { resolveModel } from "./backlog/resolveModel";
-
 const harnessFlag = (feature: HarnessFeature) =>
 	`Coding harness to launch (claude|codex|pi); defaults to the configured harness.defaults.<command>.harness, then harness.engine. Exits with the reasons, without launching, when ${feature.label} is unavailable on it`;
 
@@ -41,7 +37,10 @@ export function registerDescriptionLaunch(
 			`Model to launch the harness with; defaults to harness.defaults.${name}.model while the ${name} type's harness is used`,
 		)
 		.option("--no-model", "Launch with the harness's own default model")
-		.action((text: string | undefined, opts: LaunchOpts) => {
+		.action(async (text: string | undefined, opts: LaunchOpts) => {
+			const { launchMode } = await import("./backlog/launchMode");
+			const { resolveHarness } = await import("./backlog/resolveHarness");
+			const { resolveModel } = await import("./backlog/resolveModel");
 			const harness = resolveHarness(opts.harness, name);
 			return launchMode(slashCommand, {
 				once: opts.once,

@@ -1,6 +1,5 @@
 import type { Command } from "commander";
-import { netcap } from "./netcap/netcap";
-import { netcapExtract } from "./netcap/netcapExtract";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerNetcap(program: Command): void {
 	const command = program
@@ -17,12 +16,14 @@ export function registerNetcap(program: Command): void {
 			"-f, --filter <pattern>",
 			"Only forward requests whose URL contains this substring",
 		)
-		.action((options) => netcap(options));
+		.action(lazyAction(() => import("./netcap/netcap"), "netcap"));
 
 	command
 		.command("extract-linkedin-posts [file]")
 		.description(
 			"Extract LinkedIn posts (text, author, mentions, links, permalink) from a netcap capture file to posts.json",
 		)
-		.action((file) => netcapExtract(file));
+		.action(
+			lazyAction(() => import("./netcap/netcapExtract"), "netcapExtract"),
+		);
 }

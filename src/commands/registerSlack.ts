@@ -1,9 +1,7 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { internalCommand } from "../shared/internalCommand";
-import { readBodyArgument } from "./prs/readBodyArgument";
 import { parseSlackThreadRef } from "./slack/parseSlackThreadRef";
-import { postSlackMessage } from "./slack/postSlackMessage";
 import { slackConfigHelp } from "./slack/slackConfigHelp";
 
 export function registerSlack(program: Command): void {
@@ -33,6 +31,8 @@ export function registerSlack(program: Command): void {
 				channel: string | undefined,
 				options: { body?: string; parts?: string[]; thread?: string },
 			) => {
+				const { readBodyArgument } = await import("./prs/readBodyArgument");
+				const { postSlackMessage } = await import("./slack/postSlackMessage");
 				await postSlackMessage(channel, {
 					...options,
 					body: options.body ? await readBodyArgument(options.body) : undefined,

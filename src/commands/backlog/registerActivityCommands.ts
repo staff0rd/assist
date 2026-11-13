@@ -1,7 +1,6 @@
 import type { Command } from "commander";
 import { internalCommand } from "../../shared/internalCommand";
-import { addActivity } from "./addActivity";
-import { recordSlack } from "./recordSlack";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerActivityCommands(cmd: Command): void {
 	internalCommand(
@@ -13,7 +12,7 @@ export function registerActivityCommands(cmd: Command): void {
 			.option("--title <title>", "Title metadata for the ref")
 			.option("--url <url>", "URL metadata (auto-filled for branch/commit)")
 			.option("--state <state>", "State metadata for the ref")
-			.action(addActivity),
+			.action(lazyAction(() => import("./addActivity"), "addActivity")),
 		"/draft and /bug",
 	);
 
@@ -24,7 +23,7 @@ export function registerActivityCommands(cmd: Command): void {
 				"Attach a Slack thread permalink to the current session's backlog item",
 			)
 			.option("--title <title>", "PR title to label the ref with")
-			.action(recordSlack),
+			.action(lazyAction(() => import("./recordSlack"), "recordSlack")),
 		"/prs-slack",
 	);
 }

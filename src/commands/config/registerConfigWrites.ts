@@ -1,6 +1,5 @@
 import type { Command } from "commander";
-import { configSet } from "./configSet";
-import { configUnset } from "./configUnset";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerConfigWrites(configCommand: Command): void {
 	configCommand
@@ -17,7 +16,7 @@ export function registerConfigWrites(configCommand: Command): void {
 			"-u, --user",
 			"Write to user (db): the shared db, applied to every repo on every node",
 		)
-		.action((key, value, options) => configSet(key, value, options));
+		.action(lazyAction(() => import("./configSet"), "configSet"));
 
 	configCommand
 		.command("unset [key]")
@@ -30,5 +29,5 @@ export function registerConfigWrites(configCommand: Command): void {
 		)
 		.option("--node", "Remove from user (node): this node's ~/.assist.yml")
 		.option("-u, --user", "Remove from user (db) in the shared db")
-		.action((key, options) => configUnset(key, options));
+		.action(lazyAction(() => import("./configUnset"), "configUnset"));
 }

@@ -1,12 +1,12 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { prs } from "./prs/prs";
 import { prsConfigHelp } from "./prs/prsConfigHelp";
 import { registerPrsComments } from "./registerPrsComments";
 import { registerPrsEdit } from "./registerPrsEdit";
 import { registerPrsRaise } from "./registerPrsRaise";
 import { registerPrsStatus } from "./registerPrsStatus";
 import { registerReadTime } from "./registerReadTime";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerPrs(program: Command): void {
 	const prsCommand = program
@@ -14,7 +14,7 @@ export function registerPrs(program: Command): void {
 		.description("Pull request utilities")
 		.option("--open", "List only open pull requests")
 		.option("--closed", "List only closed pull requests")
-		.action(prs);
+		.action(lazyAction(() => import("./prs/prs"), "prs"));
 
 	registerPrsRaise(prsCommand);
 	registerPrsStatus(prsCommand);

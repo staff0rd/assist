@@ -1,7 +1,4 @@
 import type { Command } from "commander";
-import { list as backlogList } from "./backlog/list";
-import { setBacklogDir } from "./backlog/getBacklogDir";
-
 type ListOptions = {
 	status?: string;
 	all?: boolean;
@@ -23,7 +20,9 @@ export function registerList(program: Command): void {
 		.option("--all-repos", "List items across all repositories")
 		.option("-v, --verbose", "Show all item details")
 		.option("--dir <path>", "Override directory for backlog file discovery")
-		.action((options: ListOptions) => {
+		.action(async (options: ListOptions) => {
+			const { list: backlogList } = await import("./backlog/list");
+			const { setBacklogDir } = await import("./backlog/getBacklogDir");
 			setBacklogDir(options.dir);
 			return backlogList(options);
 		});

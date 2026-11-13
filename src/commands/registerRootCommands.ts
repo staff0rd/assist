@@ -1,28 +1,21 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { internalCommand } from "../shared/internalCommand";
-import { coverage } from "./coverage";
-import { init } from "./init";
-import { init as lintInit } from "./lint/init";
-import { lint } from "./lint/lint";
-import { notify } from "./notify";
 import { rootConfigHelp } from "./rootConfigHelp";
 import { registerStatusLine } from "./registerStatusLine";
-import { screenshot } from "./screenshot";
-import { update } from "./update";
-import { init as vscodeInit } from "./vscode/init";
+import { lazyAction } from "../shared/lazyAction";
 
 function registerLint(program: Command): void {
 	const lintCommand = program
 		.command("lint")
 		.description("Run lint checks for conventions not enforced by oxlint")
 		.option("-f, --fix", "Auto-fix violations where possible")
-		.action(lint);
+		.action(lazyAction(() => import("./lint/lint"), "lint"));
 
 	lintCommand
 		.command("init")
 		.description("Initialize oxlint with baseline linter config")
-		.action(lintInit);
+		.action(lazyAction(() => import("./lint/init"), "init"));
 }
 
 function registerVscode(program: Command): void {
@@ -31,7 +24,7 @@ function registerVscode(program: Command): void {
 		.description("VS Code configuration utilities")
 		.command("init")
 		.description("Add VS Code configuration files")
-		.action(vscodeInit);
+		.action(lazyAction(() => import("./vscode/init"), "init"));
 }
 
 function registerNotify(program: Command): void {
@@ -40,7 +33,7 @@ function registerNotify(program: Command): void {
 		.description(
 			"Show notification from Claude Code hook (reads JSON from stdin)",
 		)
-		.action(notify);
+		.action(lazyAction(() => import("./notify"), "notify"));
 
 	internalCommand(notifyCommand, "the Notification hook");
 	configHelp(notifyCommand, rootConfigHelp.notify);
@@ -51,7 +44,7 @@ function registerScreenshot(program: Command): void {
 		.command("screenshot")
 		.description("Capture a screenshot of a running application window")
 		.argument("<process>", "Name of the running process (e.g. notepad, code)")
-		.action(screenshot);
+		.action(lazyAction(() => import("./screenshot"), "screenshot"));
 
 	configHelp(screenshotCommand, rootConfigHelp.screenshot);
 }
@@ -60,7 +53,7 @@ export function registerRootCommands(program: Command): void {
 	program
 		.command("init")
 		.description("Initialize VS Code and verify configurations")
-		.action(init);
+		.action(lazyAction(() => import("./init"), "init"));
 
 	registerLint(program);
 	registerVscode(program);
@@ -72,12 +65,12 @@ export function registerRootCommands(program: Command): void {
 	program
 		.command("update")
 		.description("Update assist to the latest version and sync commands")
-		.action(update);
+		.action(lazyAction(() => import("./update"), "update"));
 
 	program
 		.command("coverage")
 		.description("Print global statement coverage percentage")
-		.action(coverage);
+		.action(lazyAction(() => import("./coverage"), "coverage"));
 
 	registerScreenshot(program);
 }

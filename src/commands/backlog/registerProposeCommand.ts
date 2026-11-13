@@ -1,7 +1,7 @@
 import type { Command } from "commander";
 import { internalCommand } from "../../shared/internalCommand";
-import { propose } from "./propose";
 import { proposeHelpText } from "./propose/proposeHelpText";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerProposeCommand(cmd: Command): void {
 	internalCommand(
@@ -19,7 +19,7 @@ export function registerProposeCommand(cmd: Command): void {
 				"Create the item after its draft has been reviewed in chat (agent use outside a web session)",
 			)
 			.addHelpText("after", `\n${proposeHelpText}`)
-			.action(propose),
+			.action(lazyAction(() => import("./propose"), "propose")),
 		"/draft and /bug",
 	);
 }

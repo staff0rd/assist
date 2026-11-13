@@ -1,12 +1,7 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { check as refactorCheck } from "./refactor/check";
-import { extract as refactorExtract } from "./refactor/extract";
-import { ignore as refactorIgnore } from "./refactor/ignore";
 import { refactorConfigHelp } from "./refactor/refactorConfigHelp";
-import { rename as refactorRename } from "./refactor/rename";
-import { renameSymbol as refactorRenameSymbol } from "./refactor/renameSymbol";
-import { restructure as refactorRestructure } from "./refactor/restructure";
+import { lazyAction } from "../shared/lazyAction";
 
 function registerCheck(parent: Command): void {
 	parent
@@ -20,7 +15,7 @@ function registerCheck(parent: Command): void {
 			"Maximum lines allowed per file (default: 100)",
 			Number.parseInt,
 		)
-		.action(refactorCheck);
+		.action(lazyAction(() => import("./refactor/check"), "check"));
 }
 
 function registerRename(parent: Command): void {
@@ -32,7 +27,7 @@ function registerRename(parent: Command): void {
 		.command("file <source> <destination>")
 		.description("Rename/move a TypeScript file and update all imports")
 		.option("--apply", "Execute the rename (default: dry-run)")
-		.action(refactorRename);
+		.action(lazyAction(() => import("./refactor/rename"), "rename"));
 
 	renameCommand
 		.command("symbol <file> <oldName> <newName>")
@@ -40,7 +35,9 @@ function registerRename(parent: Command): void {
 			"Rename a variable, function, class, or type across the project",
 		)
 		.option("--apply", "Execute the rename (default: dry-run)")
-		.action(refactorRenameSymbol);
+		.action(
+			lazyAction(() => import("./refactor/renameSymbol"), "renameSymbol"),
+		);
 }
 
 function registerRestructure(parent: Command): void {
@@ -57,7 +54,7 @@ function registerRestructure(parent: Command): void {
 			"--check",
 			"List files that drift from the plan and exit non-zero if any do",
 		)
-		.action(refactorRestructure);
+		.action(lazyAction(() => import("./refactor/restructure"), "restructure"));
 
 	configHelp(restructureCommand, refactorConfigHelp);
 }
@@ -75,12 +72,12 @@ export function registerRefactor(program: Command): void {
 			"Extract a function and its private dependencies to a new file",
 		)
 		.option("--apply", "Execute the extraction (default: dry-run)")
-		.action(refactorExtract);
+		.action(lazyAction(() => import("./refactor/extract"), "extract"));
 
 	refactorCommand
 		.command("ignore <file>")
 		.description("Add a file to the refactor ignore list")
-		.action(refactorIgnore);
+		.action(lazyAction(() => import("./refactor/ignore"), "ignore"));
 
 	registerRename(refactorCommand);
 	registerRestructure(refactorCommand);

@@ -1,6 +1,5 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
-import { readTime } from "./readTime/readTime";
 import { readTimeConfigHelp } from "./readTime/readTimeConfigHelp";
 
 export function registerReadTime(parent: Command): void {
@@ -13,9 +12,9 @@ export function registerReadTime(parent: Command): void {
 			"--budget <duration>",
 			"read-time budget the estimate is judged against, e.g. 45s, 1m30s, 2m (default 1m)",
 		)
-		.action(async (target: string, options: { budget?: string }) => {
-			await readTime(target, options);
-		});
+		.action(async (target: string, options: { budget?: string }) =>
+			(await import("./readTime/readTime")).readTime(target, options),
+		);
 
 	configHelp(readTimeCommand, readTimeConfigHelp);
 }

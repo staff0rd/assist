@@ -2,7 +2,7 @@ import type { Command } from "commander";
 import { minGhAttachVersion } from "../../prs/minGhAttachVersion";
 import { collectLabels } from "./collectLabels";
 import { internalCommand } from "../../../shared/internalCommand";
-import { createIssue } from "./createIssue";
+import { lazyAction } from "../../../shared/lazyAction";
 
 export function registerCreateIssue(issueCommand: Command): void {
 	const createCommand = issueCommand
@@ -44,6 +44,6 @@ export function registerCreateIssue(issueCommand: Command): void {
 			"after",
 			`\nThere is no What/Why/How template: an issue reports a problem, and the target repo's own issue template is unknowable from here. Write the body as the repo's maintainers would expect.\nIn an assist web session the title and body are previewed for approve/reject first (with inline comments); nothing is created until it is approved.\nThe reviewer may also drop or paste screenshots or video into the pane; on approval gh attaches them (gh ${minGhAttachVersion}+) under a ## Screenshots section of the issue body automatically, and on rejection they stay attached and reappear in the preview you re-propose — so never author that section yourself.\n--type, --parent, --project, --status, --label and --milestone are all resolved before the preview, so an unknown name, an unreadable parent, a missing project scope or --status without --project creates nothing.\nA bare --parent number is read against --repo, or the current repo; a parent in another repository is allowed.\nThe project scope is needed for --project: gh auth refresh -h github.com -s project`,
 		)
-		.action(createIssue);
+		.action(lazyAction(() => import("./createIssue"), "createIssue"));
 	internalCommand(createCommand, "/github create");
 }

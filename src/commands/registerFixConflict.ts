@@ -1,8 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { harnessConfigHelp } from "./backlog/harnessConfigHelp";
-import { resolveHarness } from "./backlog/resolveHarness";
-import { fixConflict } from "./fixConflict";
 
 export function registerFixConflict(
 	program: Command,
@@ -21,15 +19,18 @@ export function registerFixConflict(
 			"Launch a coding harness in /fix-conflict mode (single session)",
 		)
 		.action(
-			(
+			async (
 				number: string | undefined,
 				options: { rebase?: boolean; resumeSession?: string; harness?: string },
-			) =>
-				fixConflict(number, {
+			) => {
+				const { resolveHarness } = await import("./backlog/resolveHarness");
+				const { fixConflict } = await import("./fixConflict");
+				return fixConflict(number, {
 					rebase: options.rebase,
 					resumeSessionId: options.resumeSession,
 					harness: resolveHarness(options.harness),
-				}),
+				});
+			},
 		);
 	configHelp(command, harnessConfigHelp);
 }

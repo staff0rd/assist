@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { internalCommand } from "../../../shared/internalCommand";
-import { unassignIssue } from "./unassignIssue";
+import { lazyAction } from "../../../shared/lazyAction";
 
 export function registerUnassignIssue(issueCommand: Command): void {
 	const unassignCommand = issueCommand
@@ -18,6 +18,6 @@ export function registerUnassignIssue(issueCommand: Command): void {
 			(value: string, previous: string[]) => [...previous, value],
 			[],
 		)
-		.action(unassignIssue);
+		.action(lazyAction(() => import("./unassignIssue"), "unassignIssue"));
 	internalCommand(unassignCommand, "agents removing an assignee");
 }

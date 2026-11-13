@@ -1,6 +1,5 @@
 import type { Command } from "commander";
 import { internalCommand } from "../../shared/internalCommand";
-import { setSessionStatus } from "./setSessionStatus";
 
 export function registerSetStatusCommand(cmd: Command): void {
 	internalCommand(
@@ -17,8 +16,11 @@ export function registerSetStatusCommand(cmd: Command): void {
 				"--ack",
 				"Retry delivery until the daemon acknowledges it (without it, a single attempt)",
 			)
-			.action((status, options) =>
-				setSessionStatus(status, { source: options.source, ack: options.ack }),
+			.action(async (status, options) =>
+				(await import("./setSessionStatus")).setSessionStatus(status, {
+					source: options.source,
+					ack: options.ack,
+				}),
 			),
 		"Claude and Codex hooks",
 	);

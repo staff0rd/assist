@@ -2,8 +2,7 @@ import { type Command, Option } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { harnesses } from "../shared/harnesses";
 import { inboxConfigHelp } from "./inbox/inboxConfigHelp";
-import { list as inboxList } from "./inbox/list";
-import { scan as inboxScan } from "./inbox/scan";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerInbox(program: Command): void {
 	const inboxCommand = program
@@ -21,12 +20,12 @@ export function registerInbox(program: Command): void {
 				"Harness to scan with; defaults to Claude. Exits with the reasons, before spawning, when the inbox scan is unavailable on it (it needs read-only Gmail and Slack connectors and a tool allow-list)",
 			).choices(Object.keys(harnesses)),
 		)
-		.action(inboxScan);
+		.action(lazyAction(() => import("./inbox/scan"), "scan"));
 
 	inboxCommand
 		.command("list")
 		.description("List flagged inbox messages, newest first")
-		.action(inboxList);
+		.action(lazyAction(() => import("./inbox/list"), "list"));
 
 	configHelp(inboxCommand, inboxConfigHelp);
 }

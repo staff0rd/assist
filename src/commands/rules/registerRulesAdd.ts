@@ -1,8 +1,5 @@
 import type { Command } from "commander";
 import { internalCommand } from "../../shared/internalCommand";
-import { addRule } from "./addRule";
-import { addUserRule } from "./addUserRule";
-
 type RulesAddOptions = {
 	scope?: string;
 	title?: string;
@@ -38,11 +35,13 @@ export function registerRulesAdd(rulesCommand: Command): void {
 				"--repo [name]",
 				"As --user, but append to advice.rules in repo (db), the shared per-repo override every node sees, for the current repo or the named one",
 			)
-			.action((text: string, options: RulesAddOptions) =>
-				options.user || options.node || options.repo !== undefined
+			.action(async (text: string, options: RulesAddOptions) => {
+				const { addRule } = await import("./addRule");
+				const { addUserRule } = await import("./addUserRule");
+				return options.user || options.node || options.repo !== undefined
 					? addUserRule(text, options)
-					: addRule(text, options),
-			),
+					: addRule(text, options);
+			}),
 		"/add-rule and /fix-rules",
 	);
 }

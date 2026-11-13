@@ -1,8 +1,8 @@
 import type { Command } from "commander";
-import { commits } from "./github/commits";
 import { parseSinceDate } from "./github/parseSinceDate";
 import { parseTopCount } from "./github/parseTopCount";
 import { registerGithubIssue } from "./registerGithubIssue";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerGithub(program: Command): void {
 	const githubCommand = program
@@ -23,7 +23,7 @@ export function registerGithub(program: Command): void {
 			parseTopCount,
 		)
 		.option("--json", "Output as JSON")
-		.action(commits);
+		.action(lazyAction(() => import("./github/commits"), "commits"));
 
 	registerGithubIssue(githubCommand);
 }

@@ -1,6 +1,5 @@
 import type { Command } from "commander";
-import { link } from "./link";
-import { unlink } from "./unlink";
+import { lazyAction } from "../../shared/lazyAction";
 
 export function registerLinkCommands(cmd: Command): void {
 	cmd
@@ -11,10 +10,10 @@ export function registerLinkCommands(cmd: Command): void {
 			"Link type (relates-to or depends-on)",
 			"relates-to",
 		)
-		.action(link);
+		.action(lazyAction(() => import("./link"), "link"));
 
 	cmd
 		.command("unlink <from> <to>")
 		.description("Remove a link between two backlog items")
-		.action(unlink);
+		.action(lazyAction(() => import("./unlink"), "unlink"));
 }

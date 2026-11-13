@@ -1,13 +1,10 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { internalCommand } from "../shared/internalCommand";
-import { clean as transcriptClean } from "./transcript/clean";
-import { configure as transcriptConfigure } from "./transcript/configure";
-import { list as transcriptList } from "./transcript/list";
-import { move as transcriptMove } from "./transcript/move";
 import { registerMergeCommand } from "./transcript/registerMergeCommand";
 import { transcriptConfigHelp } from "./transcript/transcriptConfigHelp";
 import { transcriptWorkflowHelp } from "./transcript/transcriptWorkflowHelp";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerTranscript(program: Command): void {
 	const transcriptCommand = program
@@ -20,13 +17,13 @@ export function registerTranscript(program: Command): void {
 	transcriptCommand
 		.command("configure")
 		.description("Configure transcript directories")
-		.action(transcriptConfigure);
+		.action(lazyAction(() => import("./transcript/configure"), "configure"));
 
 	internalCommand(
 		transcriptCommand
 			.command("list")
 			.description("List raw .vtt filenames waiting in the pick-up directory")
-			.action(transcriptList),
+			.action(lazyAction(() => import("./transcript/list"), "list")),
 		"/transcripts",
 	);
 
@@ -38,7 +35,7 @@ export function registerTranscript(program: Command): void {
 			"--timestamps",
 			"prefix each speaker turn with its start time (--format md only)",
 		)
-		.action(transcriptClean);
+		.action(lazyAction(() => import("./transcript/clean"), "clean"));
 
 	registerMergeCommand(transcriptCommand);
 
@@ -50,7 +47,7 @@ export function registerTranscript(program: Command): void {
 			)
 			.requiredOption("--date <YYYY-MM-DD>", "meeting date")
 			.requiredOption("--client <name>", "client name")
-			.action(transcriptMove),
+			.action(lazyAction(() => import("./transcript/move"), "move")),
 		"/transcripts",
 	);
 }

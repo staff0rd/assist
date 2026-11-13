@@ -1,6 +1,6 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
-import { askDesign } from "./askDesign";
+import { lazyAction } from "../shared/lazyAction";
 
 export function registerAskDesign(program: Command): void {
 	internalCommand(
@@ -15,7 +15,7 @@ export function registerAskDesign(program: Command): void {
 			)
 			.requiredOption("--title <title>", "Pane title")
 			.option("--body <markdown|->", "Markdown summary, or - for stdin")
-			.action(askDesign),
+			.action(lazyAction(() => import("./askDesign"), "askDesign")),
 		"/draft",
 	);
 }
