@@ -1,3 +1,10 @@
+## [0.1133.3](https://github.com/staff0rd/assist/compare/v0.1133.2...v0.1133.3) (2026-11-13)
+
+
+### Bug Fixes
+
+* report worktree leftovers in one notice ([2e39c61](https://github.com/staff0rd/assist/commit/2e39c61140d578ec9e3253c198e0788c34f178c1))
+
 ## [0.1133.2](https://github.com/staff0rd/assist/compare/v0.1133.1...v0.1133.2) (2026-11-13)
 
 
