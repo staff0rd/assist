@@ -1,3 +1,11 @@
+## [0.1135.2](https://github.com/staff0rd/assist/compare/v0.1135.1...v0.1135.2) (2026-11-13)
+
+
+### Bug Fixes
+
+* cache empty commits and revalidate ([a16e253](https://github.com/staff0rd/assist/commit/a16e2533298898751bca6f5438fda76437e5faa8))
+* resolve each item commit once per session ([b25599c](https://github.com/staff0rd/assist/commit/b25599c364db3435c25fcc8351a6bd2d645100da))
+
 ## [0.1135.1](https://github.com/staff0rd/assist/compare/v0.1135.0...v0.1135.1) (2026-11-13)
 
 
