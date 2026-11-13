@@ -1,10 +1,11 @@
 import { attachCriteriaToggle } from "./attachCriteriaToggle";
-import { isIssueBodyPage } from "./isIssueBodyPage";
+import { criteriaEditorScope } from "./criteriaEditorScope";
 import { isIssueBodyTextarea } from "./isIssueBodyTextarea";
 
 export function attachCriteriaEditors(): void {
-	if (!isIssueBodyPage(globalThis.location)) return;
-	for (const textarea of document.querySelectorAll("textarea")) {
+	const scope = criteriaEditorScope(globalThis.location);
+	if (!scope) return;
+	for (const textarea of scope.querySelectorAll("textarea")) {
 		if (isIssueBodyTextarea(textarea)) attachCriteriaToggle(textarea);
 	}
 }
