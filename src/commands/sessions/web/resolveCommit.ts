@@ -10,13 +10,20 @@ export async function commitBase(
 	return (await parentOf(cwd, sha)) ?? GIT_EMPTY_TREE_HASH;
 }
 
+export type ResolvedCommit = {
+	base: string;
+	paths: string[];
+	pathsListed: boolean;
+};
+
 export async function resolveCommit(
 	cwd: string,
 	sha: string,
-): Promise<{ base: string; paths: string[] } | undefined> {
+): Promise<ResolvedCommit | undefined> {
 	const base = await commitBase(cwd, sha);
 	if (!base) return undefined;
-	return { base, paths: await commitPaths(cwd, sha) };
+	const paths = await commitPaths(cwd, sha);
+	return { base, paths: paths ?? [], pathsListed: paths !== undefined };
 }
 
 async function commitExists(cwd: string, sha: string): Promise<boolean> {
@@ -42,7 +49,10 @@ async function parentOf(cwd: string, sha: string): Promise<string | undefined> {
 	}
 }
 
-async function commitPaths(cwd: string, sha: string): Promise<string[]> {
+async function commitPaths(
+	cwd: string,
+	sha: string,
+): Promise<string[] | undefined> {
 	try {
 		const output = await execGit(cwd, [
 			"diff-tree",
@@ -54,6 +64,6 @@ async function commitPaths(cwd: string, sha: string): Promise<string[]> {
 		]);
 		return output.split("\n").filter(Boolean);
 	} catch {
-		return [];
+		return undefined;
 	}
 }
