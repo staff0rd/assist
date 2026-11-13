@@ -36,5 +36,5 @@ export function useSdkComposer(
 			stop();
 		}
 	};
-	return { ...state, text, slash, send, stop, onKeyDown };
+	return { ...state, text, commands, slash, send, stop, onKeyDown };
 }

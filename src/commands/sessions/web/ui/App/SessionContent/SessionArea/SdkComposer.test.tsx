@@ -169,4 +169,21 @@ describe("SdkComposer", () => {
 			expect(screen.queryByRole("listbox")).toBeNull();
 		});
 	});
+
+	describe("command highlighting", () => {
+		const highlightedText = () =>
+			Array.from(document.querySelectorAll("[aria-hidden] span")).map(
+				(s) => s.textContent,
+			);
+
+		it("highlights known commands but not paths", () => {
+			setup({ status: "waiting" }, "/draft see /tmp/notes.md then /dream it");
+			expect(highlightedText()).toEqual(["/draft", "/dream"]);
+		});
+
+		it("renders no backdrop without a known command", () => {
+			setup({ status: "waiting" }, "see /tmp/notes.md");
+			expect(highlightedText()).toEqual([]);
+		});
+	});
 });

@@ -33,9 +33,12 @@ export const sdkComposerSx = {
 		alignItems: "flex-end",
 		gap: 1,
 	},
-	field: {
+	fieldWrap: {
+		position: "relative",
 		flex: 1,
 		minWidth: 0,
+	},
+	field: {
 		minHeight: control,
 		px: 1.5,
 		py: 1,
@@ -45,6 +48,28 @@ export const sdkComposerSx = {
 		bgcolor: "background.default",
 		"&.Mui-focused": { borderColor: "primary.main" },
 		"&.Mui-disabled": { opacity: 0.55 },
+	},
+	fieldUnderBackdrop: {
+		"& textarea": {
+			color: "transparent",
+			caretColor: (t: Theme) => t.palette.text.primary,
+		},
+	},
+	// Mirrors the textarea's box and type exactly so highlighted text lands on the real glyphs and caret.
+	backdrop: {
+		position: "absolute",
+		inset: 0,
+		px: 1.5,
+		py: 1,
+		border: 1,
+		borderColor: "transparent",
+		typography: "body1",
+		lineHeight: "1.4375em",
+		color: "text.primary",
+		whiteSpace: "pre-wrap",
+		overflowWrap: "break-word",
+		overflow: "hidden",
+		pointerEvents: "none",
 	},
 	send: {
 		...iconButton,

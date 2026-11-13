@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
-import { useMemo } from "react";
-import { SlashCommandSourceContext } from "../../../slashSuggestions/useSessionSlashCommands";
+import { SessionSlashProviders } from "../../../slashSuggestions/SessionSlashProviders";
 import type { SessionListHandlers, Transcript } from "../../../types";
 import { ApiNodeContext } from "../../../useApiNode";
 import type {
@@ -33,16 +32,10 @@ export function ActiveSessionArea({
 	...column
 }: ActiveSessionAreaProps) {
 	const activeSession = column.sessions.find((s) => s.id === column.activeId);
-	const harness = activeSession?.harness;
-	const cwd = activeSession?.cwd;
 	const node = activeSession?.node;
-	const slashSource = useMemo(
-		() => (cwd ? { harness, cwd, node } : null),
-		[harness, cwd, node],
-	);
 	return (
 		<ApiNodeContext.Provider value={node}>
-			<SlashCommandSourceContext.Provider value={slashSource}>
+			<SessionSlashProviders session={activeSession}>
 				<Box sx={areaSx}>
 					<SessionAreaTopBar
 						session={activeSession}
@@ -57,7 +50,7 @@ export function ActiveSessionArea({
 						<SessionTerminalColumn {...column} activeSession={activeSession} />
 					</SessionDiffSplit>
 				</Box>
-			</SlashCommandSourceContext.Provider>
+			</SessionSlashProviders>
 		</ApiNodeContext.Provider>
 	);
 }

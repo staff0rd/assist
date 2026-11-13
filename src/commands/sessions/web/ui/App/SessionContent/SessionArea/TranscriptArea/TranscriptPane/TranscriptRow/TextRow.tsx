@@ -1,5 +1,8 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
+import { useKnownSlashCommands } from "../../../../../../slashSuggestions/useKnownSlashCommands";
+import { SlashCommandText } from "../../../../../../slashSuggestions/SlashCommandText";
+import { slashHighlightSx } from "../../../../../../slashSuggestions/slashHighlightSx";
 import { HighlightedText } from "./TextRow/HighlightedText";
 import { TextRowLabel } from "./TextRow/TextRowLabel";
 
@@ -15,6 +18,7 @@ export function TextRow({
 	queued?: boolean;
 }) {
 	const isUser = role === "user";
+	const commands = useKnownSlashCommands();
 	const accent = isUser ? "info.main" : "success.main";
 	return (
 		<Box
@@ -42,7 +46,12 @@ export function TextRow({
 					lineHeight: 1.6,
 				}}
 			>
-				<HighlightedText text={text} term={term} />
+				<SlashCommandText
+					text={text}
+					commands={isUser ? commands : []}
+					commandSx={slashHighlightSx.chip}
+					renderText={(t) => <HighlightedText text={t} term={term} />}
+				/>
 			</Typography>
 		</Box>
 	);
