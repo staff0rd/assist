@@ -16,31 +16,36 @@ export const reviewSynthesisFeature: HarnessFeature = {
 export const reviewRefineFeature: HarnessFeature = {
 	id: "reviewRefine",
 	label: "Review & refine",
-	requires: [...editEnforcement],
+	requires: ["launch.terminal", ...editEnforcement],
 };
 
 export const reviewApplyFeature: HarnessFeature = {
 	id: "reviewApply",
 	label: "Review & apply",
-	requires: [...editEnforcement],
+	requires: ["launch.terminal", ...editEnforcement],
 };
 
 export const reviewBacklogFeature: HarnessFeature = {
 	id: "reviewBacklog",
 	label: "Review & backlog",
-	requires: ["skills.native", ...editEnforcement],
+	requires: ["skills.native", "launch.terminal", ...editEnforcement],
 };
 
 export const reviewCheckoutFeature: HarnessFeature = {
 	id: "reviewCheckout",
 	label: "PR checkout session",
-	requires: [...editEnforcement],
+	requires: ["launch.terminal", ...editEnforcement],
 };
 
 export const highLevelReviewFeature: HarnessFeature = {
 	id: "highLevelReview",
 	label: "High-level review",
-	requires: ["skills.native", "tasks.notifyOnExit", ...editEnforcement],
+	requires: [
+		"skills.native",
+		"launch.terminal",
+		"tasks.notifyOnExit",
+		...editEnforcement,
+	],
 };
 
 export const highLevelGlobsFeature: HarnessFeature = {

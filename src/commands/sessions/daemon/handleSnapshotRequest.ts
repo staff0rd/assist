@@ -1,3 +1,4 @@
+import { skipsTerminalPath } from "./skipsTerminalPath";
 import { sendTo } from "./broadcast";
 import { daemonLog } from "./daemonLog";
 import type { Handler } from "./routed";
@@ -8,7 +9,7 @@ export const handleSnapshotRequest: Handler = (client, m, d) => {
 	let data: string | undefined;
 	m.update((sessions) => {
 		const s = sessions.get(sessionId);
-		if (s) data = sessionSnapshot(s);
+		if (s && !skipsTerminalPath(s, "snapshot")) data = sessionSnapshot(s);
 		return false;
 	});
 	daemonLog(

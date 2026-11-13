@@ -17,15 +17,19 @@ import type { WsDispatch } from "../../WsDispatch";
 
 type Msg = Record<string, unknown>;
 
+function setTranscriptFrom(msg: Msg, d: WsDispatch): void {
+	d.setTranscript({
+		sessionId: msg.sessionId as string,
+		messages: msg.messages as TranscriptMessage[],
+	});
+}
+
 const wsHandlers: Record<string, (msg: Msg, d: WsDispatch) => void> = {
 	sessions: handleSessions,
 	created: handleCreated,
 	history: (msg, d) => d.setHistory(msg.sessions as HistoricalSession[]),
-	transcript: (msg, d) =>
-		d.setTranscript({
-			sessionId: msg.sessionId as string,
-			messages: msg.messages as TranscriptMessage[],
-		}),
+	transcript: setTranscriptFrom,
+	"session-transcript": setTranscriptFrom,
 	"user-messages": (msg, d) =>
 		d.setUserMessages({
 			sessionId: msg.sessionId as string,

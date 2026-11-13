@@ -20,6 +20,7 @@ export const fakeHarnessCapabilities: CapabilityDeclarations = {
 	"intercept.editDiff": supported,
 	"intercept.fileWrite": supported,
 	"intercept.question": supported,
+	"launch.terminal": supported,
 	"oneShot.structured": supported,
 	"oneShot.text": supported,
 	"skills.native": supported,

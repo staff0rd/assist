@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import type { SessionInfo } from "../types";
 import type { SessionSocket } from "../useSessionSocket";
+import { LiveTranscriptArea } from "../App/SessionContent/SessionArea/LiveTranscriptArea";
 import { PhoneTerminal } from "./PhoneTerminal";
 import { pendingCheck } from "./pendingCheck";
 import { pendingPreview } from "./pendingPreview";
@@ -14,6 +15,8 @@ const terminalSx = {
 	display: "flex",
 	flexDirection: "column",
 } as const;
+
+const sdkBodySx = { flex: 1, minHeight: 0, display: "flex" } as const;
 
 const askTerminalSx = { ...terminalSx, flex: "0 0 22%" } as const;
 
@@ -32,15 +35,25 @@ export function PhoneSessionBody(props: {
 	return (
 		<>
 			<Box sx={asking ? askTerminalSx : terminalSx}>
-				<PhoneTerminal
-					key={session.id}
-					sessionId={session.id}
-					cols={session.cols}
-					rows={session.rows}
-					onOutput={socket.onOutput}
-					sendSize={io.sendSize}
-					reclaimRef={io.reclaimRef}
-				/>
+				{session.sdk ? (
+					<Box sx={sdkBodySx}>
+						<LiveTranscriptArea
+							session={session}
+							transcript={socket.transcript}
+							fetchSessionTranscript={socket.fetchSessionTranscript}
+						/>
+					</Box>
+				) : (
+					<PhoneTerminal
+						key={session.id}
+						sessionId={session.id}
+						cols={session.cols}
+						rows={session.rows}
+						onOutput={socket.onOutput}
+						sendSize={io.sendSize}
+						reclaimRef={io.reclaimRef}
+					/>
+				)}
 			</Box>
 			<PhoneSessionAsk {...props} />
 		</>

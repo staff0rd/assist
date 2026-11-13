@@ -15,7 +15,7 @@ export function registerSpawnedSession(
 ): string {
 	if (context?.launchedFrom) session.launchedFrom = context.launchedFrom;
 	sessions.set(session.id, session);
-	wirePtyEvents(session, clients, onStatusChange);
+	wirePtyEvents(session, clients, onStatusChange, notify);
 	notify();
 	wireSessionWatchers(session, notify, onStatusChange);
 	logSpawnedSession(session);

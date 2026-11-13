@@ -1,7 +1,7 @@
 import type { Session } from "./createSession";
 
 export function killPtyTree(pty: NonNullable<Session["pty"]>): void {
-	if (process.platform === "win32") {
+	if (pty.sdk || process.platform === "win32") {
 		try {
 			pty.kill();
 		} catch {}

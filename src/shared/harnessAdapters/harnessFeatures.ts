@@ -8,25 +8,25 @@ import type { HarnessFeature } from "./types";
 export const refineFeature: HarnessFeature = {
 	id: "refine",
 	label: "Refine",
-	requires: ["skills.native", ...editEnforcement],
+	requires: ["skills.native", "launch.terminal", ...editEnforcement],
 };
 
 export const draftFeature: HarnessFeature = {
 	id: "draft",
 	label: "Draft",
-	requires: ["skills.native", ...editEnforcement],
+	requires: ["skills.native", "launch.terminal", ...editEnforcement],
 };
 
 export const bugFeature: HarnessFeature = {
 	id: "bug",
 	label: "Bug filing",
-	requires: ["skills.native", ...editEnforcement],
+	requires: ["skills.native", "launch.terminal", ...editEnforcement],
 };
 
 export const buildFeature: HarnessFeature = {
 	id: "build",
 	label: "Build",
-	requires: [...editEnforcement],
+	requires: ["launch.terminal", ...editEnforcement],
 };
 
 export const sessionFeature: HarnessFeature = {
@@ -50,7 +50,7 @@ export const conversationRecoveryFeature: HarnessFeature = {
 export const divergenceEscalationFeature: HarnessFeature = {
 	id: "divergenceEscalation",
 	label: "Divergence escalation",
-	requires: [...editEnforcement],
+	requires: ["launch.terminal", ...editEnforcement],
 };
 
 const previewQuestionsFeature: HarnessFeature = {

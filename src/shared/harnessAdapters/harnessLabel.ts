@@ -2,15 +2,25 @@ import type { HarnessKind } from "../harnesses";
 
 const HARNESS_LABELS: Record<HarnessKind, string> = {
 	claude: "Claude",
+	"claude-sdk": "Claude (SDK)",
 	codex: "Codex",
 	pi: "pi",
 };
 
 const HARNESS_PRODUCT_LABELS: Record<HarnessKind, string> = {
 	claude: "Claude Code",
+	"claude-sdk": "Claude Code",
 	codex: "Codex",
 	pi: "pi",
 };
+
+const HARNESS_SUBLINES: Partial<Record<HarnessKind, string>> = {
+	"claude-sdk": "Transcript and composer · auto permission mode",
+};
+
+export function harnessSubline(harness: HarnessKind): string | undefined {
+	return HARNESS_SUBLINES[harness];
+}
 
 export const legacyDefaultHarness: HarnessKind = "claude";
 

@@ -1,3 +1,4 @@
+import { isSdkSession } from "./isSdkSession";
 import { sendTo } from "./broadcast";
 import { daemonLog } from "./daemonLog";
 import { routeOutputToLink } from "./links/routeOutputToLink";
@@ -20,10 +21,21 @@ export const handleOutputRequest: Handler = (client, m, request) => {
 	}
 	const { sessionId, exited } = target;
 	let scrollback: string | undefined;
+	let sdk = false;
 	m.update((sessions) => {
-		scrollback = sessions.get(sessionId)?.scrollback;
+		const session = sessions.get(sessionId);
+		sdk = session ? isSdkSession(session) : false;
+		scrollback = session?.scrollback;
 		return false;
 	});
+	if (sdk) {
+		const error = `Session ${sessionId} is a Claude (SDK) session with no terminal output`;
+		daemonLog(
+			`output requested: id=${sessionId} skipped (Claude SDK session, no terminal)`,
+		);
+		sendTo(client, { type: "session-output", sessionId, error, requestId });
+		return;
+	}
 	daemonLog(
 		`output requested: id=${sessionId}${exited ? ` (exited: ${exited})` : ""} ${scrollback === undefined ? "unknown session" : `${scrollback.length} chars`}`,
 	);

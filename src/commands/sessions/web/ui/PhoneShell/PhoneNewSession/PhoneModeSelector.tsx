@@ -1,4 +1,6 @@
 import Box from "@mui/material/Box";
+import Typography from "@mui/material/Typography";
+import { harnessSubline } from "../../../../../../shared/harnessAdapters/harnessLabel";
 import type { HarnessKind } from "../../../../../../shared/harnesses";
 import {
 	harnessFeatureFor,
@@ -15,6 +17,7 @@ const modeLabel = (mode: string) => mode[0].toUpperCase() + mode.slice(1);
 export function PhoneModeSelector({ form }: { form: PhoneNewSession }) {
 	const showHarness =
 		harnessFeatureFor(form.mode) !== undefined && form.harnesses.length > 1;
+	const subline = harnessSubline(form.harness);
 	return (
 		<>
 			<PhoneSegmented
@@ -33,6 +36,15 @@ export function PhoneModeSelector({ form }: { form: PhoneNewSession }) {
 						onChange={(harness) => form.setHarness(harness as HarnessKind)}
 						mono
 					/>
+					{subline && (
+						<Typography
+							variant="caption"
+							color="text.secondary"
+							sx={{ display: "block", mx: 2, mt: 0.5 }}
+						>
+							{subline}
+						</Typography>
+					)}
 				</Box>
 			)}
 			{form.model && <PhoneModelSelector model={form.model} />}

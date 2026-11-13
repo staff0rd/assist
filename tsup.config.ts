@@ -11,7 +11,13 @@ export default defineConfig({
 	clean: true,
 	shims: true,
 	silent: true,
-	external: ["typescript", "better-sqlite3", "node-pty", "pg"],
+	external: [
+		"typescript",
+		"better-sqlite3",
+		"node-pty",
+		"pg",
+		"@anthropic-ai/claude-agent-sdk",
+	],
 	onSuccess: async () => {
 		writeFileSync("dist/built-version", pkg.version);
 		cpSync("allowed.cli-reads", "dist/allowed.cli-reads");

@@ -4,6 +4,7 @@ import { useNowSeconds } from "../App/useNowSeconds";
 import { statusPillSx } from "../designSystem/statusPillSx";
 import { displayStatus } from "../displayStatus";
 import { statusGlyph } from "../statusGlyph";
+import { SdkBadge } from "../SdkBadge";
 import type { SessionInfo } from "../types";
 import { PhoneBadges } from "./PhoneBadges";
 import { PhoneStripOrigin } from "./PhoneStripOrigin";
@@ -53,6 +54,7 @@ export function PhoneStatusStrip({
 			>
 				{statusGlyph[status]} {status[0].toUpperCase() + status.slice(1)}
 			</Box>
+			{session.sdk && <SdkBadge label="SDK" />}
 			<PhoneStripOrigin session={session} localNode={localNode} />
 			<PhoneBadges session={session} localNode={localNode} hideNode />
 			{phase && <span>phase {phase}</span>}

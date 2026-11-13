@@ -1,3 +1,4 @@
+import { harnessKinds } from "../../../shared/harnessKinds";
 import { z } from "zod";
 import { activitySchema } from "../../../shared/emitActivity";
 
@@ -8,7 +9,7 @@ export const persistedSessionSchema = z.object({
 	generatedTitle: z.string().optional(),
 	subtitle: z.string().optional(),
 	commandType: z.enum(["claude", "run", "assist"]),
-	harness: z.enum(["claude", "codex", "pi"]).optional(),
+	harness: z.enum(harnessKinds).optional(),
 	status: z.enum(["running", "waiting", "done", "error", "stopped"]).optional(),
 	error: z.string().optional(),
 	cwd: z.string(),

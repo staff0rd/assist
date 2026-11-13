@@ -139,7 +139,7 @@ describe("describeConfigLeaves", () => {
 		expect(leaf(leaves, "sessions.maxLive").type).toBe("number");
 		expect(leaf(leaves, "harness.engine")).toMatchObject({
 			type: "enum",
-			enumValues: ["claude", "codex", "pi"],
+			enumValues: ["claude", "claude-sdk", "codex", "pi"],
 			defaultValue: "claude",
 		});
 		expect(leaf(leaves, "worktree.copy")).toMatchObject({

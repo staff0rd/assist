@@ -12,6 +12,7 @@ import { relayLinkSessions } from "./relayLinkSessions";
 import { relayReply } from "./relayReply";
 import { relayRunConflict } from "./relayRunConflict";
 import { relayToCreator } from "./relayToCreator";
+import { relayWithNodeSessionId } from "./relayWithNodeSessionId";
 import { toNodeSessionId } from "./splitNodeSessionId";
 
 type Msg = Record<string, unknown>;
@@ -45,8 +46,7 @@ const relayHistory: Relay = (state, msg) => {
 const relays: Record<string, Relay> = {
 	sessions: relayLinkSessions,
 	output: relayOutput,
-	clear: (state, msg) =>
-		broadcastToViewers(state, { ...msg, sessionId: nsId(state, msg) }),
+	clear: relayWithNodeSessionId,
 	created: relayToCreator("created session"),
 	error: relayToCreator("peer error:"),
 	notice: (state, msg) => broadcastToViewers(state, msg),
@@ -61,8 +61,8 @@ const relays: Record<string, Relay> = {
 			sessionId:
 				typeof msg.sessionId === "string" ? nsId(state, msg) : undefined,
 		}),
-	"user-messages": (state, msg) =>
-		broadcastToViewers(state, { ...msg, sessionId: nsId(state, msg) }),
+	"user-messages": relayWithNodeSessionId,
+	"session-transcript": relayWithNodeSessionId,
 	limits: (state, msg) =>
 		state.onLimits(
 			msg.harness as HarnessKind | undefined,

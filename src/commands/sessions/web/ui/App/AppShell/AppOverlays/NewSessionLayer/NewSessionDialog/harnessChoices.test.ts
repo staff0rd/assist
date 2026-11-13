@@ -32,6 +32,30 @@ describe("harnessChoices", () => {
 		).toEqual(["claude", "codex"]);
 	});
 
+	it("offers Claude (SDK) after Claude only where the resolver reports it available", () => {
+		expect(
+			harnessChoices(
+				{
+					features: {
+						session: { claude: available, "claude-sdk": available },
+						build: { claude: available, "claude-sdk": missing },
+					},
+				},
+				"session",
+			),
+		).toEqual(["claude", "claude-sdk"]);
+		expect(
+			harnessChoices(
+				{
+					features: {
+						build: { claude: available, "claude-sdk": missing },
+					},
+				},
+				"build",
+			),
+		).toEqual(["claude"]);
+	});
+
 	it("omits an undetected default harness when another is available", () => {
 		expect(
 			harnessChoices(

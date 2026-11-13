@@ -90,6 +90,8 @@ export type SessionInfoBase = {
 	seeding?: string;
 	lastUserMessage?: string;
 	lastAssistantMessage?: string;
+	sdk?: boolean;
+	sdkActivity?: string;
 	cols?: number;
 	rows?: number;
 	activeViewer?: string;

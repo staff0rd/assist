@@ -1,7 +1,9 @@
+import { skipsTerminalPath } from "./skipsTerminalPath";
 import { clearPause, requestPause } from "../../backlog/consumePause";
 import type { Session, SessionStatus } from "./createSession";
 import { claimViewer, type ViewerClaim } from "./claimViewer";
 import { daemonLog } from "./daemonLog";
+import { dropsInactiveViewerResponse } from "./dropsInactiveViewerResponse";
 import { isTerminalResponse } from "./isTerminalResponse";
 import { watchPromptSubmit } from "./watchPromptSubmit";
 
@@ -14,13 +16,9 @@ export function writeToSession(
 ): void {
 	const s = sessions.get(id);
 	if (!s || s.status === "done") return;
+	if (skipsTerminalPath(s, "input")) return;
 	const response = isTerminalResponse(data);
-	if (response && s.activeViewer && viewer.viewerId !== s.activeViewer) {
-		daemonLog(
-			`session ${id} dropped terminal response from inactive viewer ${viewer.viewerId ?? "unknown"} on ${viewer.viewerNode ?? "unknown node"}`,
-		);
-		return;
-	}
+	if (dropsInactiveViewerResponse(s, response, viewer)) return;
 	s.pty?.write(data);
 	watchPromptSubmit(s, data, onStatusChange);
 	if (!response) claimViewer(s, viewer, "input");

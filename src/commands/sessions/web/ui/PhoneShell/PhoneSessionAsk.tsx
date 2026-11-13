@@ -1,8 +1,6 @@
-import { displayStatus } from "../displayStatus";
-import { isAwaitingUser } from "../isAwaitingUser";
 import type { SessionInfo } from "../types";
 import type { SessionSocket } from "../useSessionSocket";
-import { PhoneInputDock } from "./PhoneInputDock";
+import { PhoneSessionDock } from "./PhoneSessionDock";
 import { PhonePendingPreview } from "./PhonePendingPreview";
 import { PhoneSessionCheck } from "./PhoneSessionCheck";
 import { PhoneSessionQuestion } from "./PhoneSessionQuestion";
@@ -50,14 +48,6 @@ export function PhoneSessionAsk({
 			<PhoneSessionCheck key={check.requestId} check={check} {...shared} />
 		);
 	return (
-		<PhoneInputDock
-			harness={session.harness}
-			cwd={session.cwd}
-			node={session.node}
-			waiting={isAwaitingUser(displayStatus(session))}
-			keyboardOpen={keyboardOpen}
-			onKey={io.onKey}
-			onSend={io.onSend}
-		/>
+		<PhoneSessionDock session={session} io={io} keyboardOpen={keyboardOpen} />
 	);
 }

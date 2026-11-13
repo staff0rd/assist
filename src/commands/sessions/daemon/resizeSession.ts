@@ -1,3 +1,4 @@
+import { skipsTerminalPath } from "./skipsTerminalPath";
 import { claimViewer, type ViewerClaim } from "./claimViewer";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
@@ -19,7 +20,8 @@ export function resizeSession(
 	viewer: ResizeViewer = {},
 ): void {
 	const s = sessions.get(id);
-	if (!s || isInactiveViewer(s, viewer)) return;
+	if (!s || isInactiveViewer(s, viewer) || skipsTerminalPath(s, "resize"))
+		return;
 	claimViewer(s, viewer, "resize");
 	if (s.status === "done" || !s.pty) return;
 	const unchanged = s.cols === cols && s.rows === rows;

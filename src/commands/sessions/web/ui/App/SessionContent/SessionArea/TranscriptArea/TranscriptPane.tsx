@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
-import CircularProgress from "@mui/material/CircularProgress";
-import Typography from "@mui/material/Typography";
+import type { ReactNode } from "react";
+import { TranscriptPlaceholder } from "./TranscriptPlaceholder";
 import { TranscriptRow } from "./TranscriptPane/TranscriptRow";
 import { useScrollToFirstMark } from "./TranscriptPane/useScrollToFirstMark";
 import type { TranscriptMessage } from "../../../../types";
@@ -24,31 +24,19 @@ export function TranscriptPane({
 	messages,
 	loading,
 	term,
+	tail,
+	follow,
 }: {
 	messages: TranscriptMessage[];
 	loading: boolean;
 	term: string;
+	tail?: ReactNode;
+	follow?: boolean;
 }) {
-	const scrollRef = useScrollToFirstMark(messages, term);
+	const scrollRef = useScrollToFirstMark(messages, term, follow);
 
-	if (loading)
-		return (
-			<Box sx={centeredSx}>
-				<CircularProgress size={20} />
-				<Typography variant="caption" color="text.disabled">
-					Loading transcript…
-				</Typography>
-			</Box>
-		);
-
-	if (messages.length === 0)
-		return (
-			<Box sx={centeredSx}>
-				<Typography variant="body2" color="text.disabled">
-					No transcript available
-				</Typography>
-			</Box>
-		);
+	if (loading || (messages.length === 0 && !tail))
+		return <TranscriptPlaceholder loading={loading} />;
 
 	return (
 		<Box
@@ -59,17 +47,8 @@ export function TranscriptPane({
 				{withKeys(messages).map((m) => (
 					<TranscriptRow key={m.key} message={m} term={term} />
 				))}
+				{tail}
 			</Box>
 		</Box>
 	);
 }
-
-const centeredSx = {
-	position: "absolute",
-	inset: 0,
-	display: "flex",
-	flexDirection: "column",
-	gap: 1.5,
-	alignItems: "center",
-	justifyContent: "center",
-} as const;

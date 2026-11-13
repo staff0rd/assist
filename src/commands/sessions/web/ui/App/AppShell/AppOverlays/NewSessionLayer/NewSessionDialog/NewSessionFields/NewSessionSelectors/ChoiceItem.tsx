@@ -1,11 +1,18 @@
+import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 
 export type Choice = {
 	key: string;
 	label: string;
+	detail?: string;
 	checked: boolean;
 	pick: () => void;
 };
+
+const textSlots = {
+	primary: { sx: { fontSize: "inherit" } },
+	secondary: { sx: { fontSize: 12 } },
+} as const;
 
 export function ChoiceItem({
 	choice,
@@ -25,7 +32,15 @@ export function ChoiceItem({
 			}}
 			sx={{ fontSize: 13 }}
 		>
-			{choice.label}
+			{choice.detail ? (
+				<ListItemText
+					primary={choice.label}
+					secondary={choice.detail}
+					slotProps={textSlots}
+				/>
+			) : (
+				choice.label
+			)}
 		</MenuItem>
 	);
 }

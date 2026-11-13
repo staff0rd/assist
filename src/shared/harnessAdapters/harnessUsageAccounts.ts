@@ -4,6 +4,7 @@ type UsageAccount = { windowPrefix?: string };
 
 export const harnessUsageAccounts: Record<HarnessKind, UsageAccount> = {
 	claude: {},
+	"claude-sdk": {},
 	codex: { windowPrefix: "codex" },
 	pi: { windowPrefix: "pi" },
 };

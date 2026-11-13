@@ -1,20 +1,11 @@
+import { findSession } from "./findSession";
 import { conversationOf } from "../shared/conversationOf";
 import { userMessageTexts } from "../shared/userMessageTexts";
 import { readTranscriptTail } from "../shared/readTranscriptTail";
 import { type SessionClient, sendTo } from "./broadcast";
 import { daemonLog } from "./daemonLog";
 import { resolveTranscriptPath } from "./resolveTranscriptPath";
-import type { Session } from "./createSession";
 import type { SessionManager } from "./SessionManager";
-
-function findSession(manager: SessionManager, id: string): Session | undefined {
-	let found: Session | undefined;
-	manager.update((sessions) => {
-		found = sessions.get(id);
-		return false;
-	});
-	return found;
-}
 
 export async function handleFetchUserMessages(
 	client: SessionClient,

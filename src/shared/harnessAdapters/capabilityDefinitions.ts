@@ -1,6 +1,8 @@
 export const capabilityDefinitions = {
 	"skills.native":
 		"Runs an assist skill (synced from agent/commands/) by its native invocation, e.g. `/refine a123`, so the skill's prompt loads without assist inlining it.",
+	"launch.terminal":
+		"Starts workflows (backlog build and refine, draft, bug, the review modes, fix-conflict, review-pr-comments, divergence escalation) from an assist command in the session's terminal, where the harness CLI takes over the terminal the daemon mirrors.",
 	"conversation.resume":
 		"Reopens an existing conversation by id with its history intact, so a daemon restart or `--resume-session` continues the same conversation instead of starting fresh.",
 	"conversation.relocate":

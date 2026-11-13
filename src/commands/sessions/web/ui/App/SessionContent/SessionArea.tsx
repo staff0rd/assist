@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import type { SendPrDecision } from "./SessionArea/SessionPreviewSplit";
+import type { FetchSessionTranscript } from "./SessionArea/LiveTranscriptArea";
 import { SessionAreaTopBar } from "./SessionArea/SessionAreaTopBar";
 import { SessionDiffSplit } from "./SessionArea/SessionDiffSplit";
 import { SessionTerminalColumn } from "./SessionArea/SessionTerminalColumn";
@@ -20,10 +21,12 @@ export function SessionArea({
 	transcript,
 	sendPrDecision,
 	lifecycle,
+	fetchSessionTranscript,
 	...terminal
 }: TerminalAreaProps & {
 	viewingTranscriptSessionId: string | null;
 	transcript: Transcript | null;
+	fetchSessionTranscript: FetchSessionTranscript;
 	sendPrDecision: SendPrDecision;
 	lifecycle: SessionListHandlers;
 }) {
@@ -56,6 +59,8 @@ export function SessionArea({
 						{...terminal}
 						activeSession={activeSession}
 						sendPrDecision={sendPrDecision}
+						transcript={transcript}
+						fetchSessionTranscript={fetchSessionTranscript}
 					/>
 				</SessionDiffSplit>
 			</Box>

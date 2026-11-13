@@ -18,6 +18,12 @@ export function useTranscriptNavigation(
 		[send],
 	);
 
+	const fetchSessionTranscript = useCallback(
+		(sessionId: string) =>
+			send({ type: "fetch-session-transcript", sessionId }),
+		[send],
+	);
+
 	const clearTranscript = useCallback(() => {
 		setViewingTranscriptSessionId(null);
 	}, [setViewingTranscriptSessionId]);
@@ -31,5 +37,11 @@ export function useTranscriptNavigation(
 		[setActiveId, setViewingTranscriptSessionId],
 	);
 
-	return { viewTranscript, fetchUserMessages, clearTranscript, selectSession };
+	return {
+		viewTranscript,
+		fetchUserMessages,
+		fetchSessionTranscript,
+		clearTranscript,
+		selectSession,
+	};
 }

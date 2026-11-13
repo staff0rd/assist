@@ -3,12 +3,13 @@ import { unsupported } from "../../../shared/harnessAdapters/unsupported";
 
 const locate = {
 	claude: vi.fn(async (_id: string): Promise<string | null> => null),
+	"claude-sdk": vi.fn(async (_id: string): Promise<string | null> => null),
 	codex: vi.fn(async (_id: string): Promise<string | null> => null),
 	pi: vi.fn(async (_id: string): Promise<string | null> => "/pi/never"),
 };
 
 vi.mock("../../../shared/harnessAdapters/harnessAdapter", () => ({
-	harnessAdapter: (kind: "claude" | "codex" | "pi") => ({
+	harnessAdapter: (kind: keyof typeof locate) => ({
 		capabilities: {
 			"transcript.read":
 				kind === "pi"

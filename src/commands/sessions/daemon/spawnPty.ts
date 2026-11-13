@@ -3,6 +3,7 @@ import * as pty from "node-pty";
 import { daemonLog } from "./daemonLog";
 import { ensureSpawnHelperExecutable } from "./ensureSpawnHelperExecutable";
 import { resolvePtyCommand } from "./resolvePtyCommand";
+import { sessionChildEnv } from "./sessionChildEnv";
 import { viewerSize } from "./viewerSize";
 
 export class MissingCwdError extends Error {
@@ -22,36 +23,15 @@ export function spawnPty(
 	ensureSpawnHelperExecutable();
 	const command = resolvePtyCommand(args);
 
-	/* why: a daemon spawned from within a Claude Code session inherits
-	 * CLAUDE_CODE_CHILD_SESSION; left in the env it propagates to every claude the
-	 * session launches, marking them nested child sessions that never write a
-	 * resumable ~/.claude transcript — so resuming after a daemon restart fails
-	 * with "No conversation found" (#402). Strip it at this single chokepoint.
-	 * CLAUDECODE likewise would make every session command believe it already
-	 * runs inside Claude (e.g. `review --high-level` skipping its own session). */
-	const {
-		CLAUDE_CODE_CHILD_SESSION: _childSession,
-		CLAUDECODE: _claudeCode,
-		...parentEnv
-	} = process.env;
-
 	return pty.spawn(command.file, command.args, {
 		name: "xterm-256color",
 		...viewerSize(),
 		cwd: cwd ?? process.cwd(),
-		env: {
-			...parentEnv,
-			ASSIST_SESSION: "1",
-			...(sessionId && {
-				ASSIST_SESSION_ID: sessionId,
-				ASSIST_ACTIVITY_ID: sessionId,
-			}),
-			...extraEnv,
-		} as Record<string, string>,
+		env: sessionChildEnv(process.env, sessionId, extraEnv),
 	});
 }
 
-function refuseMissingCwd(
+export function refuseMissingCwd(
 	cwd: string | undefined,
 	sessionId: string | undefined,
 ): void {

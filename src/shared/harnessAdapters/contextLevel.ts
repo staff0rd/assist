@@ -5,6 +5,7 @@ type ContextLevel = "red" | "yellow" | "dim";
 
 const THRESHOLDS: Record<HarnessKind, { red: number; yellow: number }> = {
 	claude: { red: 30, yellow: 20 },
+	"claude-sdk": { red: 30, yellow: 20 },
 	codex: { red: 75, yellow: 50 },
 	pi: { red: 30, yellow: 20 },
 };

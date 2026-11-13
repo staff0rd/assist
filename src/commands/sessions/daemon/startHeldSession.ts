@@ -37,7 +37,7 @@ export function startHeldSession(
 		try {
 			session.pty?.resize(session.cols, session.rows);
 		} catch {}
-	wirePtyEvents(session, clients, onStatusChange);
+	wirePtyEvents(session, clients, onStatusChange, notify);
 	daemonLog(
 		`session ${session.id} started once ${trigger ?? `worktree ${session.worktree?.path ?? session.cwd} finished seeding`}`,
 	);

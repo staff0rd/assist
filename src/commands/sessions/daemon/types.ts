@@ -1,5 +1,6 @@
 import type { FSWatcher } from "node:fs";
 import type { Activity } from "../../../shared/emitActivity";
+import type { SessionProcess } from "../../../shared/harnessAdapters/types";
 import type { HarnessKind } from "../../../shared/harnesses";
 import type {
 	CommandType,
@@ -9,7 +10,6 @@ import type {
 } from "../shared/SessionInfoBase";
 import type { ScreenMirror } from "./createScreenMirror";
 import type { SessionInterruption } from "./SessionInterruption";
-import type { spawnClaude } from "./spawnClaude";
 import type { StateWatcher } from "./worktree/watchGitState";
 
 export type SessionStatus =
@@ -46,7 +46,7 @@ export type Session = {
 	runningMs: number;
 	runningSince: number | null;
 	waitingSince: number | null;
-	pty: ReturnType<typeof spawnClaude> | null;
+	pty: SessionProcess | null;
 	scrollback: string;
 	screen?: ScreenMirror;
 	runName?: string;
@@ -107,6 +107,7 @@ export type Session = {
 	rows?: number;
 	activeViewer?: string;
 	activeViewerNode?: string;
+	sdkActivity?: string;
 	usedPct?: number;
 	activeMsFlushedForStretch?: { since: number; ms: number };
 	activeMsFlushChain?: Promise<void>;

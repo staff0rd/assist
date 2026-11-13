@@ -2,35 +2,62 @@ import type { HarnessKind } from "../harnesses";
 import type { CapabilityDeclarations } from "./types";
 import { supported, unsupported } from "./unsupported";
 
+const claude: CapabilityDeclarations = {
+	"skills.native": supported,
+	"launch.terminal": supported,
+	"conversation.resume": supported,
+	"conversation.relocate": supported,
+	"conversation.id": supported,
+	"conversation.preassignId": supported,
+	"systemPrompt.append": supported,
+	"tasks.notifyOnExit": supported,
+	"artifacts.publish": supported,
+	"transcript.read": supported,
+	"oneShot.text": supported,
+	"oneShot.structured": supported,
+	"usage.rateLimits": supported,
+	"tools.restrict": supported,
+	"connector.gmail.read": supported,
+	"connector.slack.read": supported,
+	"intercept.command": supported,
+	"intercept.fileRead": supported,
+	"intercept.fileWrite": supported,
+	"intercept.editDiff": supported,
+	"intercept.question": supported,
+	"slashCommands.suggest": supported,
+};
+
 export const harnessCapabilityDeclarations: Record<
 	HarnessKind,
 	CapabilityDeclarations
 > = {
-	claude: {
-		"skills.native": supported,
-		"conversation.resume": supported,
-		"conversation.relocate": supported,
-		"conversation.id": supported,
-		"conversation.preassignId": supported,
-		"systemPrompt.append": supported,
-		"tasks.notifyOnExit": supported,
-		"artifacts.publish": supported,
-		"transcript.read": supported,
-		"oneShot.text": supported,
-		"oneShot.structured": supported,
-		"usage.rateLimits": supported,
-		"tools.restrict": supported,
-		"connector.gmail.read": supported,
-		"connector.slack.read": supported,
-		"intercept.command": supported,
-		"intercept.fileRead": supported,
-		"intercept.fileWrite": supported,
-		"intercept.editDiff": supported,
-		"intercept.question": supported,
-		"slashCommands.suggest": supported,
+	claude,
+	"claude-sdk": {
+		...claude,
+		"launch.terminal": unsupported(
+			"Claude (SDK) sessions have no terminal, and these workflows start an assist command that opens the Claude CLI's terminal UI",
+			"run the workflow with Claude",
+			"a1560",
+		),
+		"conversation.resume": unsupported(
+			"Claude (SDK) sessions do not resume their conversation yet",
+			"a daemon restart starts a fresh conversation; pick Claude to keep the conversation across restarts",
+			"a1560",
+		),
+		"conversation.relocate": unsupported(
+			"Claude (SDK) sessions do not resume their conversation yet, so it cannot continue in a replacement worktree",
+			"start a fresh session in the replacement worktree; pick Claude to keep the conversation",
+			"a1560",
+		),
+		"usage.rateLimits": unsupported(
+			"assist does not yet record usage and rate-limit events from Claude (SDK) sessions",
+			"Claude (SDK) usage is not shown in the status bar; terminal Claude usage still is",
+			"a1560",
+		),
 	},
 	codex: {
 		"skills.native": supported,
+		"launch.terminal": supported,
 		"conversation.resume": supported,
 		"conversation.relocate": supported,
 		"conversation.id": supported,
@@ -89,6 +116,7 @@ export const harnessCapabilityDeclarations: Record<
 	},
 	pi: {
 		"skills.native": supported,
+		"launch.terminal": supported,
 		"conversation.resume": unsupported(
 			"pi sessions cannot be resumed yet",
 			"restart starts a fresh pi conversation; pick Claude or Codex to keep the conversation across restarts",

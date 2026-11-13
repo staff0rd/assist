@@ -4,13 +4,13 @@ import type { HarnessFeature } from "./types";
 export const fixConflictFeature: HarnessFeature = {
 	id: "fixConflict",
 	label: "Fix conflicts",
-	requires: ["skills.native", ...editEnforcement],
+	requires: ["skills.native", "launch.terminal", ...editEnforcement],
 };
 
 export const reviewPrCommentsFeature: HarnessFeature = {
 	id: "reviewPrComments",
 	label: "Address comments",
-	requires: ["skills.native", ...editEnforcement],
+	requires: ["skills.native", "launch.terminal", ...editEnforcement],
 };
 
 export const addressCommentsChainFeature: HarnessFeature = {

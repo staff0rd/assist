@@ -4,6 +4,7 @@ import { statusPillSx } from "../../../../../../../designSystem/statusPillSx";
 import { displayStatus } from "../../../../../../../displayStatus";
 import { statusGlyph } from "../../../../../../../statusGlyph";
 import { isVerifying } from "../../../../../../isVerifying";
+import { SdkBadge } from "../../../../../../../SdkBadge";
 import { SessionStatusDot } from "./SessionTopBarStatus/SessionStatusDot";
 import { statusColors } from "../../../../../../statusColors";
 import type { SessionInfo } from "../../../../../../../types";
@@ -27,6 +28,7 @@ export function SessionTopBarStatus({ session }: { session: SessionInfo }) {
 	return (
 		<>
 			<StatusLabel session={session} />
+			{session.sdk && <SdkBadge label="Claude · SDK" />}
 			{restored !== undefined && (
 				<Typography
 					variant="caption"

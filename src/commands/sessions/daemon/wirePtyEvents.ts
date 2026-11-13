@@ -2,14 +2,18 @@ import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
 import { emitSessionOutput } from "./emitSessionOutput";
 import { handlePtyExit } from "./handlePtyExit";
+import { isSdkSession } from "./isSdkSession";
 import type { OnStatusChange } from "./types";
+import { wireSdkEvents } from "./wireSdkEvents";
 
 export function wirePtyEvents(
 	session: Session,
 	clients: Set<SessionClient>,
 	onStatusChange: OnStatusChange,
+	notify?: () => void,
 ): void {
 	if (!session.pty) return;
+	wireSdkEvents(session, onStatusChange, notify);
 	/* why: running/waiting is pushed by Claude Code hooks (set-status) — including
 	 * the explicit `running` the backlog-run driver emits while it works between
 	 * hook-bearing phases (#447) — so the PTY stream only feeds scrollback, never
@@ -29,6 +33,7 @@ function reportSilentFailure(
 	clients: Set<SessionClient>,
 ): void {
 	if (session.status !== "error" || !session.error) return;
+	if (isSdkSession(session)) return;
 	if (session.scrollback.length > 0) return;
 	emitSessionOutput(
 		session,

@@ -1,3 +1,4 @@
+import { harnessKinds } from "./harnessKinds";
 import { mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join } from "node:path";
@@ -5,7 +6,7 @@ import { z } from "zod";
 
 export const activitySchema = z.object({
 	kind: z.enum(["command", "backlog"]),
-	harness: z.enum(["claude", "codex", "pi"]).optional(),
+	harness: z.enum(harnessKinds).optional(),
 	name: z.string().optional(),
 	itemId: z.number().optional(),
 	itemName: z.string().optional(),

@@ -1,11 +1,20 @@
 import type { IPty } from "node-pty";
 import type { HarnessKind } from "../harnesses";
-
-type InteractivePty = IPty;
 import type { SpinnerHandle } from "../../commands/review/MultiSpinner";
 import type { ReviewerResult } from "../../commands/review/runStreamingChild";
 import type { SpawnResult } from "../spawnInherit";
 import type { CapabilityId } from "./capabilityDefinitions";
+
+export type SdkSessionEvent =
+	| { kind: "status"; status: "running" | "waiting" }
+	| { kind: "activity"; text: string | null };
+
+export type SessionProcess = Pick<
+	IPty,
+	"pid" | "cols" | "rows" | "write" | "resize" | "kill" | "onData" | "onExit"
+> & {
+	sdk?: { onEvent: (listener: (event: SdkSessionEvent) => void) => void };
+};
 
 export type CapabilityStatus =
 	| { supported: true }
@@ -215,7 +224,7 @@ export type HarnessAdapter = HarnessCapabilitySource & {
 		nudge: string,
 		options: ResumeOptions,
 	) => SpawnResult;
-	interactive: (launch: InteractiveLaunch) => InteractivePty;
+	interactive: (launch: InteractiveLaunch) => SessionProcess;
 	oneShot: (prompt: string, options: OneShotOptions) => Promise<string>;
 	structured: (run: StructuredRun) => Promise<ReviewerResult>;
 	connectorRun: (run: ConnectorRun) => Promise<ConnectorRunResult>;

@@ -2,7 +2,7 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { checkCliAvailable } from "./checkCliAvailable";
 
-export type HarnessKind = "claude" | "codex" | "pi";
+export type HarnessKind = "claude" | "claude-sdk" | "codex" | "pi";
 
 export type Harness = {
 	kind: HarnessKind;
@@ -16,18 +16,21 @@ export type Harness = {
 	};
 };
 
-export const harnesses: Record<HarnessKind, Harness> = {
-	claude: {
-		kind: "claude",
-		command: "claude",
-		homeDir: path.join(os.homedir(), ".claude"),
-		sync: {
-			commandDest: (name) => path.join("skills", name, "SKILL.md"),
-			designPromptDest: "design-system-prompt.md",
-			designSkillDest: (name) => path.join("skills", `${name}.md`),
-			nativeDesignSkills: false,
-		},
+const claudeHarness: Harness = {
+	kind: "claude",
+	command: "claude",
+	homeDir: path.join(os.homedir(), ".claude"),
+	sync: {
+		commandDest: (name) => path.join("skills", name, "SKILL.md"),
+		designPromptDest: "design-system-prompt.md",
+		designSkillDest: (name) => path.join("skills", `${name}.md`),
+		nativeDesignSkills: false,
 	},
+};
+
+export const harnesses: Record<HarnessKind, Harness> = {
+	claude: claudeHarness,
+	"claude-sdk": { ...claudeHarness, kind: "claude-sdk" },
 	codex: {
 		kind: "codex",
 		command: "codex",

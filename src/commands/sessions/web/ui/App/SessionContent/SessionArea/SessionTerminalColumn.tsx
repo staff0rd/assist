@@ -1,11 +1,13 @@
 import Box from "@mui/material/Box";
+import type { FetchSessionTranscript } from "./LiveTranscriptArea";
+import { SessionBody } from "./SessionBody";
 import {
 	type SendPrDecision,
 	SessionPreviewSplit,
 } from "./SessionPreviewSplit";
 import { SessionLastMessage } from "./SessionTerminalColumn/SessionLastMessage";
-import { TerminalArea, type TerminalAreaProps } from "./TerminalArea";
-import type { SessionInfo } from "../../../types";
+import type { TerminalAreaProps } from "./TerminalArea";
+import type { SessionInfo, Transcript } from "../../../types";
 import { useLastMessageHistory } from "../useLastMessageHistory";
 
 const columnSx = {
@@ -19,10 +21,12 @@ const columnSx = {
 export function SessionTerminalColumn({
 	activeSession,
 	sendPrDecision,
-	...terminal
+	...body
 }: TerminalAreaProps & {
 	activeSession: SessionInfo | undefined;
 	sendPrDecision: SendPrDecision;
+	transcript: Transcript | null;
+	fetchSessionTranscript: FetchSessionTranscript;
 }) {
 	const { history, onFetchHistory } = useLastMessageHistory(activeSession?.id);
 
@@ -31,11 +35,11 @@ export function SessionTerminalColumn({
 			<SessionPreviewSplit
 				session={activeSession}
 				sendPrDecision={sendPrDecision}
-				sendInput={terminal.sendInput}
+				sendInput={body.sendInput}
 			>
-				<TerminalArea {...terminal} />
+				<SessionBody {...body} activeSession={activeSession} />
 			</SessionPreviewSplit>
-			{activeSession !== undefined && (
+			{activeSession !== undefined && !activeSession.sdk && (
 				<SessionLastMessage
 					message={activeSession.lastUserMessage}
 					history={history}

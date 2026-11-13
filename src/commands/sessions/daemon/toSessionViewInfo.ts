@@ -8,8 +8,12 @@ export function toSessionViewInfo({
 	activeViewer,
 	activeViewerNode,
 	transfer,
+	pty,
+	sdkActivity,
 }: Session) {
 	return {
+		sdk: pty?.sdk ? true : undefined,
+		sdkActivity,
 		transfer,
 		lastUserMessage,
 		lastAssistantMessage,

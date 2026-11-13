@@ -54,24 +54,29 @@ describe("harnessCapabilities", () => {
 		mockLoadConfig.mockReturnValue(makeAssistConfig({ harness: {} }));
 	});
 
-	it("resolves Refine available on every detected harness", () => {
+	it("resolves Refine available on every detected terminal harness", () => {
 		mockIsHarnessAvailable.mockReturnValue(true);
 		const [, status, body] = run();
 		expect(status).toBe(200);
 		expect(body.exposeCodexActions).toBe(true);
 		expect(body.exposePiActions).toBe(true);
 		expect(body.engine).toBe("claude");
-		expect(body.features.refine).toEqual({
+		expect(body.features.refine).toMatchObject({
 			claude: { available: true },
+			"claude-sdk": {
+				available: false,
+				reasons: [expect.objectContaining({ capability: "launch.terminal" })],
+			},
 			codex: { available: true },
 			pi: { available: true },
 		});
+		expect(body.features.session["claude-sdk"]).toEqual({ available: true });
 	});
 
 	it("probes each harness once however many features resolve", () => {
 		mockIsHarnessAvailable.mockReturnValue(true);
 		run();
-		expect(mockIsHarnessAvailable).toHaveBeenCalledTimes(3);
+		expect(mockIsHarnessAvailable).toHaveBeenCalledTimes(4);
 	});
 
 	it("resolves Refine unavailable with the detection reason when a harness is not on PATH", () => {
