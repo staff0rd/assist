@@ -1,4 +1,5 @@
 // assist-maintainability-override: 60
+import { liveSessionCount } from "./liveSessionCount";
 import type { HarnessKind } from "../../../shared/harnesses";
 import { ActiveSelection } from "./ActiveSelection";
 import type { SessionClient } from "./broadcast";
@@ -79,7 +80,8 @@ export class SessionManager {
 		this.onIdleChange?.(this.isIdle());
 	}
 
-	isIdle = (): boolean => this.sessions.size === 0 && this.clients.size === 0;
+	isIdle = (): boolean =>
+		liveSessionCount(this.sessions) === 0 && this.clients.size === 0;
 
 	shutdown(): void {
 		this.shuttingDown = true;

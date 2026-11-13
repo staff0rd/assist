@@ -8,11 +8,18 @@ type WorktreeRecord = {
 	clone: string;
 	origin: string;
 	harness?: HarnessKind;
+	leftover?: string;
 };
 
 type Registry = Record<
 	string,
-	{ clone: string; origin: string; reaped?: boolean; harness?: HarnessKind }
+	{
+		clone: string;
+		origin: string;
+		reaped?: boolean;
+		harness?: HarnessKind;
+		leftover?: string;
+	}
 >;
 
 export function readWorktreeRegistry(): WorktreeRecord[] {
@@ -62,5 +69,22 @@ export function forgetWorktree(path: string): void {
 	const record = data[path];
 	if (!record || record.reaped) return;
 	data[path] = { ...record, reaped: true };
+	saveJson(REGISTRY_FILE, data);
+}
+
+export function markLeftover(path: string, reason: string): void {
+	const data = loadJson<Registry>(REGISTRY_FILE);
+	const record = data[path];
+	if (!record) return;
+	data[path] = { ...record, reaped: true, leftover: reason };
+	saveJson(REGISTRY_FILE, data);
+}
+
+export function clearLeftover(path: string): void {
+	const data = loadJson<Registry>(REGISTRY_FILE);
+	const record = data[path];
+	if (!record?.leftover) return;
+	const { leftover: _leftover, ...rest } = record;
+	data[path] = rest;
 	saveJson(REGISTRY_FILE, data);
 }

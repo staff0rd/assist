@@ -17,6 +17,11 @@ export const sessionsConfigHelp: ConfigHelpEntry[] = [
 		note: "ceiling on concurrent live sessions one daemon holds; spawning past it is refused, and restore respawns at most this many persisted sessions (default: 24)",
 	},
 	{
+		key: "sessions.reportLeftovers",
+		setter: "assist config set sessions.reportLeftovers false --node",
+		note: "default on: on daemon restart, recheck reaped worktree paths that reappeared (e.g. root-owned Docker bind-mount stubs) and list any leftover assist cannot delete in one notice with a combined removal command. Set false to skip both",
+	},
+	{
 		key: "sessions.newSessionMode",
 		setter: "assist config set sessions.newSessionMode bug --node",
 		note: "default mode pre-selected in the Ctrl+N new session dialog: draft | bug | prompt | design (default: draft)",

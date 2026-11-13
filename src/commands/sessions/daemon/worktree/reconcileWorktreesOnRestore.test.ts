@@ -6,7 +6,13 @@ import { makeSession } from "../../../../test/mothers/makeSession";
 import type { Session } from "../createSession";
 import { daemonLog } from "../daemonLog";
 import { loadPersistedSessions } from "../loadPersistedSessions";
-import { forgetWorktree, readWorktreeRegistry } from "./readWorktreeRegistry";
+import {
+	forgetWorktree,
+	markLeftover,
+	readWorktreeRegistry,
+} from "./readWorktreeRegistry";
+import { recheckReapedWorktrees } from "./recheckReapedWorktrees";
+import { reportLeftoversEnabled } from "./reportLeftoversEnabled";
 import { reapWorktree } from "./reapWorktree";
 import { reclaimVanishedWorktrees } from "./reclaimVanishedWorktrees";
 import { reconcileWorktreesOnRestore } from "./reconcileWorktreesOnRestore";
@@ -18,8 +24,11 @@ vi.mock("node:fs", async () =>
 		await vi.importActual<typeof fsMockModule>("../../../../test/mocks/fsMock")
 	).fsMock(),
 );
-vi.mock("./leftoverSurfacingEnabled", () => ({
-	leftoverSurfacingEnabled: true,
+vi.mock("./reportLeftoversEnabled", () => ({
+	reportLeftoversEnabled: vi.fn(() => true),
+}));
+vi.mock("./recheckReapedWorktrees", () => ({
+	recheckReapedWorktrees: vi.fn(() => Promise.resolve([])),
 }));
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("../../../../shared/findRepoRoot", () => ({
@@ -31,8 +40,8 @@ vi.mock("../loadPersistedSessions", () => ({
 vi.mock("./bindNewWorktree", () => ({ bindRestoredWorktrees: vi.fn() }));
 vi.mock("./readWorktreeRegistry", () => ({
 	readWorktreeRegistry: vi.fn(),
-	readReapedWorktreeRegistry: vi.fn(() => []),
 	forgetWorktree: vi.fn(),
+	markLeftover: vi.fn(),
 }));
 vi.mock("./reapWorktree", () => ({
 	reapWorktree: vi.fn(() => Promise.resolve({ removed: true })),
@@ -80,6 +89,8 @@ function reconcile(sessions: Map<string, Session>) {
 describe("reconcileWorktreesOnRestore", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		vi.mocked(reportLeftoversEnabled).mockReturnValue(true);
+		vi.mocked(recheckReapedWorktrees).mockResolvedValue([]);
 		existsMock.mockReturnValue(true);
 		vi.mocked(realpathSync).mockImplementation((path) => String(path));
 		persistedMock.mockReturnValue([]);
@@ -139,7 +150,7 @@ describe("reconcileWorktreesOnRestore", () => {
 		expect(sessions.size).toBe(0);
 	});
 
-	it("surfaces a durable orphan it cannot delete as an error card instead of retrying silently", async () => {
+	it("lists a durable orphan it cannot delete in the leftover notice instead of retrying silently", async () => {
 		existsMock.mockImplementation((path) => !String(path).endsWith(".git"));
 		durabilityMock.mockResolvedValue({ durable: true, gone: true });
 		reapMock.mockResolvedValue({
@@ -158,12 +169,49 @@ describe("reconcileWorktreesOnRestore", () => {
 
 		await reconcile(sessions);
 
-		const card = [...sessions.values()][0];
-		expect(card?.status).toBe("error");
-		expect(card?.cwd).toBe("/git/repo-2");
-		expect(card?.worktree).toBeUndefined();
-		expect(card?.error).toContain("sudo rm -rf /git/repo-2");
-		expect(forgetMock).toHaveBeenCalledWith("/git/repo-2");
+		expect(sessions.size).toBe(1);
+		const notice = [...sessions.values()][0];
+		expect(notice?.leftoverNotice).toBe(true);
+		expect(notice?.status).toBe("error");
+		expect(notice?.worktree).toBeUndefined();
+		expect(notice?.scrollback).toContain("sudo rm -rf /git/repo-2");
+		expect(vi.mocked(markLeftover)).toHaveBeenCalledWith(
+			"/git/repo-2",
+			"remove it with `sudo rm -rf /git/repo-2`",
+		);
+	});
+
+	it("keeps one notice across a second reconcile", async () => {
+		registryMock.mockReturnValue([]);
+		vi.mocked(recheckReapedWorktrees).mockResolvedValue(
+			Array.from({ length: 16 }, (_, i) => ({
+				path: `/git/repo-${i + 2}`,
+				reason: "EACCES",
+			})),
+		);
+		const sessions = new Map<string, Session>();
+
+		await reconcile(sessions);
+		await reconcile(sessions);
+
+		expect(sessions.size).toBe(1);
+		expect([...sessions.values()][0]?.error).toContain(
+			"16 leftover workspaces",
+		);
+	});
+
+	it("skips the reaped recheck and the notice when sessions.reportLeftovers is false", async () => {
+		vi.mocked(reportLeftoversEnabled).mockReturnValue(false);
+		existsMock.mockImplementation((path) => !String(path).endsWith(".git"));
+		durabilityMock.mockResolvedValue({ durable: true, gone: true });
+		reapMock.mockResolvedValue({ removed: false, reason: "EACCES" });
+		const sessions = new Map<string, Session>();
+
+		await reconcile(sessions);
+
+		expect(recheckReapedWorktrees).not.toHaveBeenCalled();
+		expect(vi.mocked(markLeftover)).not.toHaveBeenCalled();
+		expect(sessions.size).toBe(0);
 	});
 
 	it("leaves a worktree a restored session still holds alone", async () => {

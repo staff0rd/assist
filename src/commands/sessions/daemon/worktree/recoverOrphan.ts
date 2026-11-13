@@ -8,7 +8,9 @@ import {
 	type OrphanedWorktree,
 	resurfaceOrphanedWorktree,
 } from "./resurfaceOrphanedWorktree";
-import { surfaceUndeletableLeftover } from "./surfaceUndeletableLeftover";
+import type { Leftover } from "./Leftover";
+import { markLeftover } from "./readWorktreeRegistry";
+import { reportLeftoversEnabled } from "./reportLeftoversEnabled";
 import { checkDurability } from "./treeDurability";
 
 export async function recoverOrphan(
@@ -16,18 +18,19 @@ export async function recoverOrphan(
 	spawnWith: SpawnSession,
 	orphan: OrphanedWorktree,
 	notify: () => void,
-): Promise<void> {
+): Promise<Leftover | undefined> {
 	daemonLog(`worktree ${orphan.path} orphaned across restart; reconciling`);
 	const durability = await checkDurability(orphan.path);
 	if (durability.durable) {
 		const removal = await reapWorktree(orphan.path);
-		if (!removal.removed && holdsNoCheckout(orphan.path))
-			surfaceUndeletableLeftover(
-				spawnWith,
-				{ ...orphan, reason: removal.reason },
-				notify,
-			);
-		return;
+		if (
+			removal.removed ||
+			!holdsNoCheckout(orphan.path) ||
+			!reportLeftoversEnabled()
+		)
+			return undefined;
+		markLeftover(orphan.path, removal.reason);
+		return { path: orphan.path, reason: removal.reason };
 	}
 	const held = await describeHeldWork(orphan.path, durability.reason);
 	resurfaceOrphanedWorktree(
@@ -36,4 +39,5 @@ export async function recoverOrphan(
 		{ orphan, reason: durability.reason, held },
 		notify,
 	);
+	return undefined;
 }

@@ -1,4 +1,5 @@
 import type { SessionClient } from "./broadcast";
+import { liveSessionCount } from "./liveSessionCount";
 import { registerSpawnedSession } from "./registerSpawnedSession";
 import { sessionLimits } from "./sessionLimits";
 import type { OnStatusChange, Session, SpawnSession } from "./types";
@@ -27,7 +28,9 @@ export function makeSessionSpawner(
 				context,
 			);
 	return {
-		spawn: register(() => sessionLimits.nextId(sessions.size, counter)),
+		spawn: register(() =>
+			sessionLimits.nextId(liveSessionCount(sessions), counter),
+		),
 		recoveryCard: register(() => sessionLimits.recoveryCardId(counter)),
 	};
 }

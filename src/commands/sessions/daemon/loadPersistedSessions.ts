@@ -53,7 +53,8 @@ export function persistLiveSessions(sessions: Map<string, Session>): void {
 				s.status === "stopped" ||
 				s.status === "error" ||
 				(s.awaitingSeed && s.pendingStart)) &&
-			s.status !== "done",
+			s.status !== "done" &&
+			!s.leftoverNotice,
 	);
 	savePersistedSessions(live.map(toPersistedSession));
 	logPersist(live);

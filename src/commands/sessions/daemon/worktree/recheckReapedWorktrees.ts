@@ -1,26 +1,35 @@
-import type { SpawnSession } from "../types";
+import { existsSync } from "node:fs";
 import { deleteTreeDirectly } from "./deleteTreeDirectly";
 import { holdsNoCheckout } from "./holdsNoCheckout";
+import type { Leftover } from "./Leftover";
 import { type LeftoverContents, leftoverContents } from "./leftoverContents";
-import { readReapedWorktreeRegistry } from "./readWorktreeRegistry";
+import {
+	clearLeftover,
+	markLeftover,
+	readReapedWorktreeRegistry,
+} from "./readWorktreeRegistry";
 import type { OrphanedWorktree } from "./resurfaceOrphanedWorktree";
-import { surfaceUndeletableLeftover } from "./surfaceUndeletableLeftover";
 import { underTempRoot } from "./underTempRoot";
-import { leftoverSurfacingEnabled } from "./leftoverSurfacingEnabled";
 
 export async function recheckReapedWorktrees(
 	accounted: Set<string>,
-	spawnWith: SpawnSession,
-	notify: () => void,
-): Promise<void> {
-	if (!leftoverSurfacingEnabled) return;
+): Promise<Leftover[]> {
+	const leftovers: Leftover[] = [];
 	for (const record of readReapedWorktreeRegistry()) {
 		if (accounted.has(record.path) || underTempRoot(record.path)) continue;
+		if (record.leftover) {
+			if (existsSync(record.path))
+				leftovers.push({ path: record.path, reason: record.leftover });
+			else clearLeftover(record.path);
+			continue;
+		}
 		if (!holdsNoCheckout(record.path)) continue;
 		const reason = await clearReappearedTree(record);
-		if (reason)
-			surfaceUndeletableLeftover(spawnWith, { ...record, reason }, notify);
+		if (!reason) continue;
+		markLeftover(record.path, reason);
+		leftovers.push({ path: record.path, reason });
 	}
+	return leftovers;
 }
 
 async function clearReappearedTree(
