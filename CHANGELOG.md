@@ -1,3 +1,10 @@
+# [0.1145.0](https://github.com/staff0rd/assist/compare/v0.1144.0...v0.1145.0) (2026-11-13)
+
+
+### Features
+
+* comment on SDK transcript selections ([64bf014](https://github.com/staff0rd/assist/commit/64bf01433ea73bca9dc814809804e1f1b9320271))
+
 # [0.1144.0](https://github.com/staff0rd/assist/compare/v0.1143.4...v0.1144.0) (2026-11-13)
 
 
