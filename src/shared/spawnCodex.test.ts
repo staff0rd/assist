@@ -179,6 +179,30 @@ describe("spawnCodex", () => {
 		);
 	});
 
+	it("runs plain codex when harness.codexModel is codex-default", () => {
+		withConfig({
+			harness: { engine: "claude", codexModel: "codex-default" },
+			litellm: LITELLM,
+		});
+
+		spawnCodex("Do the thing", { cwd: "/repo" });
+
+		expect(spawnInheritMock).toHaveBeenCalledWith(
+			"codex",
+			[
+				"--no-daemon",
+				ENV,
+				...SANDBOX,
+				"-C",
+				"/repo",
+				"--sandbox",
+				"workspace-write",
+				"Do the thing",
+			],
+			{ env: {} },
+		);
+	});
+
 	it("neutralizes $skill mentions so quoted text cannot load a Codex skill", () => {
 		spawnCodex("Earlier we ran 'codex exec $refine' with $HOME set", {
 			cwd: "/repo",

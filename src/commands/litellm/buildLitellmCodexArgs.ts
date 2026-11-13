@@ -1,3 +1,4 @@
+import { resolveCodexModel } from "../../shared/resolveCodexModel";
 import {
 	buildCodexProviderArgs,
 	type CodexModelOverride,
@@ -7,7 +8,7 @@ import { readLitellmConfig } from "./readLitellmConfig";
 export function buildLitellmCodexArgs(
 	rawModel: string | undefined,
 ): CodexModelOverride {
-	const model = rawModel?.trim();
+	const model = resolveCodexModel(rawModel);
 	if (!model) return { args: [], env: {} };
 	const { config } = readLitellmConfig();
 	if (!config) return { args: [], env: {} };

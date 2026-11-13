@@ -41,6 +41,6 @@ export function registerReview(program: Command): void {
 	configHelp(
 		reviewCommand,
 		reviewConfigHelp,
-		"With review.codexModel unset the codex reviewer runs on the user's own codex auth; when it is set but the LiteLLM proxy is not configured, the reviewer falls back to that plain codex run. A reviewer whose harness is unavailable is skipped with its reason, and the review stops before reviewing when the review.synthesisHarness cannot synthesise.",
+		"With review.codexModel unset or codex-default the codex reviewer runs on the user's own codex auth and configured model (set codex-default in a repo to override an inherited value); when it is set but the LiteLLM proxy is not configured, the reviewer falls back to that plain codex run. A reviewer whose harness is unavailable is skipped with its reason, and the review stops before reviewing when the review.synthesisHarness cannot synthesise.",
 	);
 }

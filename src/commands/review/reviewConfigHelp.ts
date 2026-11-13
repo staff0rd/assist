@@ -5,7 +5,7 @@ export const reviewConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "review.codexModel",
 		setter: "assist config set review.codexModel gpt-5-codex",
-		note: "optional; runs the codex reviewer on this model via the LiteLLM proxy (needs litellm.baseUrl and litellm.apiKey)",
+		note: "optional; runs the codex reviewer on this model via the LiteLLM proxy (needs litellm.baseUrl and litellm.apiKey); codex-default runs it on codex's own configured model, overriding a value inherited from user or global config",
 	},
 	{
 		key: "review.synthesisHarness",

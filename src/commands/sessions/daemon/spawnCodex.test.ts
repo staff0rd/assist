@@ -235,6 +235,22 @@ describe("spawnCodex", () => {
 		});
 	});
 
+	it("launches plain codex when harness.codexModel is codex-default", () => {
+		withConfig({
+			harness: { engine: "claude", codexModel: "codex-default" },
+			litellm: LITELLM,
+		});
+
+		spawnCodex({ cwd: "/repo", sessionId: "7" });
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["codex", "--no-daemon", ENV, ...SANDBOX],
+			"/repo",
+			"7",
+			{},
+		);
+	});
+
 	it("appends a system prompt file as developer instructions, on resume too", () => {
 		const dir = mkdtempSync(join(tmpdir(), "assist-codex-prompt-"));
 		const file = join(dir, "prompt.md");
