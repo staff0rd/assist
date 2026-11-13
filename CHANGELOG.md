@@ -1,3 +1,10 @@
+# [0.1135.0](https://github.com/staff0rd/assist/compare/v0.1134.0...v0.1135.0) (2026-11-13)
+
+
+### Features
+
+* add SDK composer, queue and stop ([bd4a8d3](https://github.com/staff0rd/assist/commit/bd4a8d3b0d1368c88b137dcc68db8d7c334df437))
+
 # [0.1134.0](https://github.com/staff0rd/assist/compare/v0.1133.3...v0.1134.0) (2026-11-13)
 
 
