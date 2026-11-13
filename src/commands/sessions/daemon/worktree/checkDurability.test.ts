@@ -156,6 +156,53 @@ describe("checkDurability", () => {
 			reason: "unpushed commits",
 		});
 	});
+	describe("on a PR branch fetched by gh pr checkout with no remote-tracking ref", () => {
+		const forkBranch = {
+			status: { ok: true, out: "" },
+			"rev-parse": { ok: false },
+			branch: { ok: true, out: "" },
+			"symbolic-ref": { ok: true, out: "refs/heads/fix-poll" },
+		};
+
+		it("is durable when the branch tip was stored by a fetch", async () => {
+			gitReplies({
+				...forkBranch,
+				reflog: {
+					ok: true,
+					out: "f76fc9a7 fetch origin refs/pull/16/head:fix-poll --no-tags: storing ref",
+				},
+			});
+
+			expect(await checkDurability("/git/repo-7")).toEqual({ durable: true });
+		});
+
+		it("holds the tree once a local commit moves the tip past the fetched head", async () => {
+			gitReplies({
+				...forkBranch,
+				reflog: {
+					ok: true,
+					out: [
+						"a1b2c3d4 commit: fix: apply review",
+						"f76fc9a7 fetch origin refs/pull/16/head:fix-poll --no-tags: storing ref",
+					].join("\n"),
+				},
+			});
+
+			expect(await checkDurability("/git/repo-7")).toEqual({
+				durable: false,
+				reason: "unpushed commits",
+			});
+		});
+
+		it("holds the tree when HEAD is detached", async () => {
+			gitReplies({ ...forkBranch, "symbolic-ref": { ok: false } });
+
+			expect(await checkDurability("/git/repo-7")).toEqual({
+				durable: false,
+				reason: "unpushed commits",
+			});
+		});
+	});
 });
 
 describe("checkDurabilitySync", () => {
