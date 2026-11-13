@@ -1,3 +1,10 @@
+## [0.1135.1](https://github.com/staff0rd/assist/compare/v0.1135.0...v0.1135.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* let codex sandbox write ~/.assist ([6c2b0fe](https://github.com/staff0rd/assist/commit/6c2b0feb3f4af3f75dc319a28a8411b5f16f6d0e))
+
 # [0.1135.0](https://github.com/staff0rd/assist/compare/v0.1134.0...v0.1135.0) (2026-11-13)
 
 
