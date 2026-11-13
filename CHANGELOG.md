@@ -1,3 +1,10 @@
+# [0.1130.0](https://github.com/staff0rd/assist/compare/v0.1129.2...v0.1130.0) (2026-11-13)
+
+
+### Features
+
+* list clone.baseDir repos in pickers ([7b6fe29](https://github.com/staff0rd/assist/commit/7b6fe2910e1561a5f702ebc84e1feb04a3069bc9))
+
 ## [0.1129.2](https://github.com/staff0rd/assist/compare/v0.1129.1...v0.1129.2) (2026-11-13)
 
 
