@@ -1,5 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { respondJson } from "../../../shared/web";
 import { execGit } from "./execGit";
 import { gitBranchInfo } from "./gitBranchInfo";
@@ -43,11 +43,20 @@ async function request(url = "/api/git-status?cwd=%2Frepo"): Promise<{
 	return { status, counts };
 }
 
+let clock = Date.UTC(2026, 0, 1);
+
 describe("gitStatus", () => {
 	beforeEach(() => {
+		clock += 3_600_000;
+		vi.useFakeTimers({ toFake: ["Date"] });
+		vi.setSystemTime(clock);
 		vi.clearAllMocks();
 		itemChangeSetMock.mockResolvedValue(undefined);
 		gitBranchInfoMock.mockResolvedValue(NO_BRANCH);
+	});
+
+	afterEach(() => {
+		vi.useRealTimers();
 	});
 
 	it("rejects a request without a cwd", async () => {
@@ -256,6 +265,100 @@ describe("gitStatus", () => {
 			modified: ["changed.ts"],
 			deleted: [],
 			...NO_BRANCH,
+		});
+	});
+
+	describe("polled again for the same session", () => {
+		const repo = {
+			head: "head-one",
+			status: "",
+			diff: "M\ta.ts\n",
+			blob: "blob-one",
+		};
+		const diffsRun = () =>
+			execGitMock.mock.calls.filter(([, args]) => args[1] === "--name-status")
+				.length;
+
+		beforeEach(() => {
+			Object.assign(repo, {
+				head: "head-one",
+				status: "",
+				diff: "M\ta.ts\n",
+				blob: "blob-one",
+			});
+			withChangeSet([{ base: "base-one", paths: ["a.ts"] }]);
+			withGit((args) => {
+				if (args[0] === "rev-parse") return `${repo.head}\n`;
+				if (args[0] === "status") return repo.status;
+				if (args[0] === "hash-object") return `${repo.blob}\n`;
+				return args[1] === "--name-status" ? repo.diff : "";
+			});
+		});
+
+		it("reuses the item counts while nothing has changed", async () => {
+			await request();
+			const { counts } = await request();
+
+			expect(diffsRun()).toBe(1);
+			expect(counts.modified).toEqual(["a.ts"]);
+		});
+
+		it("recounts when the working tree changes", async () => {
+			await request();
+			repo.status = " M a.ts\n";
+			await request();
+
+			expect(diffsRun()).toBe(2);
+		});
+
+		it("recounts when an item file's contents change but its status does not", async () => {
+			repo.status = " M a.ts\n";
+			await request();
+			repo.blob = "blob-two";
+			repo.diff = "";
+			const { counts } = await request();
+
+			expect(diffsRun()).toBe(2);
+			expect(counts.modified).toEqual([]);
+		});
+
+		it("recounts when HEAD moves", async () => {
+			await request();
+			repo.head = "head-two";
+			repo.diff = "";
+			const { counts } = await request();
+
+			expect(diffsRun()).toBe(2);
+			expect(counts.modified).toEqual([]);
+		});
+
+		it("recounts when the item's change groups change", async () => {
+			await request();
+			withChangeSet([{ base: "base-one", paths: ["a.ts", "b.ts"] }]);
+			await request();
+
+			expect(diffsRun()).toBe(2);
+		});
+
+		it("recounts after thirty seconds regardless", async () => {
+			await request();
+			vi.setSystemTime(Date.now() + 31_000);
+			await request();
+
+			expect(diffsRun()).toBe(2);
+		});
+
+		it("shares one count between overlapping polls", async () => {
+			await Promise.all([request(), request()]);
+
+			expect(diffsRun()).toBe(1);
+		});
+
+		it("counts each session separately", async () => {
+			await request("/api/git-status?cwd=%2Frepo&session=sess-1");
+			await request("/api/git-status?cwd=%2Frepo&session=sess-2");
+
+			expect(diffsRun()).toBe(2);
 		});
 	});
 });
