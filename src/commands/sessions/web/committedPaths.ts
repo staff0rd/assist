@@ -1,7 +1,7 @@
 import type { CommitRef } from "../../../shared/db/listCommitRefs";
 import type { ConversationTarget } from "../shared/sessionConversationTarget";
 import { itemCommits } from "./itemCommits";
-import { resolveCommit } from "./resolveCommit";
+import { resolveCommitOnce } from "./resolveCommitOnce";
 import { transcriptCommits } from "./transcriptCommits";
 
 type CommittedPaths = { commits: CommitRef[]; bases: Map<string, string> };
@@ -23,7 +23,7 @@ export async function committedPaths(
 	const pending = inFlight.get(key);
 	if (pending) return pending;
 
-	const lookup = loadCommittedPaths(cwd, session)
+	const lookup = loadCommittedPaths(key, cwd, session)
 		.then((value) => {
 			cache.set(key, { value, expiresAt: Date.now() + CACHE_TTL_MS });
 			return value;
@@ -34,6 +34,7 @@ export async function committedPaths(
 }
 
 async function loadCommittedPaths(
+	key: string,
 	cwd: string,
 	session: ConversationTarget,
 ): Promise<CommittedPaths> {
@@ -44,7 +45,7 @@ async function loadCommittedPaths(
 			: await transcriptCommits(cwd, session);
 	const bases = new Map<string, string>();
 	for (const commit of commits) {
-		const resolved = await resolveCommit(cwd, commit.sha);
+		const resolved = await resolveCommitOnce(key, cwd, commit.sha);
 		if (!resolved) continue;
 		for (const path of resolved.paths) {
 			if (!bases.has(path)) bases.set(path, resolved.base);

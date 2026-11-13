@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { loadConfigFrom } from "../../../shared/loadConfigFrom";
 import { execGit } from "./execGit";
 import { itemChangeSet } from "./itemChangeSet";
@@ -238,5 +238,90 @@ describe("itemChangeSet", () => {
 		]);
 
 		expect(itemCommitsMock).toHaveBeenCalledOnce();
+	});
+
+	describe("once the commit lookup cache expires", () => {
+		const gitCallsFor = (sha: string) =>
+			execGitMock.mock.calls.filter(([, args]) =>
+				args.some((arg) => arg.startsWith(sha)),
+			).length;
+
+		beforeEach(() => {
+			vi.useFakeTimers();
+		});
+
+		afterEach(() => {
+			vi.useRealTimers();
+		});
+
+		it("does not resolve an already resolved commit again", async () => {
+			config(true);
+			commits("one");
+			withRepo({ one: { parent: "base-one", paths: ["a.ts"] } });
+			const session = nextSession();
+
+			await itemChangeSet("/repo", session);
+			const resolvingOnce = gitCallsFor("one");
+			vi.advanceTimersByTime(60_000);
+			const changeSet = await itemChangeSet("/repo", session);
+
+			expect(itemCommitsMock).toHaveBeenCalledTimes(2);
+			expect(gitCallsFor("one")).toBe(resolvingOnce);
+			expect(changeSet?.groups).toEqual([
+				{ base: "base-one", paths: ["a.ts"] },
+			]);
+		});
+
+		it("resolves a commit recorded since the last lookup", async () => {
+			config(true);
+			commits("one");
+			withRepo({
+				one: { parent: "base-one", paths: ["a.ts"] },
+				two: { parent: "one", paths: ["b.ts"] },
+			});
+			const session = nextSession();
+
+			await itemChangeSet("/repo", session);
+			commits("one", "two");
+			vi.advanceTimersByTime(60_000);
+			const changeSet = await itemChangeSet("/repo", session);
+
+			expect(changeSet?.groups).toEqual([
+				{ base: "base-one", paths: ["a.ts"] },
+				{ base: "one", paths: ["b.ts"] },
+			]);
+		});
+
+		it("retries a commit that was missing from the repo", async () => {
+			config(true);
+			commits("one");
+			withRepo({});
+			const session = nextSession();
+
+			expect(await itemChangeSet("/repo", session)).toBeUndefined();
+			withRepo({ one: { parent: "base-one", paths: ["a.ts"] } });
+			vi.advanceTimersByTime(60_000);
+			const changeSet = await itemChangeSet("/repo", session);
+
+			expect(changeSet?.groups).toEqual([
+				{ base: "base-one", paths: ["a.ts"] },
+			]);
+		});
+
+		it("retries a commit whose paths could not be listed", async () => {
+			config(true);
+			commits("one");
+			withRepo({ one: { parent: "base-one", paths: [] } });
+			const session = nextSession();
+
+			expect(await itemChangeSet("/repo", session)).toBeUndefined();
+			withRepo({ one: { parent: "base-one", paths: ["a.ts"] } });
+			vi.advanceTimersByTime(60_000);
+			const changeSet = await itemChangeSet("/repo", session);
+
+			expect(changeSet?.groups).toEqual([
+				{ base: "base-one", paths: ["a.ts"] },
+			]);
+		});
 	});
 });
