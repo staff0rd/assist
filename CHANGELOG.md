@@ -1,3 +1,10 @@
+# [0.1133.0](https://github.com/staff0rd/assist/compare/v0.1132.0...v0.1133.0) (2026-11-13)
+
+
+### Features
+
+* criteria toggle in project dialog ([4105ca5](https://github.com/staff0rd/assist/commit/4105ca571f2b3548d73b947ff25711c90ced2857))
+
 # [0.1132.0](https://github.com/staff0rd/assist/compare/v0.1131.0...v0.1132.0) (2026-11-13)
 
 
