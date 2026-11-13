@@ -1,3 +1,10 @@
+## [0.1141.1](https://github.com/staff0rd/assist/compare/v0.1141.0...v0.1141.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* size desktop skill suggestion list ([9a8abc8](https://github.com/staff0rd/assist/commit/9a8abc8d2934f3ef20033bc8c4704113a3b0fb39))
+
 # [0.1141.0](https://github.com/staff0rd/assist/compare/v0.1140.2...v0.1141.0) (2026-11-13)
 
 
