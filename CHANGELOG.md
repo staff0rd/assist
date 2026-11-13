@@ -1,3 +1,10 @@
+# [0.1144.0](https://github.com/staff0rd/assist/compare/v0.1143.4...v0.1144.0) (2026-11-13)
+
+
+### Features
+
+* run workflows on the SDK harness ([2829b83](https://github.com/staff0rd/assist/commit/2829b83c9d254b38350b71ebe58f77ddc802eb22))
+
 ## [0.1143.4](https://github.com/staff0rd/assist/compare/v0.1143.3...v0.1143.4) (2026-11-13)
 
 
