@@ -14,14 +14,6 @@ const HARNESS_PRODUCT_LABELS: Record<HarnessKind, string> = {
 	pi: "pi",
 };
 
-const HARNESS_SUBLINES: Partial<Record<HarnessKind, string>> = {
-	"claude-sdk": "Transcript and composer · auto permission mode",
-};
-
-export function harnessSubline(harness: HarnessKind): string | undefined {
-	return HARNESS_SUBLINES[harness];
-}
-
 export const legacyDefaultHarness: HarnessKind = "claude";
 
 export function resolveHarness(harness: HarnessKind | undefined): HarnessKind {

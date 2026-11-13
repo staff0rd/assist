@@ -2,10 +2,7 @@ import Divider from "@mui/material/Divider";
 import ListSubheader from "@mui/material/ListSubheader";
 import Menu from "@mui/material/Menu";
 import type { HarnessKind } from "../../../../../../../../../../../shared/harnesses";
-import {
-	harnessLabel,
-	harnessSubline,
-} from "../../../../../../../../../../../shared/harnessAdapters/harnessLabel";
+import { harnessLabel } from "../../../../../../../../../../../shared/harnessAdapters/harnessLabel";
 import type { SessionModel } from "../../../sessionModel";
 import { type Choice, ChoiceItem } from "./ChoiceItem";
 import { modelChoices } from "./modelChoices";
@@ -30,7 +27,6 @@ export function HarnessMenu({
 			? harnesses.map((choice) => ({
 					key: choice,
 					label: harnessLabel(choice),
-					detail: harnessSubline(choice),
 					checked: choice === harness,
 					pick: () => onPick(choice),
 				}))
