@@ -1,3 +1,10 @@
+## [0.1145.1](https://github.com/staff0rd/assist/compare/v0.1145.0...v0.1145.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* refresh docs for recent stories ([d4a89e3](https://github.com/staff0rd/assist/commit/d4a89e3d395c06817d118b2ba9baeaf09f8143bb))
+
 # [0.1145.0](https://github.com/staff0rd/assist/compare/v0.1144.0...v0.1145.0) (2026-11-13)
 
 
