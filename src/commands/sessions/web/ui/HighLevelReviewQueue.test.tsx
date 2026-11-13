@@ -259,6 +259,7 @@ describe("high-level review queue", () => {
 		it("prefills the note and saves only the note", () => {
 			const { onDecision } = queueAndEdit();
 
+			expect(document.activeElement).toBe(noteBox());
 			expect(noteBox().value).toBe("asserts nothing useful");
 			fireEvent.change(noteBox(), { target: { value: "asserts nothing" } });
 			fireEvent.click(screen.getByRole("button", { name: "Save" }));
