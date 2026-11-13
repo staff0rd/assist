@@ -1,3 +1,10 @@
+## [0.1139.1](https://github.com/staff0rd/assist/compare/v0.1139.0...v0.1139.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* join restart split button segments ([8de89a2](https://github.com/staff0rd/assist/commit/8de89a294e9d5b292cc4ab5ccf7d4892288334b4))
+
 # [0.1139.0](https://github.com/staff0rd/assist/compare/v0.1138.0...v0.1139.0) (2026-11-13)
 
 
