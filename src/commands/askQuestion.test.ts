@@ -114,6 +114,9 @@ describe("askQuestion", () => {
 		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
 	});
 
+	const HEADING =
+		"Error: each question must be 30 words or fewer and its context 40 words or fewer:";
+	const FOOTER = "Shorten these and re-run assist ask-question.";
 	const words = (count: number) =>
 		Array.from({ length: count }, (_, i) => `w${i}`).join(" ");
 
@@ -139,13 +142,55 @@ describe("askQuestion", () => {
 		await expect(askQuestion({ json: "-" })).rejects.toThrow("process.exit(1)");
 		expect(errored.join("\n")).toBe(
 			[
-				"Error: questions must be 30 words or fewer:",
-				"- Layout: 31 words",
-				"- Long: 45 words",
-				"Shorten these questions and re-run assist ask-question.",
+				HEADING,
+				"- Layout question: 31 words",
+				"- Long question: 45 words",
+				FOOTER,
 			].join("\n"),
 		);
 		expect(mockIsLive).not.toHaveBeenCalled();
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+	});
+
+	it("opens the form for a context at the 40-word limit", async () => {
+		stdin({ questions: [{ ...questions[0], context: words(40) }] });
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+
+		await askQuestion({ json: "-" });
+
+		expect(mockRequestPreviewDecision).toHaveBeenCalled();
+	});
+
+	it("rejects a context over 40 words before any session check", async () => {
+		vi.stubEnv("ASSIST_SESSION", "");
+		stdin({ questions: [{ ...questions[0], context: words(41) }] });
+
+		await expect(askQuestion({ json: "-" })).rejects.toThrow("process.exit(1)");
+		expect(errored.join("\n")).toBe(
+			[HEADING, "- Layout context: 41 words", FOOTER].join("\n"),
+		);
+		expect(mockIsLive).not.toHaveBeenCalled();
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+	});
+
+	it("reports question and context violations together", async () => {
+		stdin({
+			questions: [
+				{ ...questions[0], question: words(31), context: words(50) },
+				{ ...questions[1], context: words(41) },
+			],
+		});
+
+		await expect(askQuestion({ json: "-" })).rejects.toThrow("process.exit(1)");
+		expect(errored.join("\n")).toBe(
+			[
+				HEADING,
+				"- Layout question: 31 words",
+				"- Layout context: 50 words",
+				"- Notify context: 41 words",
+				FOOTER,
+			].join("\n"),
+		);
 		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
 	});
 
