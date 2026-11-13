@@ -1,3 +1,10 @@
+## [0.1143.2](https://github.com/staff0rd/assist/compare/v0.1143.1...v0.1143.2) (2026-11-13)
+
+
+### Bug Fixes
+
+* lazy-load every command implementation ([8aeef88](https://github.com/staff0rd/assist/commit/8aeef88a433bee266329468f2a37ae6811aca48c))
+
 ## [0.1143.1](https://github.com/staff0rd/assist/compare/v0.1143.0...v0.1143.1) (2026-11-13)
 
 
