@@ -11,13 +11,11 @@ import { useAssistHarness } from "./useAssistHarness";
 export function AssistReviewMenuList({
 	menuRef,
 	actionsOnly,
-	autoFocusItem,
 	onPick,
 	onClose,
 }: {
 	menuRef: Ref<HTMLUListElement>;
 	actionsOnly: boolean;
-	autoFocusItem: boolean;
 	onPick: (args: string[]) => void;
 	onClose: (restoreFocus: boolean) => void;
 }) {
@@ -33,7 +31,6 @@ export function AssistReviewMenuList({
 	return (
 		<MenuList
 			ref={menuRef}
-			autoFocusItem={autoFocusItem}
 			dense
 			aria-label="Start an assist session for this PR"
 			onKeyDown={onKeyDown}

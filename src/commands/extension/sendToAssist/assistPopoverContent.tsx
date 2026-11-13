@@ -27,14 +27,10 @@ export function assistPopoverContent(
 					dismiss(false);
 					send({ args });
 				}}
-				onPrompt={
-					kind === "review"
-						? (instructions) => {
-								dismiss(false);
-								send({ instructions: instructions || undefined });
-							}
-						: undefined
-				}
+				onPrompt={(instructions) => {
+					dismiss(false);
+					send({ instructions: instructions || undefined });
+				}}
 				onClose={dismiss}
 			/>
 		);

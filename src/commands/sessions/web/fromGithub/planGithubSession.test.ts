@@ -1,5 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { resolveRepoLocation } from "../../../backlog/resolveRepoLocation";
+import { findAzureDevopsClone } from "./findAzureDevopsClone";
 import { findCloneByOrigin } from "./findCloneByOrigin";
 import { planGithubSession } from "./planGithubSession";
 
@@ -7,6 +8,7 @@ vi.mock("../../../backlog/resolveRepoLocation", () => ({
 	resolveRepoLocation: vi.fn(),
 }));
 vi.mock("./findCloneByOrigin", () => ({ findCloneByOrigin: vi.fn() }));
+vi.mock("./findAzureDevopsClone", () => ({ findAzureDevopsClone: vi.fn() }));
 
 const mockResolve = vi.mocked(resolveRepoLocation);
 const mockFind = vi.mocked(findCloneByOrigin);
@@ -155,6 +157,39 @@ describe("planGithubSession", () => {
 				ok: false,
 				status: 404,
 				error: "other/target is not cloned under /base",
+			});
+		});
+	});
+
+	describe("with an Azure DevOps PR", () => {
+		const ADO = "https://dev.azure.com/acme/proj/_git/site/pullrequest/42";
+
+		it("prompts in the ADO clone with read-remotely guidance", () => {
+			vi.mocked(findAzureDevopsClone).mockReturnValue("/base/site");
+			const plan = planGithubSession(
+				{ url: ` ${ADO} `, instructions: "why?" },
+				"/base",
+			);
+			expect(plan).toMatchObject({ ok: true, cwd: "/base/site" });
+			const { prompt } = plan as { prompt: string };
+			expect(prompt.startsWith(`${ADO}\n\n`)).toBe(true);
+			expect(prompt).toContain("az repos pr show --id 42");
+			expect(prompt).toContain("Do not check out its branch.");
+			expect(prompt.endsWith("\n\nwhy?")).toBe(true);
+			expect(findAzureDevopsClone).toHaveBeenCalledWith(
+				expect.objectContaining({ org: "acme", project: "proj", repo: "site" }),
+				"/base",
+			);
+			expect(mockResolve).not.toHaveBeenCalled();
+		});
+
+		it("reports the same not-cloned error as Checkout", () => {
+			vi.mocked(findAzureDevopsClone).mockReturnValue(undefined);
+			expect(planGithubSession({ url: ADO }, "/base")).toEqual({
+				ok: false,
+				status: 404,
+				error:
+					"acme/proj/site is not cloned under /base; clone https://dev.azure.com/acme/proj/_git/site there and retry",
 			});
 		});
 	});

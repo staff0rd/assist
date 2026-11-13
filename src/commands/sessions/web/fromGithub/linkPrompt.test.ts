@@ -27,4 +27,20 @@ describe("linkPrompt", () => {
 			`\`gh pr diff ${PR}\``,
 		);
 	});
+
+	it("tells the agent to read an Azure DevOps PR remotely", () => {
+		const prompt = linkPrompt(
+			"https://dev.azure.com/acme/My%20Proj/_git/site/pullrequest/42?_a=files",
+			"why?",
+		);
+		expect(prompt).toContain(
+			"az repos pr show --id 42 --org https://dev.azure.com/acme",
+		);
+		expect(prompt).toContain(
+			'"project=My Proj" "repositoryId=site" pullRequestId=42',
+		);
+		expect(prompt).toContain("git fetch origin refs/pull/42/merge");
+		expect(prompt).toContain("Do not check out its branch.");
+		expect(prompt.endsWith("\n\nwhy?")).toBe(true);
+	});
 });

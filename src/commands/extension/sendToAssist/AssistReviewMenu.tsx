@@ -14,23 +14,20 @@ export function AssistReviewMenu({
 }: {
 	actionsOnly?: boolean;
 	onPick: (args: string[]) => void;
-	onPrompt?: (instructions: string) => void;
+	onPrompt: (instructions: string) => void;
 	onClose: (restoreFocus: boolean) => void;
 }) {
 	const menuRef = useRef<HTMLUListElement>(null);
 	return (
 		<Paper sx={popoverPaperSx} onBlur={closeWhenFocusLeaves(false, onClose)}>
-			{onPrompt && (
-				<AssistReviewPromptField
-					onPrompt={onPrompt}
-					onClose={onClose}
-					focusMenu={() => focusFirstMenuItem(menuRef.current)}
-				/>
-			)}
+			<AssistReviewPromptField
+				onPrompt={onPrompt}
+				onClose={onClose}
+				focusMenu={() => focusFirstMenuItem(menuRef.current)}
+			/>
 			<AssistReviewMenuList
 				menuRef={menuRef}
 				actionsOnly={actionsOnly}
-				autoFocusItem={!onPrompt}
 				onPick={onPick}
 				onClose={onClose}
 			/>

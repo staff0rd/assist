@@ -37,7 +37,9 @@ afterEach(() => {
 describe("AssistReviewMenu", () => {
 	it("launches a GitHub action on Codex from its harness button", async () => {
 		const onPick = vi.fn();
-		render(<AssistReviewMenu onPick={onPick} onClose={vi.fn()} />);
+		render(
+			<AssistReviewMenu onPick={onPick} onPrompt={vi.fn()} onClose={vi.fn()} />,
+		);
 		fireEvent.click(
 			await screen.findByRole("button", {
 				name: "Run Review & refine on Codex",
@@ -53,7 +55,9 @@ describe("AssistReviewMenu", () => {
 
 	it("launches on the engine without --harness from the row", async () => {
 		const onPick = vi.fn();
-		render(<AssistReviewMenu onPick={onPick} onClose={vi.fn()} />);
+		render(
+			<AssistReviewMenu onPick={onPick} onPrompt={vi.fn()} onClose={vi.fn()} />,
+		);
 		await screen.findByRole("button", { name: "Run Review & refine on Codex" });
 		fireEvent.click(screen.getByRole("menuitem", { name: /^Review & refine/ }));
 		expect(onPick).toHaveBeenCalledWith(["review", "--refine"]);
@@ -61,7 +65,14 @@ describe("AssistReviewMenu", () => {
 
 	it("offers Codex on Azure DevOps Address Comments only", async () => {
 		const onPick = vi.fn();
-		render(<AssistReviewMenu actionsOnly onPick={onPick} onClose={vi.fn()} />);
+		render(
+			<AssistReviewMenu
+				actionsOnly
+				onPick={onPick}
+				onPrompt={vi.fn()}
+				onClose={vi.fn()}
+			/>,
+		);
 		fireEvent.click(
 			await screen.findByRole("button", {
 				name: "Run Address Comments (auto) on Codex",
@@ -80,7 +91,13 @@ describe("AssistReviewMenu", () => {
 
 	it("shows no harness buttons when the server is unreachable", async () => {
 		const sendMessage = stubHarness({ ok: false, message: "unreachable" });
-		render(<AssistReviewMenu onPick={vi.fn()} onClose={vi.fn()} />);
+		render(
+			<AssistReviewMenu
+				onPick={vi.fn()}
+				onPrompt={vi.fn()}
+				onClose={vi.fn()}
+			/>,
+		);
 		await vi.waitFor(() => expect(sendMessage).toHaveBeenCalled());
 		expect(screen.queryByRole("button", { name: /^Run / })).toBeNull();
 	});
@@ -90,11 +107,6 @@ describe("AssistReviewMenu prompt field", () => {
 	function field(): HTMLTextAreaElement {
 		return screen.getByLabelText("Instructions for assist");
 	}
-
-	it("shows no prompt field without onPrompt", () => {
-		render(<AssistReviewMenu onPick={vi.fn()} onClose={vi.fn()} />);
-		expect(screen.queryByLabelText("Instructions for assist")).toBeNull();
-	});
 
 	it("starts focus in the field above the menu rows", () => {
 		render(

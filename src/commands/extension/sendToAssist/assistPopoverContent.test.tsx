@@ -78,13 +78,13 @@ describe("review popover prompt", () => {
 		expect(send).toHaveBeenCalledWith({ instructions: "What changed?" });
 	});
 
-	it("has no prompt field on Azure DevOps yet", () => {
+	it("sends the question with no args from Prompt on Azure DevOps", () => {
+		const send = vi.fn();
 		render(
-			assistPopoverContent("azure-devops-review", {
-				send: vi.fn(),
-				dismiss: vi.fn(),
-			}),
+			assistPopoverContent("azure-devops-review", { send, dismiss: vi.fn() }),
 		);
-		expect(screen.queryByLabelText("Instructions for assist")).toBeNull();
+		fireEvent.change(field(), { target: { value: "Is this safe?" } });
+		fireEvent.click(screen.getByRole("button", { name: "Prompt" }));
+		expect(send).toHaveBeenCalledWith({ instructions: "Is this safe?" });
 	});
 });
