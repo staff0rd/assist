@@ -1,3 +1,10 @@
+## [0.1129.2](https://github.com/staff0rd/assist/compare/v0.1129.1...v0.1129.2) (2026-11-13)
+
+
+### Bug Fixes
+
+* surface undeletable worktree leftovers ([ccf5a44](https://github.com/staff0rd/assist/commit/ccf5a44a8901b72369449f85ab3059d8034626a2))
+
 ## [0.1129.1](https://github.com/staff0rd/assist/compare/v0.1129.0...v0.1129.1) (2026-11-13)
 
 
