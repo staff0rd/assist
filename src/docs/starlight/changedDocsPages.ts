@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
-import { existsSync } from "node:fs";
+import { createHash } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
 import { join, relative } from "node:path";
 import { docsPaths } from "../docsPaths";
 
@@ -21,15 +22,25 @@ function pagesPath(): string {
 	return relative(docsPaths.repoRoot, docsPaths.pagesDir).replace(/\\/g, "/");
 }
 
-export function changedDocsPages(): string[] {
+export type ChangedSource = { id: string; version: string };
+
+function versionOf(path: string): string {
+	return createHash("sha1")
+		.update(readFileSync(join(docsPaths.repoRoot, path)))
+		.digest("hex")
+		.slice(0, 12);
+}
+
+export function changedDocsPages(): ChangedSource[] {
 	const paths = [
 		...git(["diff", "--name-only", "HEAD"]),
 		...git(["ls-files", "--others", "--exclude-standard"]),
 	];
-	const ids = paths
-		.filter((path) => existsSync(join(docsPaths.repoRoot, path)))
-		.map((path) => /^(.+)\.mdx?$/.exec(path.slice(pagesPath().length + 1)))
-		.filter((match) => match !== null)
-		.map((match) => match[1]);
-	return [...new Set(ids)];
+	const sources = new Map<string, string>();
+	for (const path of paths) {
+		if (!existsSync(join(docsPaths.repoRoot, path))) continue;
+		const match = /^(.+)\.mdx?$/.exec(path.slice(pagesPath().length + 1));
+		if (match) sources.set(match[1], versionOf(path));
+	}
+	return [...sources].map(([id, version]) => ({ id, version }));
 }

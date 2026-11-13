@@ -91,6 +91,12 @@ a[data-assist-changed]::before {
 	background: var(--assist-diff-added-bar);
 }
 
+a[data-assist-changed][data-assist-done]::before {
+	box-sizing: border-box;
+	border: 2px solid var(--assist-diff-added-bar);
+	background: transparent;
+}
+
 .assist-diff-nav {
 	position: fixed;
 	inset-inline-end: 1rem;

@@ -12,21 +12,38 @@ describe("markChangedPages", () => {
 		const config = link("Config", "/assist/config/");
 		const pages = markChangedPages(
 			[{ type: "group", entries: [updating, backlog] }, config],
-			["config", "updating"],
+			[
+				{ id: "config", version: "c1" },
+				{ id: "updating", version: "u1" },
+			],
 			"/assist",
 		);
 		expect(pages).toEqual([
-			{ id: "updating", href: "/assist/updating/", label: "Updating" },
-			{ id: "config", href: "/assist/config/", label: "Config" },
+			{
+				id: "updating",
+				version: "u1",
+				href: "/assist/updating/",
+				label: "Updating",
+			},
+			{ id: "config", version: "c1", href: "/assist/config/", label: "Config" },
 		]);
 		expect(updating.attrs).toEqual({ "data-assist-changed": "" });
 		expect(backlog.attrs).toEqual({});
 	});
 
 	it("links changed pages missing from the sidebar by id", () => {
-		expect(markChangedPages([], ["index", "draft"], "/")).toEqual([
-			{ id: "index", href: "/", label: "index" },
-			{ id: "draft", href: "/draft/", label: "draft" },
+		expect(
+			markChangedPages(
+				[],
+				[
+					{ id: "index", version: "i1" },
+					{ id: "draft", version: "d1" },
+				],
+				"/",
+			),
+		).toEqual([
+			{ id: "index", version: "i1", href: "/", label: "index" },
+			{ id: "draft", version: "d1", href: "/draft/", label: "draft" },
 		]);
 	});
 

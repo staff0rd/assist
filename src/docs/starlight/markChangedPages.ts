@@ -1,4 +1,5 @@
 import { docsFeedbackMarkers } from "../../shared/docsFeedbackMarkers";
+import type { ChangedSource } from "./changedDocsPages";
 
 type SidebarEntry =
 	| {
@@ -9,7 +10,7 @@ type SidebarEntry =
 	  }
 	| { type: "group"; entries: SidebarEntry[] };
 
-export type ChangedPage = { id: string; href: string; label: string };
+export type ChangedPage = ChangedSource & { href: string; label: string };
 
 function pageIdOfHref(href: string, base: string): string {
 	const path = href.startsWith(base) ? href.slice(base.length) : href;
@@ -27,22 +28,24 @@ function* sidebarLinks(
 
 export function markChangedPages(
 	sidebar: SidebarEntry[],
-	changedIds: string[],
+	sources: ChangedSource[],
 	base: string,
 ): ChangedPage[] {
-	const changed = new Set(changedIds);
+	const changed = new Map(sources.map((source) => [source.id, source.version]));
 	const pages: ChangedPage[] = [];
 	for (const link of sidebarLinks(sidebar)) {
 		const id = pageIdOfHref(link.href, base);
-		if (!changed.has(id)) continue;
+		const version = changed.get(id);
+		if (version === undefined) continue;
 		link.attrs[docsFeedbackMarkers.changedAttribute] = "";
-		pages.push({ id, href: link.href, label: link.label });
+		pages.push({ id, version, href: link.href, label: link.label });
 		changed.delete(id);
 	}
 	const root = base.endsWith("/") ? base : `${base}/`;
-	for (const id of changed)
+	for (const [id, version] of changed)
 		pages.push({
 			id,
+			version,
 			href: id === "index" ? root : `${root}${id}/`,
 			label: id,
 		});

@@ -1,49 +1,51 @@
-import { changeCursor } from "./changeCursor";
+import type { ChangeLoop } from "./changeLoop";
+import { changeHash, changeSteps } from "./changeSteps";
+import { doneCursor } from "./doneCursor";
+import type { DoneStore } from "./doneStore";
+import { remainingStatus } from "./remainingStatus";
+import { stepperButton } from "./stepperButton";
 
-const changeHash = {
-	first: "#assist-change-first",
-	last: "#assist-change-last",
-};
-
-type StepperPages = {
-	previous?: string;
-	next?: string;
+type StepperContext = {
+	loop: ChangeLoop;
+	store: DoneStore;
 	go: (href: string) => void;
+	onRefresh: () => void;
 };
-
-function button(doc: Document, label: string, text: string) {
-	const element = doc.createElement("button");
-	element.type = "button";
-	element.ariaLabel = label;
-	element.title = label;
-	element.textContent = text;
-	return element;
-}
 
 export function changeStepper(
 	doc: Document,
 	changes: Element[][],
-	pages: StepperPages,
+	{ loop, store, go, onRefresh }: StepperContext,
 ) {
-	const status = doc.createElement("span");
-	const previous = button(doc, "Previous change", "‹");
-	const next = button(doc, "Next change", "›");
-	previous.disabled = changes.length === 0 && !pages.previous;
-	next.disabled = changes.length === 0 && !pages.next;
-	const cursor = changeCursor(changes, status);
-	previous.addEventListener("click", () => {
-		if (cursor.current > 0) cursor.show(cursor.current - 1);
-		else if (pages.previous) pages.go(pages.previous + changeHash.last);
-		else cursor.show(changes.length - 1);
-	});
-	next.addEventListener("click", () => {
-		if (cursor.current < changes.length - 1) cursor.show(cursor.current + 1);
-		else if (pages.next) pages.go(pages.next + changeHash.first);
-		else cursor.show(0);
-	});
+	const position = doc.createElement("span");
+	const remaining = doc.createElement("span");
+	const previous = stepperButton(doc, "Previous change", "‹");
+	const next = stepperButton(doc, "Next change", "›");
+	const done = stepperButton(doc, "Mark done and go to next change", "✓ ›");
+	previous.disabled = changes.length === 0 && !loop.previous;
+	const cursor = doneCursor(loop.page.id, changes, position, store);
+	const steps = changeSteps(cursor, changes.length, loop, go);
+	const refresh = () => {
+		const left = cursor.left();
+		store.setLeft(loop.page, left);
+		remaining.textContent = remainingStatus(left, loop.elsewhere());
+		const allDone = remaining.textContent === "All changes done";
+		next.disabled = allDone;
+		done.disabled = allDone;
+		onRefresh();
+	};
+	const leave = (isDone: boolean) => {
+		cursor.setCurrentDone(isDone);
+		refresh();
+		steps.next();
+	};
+	previous.addEventListener("click", steps.previous);
+	next.addEventListener("click", () => leave(false));
+	done.addEventListener("click", () => leave(true));
+	refresh();
 	const start = doc.location.hash;
-	if (changes.length && start === changeHash.first) cursor.show(0);
+	if (start === changeHash.first) steps.next();
 	if (changes.length && start === changeHash.last)
 		cursor.show(changes.length - 1);
-	return [previous, status, next];
+	return [previous, position, next, done, remaining];
 }

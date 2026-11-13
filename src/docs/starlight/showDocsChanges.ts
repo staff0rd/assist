@@ -1,7 +1,10 @@
 import { docsFeedbackMarkers } from "../../shared/docsFeedbackMarkers";
+import { changeLoop } from "./changeLoop";
 import { changeStepper } from "./changeStepper";
+import { doneStore } from "./doneStore";
 import { findChanges } from "./findChanges";
 import type { ChangedPage } from "./markChangedPages";
+import { markDonePages } from "./markDonePages";
 import { otherPagesList } from "./otherPagesList";
 
 function metaContent(doc: Document, name: string): string | undefined {
@@ -14,25 +17,26 @@ function metaContent(doc: Document, name: string): string | undefined {
 export function showDocsChanges(
 	doc: Document,
 	go: (href: string) => void = (href) => doc.location.assign(href),
+	storage: Storage | undefined = doc.defaultView?.localStorage,
 ): void {
 	const json = metaContent(doc, docsFeedbackMarkers.changesMeta);
 	const pageId = metaContent(doc, docsFeedbackMarkers.pageMeta);
-	const content = doc.querySelector(".sl-markdown-content");
-	if (!json || !content) return;
+	if (!json) return;
 	const pages = JSON.parse(json) as ChangedPage[];
+	const store = doneStore(storage);
+	const markSidebar = () => markDonePages(doc, pages, store);
+	markSidebar();
+	const content = doc.querySelector(".sl-markdown-content");
 	const index = pages.findIndex((page) => page.id === pageId);
-	if (index === -1) return;
-	const neighbour = (offset: number) =>
-		pages.length > 1
-			? pages[(index + offset + pages.length) % pages.length].href
-			: undefined;
+	if (index === -1 || !content) return;
 	const bar = doc.createElement("aside");
 	bar.className = "assist-diff-nav";
 	bar.append(
 		...changeStepper(doc, findChanges(content), {
-			previous: neighbour(-1),
-			next: neighbour(1),
+			loop: changeLoop(pages, index, store),
+			store,
 			go,
+			onRefresh: markSidebar,
 		}),
 	);
 	const others = pages.filter((page) => page.id !== pageId);
