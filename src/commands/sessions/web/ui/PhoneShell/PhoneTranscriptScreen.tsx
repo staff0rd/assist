@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import { useEffect } from "react";
-import { useParams } from "react-router";
+import { useParams, useSearchParams } from "react-router";
 import { TranscriptArea } from "../App/SessionContent/SessionArea/TranscriptArea";
 import { safeAreaInsets } from "../designSystem/safeAreaInsets";
 import type { SessionSocket } from "../useSessionSocket";
@@ -16,13 +16,16 @@ const bodySx = {
 
 export function PhoneTranscriptScreen({ socket }: { socket: SessionSocket }) {
 	const { id = "" } = useParams();
+	const node = useSearchParams()[0].get("node") ?? undefined;
 	const { viewTranscript, clearTranscript } = socket;
-	const entry = socket.history.find((h) => h.sessionId === id);
+	const entry = socket.history.find(
+		(h) => h.sessionId === id && h.node === node,
+	);
 
 	useEffect(() => {
-		viewTranscript(id);
+		viewTranscript(id, node);
 		return clearTranscript;
-	}, [id, viewTranscript, clearTranscript]);
+	}, [id, node, viewTranscript, clearTranscript]);
 
 	return (
 		<>

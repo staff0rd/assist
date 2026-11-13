@@ -24,7 +24,13 @@ export function PhoneHistoryRow({
 	return (
 		<ButtonBase
 			sx={phoneRowSx("done")}
-			onClick={() => navigate(`/history/${entry.sessionId}`)}
+			onClick={() =>
+				navigate(
+					entry.node
+						? `/history/${entry.sessionId}?node=${encodeURIComponent(entry.node)}`
+						: `/history/${entry.sessionId}`,
+				)
+			}
 		>
 			<Box sx={phoneRowTitleSx}>{entry.title ?? entry.name}</Box>
 			<ChevronRightIcon fontSize="small" sx={phoneRowChevronSx} />
