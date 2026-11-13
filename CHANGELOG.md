@@ -1,3 +1,10 @@
+## [0.1130.1](https://github.com/staff0rd/assist/compare/v0.1130.0...v0.1130.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* disable leftover worktree error cards ([18e1f4c](https://github.com/staff0rd/assist/commit/18e1f4cde304c65779fdebcd29906aed47b339dc))
+
 # [0.1130.0](https://github.com/staff0rd/assist/compare/v0.1129.2...v0.1130.0) (2026-11-13)
 
 
