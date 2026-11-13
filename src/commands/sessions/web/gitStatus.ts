@@ -3,7 +3,7 @@ import { respondJson } from "../../../shared/web";
 import { getCwdParam } from "./getCwdParam";
 import { getConversationParam } from "./getConversationParam";
 import { type GitBranchInfo, gitBranchInfo } from "./gitBranchInfo";
-import { groupedCounts } from "./groupedCounts";
+import { groupedCountsUnlessUnchanged } from "./groupedCountsUnlessUnchanged";
 import { itemChangeSet } from "./itemChangeSet";
 import type { GitStatusCounts } from "./parseGitStatus";
 import { workingTreeCounts } from "./workingTreeCounts";
@@ -22,17 +22,19 @@ export async function gitStatus(
 	if (!cwd) return;
 	try {
 		const branch = await gitBranchInfo(cwd);
-		const changeSet = await itemChangeSet(cwd, getConversationParam(req)).catch(
-			() => undefined,
-		);
+		const session = getConversationParam(req);
+		const changeSet = await itemChangeSet(cwd, session).catch(() => undefined);
+		const uncommitted = await workingTreeCounts(cwd);
 		if (!changeSet) {
-			respondJson(res, 200, { ...(await workingTreeCounts(cwd)), ...branch });
+			respondJson(res, 200, { ...uncommitted, ...branch });
 			return;
 		}
-		const [counts, uncommitted] = await Promise.all([
-			groupedCounts(cwd, changeSet.groups),
-			workingTreeCounts(cwd),
-		]);
+		const counts = await groupedCountsUnlessUnchanged(
+			`${cwd} ${session?.harness ?? ""}:${session?.conversationId ?? ""}`,
+			cwd,
+			changeSet.groups,
+			uncommitted,
+		);
 		respondJson(res, 200, {
 			...counts,
 			...branch,

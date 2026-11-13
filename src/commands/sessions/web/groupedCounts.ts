@@ -16,11 +16,18 @@ export async function groupedCounts(
 	cwd: string,
 	groups: ChangeGroup[],
 ): Promise<GitStatusCounts> {
-	const outputs = await Promise.all(
-		groups.map((group) =>
-			execGit(cwd, ["diff", "--name-status", group.base, "--", ...group.paths]),
-		),
-	);
+	const outputs: string[] = [];
+	for (const group of groups) {
+		outputs.push(
+			await execGit(cwd, [
+				"diff",
+				"--name-status",
+				group.base,
+				"--",
+				...group.paths,
+			]),
+		);
+	}
 	const counts = parseDiffNameStatus(outputs.join(""));
 	counts.new.push(...(await untrackedPaths(cwd)));
 	return counts;
