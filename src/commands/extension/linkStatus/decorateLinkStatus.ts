@@ -7,6 +7,18 @@ import { requestLinkStatus } from "./requestLinkStatus";
 const LINK_SELECTOR = ".markdown-body a[href], .js-issue-title a[href]";
 const NATIVE_SELECTOR = ".issue-link, .js-issue-link";
 
+function precedingElement(anchor: HTMLAnchorElement): Element | null {
+	let node = anchor.previousSibling;
+	while (node?.nodeType === Node.TEXT_NODE && !node.textContent?.trim())
+		node = node.previousSibling;
+	return node instanceof Element ? node : null;
+}
+
+function hasNativeStateIcon(anchor: HTMLAnchorElement): boolean {
+	if (anchor.querySelector("svg:not([data-assist-link-icon])")) return true;
+	return precedingElement(anchor)?.matches("svg.octicon") ?? false;
+}
+
 type PendingRef = { ref: LinkRef; anchors: HTMLAnchorElement[] };
 
 function collectPending(): Map<string, PendingRef> {
@@ -18,9 +30,10 @@ function collectPending(): Map<string, PendingRef> {
 		if (processed === anchor.href) continue;
 		if (processed !== undefined) clearLinkState(anchor);
 		anchor.dataset.assistLinkStatus = anchor.href;
-		const ref = anchor.matches(NATIVE_SELECTOR)
-			? null
-			: parseItemLink(anchor.href);
+		const ref =
+			anchor.matches(NATIVE_SELECTOR) && hasNativeStateIcon(anchor)
+				? null
+				: parseItemLink(anchor.href);
 		if (!ref) continue;
 		const key = linkRefKey(ref);
 		const entry = pending.get(key) ?? { ref, anchors: [] };

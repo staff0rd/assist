@@ -45,11 +45,42 @@ describe("decorateLinkStatus", () => {
 		expect(anchor.textContent).toBe("#1087");
 	});
 
-	it("skips natively decorated links and requests each link once", async () => {
+	it.each([
+		["issue", ISSUE, "org/repo#1087", "issue-open", "Open issue"],
+		["pull request", PULL, "org/repo#42", "pr-merged", "Merged pull request"],
+	])(
+		"decorates a native %s reference with no state icon",
+		async (_, href, key, state, label) => {
+			stubStates({ ok: true, states: { [key]: state } });
+			const anchor = render(
+				`<a class="issue-link js-issue-link" data-hovercard-type="issue" href="${href}">org/repo#1</a>`,
+			);
+			await decorate();
+			expect(anchor.querySelector("svg")?.getAttribute("aria-label")).toBe(
+				label,
+			);
+		},
+	);
+
+	it.each([
+		[
+			"inside",
+			`<a class="issue-link js-issue-link" href="${ISSUE}"><svg class="octicon octicon-issue-closed"></svg>#1087</a>`,
+		],
+		[
+			"before",
+			`<svg class="octicon octicon-issue-closed"></svg> <a class="issue-link js-issue-link" href="${ISSUE}">#1087</a>`,
+		],
+	])("skips a native reference with a state icon %s it", async (_, html) => {
 		const send = stubStates({ ok: true, states: {} });
-		render(
-			`<a class="issue-link js-issue-link" href="${ISSUE}">#1087</a><a href="https://github.com/org/repo">repo</a>`,
-		);
+		render(html);
+		await decorate();
+		expect(send).not.toHaveBeenCalled();
+	});
+
+	it("skips non-item links and requests each link once", async () => {
+		const send = stubStates({ ok: true, states: {} });
+		render(`<a href="https://github.com/org/repo">repo</a>`);
 		await decorate();
 		expect(send).not.toHaveBeenCalled();
 		render(`<a href="${ISSUE}">#1087</a>`);
