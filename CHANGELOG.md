@@ -1,3 +1,12 @@
+## [0.1140.2](https://github.com/staff0rd/assist/compare/v0.1140.1...v0.1140.2) (2026-11-13)
+
+
+### Bug Fixes
+
+* find a repo at the filesystem root ([1fb0781](https://github.com/staff0rd/assist/commit/1fb078179890507403e917fb1ce70f39a8a84a30))
+* skip command tree for status-line ([44efaaa](https://github.com/staff0rd/assist/commit/44efaaa1f80f6b03795ae1a55d6e1b658a1d00f3))
+* skip git for non-repo dirs on Windows ([ec7a8f6](https://github.com/staff0rd/assist/commit/ec7a8f6cd587b9c946bfb1e601624703eb7f01e4))
+
 ## [0.1140.1](https://github.com/staff0rd/assist/compare/v0.1140.0...v0.1140.1) (2026-11-13)
 
 
