@@ -16,12 +16,13 @@ export function useRepoSelection(
 	activeId: string | null,
 	sessions: SessionInfo[],
 	nodeSelection: NodeSelection,
+	cloneBaseRepos: string[],
 ): RepoSelection {
 	const localNode = nodeSelection.nodes?.local;
 	const machine = nodeKey(nodeSelection.selected, localNode);
 	const merged = useMemo(
-		() => mergeRepos(currentCwd, history),
-		[currentCwd, history],
+		() => mergeRepos(currentCwd, history, cloneBaseRepos),
+		[currentCwd, history, cloneBaseRepos],
 	);
 	const { selectedCwd, selectedNode, selectedPick, setSelectedCwd } =
 		useSelectedRepo(currentCwd, merged, machine, localNode);

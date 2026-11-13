@@ -15,8 +15,8 @@ export function useNodeRepoTarget(
 		pickedNode && names.includes(pickedNode) ? pickedNode : localNode;
 	const key = nodeKey(node, localNode);
 	const merged = useMemo(
-		() => mergeRepos(socket.currentCwd, socket.history),
-		[socket.currentCwd, socket.history],
+		() => mergeRepos(socket.currentCwd, socket.history, socket.cloneBaseRepos),
+		[socket.currentCwd, socket.history, socket.cloneBaseRepos],
 	);
 	return {
 		node,

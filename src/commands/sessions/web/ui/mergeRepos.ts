@@ -1,5 +1,6 @@
 import { repoKeyForCwd } from "./repoGroupKey";
 import type { HistoricalSession } from "./types";
+import { appendCloneBaseRepos } from "./mergeRepos/appendCloneBaseRepos";
 import { uniqueRepos } from "./mergeRepos/uniqueRepos";
 
 export const LOCAL_NODE = "";
@@ -24,9 +25,11 @@ function historyByNode(
 export function mergeRepos(
 	currentCwd: string,
 	history: HistoricalSession[],
+	cloneBaseRepos: string[] = [],
 ): MergedRepo[] {
 	const byKey = new Map<string, MergedRepo>();
-	for (const [node, sessions] of historyByNode(history)) {
+	const byNode = historyByNode(history);
+	for (const [node, sessions] of byNode) {
 		const nodeCwd = node === LOCAL_NODE ? currentCwd : "";
 		for (const cwd of uniqueRepos(nodeCwd, sessions)) {
 			const key = repoKeyForCwd(cwd, sessions);
@@ -39,6 +42,12 @@ export function mergeRepos(
 			byKey.set(key, repo);
 		}
 	}
+	appendCloneBaseRepos(
+		byKey,
+		byNode.get(LOCAL_NODE) ?? [],
+		cloneBaseRepos,
+		LOCAL_NODE,
+	);
 	return [...byKey.values()];
 }
 

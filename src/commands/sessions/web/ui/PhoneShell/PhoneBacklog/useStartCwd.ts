@@ -13,8 +13,8 @@ export function useStartCwd(
 ): string | undefined {
 	const localNode = socket.nodes?.local;
 	const merged = useMemo(
-		() => mergeRepos(socket.currentCwd, socket.history),
-		[socket.currentCwd, socket.history],
+		() => mergeRepos(socket.currentCwd, socket.history, socket.cloneBaseRepos),
+		[socket.currentCwd, socket.history, socket.cloneBaseRepos],
 	);
 	return resolveStartCwd(
 		merged,

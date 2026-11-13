@@ -19,6 +19,7 @@ const singleNode: NodeSelection = {
 	select: () => {},
 };
 
+const noCloneBaseRepos: string[] = [];
 const clone = "/repos/live";
 const group = { origin: "host/org/live", clone };
 const otherClone = "/repos/other";
@@ -82,6 +83,7 @@ function useShell(
 		selectedCardId,
 		cards,
 		nodeSelection,
+		noCloneBaseRepos,
 	);
 	useAdoptRepoCard({
 		selectedCwd: selection.selectedCwd,

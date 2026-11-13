@@ -1,14 +1,14 @@
 import { existsSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
-type NoteRepo = { name: string; cwd: string };
+type CloneBaseRepo = { name: string; cwd: string };
 
 function hasGitDirectory(dir: string): boolean {
 	const gitPath = join(dir, ".git");
 	return existsSync(gitPath) && statSync(gitPath).isDirectory();
 }
 
-export function listNoteRepos(baseDir: string): NoteRepo[] {
+export function listCloneBaseRepos(baseDir: string): CloneBaseRepo[] {
 	if (!existsSync(baseDir)) return [];
 	return readdirSync(baseDir, { withFileTypes: true })
 		.filter((entry) => entry.isDirectory())

@@ -16,6 +16,7 @@ export function useAppShell() {
 		cardId,
 		socket.sessions,
 		socket.nodeSelection,
+		socket.cloneBaseRepos,
 	);
 	useAdoptRepoCard({
 		selectedCwd: selection.selectedCwd,

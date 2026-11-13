@@ -1,5 +1,6 @@
 export type { SessionInfo } from "./types";
 
+import { useCloneBaseRepos } from "./useSessionSocket/useCloneBaseRepos";
 import { useActiveSelectionSync } from "./useSessionSocket/useActiveSelectionSync";
 import { useReportRenderedStatus } from "./useSessionSocket/useReportRenderedStatus";
 import { useReportUserActivity } from "./useSessionSocket/useReportUserActivity";
@@ -20,6 +21,7 @@ export function useSessionSocket() {
 	const nodeSelection = useNodeSelection(conn.nodes);
 	const send = useSend(wsRef, addPendingLaunch);
 	const actions = useSessionActions(send, buffers, handlers);
+	const cloneBaseRepos = useCloneBaseRepos(conn.history);
 	useActiveSelectionSync(activeId, sessions, conn.history, send);
 	useReportRenderedStatus(sessions, send);
 	const activeNode = sessions.find((s) => s.id === activeId)?.node;
@@ -31,5 +33,5 @@ export function useSessionSocket() {
 		conn.setViewingTranscriptSessionId,
 	);
 
-	return { ...conn, ...actions, ...nav, nodeSelection };
+	return { ...conn, ...actions, ...nav, nodeSelection, cloneBaseRepos };
 }
