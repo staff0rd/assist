@@ -2,11 +2,10 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import type { ConversationTarget } from "../../../../../shared/sessionConversationTarget";
 import { apiFetch } from "../../../apiFetch";
 import { reportCaughtError } from "../../../clientFailures/reportCaughtError";
+import { startSerialPolling } from "../../../startSerialPolling";
 import { useApiNode } from "../../../useApiNode";
 import { withNode } from "../../../withNode";
 import { diffQuery } from "../../diffQuery";
-
-const POLL_INTERVAL_MS = 5000;
 
 type DiffState = {
 	diff: string;
@@ -33,26 +32,26 @@ export function useDiff(
 			setState({ diff: "", loading: false, error: false });
 			return;
 		}
-		let cancelled = false;
 		setState({ diff: "", loading: true, error: false });
-		const poll = async () => {
+		const polling = startSerialPolling(async (signal) => {
 			try {
-				const res = await apiFetch(withNode(`/api/diff?${query}`, node));
+				const res = await apiFetch(withNode(`/api/diff?${query}`, node), {
+					signal,
+				});
 				if (!res.ok) throw new Error(`HTTP ${res.status}`);
 				const body = await res.text();
-				if (!cancelled) setState({ diff: body, loading: false, error: false });
+				if (!signal.aborted)
+					setState({ diff: body, loading: false, error: false });
+				return { failed: false };
 			} catch (error) {
+				if (signal.aborted) return undefined;
 				reportCaughtError(error, "diff");
-				if (!cancelled) setState({ diff: "", loading: false, error: true });
+				setState({ diff: "", loading: false, error: true });
+				return { failed: true };
 			}
-		};
-		pollRef.current = poll;
-		poll();
-		const id = setInterval(poll, POLL_INTERVAL_MS);
-		return () => {
-			cancelled = true;
-			clearInterval(id);
-		};
+		});
+		pollRef.current = polling.poll;
+		return polling.stop;
 	}, [cwd, query, node]);
 
 	return { ...state, refresh: useCallback(() => pollRef.current(), []) };
