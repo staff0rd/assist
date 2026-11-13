@@ -10,6 +10,35 @@ const handlers: SessionLifecycleHandlers = {
 };
 
 describe("sessionActionHandlers", () => {
+	it.each(["claude", "assist"] as const)(
+		"offers start over for a live %s session only",
+		(commandType) => {
+			const onStartOver = vi.fn();
+			const session = makeSessionInfo({
+				id: "7",
+				commandType,
+				status: "running",
+			});
+			sessionActionHandlers(session, {
+				...handlers,
+				onStartOver,
+			}).onStartOver?.();
+			expect(onStartOver).toHaveBeenCalledWith("7");
+			expect(
+				sessionActionHandlers(
+					{ ...session, status: "stopped" },
+					{ ...handlers, onStartOver },
+				).onStartOver,
+			).toBeUndefined();
+			expect(
+				sessionActionHandlers(
+					{ ...session, commandType: "run" },
+					{ ...handlers, onStartOver },
+				).onStartOver,
+			).toBeUndefined();
+		},
+	);
+
 	it("offers restart for a claude session", () => {
 		const actions = sessionActionHandlers(
 			makeSessionInfo({ commandType: "claude" }),

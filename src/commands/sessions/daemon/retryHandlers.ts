@@ -11,6 +11,11 @@ export const retryHandlers: Record<string, Handler> = {
 				existing: conflict,
 			});
 	}),
+	"start-over": routed((client, m, d) => {
+		const result = m.restart(d.sessionId as string, true);
+		if (!result.ok && result.reason)
+			sendTo(client, { type: "error", message: result.reason });
+	}),
 	restart: routed((client, m, d) => {
 		const result = m.restart(d.sessionId as string);
 		if (!result.ok && result.reason)

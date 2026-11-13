@@ -6,6 +6,7 @@ import {
 	retrySessionAction,
 } from "../../resumeSessionAction";
 import type { DismissOptions } from "../../types";
+import { startOverSessionAction } from "../../startOverSessionAction";
 
 type SendFn = (msg: object) => void;
 
@@ -27,6 +28,10 @@ export function useLifecycleActions(
 		[send, buffers],
 	);
 
+	const startOverSession = useCallback(
+		(id: string) => startOverSessionAction(send, buffers.current)(id),
+		[send, buffers],
+	);
 	const dismissSession = useCallback(
 		(id: string, opts?: DismissOptions) => {
 			dismissSessionAction(send, buffers.current)(id, opts);
@@ -41,5 +46,11 @@ export function useLifecycleActions(
 		[send, buffers],
 	);
 
-	return { retrySession, restartSession, dismissSession, discardSession };
+	return {
+		startOverSession,
+		retrySession,
+		restartSession,
+		dismissSession,
+		discardSession,
+	};
 }

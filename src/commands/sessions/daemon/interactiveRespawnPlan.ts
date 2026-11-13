@@ -13,12 +13,17 @@ export type RespawnPlan = {
 	resumeOutcome?: () => ResumeOutcome | undefined;
 };
 
-export function interactiveRespawnPlan(session: Session): RespawnPlan | null {
+export function interactiveRespawnPlan(
+	session: Session,
+	fresh = false,
+): RespawnPlan | null {
 	const adapter = harnessAdapter(session.harness);
 	if (!resolveCapability(adapter.capabilities, "conversation.resume").supported)
 		return null;
 	const { cwd, initialPrompt } = session;
-	const resumeId = adapter.conversation.findResumable(session);
+	const resumeId = fresh
+		? undefined
+		: adapter.conversation.findResumable(session);
 	if (resumeId)
 		return {
 			spawn: () =>
@@ -30,7 +35,7 @@ export function interactiveRespawnPlan(session: Session): RespawnPlan | null {
 				}),
 			status: "waiting",
 		};
-	if (!initialPrompt && !cwd) return null;
+	if (!fresh && !initialPrompt && !cwd) return null;
 	return freshPlan(session, adapter, initialPrompt);
 }
 

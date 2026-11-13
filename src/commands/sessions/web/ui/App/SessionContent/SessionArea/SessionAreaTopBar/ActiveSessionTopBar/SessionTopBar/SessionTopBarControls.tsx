@@ -30,6 +30,7 @@ export function SessionTopBarControls({
 	available,
 	onRetry,
 	onRestart,
+	onStartOver,
 	onDismiss,
 	childDismiss,
 	onSetAutoApprove,
@@ -56,6 +57,7 @@ export function SessionTopBarControls({
 					session={session}
 					onRetry={onRetry}
 					onRestart={onRestart}
+					onStartOver={onStartOver}
 					onDismiss={onDismiss}
 					childDismiss={childDismiss}
 				/>

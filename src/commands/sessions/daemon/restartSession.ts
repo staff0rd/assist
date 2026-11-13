@@ -11,8 +11,11 @@ export function restartSession(
 	session: Session,
 	clients: Set<SessionClient>,
 	onStatusChange: OnStatusChange,
+	fresh = false,
 ): boolean {
-	const plan = respawnPlan(session);
+	if (fresh)
+		daemonLog(`session ${session.id} start-over requested: ${session.name}`);
+	const plan = respawnPlan(session, fresh);
 	if (!plan) return false;
 	const respawn = () => {
 		respawnSession(session, plan.spawn, plan.status, clients, onStatusChange);

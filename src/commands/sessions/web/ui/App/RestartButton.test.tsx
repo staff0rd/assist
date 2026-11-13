@@ -6,6 +6,27 @@ import { RestartButton } from "./RestartButton";
 afterEach(cleanup);
 
 describe("RestartButton", () => {
+	it.each([false, true])("starts over from the menu (shift=%s)", (shiftKey) => {
+		const onStartOver = vi.fn();
+		const onRestart = vi.fn();
+		render(
+			<RestartButton id="54" onRestart={onRestart} onStartOver={onStartOver} />,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "Restart options" }));
+		fireEvent.click(screen.getByRole("menuitem", { name: "Start over" }), {
+			shiftKey,
+		});
+		if (!shiftKey) {
+			expect(onStartOver).not.toHaveBeenCalled();
+			expect(
+				screen.getByText(/conversation history is discarded/),
+			).toBeTruthy();
+			fireEvent.click(screen.getByRole("button", { name: "Start over" }));
+		}
+		expect(onStartOver).toHaveBeenCalledOnce();
+		expect(onRestart).not.toHaveBeenCalled();
+	});
+
 	it("names the session id in its tooltip so cards map to daemon.log ids", () => {
 		render(<RestartButton id="54" onRestart={() => {}} />);
 

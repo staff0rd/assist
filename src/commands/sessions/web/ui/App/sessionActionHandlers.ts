@@ -11,6 +11,7 @@ export function sessionActionHandlers(
 ): {
 	onRetry?: (replace?: boolean) => void;
 	onRestart?: () => void;
+	onStartOver?: () => void;
 	onDismiss: (opts?: DismissOptions) => void;
 } {
 	const retryable = session.commandType === "run" || needsRelaunch(session);
@@ -20,6 +21,10 @@ export function sessionActionHandlers(
 			? (replace) => handlers.onRetry(session.id, replace)
 			: undefined,
 		onRestart: restartable ? () => handlers.onRestart(session.id) : undefined,
+		onStartOver:
+			restartable && session.status !== "stopped" && handlers.onStartOver
+				? () => handlers.onStartOver?.(session.id)
+				: undefined,
 		onDismiss: (opts) => handlers.onDismiss(session.id, opts),
 	};
 }

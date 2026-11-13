@@ -13,6 +13,7 @@ export function SessionCard({
 	onClick,
 	onRetry,
 	onRestart,
+	onStartOver,
 	onDismiss,
 	childDismiss,
 }: {
@@ -33,6 +34,7 @@ export function SessionCard({
 					loading={loading}
 					onRetry={onRetry}
 					onRestart={onRestart}
+					onStartOver={onStartOver}
 					onDismiss={onDismiss}
 					childDismiss={childDismiss}
 				/>

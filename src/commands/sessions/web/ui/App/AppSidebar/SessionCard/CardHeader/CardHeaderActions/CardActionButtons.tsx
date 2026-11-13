@@ -5,6 +5,7 @@ import type { CardHeaderProps } from "../../../../../types";
 export function CardActionButtons({
 	session,
 	onRestart,
+	onStartOver,
 	onDismiss,
 	childDismiss,
 }: CardHeaderProps) {
@@ -13,6 +14,7 @@ export function CardActionButtons({
 			<CardCloseActions
 				session={session}
 				onRestart={onRestart}
+				onStartOver={onStartOver}
 				onDismiss={onDismiss}
 				childDismiss={childDismiss}
 			/>

@@ -26,6 +26,7 @@ export type CardHeaderProps = {
 	loading: boolean;
 	onRetry?: (replace?: boolean) => void;
 	onRestart?: () => void;
+	onStartOver?: () => void;
 	onDismiss: () => void;
 	childDismiss?: ChildDismiss;
 };
@@ -57,6 +58,7 @@ export type DismissOptions = { closeServerRuns?: boolean };
 export type SessionLifecycleHandlers = {
 	onRetry: (id: string, replace?: boolean) => void;
 	onRestart: (id: string) => void;
+	onStartOver?: (id: string) => void;
 	onDismiss: (id: string, opts?: DismissOptions) => void;
 };
 
@@ -68,6 +70,7 @@ export type SessionListHandlers = SessionLifecycleHandlers & {
 export type SessionControlHandlers = {
 	onRetry?: (replace?: boolean) => void;
 	onRestart?: () => void;
+	onStartOver?: () => void;
 	onDismiss: (opts?: DismissOptions) => void;
 	childDismiss?: ChildDismiss;
 	onSetAutoApprove: (enabled: boolean) => void;

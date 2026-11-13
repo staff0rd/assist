@@ -8,6 +8,7 @@ export function SessionContent({ socket }: { socket: SessionSocket }) {
 		() => ({
 			onRetry: socket.retrySession,
 			onRestart: socket.restartSession,
+			onStartOver: socket.startOverSession,
 			onDismiss: socket.dismissSession,
 			onSetAutoApprove: socket.setAutoApprove,
 			onSetAutoAdvance: socket.setAutoAdvance,
@@ -15,6 +16,7 @@ export function SessionContent({ socket }: { socket: SessionSocket }) {
 		[
 			socket.retrySession,
 			socket.restartSession,
+			socket.startOverSession,
 			socket.dismissSession,
 			socket.setAutoApprove,
 			socket.setAutoAdvance,

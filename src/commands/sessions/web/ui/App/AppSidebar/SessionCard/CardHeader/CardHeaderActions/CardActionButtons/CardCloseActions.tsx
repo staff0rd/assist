@@ -7,11 +7,13 @@ import type { ChildDismiss, SessionInfo } from "../../../../../../types";
 export function CardCloseActions({
 	session,
 	onRestart,
+	onStartOver,
 	onDismiss,
 	childDismiss,
 }: {
 	session: SessionInfo;
 	onRestart?: () => void;
+	onStartOver?: () => void;
 	onDismiss: () => void;
 	childDismiss?: ChildDismiss;
 }) {
@@ -41,7 +43,12 @@ export function CardCloseActions({
 				</span>
 			)}
 			{onRestart && (
-				<RestartButton id={id} onRestart={onRestart} harness={harness} />
+				<RestartButton
+					id={id}
+					onRestart={onRestart}
+					onStartOver={onStartOver}
+					harness={harness}
+				/>
 			)}
 		</>
 	);

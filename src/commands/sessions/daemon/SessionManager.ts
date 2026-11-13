@@ -176,13 +176,14 @@ export class SessionManager {
 		});
 	}
 
-	restart(id: string): RestartResult {
+	restart(id: string, fresh = false): RestartResult {
 		return restartAndNotify(
 			this.sessions,
 			id,
 			this.clients,
 			this.onStatusChange,
 			this.notify,
+			fresh,
 		);
 	}
 

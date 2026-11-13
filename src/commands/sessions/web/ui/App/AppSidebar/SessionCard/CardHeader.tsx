@@ -50,6 +50,7 @@ export function CardHeader({
 	loading,
 	onRetry,
 	onRestart,
+	onStartOver,
 	onDismiss,
 	childDismiss,
 }: CardHeaderProps) {
@@ -65,6 +66,7 @@ export function CardHeader({
 					loading={loading}
 					onRetry={onRetry}
 					onRestart={onRestart}
+					onStartOver={onStartOver}
 					onDismiss={onDismiss}
 					childDismiss={childDismiss}
 				/>

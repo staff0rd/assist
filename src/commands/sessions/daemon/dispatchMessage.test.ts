@@ -276,3 +276,7 @@ describe("dispatchMessage", () => {
 		});
 	});
 });
+
+vi.mock("../../../shared/harnessAdapters/launchBlocker", () => ({
+	launchBlocker: vi.fn(() => undefined),
+}));

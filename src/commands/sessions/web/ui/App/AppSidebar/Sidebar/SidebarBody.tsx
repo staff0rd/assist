@@ -23,6 +23,7 @@ export function SidebarBody(props: SidebarProps) {
 			onDismissPending={props.onDismissPending}
 			onRetry={props.onRetry}
 			onRestart={props.onRestart}
+			onStartOver={props.onStartOver}
 			onDismiss={props.onDismiss}
 			onSetAutoApprove={props.onSetAutoApprove}
 			onSetAutoAdvance={props.onSetAutoAdvance}

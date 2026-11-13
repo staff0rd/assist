@@ -11,8 +11,15 @@ export function restartAndNotify(
 	clients: Set<SessionClient>,
 	onStatusChange: OnStatusChange,
 	notify: () => void,
+	fresh = false,
 ): RestartResult {
-	const result = restartManagedSession(sessions, id, clients, onStatusChange);
+	const result = restartManagedSession(
+		sessions,
+		id,
+		clients,
+		onStatusChange,
+		fresh,
+	);
 	if (result.ok) notify();
 	return result;
 }

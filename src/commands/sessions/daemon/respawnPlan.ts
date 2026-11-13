@@ -10,17 +10,24 @@ import {
 } from "./interactiveRespawnPlan";
 import { spawnPty } from "./spawnPty";
 
-export function respawnPlan(session: Session): RespawnPlan | null {
+export function respawnPlan(
+	session: Session,
+	fresh = false,
+): RespawnPlan | null {
 	const { commandType, cwd, assistArgs } = session;
-	if (commandType === "claude") return interactiveRespawnPlan(session);
+	if (commandType === "claude") return interactiveRespawnPlan(session, fresh);
 	if (commandType === "assist" && assistArgs) {
-		const idle = session.status === "waiting";
+		const idle = !fresh && session.status === "waiting";
 		let resume: ResumeOutcome | undefined;
 		return {
 			spawn: () => {
-				resume = conversationResumeOutcome(session);
+				if (fresh) {
+					session.claudeSessionId = undefined;
+					session.harnessSessionId = undefined;
+				}
+				resume = fresh ? undefined : conversationResumeOutcome(session);
 				return spawnPty(
-					assistResumeArgs({ assistArgs, resumeSessionId: resume.id }),
+					assistResumeArgs({ assistArgs, resumeSessionId: resume?.id }),
 					cwd,
 					session.id,
 					idle ? { ASSIST_RESUME_IDLE: "1" } : undefined,

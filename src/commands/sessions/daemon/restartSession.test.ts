@@ -32,6 +32,76 @@ describe("restartSession", () => {
 		vi.clearAllMocks();
 	});
 
+	it("starts over with only the initial prompt and restarts the new conversation", () => {
+		const session = makeSession({
+			commandType: "claude",
+			status: "done",
+			initialPrompt: "Original task",
+			claudeSessionId: "old",
+			harnessSessionId: "old",
+			cwd: "/repo",
+		});
+		expect(restartSession(session, new Set(), vi.fn(), true)).toBe(true);
+		expect(spawnClaudeMock).toHaveBeenLastCalledWith(
+			expect.objectContaining({ prompt: "Original task" }),
+		);
+		expect(
+			spawnClaudeMock.mock.calls.at(-1)?.[0].resumeSessionId,
+		).toBeUndefined();
+		expect(session.claudeSessionId).not.toBe("old");
+		expect(session.harnessSessionId).not.toBe("old");
+		const newId = session.claudeSessionId;
+		expect(newId).toBeTruthy();
+		session.status = "done";
+		restartSession(session, new Set(), vi.fn());
+		expect(spawnClaudeMock).toHaveBeenLastCalledWith(
+			expect.objectContaining({ resumeSessionId: newId }),
+		);
+	});
+
+	it("starts over idle when there was no initial prompt", () => {
+		const session = makeSession({
+			commandType: "claude",
+			status: "done",
+			claudeSessionId: "old",
+			cwd: "/repo",
+		});
+		restartSession(session, new Set(), vi.fn(), true);
+		expect(session.status).toBe("waiting");
+		expect(
+			spawnClaudeMock.mock.calls.at(-1)?.[0].resumeSessionId,
+		).toBeUndefined();
+	});
+
+	it("kills an assist session and starts over without resuming", () => {
+		const kill = vi.spyOn(process, "kill").mockImplementation(() => true);
+		try {
+			const session = makeSession({
+				commandType: "assist",
+				status: "waiting",
+				claudeSessionId: "old",
+				harnessSessionId: "old",
+				assistArgs: ["backlog", "run", "601"],
+				cwd: "/repo",
+				pty: makePty(4321).pty,
+			});
+			restartSession(session, new Set(), vi.fn(), true);
+			expect(kill).toHaveBeenCalledWith(-4321, "SIGHUP");
+			expect(spawnPtyMock).not.toHaveBeenCalled();
+			session.pendingRestart?.();
+			expect(spawnPtyMock).toHaveBeenCalledWith(
+				["assist", "backlog", "run", "601"],
+				"/repo",
+				session.id,
+				undefined,
+			);
+			expect(session.claudeSessionId).toBeUndefined();
+			expect(session.harnessSessionId).toBeUndefined();
+		} finally {
+			kill.mockRestore();
+		}
+	});
+
 	it("resumes a claude session by its conversation id", () => {
 		const session = makeSession({
 			id: "1",

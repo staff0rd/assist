@@ -15,6 +15,7 @@ export function CardHeaderActions({
 	loading,
 	onRetry,
 	onRestart,
+	onStartOver,
 	onDismiss,
 	childDismiss,
 }: CardHeaderProps) {
@@ -25,6 +26,7 @@ export function CardHeaderActions({
 				loading={loading}
 				onRetry={onRetry}
 				onRestart={onRestart}
+				onStartOver={onStartOver}
 				onDismiss={onDismiss}
 				childDismiss={childDismiss}
 			/>

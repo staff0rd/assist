@@ -13,6 +13,7 @@ export function SessionListCard({
 	onSelect,
 	onRetry,
 	onRestart,
+	onStartOver,
 	onDismiss,
 	onSetAutoApprove,
 	onSetAutoAdvance,
@@ -26,6 +27,7 @@ export function SessionListCard({
 	const actions = sessionActionHandlers(session, {
 		onRetry,
 		onRestart,
+		onStartOver,
 		onDismiss,
 	});
 	return (
@@ -36,6 +38,7 @@ export function SessionListCard({
 			onClick={() => onSelect(session.id)}
 			onRetry={actions.onRetry}
 			onRestart={actions.onRestart}
+			onStartOver={actions.onStartOver}
 			onDismiss={actions.onDismiss}
 			childDismiss={childDismissFor(session, nestedSessions, onDismiss)}
 			onSetAutoApprove={(enabled) => onSetAutoApprove(session.id, enabled)}
