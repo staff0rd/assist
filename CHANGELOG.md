@@ -1,3 +1,10 @@
+# [0.1134.0](https://github.com/staff0rd/assist/compare/v0.1133.3...v0.1134.0) (2026-11-13)
+
+
+### Features
+
+* add Agent SDK session harness ([36081d0](https://github.com/staff0rd/assist/commit/36081d088ad67cdfa7c0f241e5cd1c099b2b35f4))
+
 ## [0.1133.3](https://github.com/staff0rd/assist/compare/v0.1133.2...v0.1133.3) (2026-11-13)
 
 
