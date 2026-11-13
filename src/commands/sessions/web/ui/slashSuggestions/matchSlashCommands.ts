@@ -1,4 +1,4 @@
-import type { SlashCommand } from "../../../slashCommands/readSlashCommands";
+import type { SlashCommand } from "../../slashCommands/readSlashCommands";
 
 const scopeOrder = { user: 0, project: 1 } as const;
 

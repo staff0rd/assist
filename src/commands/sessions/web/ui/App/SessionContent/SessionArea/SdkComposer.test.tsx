@@ -1,27 +1,57 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import { bracketedPaste } from "../../../../../shared/pasteAndSubmit/bracketedPaste";
 import type { SessionInfo } from "../../../types";
 import { SdkComposer } from "./SdkComposer";
 
+vi.mock("../../../slashSuggestions/useSlashCommands", () => ({
+	useSlashCommands: (cwd: string | undefined) =>
+		cwd
+			? [
+					{ name: "draft", scope: "user" },
+					{ name: "dream", scope: "project" },
+				]
+			: [],
+}));
+
+beforeAll(() => {
+	Element.prototype.scrollIntoView = vi.fn();
+});
+
 afterEach(cleanup);
 
-function setup(overrides: Partial<SessionInfo> = {}) {
+function setup(
+	overrides: Partial<SessionInfo> = {},
+	initial = "run the tests",
+) {
 	const sendInput = vi.fn();
 	const interruptSession = vi.fn();
 	render(
 		<SdkComposer
-			session={makeSessionInfo({ sdk: true, ...overrides })}
+			session={makeSessionInfo({ sdk: true, cwd: "/repo", ...overrides })}
 			sendInput={sendInput}
 			interruptSession={interruptSession}
 		/>,
 	);
 	const field = screen.getByLabelText("Message Claude");
-	fireEvent.change(field, { target: { value: "run the tests" } });
+	type(field, initial);
 	return { field, sendInput, interruptSession };
 }
+
+function type(field: HTMLElement, value: string) {
+	fireEvent.change(field, {
+		target: { value, selectionStart: value.length, selectionEnd: value.length },
+	});
+}
+
+const value = (field: HTMLElement) => (field as HTMLTextAreaElement).value;
+
+const highlighted = () =>
+	screen
+		.getAllByRole("option")
+		.find((o) => o.getAttribute("aria-selected") === "true")?.textContent;
 
 describe("SdkComposer", () => {
 	it("sends on Enter as one pasted message", () => {
@@ -72,5 +102,71 @@ describe("SdkComposer", () => {
 			(screen.getByLabelText("Stop turn") as HTMLButtonElement).disabled,
 		).toBe(true);
 		expect(interruptSession).not.toHaveBeenCalled();
+	});
+
+	describe("slash suggestions", () => {
+		it("lists matching skills for /dr", () => {
+			setup({ status: "waiting" }, "/dr");
+			expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual([
+				"/draft",
+				"/dreamproject",
+			]);
+			expect(highlighted()).toBe("/draft");
+		});
+
+		it("moves the highlight with the arrow keys, wrapping", () => {
+			const { field } = setup({ status: "waiting" }, "/dr");
+			fireEvent.keyDown(field, { key: "ArrowDown" });
+			expect(highlighted()).toBe("/dreamproject");
+			fireEvent.keyDown(field, { key: "ArrowDown" });
+			expect(highlighted()).toBe("/draft");
+			fireEvent.keyDown(field, { key: "ArrowUp" });
+			expect(highlighted()).toBe("/dreamproject");
+		});
+
+		it("inserts the highlighted skill on Tab without sending", () => {
+			const { field, sendInput } = setup({ status: "waiting" }, "/dr");
+			fireEvent.keyDown(field, { key: "ArrowDown" });
+			fireEvent.keyDown(field, { key: "Tab" });
+			expect(value(field)).toBe("/dream ");
+			expect(screen.queryByRole("listbox")).toBeNull();
+			expect(sendInput).not.toHaveBeenCalled();
+		});
+
+		it("inserts on Enter instead of sending, then Enter sends", () => {
+			const { field, sendInput } = setup({ status: "waiting" }, "/dr");
+			fireEvent.keyDown(field, { key: "Enter" });
+			expect(value(field)).toBe("/draft ");
+			expect(sendInput).not.toHaveBeenCalled();
+			fireEvent.keyDown(field, { key: "Enter" });
+			expect(sendInput).toHaveBeenCalledWith("1", bracketedPaste("/draft "));
+		});
+
+		it("inserts a clicked suggestion", () => {
+			const { field } = setup({ status: "waiting" }, "then /dr");
+			fireEvent.click(screen.getAllByRole("option")[1]);
+			expect(value(field)).toBe("then /dream ");
+		});
+
+		it("closes on Esc without stopping the turn; a second Esc stops it", () => {
+			const { field, interruptSession } = setup({ status: "running" }, "/dr");
+			fireEvent.keyDown(field, { key: "Escape" });
+			expect(screen.queryByRole("listbox")).toBeNull();
+			expect(interruptSession).not.toHaveBeenCalled();
+			fireEvent.keyDown(field, { key: "Escape" });
+			expect(interruptSession).toHaveBeenCalledTimes(1);
+		});
+
+		it("keeps Shift+Enter as a new line while the list is open", () => {
+			const { field, sendInput } = setup({ status: "waiting" }, "/dr");
+			fireEvent.keyDown(field, { key: "Enter", shiftKey: true });
+			expect(value(field)).toBe("/dr");
+			expect(sendInput).not.toHaveBeenCalled();
+		});
+
+		it("offers nothing for a harness without slash suggestions", () => {
+			setup({ status: "waiting", harness: "codex" }, "/dr");
+			expect(screen.queryByRole("listbox")).toBeNull();
+		});
 	});
 });

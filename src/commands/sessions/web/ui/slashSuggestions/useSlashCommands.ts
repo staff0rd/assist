@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import type { SlashCommand } from "../../../slashCommands/readSlashCommands";
-import { apiFetch } from "../../apiFetch";
-import { reportCaughtError } from "../../clientFailures/reportCaughtError";
-import { withNode } from "../../withNode";
+import type { SlashCommand } from "../../slashCommands/readSlashCommands";
+import { apiFetch } from "../apiFetch";
+import { reportCaughtError } from "../clientFailures/reportCaughtError";
+import { withNode } from "../withNode";
 
 export function useSlashCommands(
 	cwd: string | undefined,

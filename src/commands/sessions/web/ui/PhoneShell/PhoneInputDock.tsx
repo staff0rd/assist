@@ -1,10 +1,9 @@
 import Box from "@mui/material/Box";
 import type { HarnessKind } from "../../../../../shared/harnesses";
-import { harnessCapability } from "../../../../../shared/harnessAdapters/harnessCapability";
 import { safeAreaInsets } from "../designSystem/safeAreaInsets";
 import { PhoneKeyStrip } from "./PhoneKeyStrip";
 import { PhoneReplyBar, type ReplyStop } from "./PhoneReplyBar";
-import { useSlashCommands } from "./PhoneSlashSuggestions/useSlashCommands";
+import { useSuggestedSlashCommands } from "../slashSuggestions/useSuggestedSlashCommands";
 
 type Props = {
 	harness?: HarnessKind;
@@ -29,8 +28,7 @@ export function PhoneInputDock({
 	stop,
 	locked,
 }: Props) {
-	const suggest = harnessCapability(harness, "slashCommands.suggest").supported;
-	const commands = useSlashCommands(suggest ? cwd : undefined, node);
+	const commands = useSuggestedSlashCommands(harness, cwd, node);
 	return (
 		<Box
 			sx={{

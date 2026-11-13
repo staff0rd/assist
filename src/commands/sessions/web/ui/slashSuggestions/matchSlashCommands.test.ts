@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import type { SlashCommand } from "../../../slashCommands/readSlashCommands";
+import type { SlashCommand } from "../../slashCommands/readSlashCommands";
 import { matchSlashCommands } from "./matchSlashCommands";
 
 const commands: SlashCommand[] = [

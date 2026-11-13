@@ -1,8 +1,8 @@
 import Box from "@mui/material/Box";
-import InputBase from "@mui/material/InputBase";
 import type { SessionInfo } from "../../../types";
 import type { InterruptSession } from "./LiveTranscriptArea";
 import { SdkComposerActions } from "./SdkComposer/SdkComposerActions";
+import { SdkComposerField } from "./SdkComposer/SdkComposerField";
 import { SdkComposerHint } from "./SdkComposer/SdkComposerHint";
 import { sdkComposerSx } from "./SdkComposer/sdkComposerSx";
 import { useSdkComposer } from "./SdkComposer/useSdkComposer";
@@ -21,17 +21,7 @@ export function SdkComposer({
 		<Box sx={sdkComposerSx.bar}>
 			<Box sx={sdkComposerSx.inner}>
 				<Box sx={sdkComposerSx.row}>
-					<InputBase
-						multiline
-						maxRows={6}
-						value={c.text}
-						disabled={!c.enabled}
-						onChange={(e) => c.setText(e.target.value)}
-						onKeyDown={c.onKeyDown}
-						placeholder={c.placeholder}
-						sx={sdkComposerSx.field}
-						inputProps={{ "aria-label": "Message Claude" }}
-					/>
+					<SdkComposerField c={c} />
 					<SdkComposerActions
 						running={c.running}
 						stopping={c.stopping}

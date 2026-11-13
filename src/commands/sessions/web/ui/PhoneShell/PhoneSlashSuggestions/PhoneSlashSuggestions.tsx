@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import type { PointerEvent } from "react";
 import type { SlashCommand } from "../../../slashCommands/readSlashCommands";
+import { SlashCommandLabel } from "../../slashSuggestions/SlashCommandLabel";
 import { phoneSlashSuggestionsSx as sx } from "./phoneSlashSuggestionsSx";
 
 const keepKeyboardOpen = (e: PointerEvent) => e.preventDefault();
@@ -24,23 +25,7 @@ export function PhoneSlashSuggestions({ matches, query, onPick }: Props) {
 					onPointerDown={keepKeyboardOpen}
 					onClick={() => onPick(command.name)}
 				>
-					<Box component="span" sx={sx.name}>
-						/
-						<Box component="span" sx={sx.match}>
-							{command.name.slice(0, query.length)}
-						</Box>
-						{command.name.slice(query.length)}
-						{command.scope === "project" && (
-							<Box component="span" sx={sx.scope}>
-								project
-							</Box>
-						)}
-					</Box>
-					{command.description && (
-						<Box component="span" sx={sx.description}>
-							{command.description}
-						</Box>
-					)}
+					<SlashCommandLabel command={command} query={query} />
 				</ButtonBase>
 			))}
 		</Box>

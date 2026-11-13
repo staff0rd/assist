@@ -27,7 +27,12 @@ export const sdkComposerSx = {
 		flexDirection: "column",
 		gap: 0.75,
 	},
-	row: { display: "flex", alignItems: "flex-end", gap: 1 },
+	row: {
+		position: "relative",
+		display: "flex",
+		alignItems: "flex-end",
+		gap: 1,
+	},
 	field: {
 		flex: 1,
 		minWidth: 0,
