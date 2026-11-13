@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { type ReactNode, useEffect } from "react";
 import type { SessionInfo, Transcript } from "../../../types";
 import { TranscriptArea } from "./TranscriptArea";
 import { SdkTail } from "./TranscriptArea/SdkTail";
@@ -10,10 +10,12 @@ export function LiveTranscriptArea({
 	session,
 	transcript,
 	fetchSessionTranscript,
+	commentLayer,
 }: {
 	session: SessionInfo;
 	transcript: Transcript | null;
 	fetchSessionTranscript: FetchSessionTranscript;
+	commentLayer?: (content: ReactNode) => ReactNode;
 }) {
 	const { id, status, sdkActivity, lastUserMessage, lastAssistantMessage } =
 		session;
@@ -34,6 +36,7 @@ export function LiveTranscriptArea({
 			transcript={transcript}
 			tail={<SdkTail session={session} />}
 			follow
+			commentLayer={commentLayer}
 		/>
 	);
 }

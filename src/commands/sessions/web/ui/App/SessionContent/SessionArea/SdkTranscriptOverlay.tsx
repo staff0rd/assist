@@ -6,6 +6,7 @@ import {
 	LiveTranscriptArea,
 } from "./LiveTranscriptArea";
 import { SdkComposer } from "./SdkComposer";
+import { TranscriptCommentLayer } from "./TranscriptCommentLayer";
 
 const overlaySx = {
 	position: "absolute",
@@ -32,7 +33,17 @@ export function SdkTranscriptOverlay({
 	return (
 		<Box sx={overlaySx}>
 			<Box sx={transcriptSx}>
-				<LiveTranscriptArea {...transcript} />
+				<LiveTranscriptArea
+					{...transcript}
+					commentLayer={(content) => (
+						<TranscriptCommentLayer
+							session={transcript.session}
+							sendInput={sendInput}
+						>
+							{content}
+						</TranscriptCommentLayer>
+					)}
+				/>
 			</Box>
 			<SdkComposer
 				key={transcript.session.id}

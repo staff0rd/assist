@@ -29,12 +29,14 @@ export function TranscriptPane({
 	term,
 	tail,
 	follow,
+	commentLayer = (content) => content,
 }: {
 	messages: TranscriptMessage[];
 	loading: boolean;
 	term: string;
 	tail?: ReactNode;
 	follow?: boolean;
+	commentLayer?: (content: ReactNode) => ReactNode;
 }) {
 	const scrollRef = useScrollToFirstMark(messages, term, follow);
 
@@ -47,10 +49,14 @@ export function TranscriptPane({
 			sx={{ position: "absolute", inset: 0, overflowY: "auto", p: 2 }}
 		>
 			<Box sx={{ maxWidth: 820, mx: "auto" }}>
-				{withKeys(messages).map((m) => (
-					<TranscriptRow key={m.key} message={m} term={term} />
-				))}
-				{tail}
+				{commentLayer(
+					<>
+						{withKeys(messages).map((m) => (
+							<TranscriptRow key={m.key} message={m} term={term} />
+						))}
+						{tail}
+					</>,
+				)}
 			</Box>
 		</Box>
 	);

@@ -9,11 +9,13 @@ export function TranscriptArea({
 	transcript,
 	tail,
 	follow,
+	commentLayer,
 }: {
 	sessionId: string;
 	transcript: Transcript | null;
 	tail?: ReactNode;
 	follow?: boolean;
+	commentLayer?: (content: ReactNode) => ReactNode;
 }) {
 	const term = useTranscriptHighlightTerm();
 	const ready = transcript?.sessionId === sessionId;
@@ -25,6 +27,7 @@ export function TranscriptArea({
 				term={term}
 				tail={tail}
 				follow={follow}
+				commentLayer={commentLayer}
 			/>
 		</Box>
 	);
