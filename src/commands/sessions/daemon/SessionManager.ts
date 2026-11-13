@@ -42,6 +42,7 @@ import {
 } from "./worktree/spawnInTree";
 import { resumeInTree } from "./worktree/resumeInTree";
 import { createRunSession, type RunSpawnRequest } from "./createRunSession";
+import { mergeNodeSessions } from "./mergeNodeSessions";
 
 export class SessionManager {
 	private sessions = new Map<string, Session>();
@@ -240,7 +241,7 @@ export class SessionManager {
 		[...this.sessions.values()].map(toSessionInfo);
 
 	listSessions = (): SessionInfo[] =>
-		this.localSessions().concat(this.links.sessions());
+		mergeNodeSessions(this.localSessions(), this.links.sessions());
 
 	private readonly notify = (): void => {
 		// During shutdown pty exits must not rewrite sessions.json, or the

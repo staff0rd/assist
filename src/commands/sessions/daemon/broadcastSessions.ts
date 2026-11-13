@@ -3,6 +3,7 @@ import { broadcast } from "./broadcast";
 import type { ClientHub } from "./ClientHub";
 import type { Session, SessionInfo } from "./createSession";
 import { persistLiveSessions } from "./loadPersistedSessions";
+import { mergeNodeSessions } from "./mergeNodeSessions";
 import { toSessionInfo } from "./toSessionInfo";
 import { isBusy } from "../shared/isBusy";
 
@@ -25,7 +26,7 @@ export function broadcastSessions(
 		type: "sessions",
 		restartActivity,
 		lastUserActivityAt: clients.userActivity.get(),
-		sessions: local.concat(linkedSessions),
+		sessions: mergeNodeSessions(local, linkedSessions),
 		active: active?.toJSON() ?? {},
 	});
 	const peers = new Set([...clients].filter((c) => !viewers.has(c)));
