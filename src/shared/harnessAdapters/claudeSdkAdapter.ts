@@ -4,6 +4,8 @@ import { claudeConnectorProbe } from "./claudeConnectorProbe";
 import { detectHarness } from "./detectHarness";
 import { harnessCapabilityDeclarations } from "./harnessCapabilityDeclarations";
 import { harnessLabel } from "./harnessLabel";
+import { buildSlashCommand } from "./buildSlashCommand";
+import { launchSdkViaDaemon } from "./launchSdkViaDaemon";
 import type { HarnessAdapter } from "./types";
 
 export const claudeSdkAdapter: HarnessAdapter = {
@@ -16,6 +18,17 @@ export const claudeSdkAdapter: HarnessAdapter = {
 		"connector.slack.read": () => claudeConnectorProbe("Slack"),
 	},
 	detect: () => detectHarness("claude-sdk"),
+	launchSkill: (skill, args, { conversationId, cwd, model }) =>
+		launchSdkViaDaemon({
+			prompt: buildSlashCommand(skill, args),
+			cwd,
+			conversationId,
+			model,
+		}),
+	launchPrompt: (prompt, { conversationId, cwd, model }) =>
+		launchSdkViaDaemon({ prompt, cwd, conversationId, model }),
+	resume: (conversationId, nudge, { cwd }) =>
+		launchSdkViaDaemon({ prompt: nudge, cwd, resumeId: conversationId }),
 	interactive: ({
 		sessionId,
 		conversationId,

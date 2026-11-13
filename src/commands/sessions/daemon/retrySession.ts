@@ -3,7 +3,7 @@ import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { killPtyTree } from "./killPtyTree";
 import { respawnSession } from "./respawnSession";
-import { spawnPty } from "./spawnPty";
+import { spawnAssistProcess } from "./spawnAssistProcess";
 import { spawnRun } from "./spawnRun";
 import type { OnStatusChange } from "./types";
 
@@ -38,6 +38,6 @@ function respawnThunk(session: Session): (() => Session["pty"]) | null {
 	if (session.commandType === "run" && runName)
 		return () => spawnRun({ name: runName, args: runArgs, cwd });
 	if (session.commandType === "assist" && assistArgs)
-		return () => spawnPty(["assist", ...assistArgs], cwd, session.id);
+		return () => spawnAssistProcess(["assist", ...assistArgs], cwd, session.id);
 	return null;
 }

@@ -6,6 +6,9 @@ import { handlePtyExit } from "./handlePtyExit";
 import { retrySession } from "./retrySession";
 import { spawnPty } from "./spawnPty";
 
+vi.mock("./assistArgsHarness", () => ({
+	assistArgsHarness: vi.fn(() => "claude"),
+}));
 vi.mock("./spawnPty", async () => {
 	const { makePty } = await vi.importActual<typeof makePtyModule>(
 		"../../../test/mothers/makePty",
@@ -60,6 +63,7 @@ describe("retrySession", () => {
 			["assist", "draft"],
 			"/home/user/repo",
 			"1",
+			undefined,
 		);
 		expect(session.status).toBe("running");
 		expect(session.restored).toBeUndefined();

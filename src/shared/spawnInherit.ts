@@ -1,6 +1,9 @@
 import { type ChildProcess, spawn } from "node:child_process";
 
-export type SpawnResult = { child: ChildProcess; done: Promise<number> };
+export type SpawnResult = {
+	child: Pick<ChildProcess, "kill">;
+	done: Promise<number>;
+};
 
 export function spawnInherit(
 	command: string,

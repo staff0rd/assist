@@ -15,6 +15,9 @@ vi.mock("../../../shared/loadJson", () => ({
 	saveJson: vi.fn(),
 }));
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
+vi.mock("./assistArgsHarness", () => ({
+	assistArgsHarness: vi.fn(() => "claude"),
+}));
 vi.mock("./spawnPty", () => ({ spawnPty: vi.fn(() => ({ fake: "pty" })) }));
 vi.mock("./spawnClaude", () => ({
 	spawnClaude: vi.fn(() => ({ fake: "pty" })),
@@ -88,6 +91,7 @@ describe("restoreSession mid worktree setup", () => {
 			["assist", "backlog", "run", "a1234"],
 			tree.path,
 			"40",
+			undefined,
 		);
 	});
 

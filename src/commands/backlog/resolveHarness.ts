@@ -3,6 +3,7 @@ import {
 	harnesses,
 	isHarnessAvailable,
 } from "../../shared/harnesses";
+import { harnessKinds } from "../../shared/harnessKinds";
 import { loadConfig } from "../../shared/loadConfig";
 import { loadMergedRawConfig } from "../../shared/loadConfigFrom";
 import type { AssistConfig } from "../../shared/types";
@@ -15,7 +16,8 @@ export function resolveHarness(
 	value?: string,
 	type?: HarnessDefaultsType,
 ): HarnessKind {
-	if (value === "claude" || value === "codex" || value === "pi") return value;
+	if (value && (harnessKinds as readonly string[]).includes(value))
+		return value as HarnessKind;
 	const { harness } = loadConfig();
 	const configured = type && harness.defaults?.[type]?.harness;
 	if (configured) return configured;

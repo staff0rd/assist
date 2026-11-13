@@ -9,7 +9,7 @@ import { restoreResumePlan } from "./restoreResumePlan";
 import { conversationResumeOutcome } from "./conversationResumeOutcome";
 import { resumedRunEnv } from "./resumedRunEnv";
 import { runningSession, waitingSession } from "./runningSession";
-import { spawnPty } from "./spawnPty";
+import { spawnAssistProcess } from "./spawnAssistProcess";
 
 export function relaunchWrapperSession(
 	id: string,
@@ -26,7 +26,7 @@ export function relaunchWrapperSession(
 	daemonLog(
 		`session ${id} relaunching wrapper (${resumeSessionId ? `resume ${resumeSessionId}` : `fresh: ${resume.reason}`})`,
 	);
-	const pty = spawnPty(
+	const pty = spawnAssistProcess(
 		assistResumeArgs({ assistArgs: persisted.assistArgs, resumeSessionId }),
 		persisted.cwd,
 		id,

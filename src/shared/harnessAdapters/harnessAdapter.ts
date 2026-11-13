@@ -14,5 +14,8 @@ const adapters: Record<HarnessKind, HarnessAdapter> = {
 };
 
 export function harnessAdapter(kind: HarnessKind | undefined): HarnessAdapter {
-	return adapters[resolveHarness(kind)];
+	const resolved = resolveHarness(kind);
+	if (resolved === "claude" && process.env.ASSIST_SDK_SESSION === "1")
+		return claudeSdkAdapter;
+	return adapters[resolved];
 }

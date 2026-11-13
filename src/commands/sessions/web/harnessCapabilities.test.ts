@@ -54,7 +54,7 @@ describe("harnessCapabilities", () => {
 		mockLoadConfig.mockReturnValue(makeAssistConfig({ harness: {} }));
 	});
 
-	it("resolves Refine available on every detected terminal harness", () => {
+	it("resolves Refine available on every detected harness", () => {
 		mockIsHarnessAvailable.mockReturnValue(true);
 		const [, status, body] = run();
 		expect(status).toBe(200);
@@ -63,10 +63,7 @@ describe("harnessCapabilities", () => {
 		expect(body.engine).toBe("claude");
 		expect(body.features.refine).toMatchObject({
 			claude: { available: true },
-			"claude-sdk": {
-				available: false,
-				reasons: [expect.objectContaining({ capability: "launch.terminal" })],
-			},
+			"claude-sdk": { available: true },
 			codex: { available: true },
 			pi: { available: true },
 		});

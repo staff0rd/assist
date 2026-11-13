@@ -2,17 +2,10 @@ import { readFileSync } from "node:fs";
 import type { Options } from "@anthropic-ai/claude-agent-sdk";
 import { ensureHooksSettings } from "../ensureHooksSettings";
 import type { SdkSessionControl } from "./createSdkSessionProcess";
+import type { SdkSpawnOpts } from "./SdkSpawnOpts";
 import { spawnSdkChild } from "./spawnSdkChild";
 
-export type SdkSpawnOpts = {
-	prompt?: string;
-	cwd?: string;
-	sessionId?: string;
-	claudeSessionId?: string;
-	resumeId?: string;
-	appendSystemPromptFile?: string;
-	model?: string;
-};
+export type { SdkSpawnOpts };
 
 export function sdkQueryOptions(
 	opts: SdkSpawnOpts,
@@ -32,7 +25,7 @@ export function sdkQueryOptions(
 		settings: ensureHooksSettings(),
 		pathToClaudeCodeExecutable: executable,
 		spawnClaudeCodeProcess: (options) =>
-			spawnSdkChild(options, opts.sessionId, control.attach),
+			spawnSdkChild(options, opts, control.attach),
 		abortController: abort,
 		model: opts.model,
 		systemPrompt: { type: "preset", preset: "claude_code", append },

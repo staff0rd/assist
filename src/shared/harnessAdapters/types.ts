@@ -17,6 +17,7 @@ type SdkSessionHandle = {
 	onEvent: (listener: (event: SdkSessionEvent) => void) => void;
 	send: (text: string) => void;
 	interrupt: () => void;
+	attach?: (query: SessionProcess, idle: boolean) => void;
 };
 
 export type SessionProcess = Pick<

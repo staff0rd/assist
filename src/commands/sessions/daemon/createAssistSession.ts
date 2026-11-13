@@ -1,5 +1,5 @@
 import type { Session } from "./createSession";
-import { spawnPty } from "./spawnPty";
+import { spawnAssistProcess } from "./spawnAssistProcess";
 import { startOrHoldPty } from "./startOrHoldPty";
 
 export type AssistSessionMeta = {
@@ -29,7 +29,7 @@ export function createAssistSession(
 		runningSince: startedAt,
 		waitingSince: null,
 		...startOrHoldPty(
-			() => spawnPty(["assist", ...assistArgs], cwd, id),
+			() => spawnAssistProcess(["assist", ...assistArgs], cwd, id),
 			holdPty,
 		),
 		scrollback: "",

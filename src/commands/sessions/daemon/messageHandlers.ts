@@ -5,6 +5,7 @@ import { handleAutoUpdateControl } from "./autoUpdate/handleAutoUpdateControl";
 import { sendTo } from "./broadcast";
 import { handleHelloRequest } from "./handleHelloRequest";
 import { handleInterrupt } from "./handleInterrupt";
+import { handleSdkLaunch } from "./sdk/handleSdkLaunch";
 import { handleWebLog } from "./handleWebLog";
 import { handleSearchHistory } from "./historySearch/handleSearchHistory";
 import { creator } from "./creator";
@@ -73,6 +74,7 @@ export const messageHandlers: Record<string, Handler> = {
 	...viewerHandlers,
 	...pinHandlers,
 	"type-prompt": handleTypePrompt,
+	"sdk-launch": handleSdkLaunch,
 	"type-prompt-to-writer": handleTypePromptToWriter,
 	...retryHandlers,
 	dismiss: handleDismiss,

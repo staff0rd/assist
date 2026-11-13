@@ -1,5 +1,6 @@
 export type SessionClient = {
 	send(data: string): void;
+	onClose?(listener: () => void): void;
 };
 
 export function sendTo(client: SessionClient, msg: object): void {

@@ -32,14 +32,7 @@ export const harnessCapabilityDeclarations: Record<
 	CapabilityDeclarations
 > = {
 	claude,
-	"claude-sdk": {
-		...claude,
-		"launch.terminal": unsupported(
-			"Claude (SDK) sessions have no terminal, and these workflows start an assist command that opens the Claude CLI's terminal UI",
-			"run the workflow with Claude",
-			"a1560",
-		),
-	},
+	"claude-sdk": claude,
 	codex: {
 		"skills.native": supported,
 		"launch.terminal": supported,

@@ -13,6 +13,7 @@ export function handleConnection(
 		send: (data) => {
 			if (socket.writable) socket.write(`${data}\n`);
 		},
+		onClose: (listener) => socket.on("close", listener),
 	};
 	manager.addClient(client);
 	manager.clients.greet(client);

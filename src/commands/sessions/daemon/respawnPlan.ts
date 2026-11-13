@@ -8,7 +8,7 @@ import {
 	interactiveRespawnPlan,
 	type RespawnPlan,
 } from "./interactiveRespawnPlan";
-import { spawnPty } from "./spawnPty";
+import { spawnAssistProcess } from "./spawnAssistProcess";
 
 export function respawnPlan(
 	session: Session,
@@ -26,7 +26,7 @@ export function respawnPlan(
 					session.harnessSessionId = undefined;
 				}
 				resume = fresh ? undefined : conversationResumeOutcome(session);
-				return spawnPty(
+				return spawnAssistProcess(
 					assistResumeArgs({ assistArgs, resumeSessionId: resume?.id }),
 					cwd,
 					session.id,

@@ -1,10 +1,10 @@
-import type { ChildProcess } from "node:child_process";
+import type { SpawnResult } from "../../shared/spawnInherit";
 import { existsSync, unwatchFile, watchFile } from "node:fs";
 import { readSignal } from "./readSignal";
 import { getSignalPath } from "./writeSignal";
 
 export function watchForMarker(
-	child: ChildProcess,
+	child: SpawnResult["child"],
 	options?: { actOnDone?: boolean },
 ): { killedOnMarker: () => boolean } {
 	let killed = false;
