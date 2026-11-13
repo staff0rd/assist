@@ -1,3 +1,10 @@
+## [0.1133.2](https://github.com/staff0rd/assist/compare/v0.1133.1...v0.1133.2) (2026-11-13)
+
+
+### Bug Fixes
+
+* select fork PR by its head branch ([ac394e2](https://github.com/staff0rd/assist/commit/ac394e2ad0435eb62def0d05017094161ba7a066))
+
 ## [0.1133.1](https://github.com/staff0rd/assist/compare/v0.1133.0...v0.1133.1) (2026-11-13)
 
 
