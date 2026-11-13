@@ -1,13 +1,11 @@
-import { parseTranscript } from "../shared/parseTranscript";
 import { type SessionClient, sendTo } from "./broadcast";
 import { collectHistory } from "./collectHistory";
 import { daemonLog } from "./daemonLog";
 import { handleFetchSessionTranscript } from "./handleFetchSessionTranscript";
+import { handleFetchTranscript } from "./handleFetchTranscript";
 import { handleFetchUserMessages } from "./handleFetchUserMessages";
 import { routed } from "./routed";
 import type { SessionManager } from "./SessionManager";
-
-type Msg = Record<string, unknown>;
 
 async function handleHistory(
 	client: SessionClient,
@@ -15,17 +13,6 @@ async function handleHistory(
 ): Promise<void> {
 	const linked = manager.clients.isPeer(client) ? [] : manager.links.history();
 	sendTo(client, { type: "history", sessions: await collectHistory(linked) });
-}
-
-function handleFetchTranscript(
-	client: SessionClient,
-	_manager: SessionManager,
-	data: Msg,
-): void {
-	const sessionId = data.sessionId as string;
-	parseTranscript(sessionId).then((messages) =>
-		sendTo(client, { type: "transcript", sessionId, messages }),
-	);
 }
 
 async function handleShutdown(

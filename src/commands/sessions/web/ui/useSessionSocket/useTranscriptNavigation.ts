@@ -6,9 +6,9 @@ export function useTranscriptNavigation(
 	setViewingTranscriptSessionId: (id: string | null) => void,
 ) {
 	const viewTranscript = useCallback(
-		(sessionId: string) => {
+		(sessionId: string, node?: string) => {
 			setViewingTranscriptSessionId(sessionId);
-			send({ type: "fetch-transcript", sessionId });
+			send({ type: "fetch-transcript", sessionId, node });
 		},
 		[send, setViewingTranscriptSessionId],
 	);

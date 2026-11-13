@@ -1,13 +1,13 @@
 import type { HarnessKind } from "../../../../shared/harnesses";
 import type { RateLimits } from "../../../../shared/RateLimits";
-import type { HistoricalSession } from "../../shared/parseSessionFile";
-import { daemonLog, relayDaemonLog } from "../daemonLog";
+import { relayDaemonLog } from "../daemonLog";
 import { logUnrecognisedType } from "../logUnrecognisedType";
 import {
 	appendScrollback,
 	broadcastToViewers,
 	type LinkRelayState,
 } from "./LinkRelayState";
+import { relayHistory } from "./relayHistory";
 import { relayLinkSessions } from "./relayLinkSessions";
 import { relayReply } from "./relayReply";
 import { relayRunConflict } from "./relayRunConflict";
@@ -25,22 +25,6 @@ const relayOutput: Relay = (state, msg) => {
 	const sessionId = nsId(state, msg);
 	appendScrollback(state, sessionId, msg.data as string);
 	broadcastToViewers(state, { type: "output", sessionId, data: msg.data });
-};
-
-const relayHistory: Relay = (state, msg) => {
-	const sessions = ((msg.sessions as HistoricalSession[]) ?? []).map((s) => ({
-		...s,
-		node: state.node,
-	}));
-	const changed =
-		JSON.stringify(sessions) !== JSON.stringify(state.lastHistory);
-	state.lastHistory = sessions;
-	const waiter = state.historyWaiters.shift();
-	if (waiter) waiter(sessions);
-	else if (changed) {
-		daemonLog(`link ${state.node} ws: late history reply changed, pushing`);
-		state.onHistoryChanged();
-	}
 };
 
 const relays: Record<string, Relay> = {
@@ -63,6 +47,7 @@ const relays: Record<string, Relay> = {
 		}),
 	"user-messages": relayWithNodeSessionId,
 	"session-transcript": relayWithNodeSessionId,
+	transcript: relayReply,
 	limits: (state, msg) =>
 		state.onLimits(
 			msg.harness as HarnessKind | undefined,

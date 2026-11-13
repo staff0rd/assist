@@ -38,7 +38,7 @@ export function useSidebarNavigation(
 	const handleView = useCallback(
 		(session: HistoricalSession, searchTerm = "") => {
 			setViewedTerm(searchTerm);
-			viewTranscript(session.sessionId);
+			viewTranscript(session.sessionId, session.node);
 			navigate("/sessions");
 		},
 		[setViewedTerm, viewTranscript, navigate],

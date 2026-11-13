@@ -39,6 +39,9 @@ vi.mock("../../shared/discoverSessions", () => ({
 		},
 	],
 }));
+vi.mock("../../shared/parseTranscript", () => ({
+	parseTranscript: async (id: string) => [{ role: "user", text: `t-${id}` }],
+}));
 vi.mock("../daemonLog", () => ({
 	daemonLog: vi.fn(),
 	relayDaemonLog: vi.fn(),
@@ -268,6 +271,48 @@ describe("two linked nodes", () => {
 				requestId: "r1",
 			}),
 		);
+	});
+
+	it("forwards a linked history session's fetch-transcript and relays the reply to the requester", async () => {
+		const wsl = node("pc-wsl", [WINDOWS]);
+		node("pc-windows");
+		const route = messageHandlers["fetch-transcript"];
+		const fetch = vi
+			.spyOn(messageHandlers, "fetch-transcript")
+			.mockImplementation((client, manager, data) =>
+				route(client, manager, data),
+			);
+		const view = viewer();
+		const other = viewer();
+		wsl.addClient(other.client);
+		wsl.links.reload();
+		await vi.waitFor(() =>
+			expect(wsl.links.nodes().links[0].state).toBe("connected"),
+		);
+
+		dispatchMessage(view.client, wsl, {
+			type: "fetch-transcript",
+			sessionId: "h1",
+			node: "pc-windows",
+		});
+
+		await vi.waitFor(() =>
+			expect(view.received).toContainEqual({
+				type: "transcript",
+				sessionId: "h1",
+				messages: [{ role: "user", text: "t-h1" }],
+				requestId: expect.any(String),
+			}),
+		);
+		expect(fetch.mock.calls.map((c) => c[2])).toContainEqual({
+			type: "fetch-transcript",
+			sessionId: "h1",
+			requestId: expect.any(String),
+		});
+		expect(other.received).not.toContainEqual(
+			expect.objectContaining({ type: "transcript" }),
+		);
+		fetch.mockRestore();
 	});
 
 	it.each([
