@@ -9,6 +9,10 @@ import {
 
 vi.mock("./spawnClaude", () => ({ spawnClaude: vi.fn(() => "claude-pty") }));
 vi.mock("./spawnCodex", () => ({ spawnCodex: vi.fn(() => "codex-pty") }));
+vi.mock("./spawnClaudeSdk", () => ({
+	spawnClaudeSdk: vi.fn(() => ({ sdk: {} })),
+}));
+vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./hasTranscriptOnDisk", () => ({
 	hasTranscriptOnDisk: vi.fn(() => true),
 }));
@@ -24,6 +28,7 @@ import type { PersistedSession } from "./loadPersistedSessions";
 import { restoreBase } from "./restoreBase";
 import { restoreInteractiveSession } from "./restoreInteractiveSession";
 import { spawnClaude } from "./spawnClaude";
+import { spawnClaudeSdk } from "./spawnClaudeSdk";
 import { spawnCodex } from "./spawnCodex";
 
 const mockSpawnClaude = spawnClaude as unknown as MockInstance;
@@ -64,6 +69,19 @@ describe("restoreInteractiveSession", () => {
 			expect(mockSpawnClaude).toHaveBeenCalledWith(
 				expect.objectContaining({ resumeSessionId: "conv-1" }),
 			);
+		});
+	});
+
+	describe("for a Claude (SDK) session with a recorded conversation", () => {
+		it("resumes it through the SDK resume option with the composer locked", () => {
+			const session = restore(
+				persistedSession({ harness: "claude-sdk", claudeSessionId: "conv-1" }),
+			);
+
+			expect(spawnClaudeSdk).toHaveBeenCalledWith(
+				expect.objectContaining({ resumeId: "conv-1" }),
+			);
+			expect(session.sdkResuming).toBe(true);
 		});
 	});
 

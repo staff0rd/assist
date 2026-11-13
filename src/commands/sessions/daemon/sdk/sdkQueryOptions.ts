@@ -9,6 +9,7 @@ export type SdkSpawnOpts = {
 	cwd?: string;
 	sessionId?: string;
 	claudeSessionId?: string;
+	resumeId?: string;
 	appendSystemPromptFile?: string;
 	model?: string;
 };
@@ -24,7 +25,9 @@ export function sdkQueryOptions(
 		: undefined;
 	return {
 		cwd: opts.cwd,
-		sessionId: opts.claudeSessionId,
+		...(opts.resumeId
+			? { resume: opts.resumeId }
+			: { sessionId: opts.claudeSessionId }),
 		permissionMode: "auto",
 		settings: ensureHooksSettings(),
 		pathToClaudeCodeExecutable: executable,

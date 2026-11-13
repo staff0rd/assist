@@ -36,6 +36,14 @@ describe("wireSdkEvents", () => {
 		expect(notify).toHaveBeenCalledTimes(2);
 	});
 
+	it("unlocks the composer once the resume completes", () => {
+		const { control, session, notify } = sdkSession("waiting");
+		session.sdkResuming = true;
+		control.emit({ kind: "resumed" });
+		expect(session.sdkResuming).toBeUndefined();
+		expect(notify).toHaveBeenCalled();
+	});
+
 	it("records queued messages and the pending interrupt", () => {
 		const { control, session } = sdkSession("running");
 		control.emit({ kind: "queued", texts: ["next"] });

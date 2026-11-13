@@ -94,6 +94,7 @@ export type SessionInfoBase = {
 	sdkActivity?: string;
 	sdkQueued?: string[];
 	sdkInterrupting?: boolean;
+	sdkResuming?: boolean;
 	cols?: number;
 	rows?: number;
 	activeViewer?: string;

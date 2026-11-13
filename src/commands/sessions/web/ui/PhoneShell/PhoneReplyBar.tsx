@@ -1,8 +1,7 @@
 import Box from "@mui/material/Box";
-import InputBase from "@mui/material/InputBase";
 import type { HarnessKind } from "../../../../../shared/harnesses";
-import { harnessLabel } from "../../../../../shared/harnessAdapters/harnessLabel";
 import type { SlashCommand } from "../../slashCommands/readSlashCommands";
+import { PhoneReplyField } from "./PhoneReplyField";
 import { PhoneReplySend } from "./PhoneReplySend";
 import { PhoneReplyStop } from "./PhoneReplyStop";
 import { PhoneSlashSuggestions } from "./PhoneSlashSuggestions/PhoneSlashSuggestions";
@@ -16,16 +15,18 @@ export function PhoneReplyBar({
 	commands = [],
 	onSend,
 	stop,
+	locked,
 }: {
 	harness?: HarnessKind;
 	commands?: SlashCommand[];
 	onSend: (text: string) => void;
 	stop?: ReplyStop;
+	locked?: string;
 }) {
 	const reply = useSlashReply(commands);
 	const { text, suggestions } = reply;
 	const send = () => {
-		if (!text.trim()) return;
+		if (!text.trim() || locked) return;
 		onSend(text);
 		reply.clear();
 	};
@@ -40,19 +41,12 @@ export function PhoneReplyBar({
 				/>
 			)}
 			<Box sx={phoneReplyBarSx.bar}>
-				<InputBase
-					multiline
-					maxRows={5}
-					value={text}
-					inputRef={reply.inputRef}
-					onChange={(e) => reply.edit(e.target)}
-					onSelect={(e) => reply.trackCursor(e.target as HTMLTextAreaElement)}
-					placeholder={`Reply to ${harnessLabel(harness)}…`}
-					sx={phoneReplyBarSx.field}
-					inputProps={{ "aria-label": "Reply" }}
-				/>
+				<PhoneReplyField reply={reply} harness={harness} locked={locked} />
 				{stop && <PhoneReplyStop {...stop} />}
-				<PhoneReplySend disabled={!text.trim()} onSend={send} />
+				<PhoneReplySend
+					disabled={Boolean(locked) || !text.trim()}
+					onSend={send}
+				/>
 			</Box>
 		</>
 	);

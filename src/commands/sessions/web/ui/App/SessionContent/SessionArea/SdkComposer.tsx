@@ -25,7 +25,7 @@ export function SdkComposer({
 						multiline
 						maxRows={6}
 						value={c.text}
-						disabled={!c.live}
+						disabled={!c.enabled}
 						onChange={(e) => c.setText(e.target.value)}
 						onKeyDown={c.onKeyDown}
 						placeholder={c.placeholder}
@@ -35,7 +35,7 @@ export function SdkComposer({
 					<SdkComposerActions
 						running={c.running}
 						stopping={c.stopping}
-						canSend={c.live && Boolean(c.text.trim())}
+						canSend={c.enabled && Boolean(c.text.trim())}
 						onStop={c.stop}
 						onSend={c.send}
 					/>

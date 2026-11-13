@@ -1,6 +1,8 @@
 import type { SessionInfo } from "../../../../types";
+import { sdkComposerState } from "../SdkComposer/sdkComposerState";
 import { SdkTailRow } from "./SdkTailRow";
 import { TextRow } from "./TranscriptPane/TranscriptRow/TextRow";
+import { TranscriptDivider } from "./TranscriptPane/TranscriptRow/TranscriptDivider";
 
 function activityText(session: SessionInfo): string | undefined {
 	if (session.status !== "running") return undefined;
@@ -9,6 +11,13 @@ function activityText(session: SessionInfo): string | undefined {
 }
 
 export function SdkTail({ session }: { session: SessionInfo }) {
+	if (sdkComposerState(session).resuming)
+		return (
+			<>
+				<TranscriptDivider label="Daemon restarted" />
+				<SdkTailRow text="Resuming conversation…" />
+			</>
+		);
 	const activity = activityText(session);
 	return (
 		<>

@@ -58,14 +58,14 @@ const EXPECTED_MATRIX: Record<string, Record<string, boolean>> = {
 	},
 	conversationResume: {
 		claude: true,
-		"claude-sdk": false,
+		"claude-sdk": true,
 		codex: true,
 		pi: false,
 		fake: true,
 	},
 	conversationRecovery: {
 		claude: true,
-		"claude-sdk": false,
+		"claude-sdk": true,
 		codex: true,
 		pi: false,
 		fake: true,
@@ -142,7 +142,7 @@ const EXPECTED_MATRIX: Record<string, Record<string, boolean>> = {
 	},
 	usageLimits: {
 		claude: true,
-		"claude-sdk": false,
+		"claude-sdk": true,
 		codex: true,
 		pi: false,
 		fake: true,

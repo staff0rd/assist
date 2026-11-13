@@ -26,6 +26,7 @@ export function PhoneSessionDock({
 			// why: the key strip drives a terminal, which an SDK session does not have
 			onKey={sdk ? undefined : io.onKey}
 			onSend={io.onSend}
+			locked={sdk?.resuming ? sdk.placeholder : undefined}
 			stop={
 				sdk?.running
 					? { disabled: sdk.stopping, onStop: io.onInterrupt }

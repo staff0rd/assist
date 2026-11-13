@@ -19,6 +19,7 @@ export const claudeSdkAdapter: HarnessAdapter = {
 	interactive: ({
 		sessionId,
 		conversationId,
+		resumeId,
 		prompt,
 		cwd,
 		appendSystemPromptFile,
@@ -29,6 +30,7 @@ export const claudeSdkAdapter: HarnessAdapter = {
 			cwd,
 			sessionId,
 			claudeSessionId: conversationId,
+			resumeId,
 			appendSystemPromptFile,
 			model,
 		}),

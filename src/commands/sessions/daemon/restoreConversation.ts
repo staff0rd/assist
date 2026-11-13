@@ -1,6 +1,7 @@
 import { sessionModeLaunch } from "./sessionModeLaunch";
 import type { HarnessAdapter } from "../../../shared/harnessAdapters/types";
 import type { Session } from "./createSession";
+import { daemonLog } from "./daemonLog";
 import type { RestoreStatus } from "./deriveRestoreStatus";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { relaunchUnwrittenConversation } from "./relaunchUnwrittenConversation";
@@ -26,7 +27,12 @@ export function restoreConversation(
 		sessionId: id,
 		...sessionModeLaunch(adapter, persisted),
 	});
-	return plan.idle
+	const session = plan.idle
 		? waitingSession(base, persisted, pty)
 		: runningSession(base, persisted, pty);
+	if (!pty?.sdk) return session;
+	daemonLog(
+		`session ${id} sdk resuming claude session ${resumeId} after daemon restart: composer locked until the resume completes`,
+	);
+	return { ...session, sdkResuming: true };
 }

@@ -39,21 +39,6 @@ export const harnessCapabilityDeclarations: Record<
 			"run the workflow with Claude",
 			"a1560",
 		),
-		"conversation.resume": unsupported(
-			"Claude (SDK) sessions do not resume their conversation yet",
-			"a daemon restart starts a fresh conversation; pick Claude to keep the conversation across restarts",
-			"a1560",
-		),
-		"conversation.relocate": unsupported(
-			"Claude (SDK) sessions do not resume their conversation yet, so it cannot continue in a replacement worktree",
-			"start a fresh session in the replacement worktree; pick Claude to keep the conversation",
-			"a1560",
-		),
-		"usage.rateLimits": unsupported(
-			"assist does not yet record usage and rate-limit events from Claude (SDK) sessions",
-			"Claude (SDK) usage is not shown in the status bar; terminal Claude usage still is",
-			"a1560",
-		),
 	},
 	codex: {
 		"skills.native": supported,

@@ -9,6 +9,7 @@ import { inboxScanner } from "./inbox/inboxScanner";
 import { pollRepoConfigCache } from "./pollRepoConfigCache";
 import { refreshRepoConfigCacheOnStart } from "./refreshRepoConfigCacheOnStart";
 import { SessionManager } from "./SessionManager";
+import { setSdkUsageSink } from "./sdk/sdkUsageSink";
 import { startDaemonLogTrimmer } from "./startDaemonLogTrimmer";
 import { startDaemonServer } from "./startDaemonServer";
 
@@ -30,6 +31,12 @@ export async function runDaemon(): Promise<void> {
 	const manager = new SessionManager(checkAutoExit);
 	// why: forward every daemonLog line to log subscribers (e.g. the web server) so they reach assist.log alongside web-server lifecycle output.
 	setDaemonLogSink(manager.clients.emitLog);
+	// why: Claude (SDK) usage draws from the Claude plan's limits, so its observations land on the Claude account like the status line's.
+	setSdkUsageSink({
+		limits: (rateLimits) => manager.clients.updateLimits(rateLimits),
+		usage: (claudeSessionId, transcriptPath, usedPct) =>
+			manager.recordUsage(claudeSessionId, transcriptPath, usedPct),
+	});
 	startDaemonLogTrimmer();
 	pollRepoConfigCache();
 	void failInterruptedJobRuns();

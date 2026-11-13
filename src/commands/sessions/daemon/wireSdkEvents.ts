@@ -13,6 +13,9 @@ function applyViewEvent(
 	} else if (event.kind === "queued") {
 		session.sdkQueued = event.texts.length ? event.texts : undefined;
 		daemonLog(`session ${session.id} sdk queued: ${event.texts.length}`);
+	} else if (event.kind === "resumed") {
+		session.sdkResuming = undefined;
+		daemonLog(`session ${session.id} sdk resumed: composer unlocked`);
 	} else {
 		session.sdkInterrupting = event.pending || undefined;
 		daemonLog(

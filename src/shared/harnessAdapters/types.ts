@@ -9,7 +9,8 @@ export type SdkSessionEvent =
 	| { kind: "status"; status: "running" | "waiting" }
 	| { kind: "activity"; text: string | null }
 	| { kind: "queued"; texts: string[] }
-	| { kind: "interrupting"; pending: boolean };
+	| { kind: "interrupting"; pending: boolean }
+	| { kind: "resumed" };
 
 type SdkSessionHandle = {
 	onEvent: (listener: (event: SdkSessionEvent) => void) => void;

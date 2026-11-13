@@ -110,6 +110,7 @@ export type Session = {
 	sdkActivity?: string;
 	sdkQueued?: string[];
 	sdkInterrupting?: boolean;
+	sdkResuming?: boolean;
 	usedPct?: number;
 	activeMsFlushedForStretch?: { since: number; ms: number };
 	activeMsFlushChain?: Promise<void>;

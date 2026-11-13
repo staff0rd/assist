@@ -11,7 +11,7 @@ export function useSdkComposer(
 	const [text, setText] = useState("");
 	const state = sdkComposerState(session);
 	const send = () => {
-		if (!text.trim() || !state.live) return;
+		if (!text.trim() || !state.enabled) return;
 		sendInput(session.id, bracketedPaste(text));
 		setText("");
 	};

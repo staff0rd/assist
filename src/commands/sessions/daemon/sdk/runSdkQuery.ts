@@ -2,6 +2,7 @@ import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
 import { daemonLog } from "../daemonLog";
 import type { SdkSessionControl } from "./createSdkSessionProcess";
 import type { SdkTurnTracker } from "./createSdkTurnTracker";
+import { createSdkUsageObserver } from "./createSdkUsageObserver";
 import { logSdkMessage } from "./logSdkMessage";
 import { sdkActivityText } from "./sdkActivityText";
 import { sdkTurnStatus } from "./sdkTurnStatus";
@@ -13,9 +14,11 @@ export async function runSdkQuery(
 	turn: SdkTurnTracker,
 ): Promise<void> {
 	const label = `session ${sessionId ?? "?"}`;
+	const observeUsage = createSdkUsageObserver(label);
 	try {
 		for await (const message of messages) {
 			logSdkMessage(label, message);
+			observeUsage(message);
 			const status = sdkTurnStatus(message);
 			if (status) turn.setStatus(status);
 			if (message.type === "assistant" && message.parent_tool_use_id === null)

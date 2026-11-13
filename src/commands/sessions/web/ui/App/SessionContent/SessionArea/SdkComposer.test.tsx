@@ -33,6 +33,17 @@ describe("SdkComposer", () => {
 		);
 	});
 
+	it("stays locked while the conversation resumes", () => {
+		const { field, sendInput } = setup({
+			status: "waiting",
+			sdkResuming: true,
+		});
+		expect((field as HTMLTextAreaElement).disabled).toBe(true);
+		expect(field.getAttribute("placeholder")).toBe("Resuming conversation…");
+		fireEvent.keyDown(field, { key: "Enter" });
+		expect(sendInput).not.toHaveBeenCalled();
+	});
+
 	it("keeps Shift+Enter for a new line", () => {
 		const { field, sendInput } = setup({ status: "waiting" });
 		fireEvent.keyDown(field, { key: "Enter", shiftKey: true });
