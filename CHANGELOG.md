@@ -1,3 +1,10 @@
+## [0.1129.1](https://github.com/staff0rd/assist/compare/v0.1129.0...v0.1129.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* decorate native refs lacking state ([395f7c9](https://github.com/staff0rd/assist/commit/395f7c9002f2595fcdef1a80e74024753766b4d1))
+
 # [0.1129.0](https://github.com/staff0rd/assist/compare/v0.1128.2...v0.1129.0) (2026-11-11)
 
 
