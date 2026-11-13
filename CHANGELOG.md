@@ -1,3 +1,10 @@
+# [0.1142.0](https://github.com/staff0rd/assist/compare/v0.1141.1...v0.1142.0) (2026-11-13)
+
+
+### Features
+
+* suggest skills in prompt dialogs ([5e1d94c](https://github.com/staff0rd/assist/commit/5e1d94cd2d99ea92f867189b6edaaa4393f487a9))
+
 ## [0.1141.1](https://github.com/staff0rd/assist/compare/v0.1141.0...v0.1141.1) (2026-11-13)
 
 
