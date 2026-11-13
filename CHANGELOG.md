@@ -1,3 +1,10 @@
+## [0.1133.1](https://github.com/staff0rd/assist/compare/v0.1133.0...v0.1133.1) (2026-11-13)
+
+
+### Bug Fixes
+
+* find current PR for fork branches ([80bee2a](https://github.com/staff0rd/assist/commit/80bee2ad337c6c17ac3519276214f55f0cc965ea))
+
 # [0.1133.0](https://github.com/staff0rd/assist/compare/v0.1132.0...v0.1133.0) (2026-11-13)
 
 
