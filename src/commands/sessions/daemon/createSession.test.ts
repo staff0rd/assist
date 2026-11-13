@@ -1,3 +1,5 @@
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createSession } from "./createSession";
 import { spawnPty } from "./spawnPty";
@@ -52,6 +54,8 @@ describe("createSession", () => {
 			"--no-daemon",
 			"-c",
 			"sandbox_workspace_write.network_access=true",
+			"--add-dir",
+			join(homedir(), ".assist"),
 			"go",
 		]);
 	});

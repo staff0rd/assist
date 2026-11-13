@@ -39,7 +39,11 @@ vi.mock("./prepareCodexHookTrust", () => ({
 
 const ENV = "<session-env>";
 
-const NETWORK = ["-c", "sandbox_workspace_write.network_access=true"];
+vi.mock("./codexSandboxArgs", () => ({
+	codexSandboxArgs: () => ["<sandbox>"],
+}));
+
+const SANDBOX = ["<sandbox>"];
 
 const LITELLM = { baseUrl: "https://proxy.example/", apiKey: "sk-test" };
 
@@ -79,7 +83,7 @@ describe("spawnCodex", () => {
 			[
 				"--no-daemon",
 				ENV,
-				...NETWORK,
+				...SANDBOX,
 				"-C",
 				"/repo",
 				"--sandbox",
@@ -118,7 +122,7 @@ describe("spawnCodex", () => {
 			[
 				"--no-daemon",
 				ENV,
-				...NETWORK,
+				...SANDBOX,
 				"-C",
 				process.cwd(),
 				"--sandbox",
@@ -143,7 +147,7 @@ describe("spawnCodex", () => {
 				"--no-daemon",
 				...OVERRIDE_ARGS,
 				ENV,
-				...NETWORK,
+				...SANDBOX,
 				"-C",
 				"/repo",
 				"--sandbox",
@@ -164,7 +168,7 @@ describe("spawnCodex", () => {
 			[
 				"--no-daemon",
 				ENV,
-				...NETWORK,
+				...SANDBOX,
 				"-C",
 				"/repo",
 				"--sandbox",
@@ -210,7 +214,7 @@ describe("spawnCodex", () => {
 			[
 				"--no-daemon",
 				ENV,
-				...NETWORK,
+				...SANDBOX,
 				"-C",
 				"/repo",
 				"--sandbox",
@@ -263,7 +267,7 @@ describe("spawnCodex", () => {
 				"-m",
 				"o3",
 				ENV,
-				...NETWORK,
+				...SANDBOX,
 				"-C",
 				"/repo",
 				"--sandbox",

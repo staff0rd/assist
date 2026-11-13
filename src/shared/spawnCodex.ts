@@ -1,6 +1,6 @@
 import { buildHarnessCodexArgs } from "./buildHarnessCodexArgs";
 import { codexIsolatedHookArgs } from "./codexIsolatedHookArgs";
-import { codexSandboxNetworkArgs } from "./codexSandboxNetworkArgs";
+import { codexSandboxArgs } from "./codexSandboxArgs";
 import { codexSessionEnvArgs } from "./codexSessionEnvArgs";
 import { harnesses } from "./harnesses";
 import { prepareCodexHookTrust } from "./prepareCodexHookTrust";
@@ -38,7 +38,7 @@ export function spawnCodex(
 			...codexIsolatedHookArgs,
 			...override.args,
 			...codexSessionEnvArgs(process.env),
-			...codexSandboxNetworkArgs,
+			...codexSandboxArgs(),
 			"-C",
 			cwd,
 			"--sandbox",

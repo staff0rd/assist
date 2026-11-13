@@ -4,7 +4,8 @@ import { readProposedItem } from "./propose/readProposedItem";
 import { reviewProposal } from "./propose/reviewProposal";
 import { saveProposedItem } from "./propose/saveProposedItem";
 import { startProposedRun } from "./propose/startProposedRun";
-import { trackProposal } from "./propose/trackProposal";
+import { type ProposalTracker, trackProposal } from "./propose/trackProposal";
+import { exitNoPreview } from "../sessions/shared/exitNoPreview";
 
 type ProposeOptions = {
 	json: string;
@@ -31,7 +32,12 @@ export async function propose(options: ProposeOptions): Promise<void> {
 
 	const item = await readProposedItem(options.json);
 
-	const tracker = sessionId ? trackProposal(sessionId) : undefined;
+	let tracker: ProposalTracker | undefined;
+	try {
+		tracker = sessionId ? trackProposal(sessionId) : undefined;
+	} catch (error) {
+		exitNoPreview(error);
+	}
 	try {
 		const approval = await reviewProposal(
 			item,

@@ -507,3 +507,30 @@ describe("re-propose after the earlier preview was approved", () => {
 		expect(await itemRows()).toHaveLength(2);
 	});
 });
+
+describe("propose when the proposal ledger cannot be written", () => {
+	beforeEach(() => {
+		process.env.ASSIST_SESSION = "1";
+		process.env.ASSIST_SESSION_ID = "7";
+		const blocker = join(ledgerDir, "blocker");
+		writeFileSync(blocker, "");
+		ledgerDir = join(blocker, "proposals");
+	});
+
+	it("exits non-zero saying no preview is open", async () => {
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		vi.spyOn(process, "exit").mockImplementation(((code?: number) => {
+			throw new Error(`process.exit(${code})`);
+		}) as never);
+
+		await expect(propose({ json: writePayload(bug) })).rejects.toThrow(
+			"process.exit(1)",
+		);
+
+		expect(errorSpy.mock.calls.map((c) => c.join(" ")).join("\n")).toContain(
+			"No preview is open",
+		);
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+		expect(await allItems()).toEqual([]);
+	});
+});

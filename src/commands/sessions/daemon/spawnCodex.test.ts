@@ -47,7 +47,11 @@ vi.mock("../../../shared/prepareCodexHookTrust", () => ({
 
 const ENV = "<session-env>";
 
-const NETWORK = ["-c", "sandbox_workspace_write.network_access=true"];
+vi.mock("../../../shared/codexSandboxArgs", () => ({
+	codexSandboxArgs: () => ["<sandbox>"],
+}));
+
+const SANDBOX = ["<sandbox>"];
 
 const LITELLM = { baseUrl: "https://proxy.example/", apiKey: "sk-test" };
 
@@ -83,7 +87,7 @@ describe("spawnCodex", () => {
 		spawnCodex({ prompt: "Do the thing", cwd: "/repo", sessionId: "7" });
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", "--no-daemon", ENV, ...NETWORK, "Do the thing"],
+			["codex", "--no-daemon", ENV, ...SANDBOX, "Do the thing"],
 			"/repo",
 			"7",
 			{},
@@ -102,7 +106,7 @@ describe("spawnCodex", () => {
 		spawnCodex({ cwd: "/repo", sessionId: "7" });
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", "--no-daemon", ENV, ...NETWORK],
+			["codex", "--no-daemon", ENV, ...SANDBOX],
 			"/repo",
 			"7",
 			{},
@@ -113,7 +117,7 @@ describe("spawnCodex", () => {
 		spawnCodex();
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", "--no-daemon", ENV, ...NETWORK],
+			["codex", "--no-daemon", ENV, ...SANDBOX],
 			undefined,
 			undefined,
 			{},
@@ -124,7 +128,7 @@ describe("spawnCodex", () => {
 		spawnCodex({ resumeSessionId: "conv-1", cwd: "/repo", sessionId: "7" });
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", "--no-daemon", ENV, ...NETWORK, "resume", "conv-1"],
+			["codex", "--no-daemon", ENV, ...SANDBOX, "resume", "conv-1"],
 			"/repo",
 			"7",
 			{},
@@ -140,7 +144,7 @@ describe("spawnCodex", () => {
 		});
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", "--no-daemon", ENV, ...NETWORK, "resume", "conv-1", "continue"],
+			["codex", "--no-daemon", ENV, ...SANDBOX, "resume", "conv-1", "continue"],
 			"/repo",
 			"7",
 			{},
@@ -162,7 +166,7 @@ describe("spawnCodex", () => {
 					"--no-daemon",
 					...OVERRIDE_ARGS,
 					ENV,
-					...NETWORK,
+					...SANDBOX,
 					"Do the thing",
 				],
 				"/repo",
@@ -190,7 +194,7 @@ describe("spawnCodex", () => {
 					"--no-daemon",
 					...OVERRIDE_ARGS,
 					ENV,
-					...NETWORK,
+					...SANDBOX,
 					"resume",
 					"conv-1",
 					"continue",
@@ -210,7 +214,7 @@ describe("spawnCodex", () => {
 			spawnCodex({ cwd: "/repo", sessionId: "7", model: "gpt-5.5" });
 
 			expect(spawnPtyMock).toHaveBeenCalledWith(
-				["codex", "--no-daemon", "-m", "gpt-5.5", ENV, ...NETWORK],
+				["codex", "--no-daemon", "-m", "gpt-5.5", ENV, ...SANDBOX],
 				"/repo",
 				"7",
 				{},
@@ -223,7 +227,7 @@ describe("spawnCodex", () => {
 			spawnCodex({ resumeSessionId: "conv-1", cwd: "/repo", sessionId: "7" });
 
 			expect(spawnPtyMock).toHaveBeenCalledWith(
-				["codex", "--no-daemon", ENV, ...NETWORK, "resume", "conv-1"],
+				["codex", "--no-daemon", ENV, ...SANDBOX, "resume", "conv-1"],
 				"/repo",
 				"7",
 				{},
@@ -252,14 +256,14 @@ describe("spawnCodex", () => {
 			"codex",
 			"--no-daemon",
 			ENV,
-			...NETWORK,
+			...SANDBOX,
 			...expected,
 		]);
 		expect(spawnPtyMock.mock.calls[1][0]).toEqual([
 			"codex",
 			"--no-daemon",
 			ENV,
-			...NETWORK,
+			...SANDBOX,
 			...expected,
 			"resume",
 			"conv-1",
@@ -273,7 +277,7 @@ describe("spawnCodex", () => {
 		spawnCodex({ cwd: "/repo", sessionId: "7" });
 
 		expect(spawnPtyMock).toHaveBeenCalledWith(
-			["codex", "--no-daemon", ENV, ...NETWORK],
+			["codex", "--no-daemon", ENV, ...SANDBOX],
 			"/repo",
 			"7",
 			{},
@@ -302,6 +306,6 @@ describe("spawnCodex", () => {
 		);
 		const args = spawnPtyMock.mock.calls[0][0] as string[];
 		expect(args.join(" ")).not.toMatch(/bypass-hook-trust|hooks.*=\s*false/);
-		expect(args).toEqual(["codex", "--no-daemon", ENV, ...NETWORK]);
+		expect(args).toEqual(["codex", "--no-daemon", ENV, ...SANDBOX]);
 	});
 });

@@ -1,4 +1,5 @@
 import type { PreviewDecision } from "./PreviewDecision";
+import { exitNoPreview } from "./exitNoPreview";
 import { reportPreviewRejection } from "./reportPreviewRejection";
 import {
 	type PreviewOutcome,
@@ -23,10 +24,7 @@ export async function awaitPreviewApproval(
 	try {
 		outcome = await requestPreviewDecision(request);
 	} catch (error) {
-		console.error(
-			`Error: ${error instanceof Error ? error.message : String(error)}`,
-		);
-		process.exit(1);
+		exitNoPreview(error);
 	}
 
 	if (outcome === "superseded") {
