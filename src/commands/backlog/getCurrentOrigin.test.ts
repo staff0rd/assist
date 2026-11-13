@@ -136,6 +136,54 @@ describe("resolveCurrentOrigin", () => {
 		expect(mockExecFileSync).not.toHaveBeenCalled();
 	});
 
+	describe("given a Windows path", () => {
+		const onPlatform = (platform: NodeJS.Platform) =>
+			vi.spyOn(process, "platform", "get").mockReturnValue(platform);
+
+		afterEach(() => {
+			vi.mocked(findRepoRoot).mockImplementation((dir: string) => dir);
+			vi.restoreAllMocks();
+		});
+
+		const outsideRepo = String.raw`C:\Users\me`;
+		const insideRepo = String.raw`C:\git\repo`;
+		const originOf = (dir: string) => ({
+			[`-C ${dir} remote get-url origin`]: "https://github.com/org/repo.git\n",
+		});
+
+		it("resolves a directory outside any repo without running git on Windows", () => {
+			onPlatform("win32");
+			vi.mocked(findRepoRoot).mockReturnValue(null);
+
+			expect(resolveCurrentOrigin(outsideRepo)).toEqual({
+				origin: `local:${outsideRepo}`,
+				stable: false,
+			});
+			expect(mockExecFileSync).not.toHaveBeenCalled();
+		});
+
+		it("asks git on Windows when the directory is inside a repo", () => {
+			onPlatform("win32");
+			respond(originOf(insideRepo));
+
+			expect(resolveCurrentOrigin(insideRepo)).toEqual({
+				origin: "github.com/org/repo",
+				stable: true,
+			});
+		});
+
+		it("asks git from WSL, where the path cannot be read directly", () => {
+			onPlatform("linux");
+			vi.mocked(findRepoRoot).mockReturnValue(null);
+			respond(originOf(insideRepo));
+
+			expect(resolveCurrentOrigin(insideRepo)).toEqual({
+				origin: "github.com/org/repo",
+				stable: true,
+			});
+		});
+	});
+
 	it("reports the local key as unstable when a listed remote's url cannot be read", () => {
 		respond({
 			"remote get-url origin": new Error("could not read"),
