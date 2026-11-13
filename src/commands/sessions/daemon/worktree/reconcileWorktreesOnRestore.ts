@@ -9,6 +9,7 @@ import { reclaimVanishedWorktrees } from "./reclaimVanishedWorktrees";
 import type { SpawnSession } from "../types";
 import { logVanishedTree } from "./logVanishedTree";
 import { underTempRoot } from "./underTempRoot";
+import { recheckReapedWorktrees } from "./recheckReapedWorktrees";
 import { recoverOrphan } from "./recoverOrphan";
 
 export function reconcileWorktreesOnRestore(
@@ -48,4 +49,5 @@ async function recoverOrphanedWorktrees(
 	}
 	for (const [clone, paths] of vanished)
 		await reclaimVanishedWorktrees(clone, paths);
+	await recheckReapedWorktrees(accountedTrees(sessions), spawnWith, notify);
 }

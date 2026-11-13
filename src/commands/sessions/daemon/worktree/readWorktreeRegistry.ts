@@ -22,6 +22,13 @@ export function readWorktreeRegistry(): WorktreeRecord[] {
 		.map(([path, { reaped: _reaped, ...record }]) => ({ path, ...record }));
 }
 
+export function readReapedWorktreeRegistry(): WorktreeRecord[] {
+	const data = loadJson<Registry>(REGISTRY_FILE);
+	return Object.entries(data)
+		.filter(([, record]) => record.reaped)
+		.map(([path, { reaped: _reaped, ...record }]) => ({ path, ...record }));
+}
+
 export function worktreeAttributionIncludingReaped(
 	path: string,
 ): { clone: string; origin: string } | undefined {

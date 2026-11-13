@@ -28,6 +28,7 @@ vi.mock("../loadPersistedSessions", () => ({
 vi.mock("./bindNewWorktree", () => ({ bindRestoredWorktrees: vi.fn() }));
 vi.mock("./readWorktreeRegistry", () => ({
 	readWorktreeRegistry: vi.fn(),
+	readReapedWorktreeRegistry: vi.fn(() => []),
 	forgetWorktree: vi.fn(),
 }));
 vi.mock("./reapWorktree", () => ({
@@ -133,6 +134,33 @@ describe("reconcileWorktreesOnRestore", () => {
 
 		expect(reapMock).toHaveBeenCalledWith("/git/repo-2");
 		expect(sessions.size).toBe(0);
+	});
+
+	it("surfaces a durable orphan it cannot delete as an error card instead of retrying silently", async () => {
+		existsMock.mockImplementation((path) => !String(path).endsWith(".git"));
+		durabilityMock.mockResolvedValue({ durable: true, gone: true });
+		reapMock.mockResolvedValue({
+			removed: false,
+			reason: "remove it with `sudo rm -rf /git/repo-2`",
+		});
+		registryMock.mockReturnValue([
+			{
+				path: "/git/repo-2",
+				clone: "/git/repo",
+				origin: "git@x:y.git",
+				harness: "claude",
+			},
+		]);
+		const sessions = new Map<string, Session>();
+
+		await reconcile(sessions);
+
+		const card = [...sessions.values()][0];
+		expect(card?.status).toBe("error");
+		expect(card?.cwd).toBe("/git/repo-2");
+		expect(card?.worktree).toBeUndefined();
+		expect(card?.error).toContain("sudo rm -rf /git/repo-2");
+		expect(forgetMock).toHaveBeenCalledWith("/git/repo-2");
 	});
 
 	it("leaves a worktree a restored session still holds alone", async () => {
