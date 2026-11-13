@@ -14,7 +14,7 @@ export function listStashShas(): string[] {
 
 function findStrandedAutostash(head: string, before: string[]): string | null {
 	const known = new Set(before);
-	for (const line of git("stash list --format='%H %P %gs'").split("\n")) {
+	for (const line of git("stash list --format=%H%x20%P%x20%gs").split("\n")) {
 		const [sha, parent, ...subject] = line.split(" ");
 		if (!sha || known.has(sha) || parent !== head) continue;
 		if (subject.join(" ").includes("autostash")) return sha;
