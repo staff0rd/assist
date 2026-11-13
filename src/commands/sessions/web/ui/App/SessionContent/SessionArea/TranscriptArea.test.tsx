@@ -79,3 +79,24 @@ describe("TranscriptArea", () => {
 		expect(marks()).toEqual([]);
 	});
 });
+
+describe("TranscriptArea markdown", () => {
+	it("renders assistant markdown when not searching", () => {
+		const { container } = render(
+			<HistorySearchQueryProvider>
+				<TranscriptArea
+					sessionId="sid"
+					transcript={{
+						sessionId: "sid",
+						messages: [
+							{ role: "assistant", text: "**Not across the board.**" },
+						],
+					}}
+				/>
+			</HistorySearchQueryProvider>,
+		);
+		expect(container.querySelector("strong")?.textContent).toBe(
+			"Not across the board.",
+		);
+	});
+});

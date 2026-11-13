@@ -1,9 +1,5 @@
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { useKnownSlashCommands } from "../../../../../../slashSuggestions/useKnownSlashCommands";
-import { SlashCommandText } from "../../../../../../slashSuggestions/SlashCommandText";
-import { slashHighlightSx } from "../../../../../../slashSuggestions/slashHighlightSx";
-import { HighlightedText } from "./TextRow/HighlightedText";
+import { TextRowBody } from "./TextRow/TextRowBody";
 import { TextRowLabel } from "./TextRow/TextRowLabel";
 
 export function TextRow({
@@ -18,7 +14,6 @@ export function TextRow({
 	queued?: boolean;
 }) {
 	const isUser = role === "user";
-	const commands = useKnownSlashCommands();
 	const accent = isUser ? "info.main" : "success.main";
 	return (
 		<Box
@@ -37,22 +32,7 @@ export function TextRow({
 			}}
 		>
 			<TextRowLabel isUser={isUser} accent={accent} queued={queued} />
-			<Typography
-				variant="body2"
-				sx={{
-					color: "text.primary",
-					whiteSpace: "pre-wrap",
-					overflowWrap: "anywhere",
-					lineHeight: 1.6,
-				}}
-			>
-				<SlashCommandText
-					text={text}
-					commands={isUser ? commands : []}
-					commandSx={slashHighlightSx.chip}
-					renderText={(t) => <HighlightedText text={t} term={term} />}
-				/>
-			</Typography>
+			<TextRowBody isUser={isUser} text={text} term={term} />
 		</Box>
 	);
 }
