@@ -1,13 +1,10 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import type { ConversationTarget } from "../../../shared/sessionConversationTarget";
 import type { ItemStatusCounts } from "../../gitStatus";
-import { createProxyBlipGate } from "../createProxyBlipGate";
 import { useApiNode } from "../useApiNode";
 import { withNode } from "../withNode";
 import { diffQuery } from "./diffQuery";
-import { fetchGitStatusCounts } from "./fetchGitStatusCounts";
-
-const POLL_INTERVAL_MS = 5000;
+import { startGitStatusPolling } from "./startGitStatusPolling";
 
 export function usePolledGitStatus(
 	cwd: string,
@@ -25,20 +22,12 @@ export function usePolledGitStatus(
 			setCounts(null);
 			return;
 		}
-		let cancelled = false;
-		const blipGate = createProxyBlipGate();
-		const path = withNode(`/api/git-status?${query}`, node);
-		const poll = async () => {
-			const polled = await fetchGitStatusCounts(path, blipGate);
-			if (polled && !cancelled) setCounts(polled.counts);
-		};
-		pollRef.current = poll;
-		poll();
-		const id = setInterval(poll, POLL_INTERVAL_MS);
-		return () => {
-			cancelled = true;
-			clearInterval(id);
-		};
+		const polling = startGitStatusPolling(
+			withNode(`/api/git-status?${query}`, node),
+			setCounts,
+		);
+		pollRef.current = polling.poll;
+		return polling.stop;
 	}, [cwd, query, node, enabled]);
 
 	return { counts, refresh: useCallback(() => pollRef.current(), []) };
