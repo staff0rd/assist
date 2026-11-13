@@ -5,7 +5,6 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as DeleteTreeModule from "./deleteTreeDirectly";
 import { deleteTreeDirectly } from "./deleteTreeDirectly";
 import {
-	clearLeftover,
 	markLeftover,
 	readReapedWorktreeRegistry,
 } from "./readWorktreeRegistry";
@@ -17,7 +16,6 @@ vi.mock("./underTempRoot", () => ({ underTempRoot: () => false }));
 vi.mock("./readWorktreeRegistry", () => ({
 	readReapedWorktreeRegistry: vi.fn(),
 	markLeftover: vi.fn(),
-	clearLeftover: vi.fn(),
 }));
 vi.mock("./deleteTreeDirectly", async (importActual) => {
 	const actual = await importActual<typeof DeleteTreeModule>();
@@ -26,6 +24,7 @@ vi.mock("./deleteTreeDirectly", async (importActual) => {
 
 const registryMock = vi.mocked(readReapedWorktreeRegistry);
 const deleteMock = vi.mocked(deleteTreeDirectly);
+const markMock = vi.mocked(markLeftover);
 
 let root: string;
 let tree: string;
@@ -47,24 +46,23 @@ describe("recheckReapedWorktrees", () => {
 	it("deletes a reaped tree that reappeared holding only empty directories", async () => {
 		mkdirSync(join(tree, "docker-local", "azure"), { recursive: true });
 
-		const leftovers = await recheck();
+		await recheck();
 
 		expect(existsSync(tree)).toBe(false);
-		expect(leftovers).toEqual([]);
+		expect(markMock).not.toHaveBeenCalled();
 	});
 
-	it("reports and records a reappeared tree it cannot delete", async () => {
+	it("records a reappeared tree it cannot delete as a leftover", async () => {
 		mkdirSync(join(tree, "docker-local"), { recursive: true });
-		const reason = `remove it with \`sudo rm -rf ${tree}\``;
+		const reason = "EACCES: permission denied";
 		deleteMock.mockResolvedValueOnce({ removed: false, reason });
 
-		const leftovers = await recheck();
+		await recheck();
 
-		expect(leftovers).toEqual([{ path: tree, reason }]);
-		expect(vi.mocked(markLeftover)).toHaveBeenCalledWith(tree, reason);
+		expect(markMock).toHaveBeenCalledWith(tree, reason);
 	});
 
-	it("lists a recorded leftover still on disk without retrying its removal", async () => {
+	it("does not retry the removal of a recorded leftover", async () => {
 		mkdirSync(join(tree, "docker-local"), { recursive: true });
 		registryMock.mockReturnValue([
 			{
@@ -75,60 +73,45 @@ describe("recheckReapedWorktrees", () => {
 			},
 		]);
 
-		const leftovers = await recheck();
+		await recheck();
 
 		expect(deleteMock).not.toHaveBeenCalled();
-		expect(leftovers).toEqual([{ path: tree, reason: "EACCES" }]);
+		expect(markMock).not.toHaveBeenCalled();
 	});
 
-	it("clears a recorded leftover once its path is gone", async () => {
-		registryMock.mockReturnValue([
-			{
-				path: tree,
-				clone: join(root, "repo"),
-				origin: "o",
-				leftover: "EACCES",
-			},
-		]);
-
-		const leftovers = await recheck();
-
-		expect(leftovers).toEqual([]);
-		expect(vi.mocked(clearLeftover)).toHaveBeenCalledWith(tree);
-	});
-
-	it("never deletes a reappeared tree holding files, surfacing it for review", async () => {
+	it("never deletes a reappeared tree holding files, recording it for review", async () => {
 		mkdirSync(join(tree, "docker-local"), { recursive: true });
 		writeFileSync(join(tree, "docker-local", "data.db"), "x");
 
-		const leftovers = await recheck();
+		await recheck();
 
 		expect(deleteMock).not.toHaveBeenCalled();
-		expect(leftovers[0]?.reason).toContain(`rm -rf ${tree}`);
+		expect(existsSync(tree)).toBe(true);
+		expect(markMock.mock.calls[0]?.[1]).toContain("will not delete unreviewed");
 	});
 
 	it("leaves a reaped path a card already accounts for alone", async () => {
 		mkdirSync(tree, { recursive: true });
 
-		const leftovers = await recheck(new Set([tree]));
+		await recheck(new Set([tree]));
 
 		expect(deleteMock).not.toHaveBeenCalled();
-		expect(leftovers).toEqual([]);
+		expect(markMock).not.toHaveBeenCalled();
 	});
 
 	it("leaves a reaped path that now holds a git checkout alone", async () => {
 		mkdirSync(join(tree, ".git"), { recursive: true });
 
-		const leftovers = await recheck();
+		await recheck();
 
 		expect(deleteMock).not.toHaveBeenCalled();
-		expect(leftovers).toEqual([]);
+		expect(markMock).not.toHaveBeenCalled();
 	});
 
 	it("ignores a reaped path that stayed gone", async () => {
-		const leftovers = await recheck();
+		await recheck();
 
 		expect(deleteMock).not.toHaveBeenCalled();
-		expect(leftovers).toEqual([]);
+		expect(markMock).not.toHaveBeenCalled();
 	});
 });

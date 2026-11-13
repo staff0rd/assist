@@ -62,6 +62,7 @@ import { revertDiffFile } from "./revertDiffFile";
 import { selfUpdate } from "./selfUpdate";
 import { revertDiffPaths } from "./revertDiffPaths";
 import { newSessionDefaults } from "./newSessionDefaults";
+import { leftovers } from "./leftovers";
 import { nodeDoctor } from "./nodeDoctor";
 import { postNodeLink } from "./nodes/postNodeLink";
 import { postNodeProbe } from "./nodes/postNodeProbe";
@@ -116,6 +117,7 @@ const routes: Record<string, Handler> = {
 	"POST /api/pr-preview/upload-image": uploadPrImage,
 	"GET /api/pr-preview/image": previewImage,
 	"POST /api/restart": restartWeb,
+	"GET /api/leftovers": leftovers,
 	"GET /api/node-doctor": nodeDoctor,
 	"POST /api/nodes/probe": postNodeProbe,
 	"POST /api/nodes/link": postNodeLink,

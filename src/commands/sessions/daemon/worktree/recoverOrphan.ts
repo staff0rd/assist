@@ -8,7 +8,6 @@ import {
 	type OrphanedWorktree,
 	resurfaceOrphanedWorktree,
 } from "./resurfaceOrphanedWorktree";
-import type { Leftover } from "./Leftover";
 import { markLeftover } from "./readWorktreeRegistry";
 import { reportLeftoversEnabled } from "./reportLeftoversEnabled";
 import { checkDurability } from "./treeDurability";
@@ -18,19 +17,22 @@ export async function recoverOrphan(
 	spawnWith: SpawnSession,
 	orphan: OrphanedWorktree,
 	notify: () => void,
-): Promise<Leftover | undefined> {
+): Promise<void> {
 	daemonLog(`worktree ${orphan.path} orphaned across restart; reconciling`);
 	const durability = await checkDurability(orphan.path);
 	if (durability.durable) {
 		const removal = await reapWorktree(orphan.path);
 		if (
-			removal.removed ||
-			!holdsNoCheckout(orphan.path) ||
-			!reportLeftoversEnabled()
-		)
-			return undefined;
-		markLeftover(orphan.path, removal.reason);
-		return { path: orphan.path, reason: removal.reason };
+			!removal.removed &&
+			holdsNoCheckout(orphan.path) &&
+			reportLeftoversEnabled()
+		) {
+			markLeftover(orphan.path, removal.reason);
+			daemonLog(
+				`worktree ${orphan.path} could not be reaped; recorded as a leftover so restarts stop retrying it`,
+			);
+		}
+		return;
 	}
 	const held = await describeHeldWork(orphan.path, durability.reason);
 	resurfaceOrphanedWorktree(
@@ -39,5 +41,4 @@ export async function recoverOrphan(
 		{ orphan, reason: durability.reason, held },
 		notify,
 	);
-	return undefined;
 }

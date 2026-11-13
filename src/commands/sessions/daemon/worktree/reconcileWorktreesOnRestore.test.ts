@@ -28,7 +28,7 @@ vi.mock("./reportLeftoversEnabled", () => ({
 	reportLeftoversEnabled: vi.fn(() => true),
 }));
 vi.mock("./recheckReapedWorktrees", () => ({
-	recheckReapedWorktrees: vi.fn(() => Promise.resolve([])),
+	recheckReapedWorktrees: vi.fn(() => Promise.resolve()),
 }));
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("../../../../shared/findRepoRoot", () => ({
@@ -90,7 +90,6 @@ describe("reconcileWorktreesOnRestore", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		vi.mocked(reportLeftoversEnabled).mockReturnValue(true);
-		vi.mocked(recheckReapedWorktrees).mockResolvedValue([]);
 		existsMock.mockReturnValue(true);
 		vi.mocked(realpathSync).mockImplementation((path) => String(path));
 		persistedMock.mockReturnValue([]);
@@ -150,57 +149,23 @@ describe("reconcileWorktreesOnRestore", () => {
 		expect(sessions.size).toBe(0);
 	});
 
-	it("lists a durable orphan it cannot delete in the leftover notice instead of retrying silently", async () => {
+	it("records a durable orphan it cannot delete as a leftover without spawning a card", async () => {
 		existsMock.mockImplementation((path) => !String(path).endsWith(".git"));
 		durabilityMock.mockResolvedValue({ durable: true, gone: true });
-		reapMock.mockResolvedValue({
-			removed: false,
-			reason: "remove it with `sudo rm -rf /git/repo-2`",
-		});
-		registryMock.mockReturnValue([
-			{
-				path: "/git/repo-2",
-				clone: "/git/repo",
-				origin: "git@x:y.git",
-				harness: "claude",
-			},
-		]);
+		reapMock.mockResolvedValue({ removed: false, reason: "EACCES" });
 		const sessions = new Map<string, Session>();
 
 		await reconcile(sessions);
 
-		expect(sessions.size).toBe(1);
-		const notice = [...sessions.values()][0];
-		expect(notice?.leftoverNotice).toBe(true);
-		expect(notice?.status).toBe("error");
-		expect(notice?.worktree).toBeUndefined();
-		expect(notice?.scrollback).toContain("sudo rm -rf /git/repo-2");
+		expect(sessions.size).toBe(0);
 		expect(vi.mocked(markLeftover)).toHaveBeenCalledWith(
 			"/git/repo-2",
-			"remove it with `sudo rm -rf /git/repo-2`",
+			"EACCES",
 		);
+		expect(recheckReapedWorktrees).toHaveBeenCalledTimes(1);
 	});
 
-	it("keeps one notice across a second reconcile", async () => {
-		registryMock.mockReturnValue([]);
-		vi.mocked(recheckReapedWorktrees).mockResolvedValue(
-			Array.from({ length: 16 }, (_, i) => ({
-				path: `/git/repo-${i + 2}`,
-				reason: "EACCES",
-			})),
-		);
-		const sessions = new Map<string, Session>();
-
-		await reconcile(sessions);
-		await reconcile(sessions);
-
-		expect(sessions.size).toBe(1);
-		expect([...sessions.values()][0]?.error).toContain(
-			"16 leftover workspaces",
-		);
-	});
-
-	it("skips the reaped recheck and the notice when sessions.reportLeftovers is false", async () => {
+	it("skips the reaped recheck and leftover recording when sessions.reportLeftovers is false", async () => {
 		vi.mocked(reportLeftoversEnabled).mockReturnValue(false);
 		existsMock.mockImplementation((path) => !String(path).endsWith(".git"));
 		durabilityMock.mockResolvedValue({ durable: true, gone: true });

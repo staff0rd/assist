@@ -8,6 +8,8 @@ import { menuItemHandlers } from "./HamburgerMenu/menuItemHandlers";
 import { useMenuActions } from "./HamburgerMenu/useMenuActions";
 import { useMenuDialog } from "./HamburgerMenu/useMenuDialog";
 import { useSelectedPeer } from "./HamburgerMenu/useSelectedPeer";
+import { useLeftoverReport } from "./HamburgerMenu/useLeftoverReport";
+import { LeftoversDialog } from "./HamburgerMenu/HamburgerMenuDialogs/LeftoversDialog";
 import { menuTargetLabels } from "./HamburgerMenu/menuTargetLabels";
 import type { SessionInfo } from "../../types";
 
@@ -26,6 +28,7 @@ export function HamburgerMenu({
 	const { dialog, showDialog, closeDialog } = useMenuDialog();
 	const peer = useSelectedPeer();
 	const actions = useMenuActions(peer, sessions, reconnecting);
+	const leftovers = useLeftoverReport(peer, open);
 
 	return (
 		<>
@@ -42,6 +45,7 @@ export function HamburgerMenu({
 				{hamburgerMenuItems({
 					mode,
 					...menuTargetLabels(peer),
+					leftoverCount: leftovers?.leftovers.length ?? 0,
 					...menuItemHandlers(close, showDialog, toggle, actions),
 				})}
 			</Menu>
@@ -51,6 +55,9 @@ export function HamburgerMenu({
 				actions={actions}
 				onClose={closeDialog}
 			/>
+			{dialog === "leftovers" && leftovers && (
+				<LeftoversDialog report={leftovers} onClose={closeDialog} />
+			)}
 		</>
 	);
 }

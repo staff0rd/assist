@@ -5,6 +5,7 @@ import Divider from "@mui/material/Divider";
 import { ColorModeIcon } from "./hamburgerMenuItems/ColorModeIcon";
 import { FirefoxExtensionMenuItem } from "./hamburgerMenuItems/FirefoxExtensionMenuItem";
 import { IconMenuItem } from "./hamburgerMenuItems/IconMenuItem";
+import { leftoversMenuItems } from "./hamburgerMenuItems/leftoversMenuItems";
 import { navigationMenuItems } from "./hamburgerMenuItems/navigationMenuItems";
 import { RenderHudMenuItem } from "./hamburgerMenuItems/RenderHudMenuItem";
 import {
@@ -17,11 +18,13 @@ type HamburgerMenuHandlers = {
 	mode: "light" | "dark";
 	restartLabel: string;
 	updateLabel: string;
+	leftoverCount: number;
 	onToggleColorMode: () => void;
 	onShowShortcuts: () => void;
 	onNavigate: () => void;
 	onFirefoxExtension: () => void;
 	onTestflight: () => void;
+	onLeftovers: () => void;
 	onRestart: ShiftSkipMenuAction;
 	onUpdate: ShiftSkipMenuAction;
 };
@@ -47,6 +50,7 @@ export function hamburgerMenuItems(handlers: HamburgerMenuHandlers) {
 			onClose={handlers.onFirefoxExtension}
 		/>,
 		<TestflightMenuItem key="testflight" onClick={handlers.onTestflight} />,
+		...leftoversMenuItems(handlers.leftoverCount, handlers.onLeftovers),
 		<Divider key="restart-divider" />,
 		<ShiftSkipMenuItem
 			key="restart"

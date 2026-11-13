@@ -1,7 +1,12 @@
 import { useCallback, useState } from "react";
 import { useShortcutsSheetHotkey } from "./useMenuDialog/useShortcutsSheetHotkey";
 
-export type MenuDialog = "shortcuts" | "restart" | "update" | "testflight";
+export type MenuDialog =
+	| "shortcuts"
+	| "restart"
+	| "update"
+	| "testflight"
+	| "leftovers";
 
 export function useMenuDialog() {
 	const [dialog, setDialog] = useState<MenuDialog | null>(null);

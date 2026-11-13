@@ -19,7 +19,7 @@ export const sessionsConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "sessions.reportLeftovers",
 		setter: "assist config set sessions.reportLeftovers false --node",
-		note: "default on: on daemon restart, recheck reaped worktree paths that reappeared (e.g. root-owned Docker bind-mount stubs) and list any leftover assist cannot delete in one notice with a combined removal command. Set false to skip both",
+		note: "default on: on daemon restart, recheck reaped worktree paths that reappeared (e.g. root-owned Docker bind-mount stubs) and list any leftover assist cannot delete, with a combined removal command, in the web node menu and `assist sessions nodes doctor`. Set false to skip both",
 	},
 	{
 		key: "sessions.newSessionMode",

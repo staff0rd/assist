@@ -1,3 +1,4 @@
+import type { LeftoverReport } from "../shared/LeftoverReport";
 import { loadLinkSpecs } from "../shared/loadLinkSpecs";
 import { resolveNodeName } from "../shared/resolveNodeName";
 import { diagnoseLink } from "./diagnoseLink";
@@ -9,11 +10,14 @@ import {
 import { queryNodes } from "./queryNodes";
 import { printReport } from "./printReport";
 import { buildDoctorProbes } from "./buildDoctorProbes";
+import { collectLeftovers } from "./collectLeftovers";
+import { printLeftovers } from "./printLeftovers";
 
 type DoctorReport = {
 	local: string;
 	links: LinkDiagnosis[];
 	suggestion?: LinkSuggestion;
+	leftovers: LeftoverReport[];
 };
 
 export async function doctorNodes(
@@ -24,11 +28,18 @@ export async function doctorNodes(
 	if (name && specs.length === 0)
 		throw new Error(`No link named ${name}; see assist sessions nodes`);
 	const probes = buildDoctorProbes(await queryNodes());
-	const report: DoctorReport = { local: resolveNodeName(), links: [] };
+	const report: DoctorReport = {
+		local: resolveNodeName(),
+		links: [],
+		leftovers: await collectLeftovers(specs),
+	};
 	for (const spec of specs) report.links.push(await diagnoseLink(spec, probes));
 	if (specs.length === 0)
 		report.suggestion = await findUnlinkedWindowsNode(probes.health);
 	if (report.links.some((l) => !l.ok)) process.exitCode = 1;
 	if (options.json) console.log(JSON.stringify(report, null, 2));
-	else printReport(report);
+	else {
+		printReport(report);
+		printLeftovers(report.leftovers);
+	}
 }
