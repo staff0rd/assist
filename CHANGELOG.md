@@ -1,3 +1,11 @@
+# [0.1137.0](https://github.com/staff0rd/assist/compare/v0.1136.0...v0.1137.0) (2026-11-13)
+
+
+### Features
+
+* cap ask-question context at 40 words ([811bfe9](https://github.com/staff0rd/assist/commit/811bfe9e4847e8821980a8cbc5e16d18e7873ddd))
+* optional context on ask-question ([3fca8b5](https://github.com/staff0rd/assist/commit/3fca8b55f5c161edb27db0d734ebb7b471d5ccfa))
+
 # [0.1136.0](https://github.com/staff0rd/assist/compare/v0.1135.2...v0.1136.0) (2026-11-13)
 
 
