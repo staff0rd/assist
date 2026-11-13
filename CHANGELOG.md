@@ -1,3 +1,10 @@
+## [0.1139.2](https://github.com/staff0rd/assist/compare/v0.1139.1...v0.1139.2) (2026-11-13)
+
+
+### Bug Fixes
+
+* clear Starting on SDK session cards ([898d48c](https://github.com/staff0rd/assist/commit/898d48cdf23e56cf1b21c96ab4456e37249f6134))
+
 ## [0.1139.1](https://github.com/staff0rd/assist/compare/v0.1139.0...v0.1139.1) (2026-11-13)
 
 
