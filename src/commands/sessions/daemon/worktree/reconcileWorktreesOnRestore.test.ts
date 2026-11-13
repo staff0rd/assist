@@ -18,6 +18,9 @@ vi.mock("node:fs", async () =>
 		await vi.importActual<typeof fsMockModule>("../../../../test/mocks/fsMock")
 	).fsMock(),
 );
+vi.mock("./leftoverSurfacingEnabled", () => ({
+	leftoverSurfacingEnabled: true,
+}));
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("../../../../shared/findRepoRoot", () => ({
 	findRepoRoot: (cwd: string) => cwd,

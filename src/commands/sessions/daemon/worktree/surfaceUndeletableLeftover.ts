@@ -5,6 +5,7 @@ import { daemonLog } from "../daemonLog";
 import { sessionBase } from "../sessionBase";
 import type { SpawnSession } from "../types";
 import { forgetWorktree } from "./readWorktreeRegistry";
+import { leftoverSurfacingEnabled } from "./leftoverSurfacingEnabled";
 import type { OrphanedWorktree } from "./resurfaceOrphanedWorktree";
 
 type UndeletableLeftover = OrphanedWorktree & { reason: string };
@@ -14,6 +15,7 @@ export function surfaceUndeletableLeftover(
 	leftover: UndeletableLeftover,
 	notify: () => void,
 ): void {
+	if (!leftoverSurfacingEnabled) return;
 	forgetWorktree(leftover.path);
 	try {
 		const id = spawnWith((sid) => leftoverSession(sid, leftover));

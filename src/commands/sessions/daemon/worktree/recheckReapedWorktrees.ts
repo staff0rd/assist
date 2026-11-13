@@ -6,12 +6,14 @@ import { readReapedWorktreeRegistry } from "./readWorktreeRegistry";
 import type { OrphanedWorktree } from "./resurfaceOrphanedWorktree";
 import { surfaceUndeletableLeftover } from "./surfaceUndeletableLeftover";
 import { underTempRoot } from "./underTempRoot";
+import { leftoverSurfacingEnabled } from "./leftoverSurfacingEnabled";
 
 export async function recheckReapedWorktrees(
 	accounted: Set<string>,
 	spawnWith: SpawnSession,
 	notify: () => void,
 ): Promise<void> {
+	if (!leftoverSurfacingEnabled) return;
 	for (const record of readReapedWorktreeRegistry()) {
 		if (accounted.has(record.path) || underTempRoot(record.path)) continue;
 		if (!holdsNoCheckout(record.path)) continue;

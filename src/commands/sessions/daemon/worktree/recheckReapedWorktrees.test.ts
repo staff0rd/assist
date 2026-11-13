@@ -11,6 +11,9 @@ import {
 } from "./readWorktreeRegistry";
 import { recheckReapedWorktrees } from "./recheckReapedWorktrees";
 
+vi.mock("./leftoverSurfacingEnabled", () => ({
+	leftoverSurfacingEnabled: true,
+}));
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./git", () => ({ git: vi.fn(() => Promise.resolve("")) }));
 vi.mock("./underTempRoot", () => ({ underTempRoot: () => false }));
