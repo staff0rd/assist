@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material";
+import { SessionSlashTextField } from "../../../../slashSuggestions/SessionSlashTextField";
 import type { KeyboardEvent } from "react";
 import type { QuestionOtherProps } from "./QuestionFieldProps";
 import { QuestionOptionRow } from "./QuestionOptionRow";
@@ -27,13 +27,13 @@ export function QuestionOtherRow({
 			onChange={onPickOther}
 		>
 			{choice.otherOn && (
-				<TextField
+				<SessionSlashTextField
 					size="small"
 					multiline
 					autoFocus
 					placeholder="Type your answer"
 					value={choice.otherText}
-					onChange={(event) => onOtherText(event.target.value)}
+					onChange={onOtherText}
 					onKeyDown={onKeyDown}
 					slotProps={{
 						htmlInput: {

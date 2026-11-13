@@ -1,4 +1,4 @@
-import { TextField } from "@mui/material";
+import { SessionSlashTextField } from "../../../../slashSuggestions/SessionSlashTextField";
 
 export function CheckNoteField({
 	value,
@@ -8,13 +8,13 @@ export function CheckNoteField({
 	onChange: (value: string) => void;
 }) {
 	return (
-		<TextField
+		<SessionSlashTextField
 			placeholder="Add a note for the agent (optional)"
 			multiline
 			minRows={2}
 			size="small"
 			value={value}
-			onChange={(event) => onChange(event.target.value)}
+			onChange={onChange}
 			slotProps={{ htmlInput: { "aria-label": "Note" } }}
 			sx={{ px: 2, pt: 1.5 }}
 		/>

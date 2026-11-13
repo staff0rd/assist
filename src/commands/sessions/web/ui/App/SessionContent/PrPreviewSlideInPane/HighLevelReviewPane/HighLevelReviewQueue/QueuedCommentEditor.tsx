@@ -1,5 +1,6 @@
-import { Button, Stack, TextField } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 import { useState } from "react";
+import { SessionSlashTextField } from "../../../../../slashSuggestions/SessionSlashTextField";
 
 export function QueuedCommentEditor({
 	initial,
@@ -19,14 +20,14 @@ export function QueuedCommentEditor({
 	};
 	return (
 		<Stack spacing={0.5} sx={{ mt: 0.5 }}>
-			<TextField
+			<SessionSlashTextField
 				autoFocus
 				multiline
 				minRows={2}
 				maxRows={8}
 				size="small"
 				value={note}
-				onChange={(e) => setNote(e.target.value)}
+				onChange={setNote}
 				onKeyDown={(e) => {
 					if (e.key === "Enter" && !e.shiftKey) {
 						e.preventDefault();

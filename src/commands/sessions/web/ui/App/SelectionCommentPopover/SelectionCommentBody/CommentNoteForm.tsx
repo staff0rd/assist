@@ -1,5 +1,5 @@
-import { TextField } from "@mui/material";
 import { useState } from "react";
+import { SessionSlashTextField } from "../../../slashSuggestions/SessionSlashTextField";
 import { CommentNoteActions } from "./CommentNoteForm/CommentNoteActions";
 import { useCommentNoteSubmit } from "./CommentNoteForm/useCommentNoteSubmit";
 
@@ -29,7 +29,7 @@ export function CommentNoteForm({
 
 	return (
 		<>
-			<TextField
+			<SessionSlashTextField
 				autoFocus
 				multiline
 				minRows={2}
@@ -37,7 +37,7 @@ export function CommentNoteForm({
 				size="small"
 				placeholder="Add a note…"
 				value={note}
-				onChange={(e) => setNote(e.target.value)}
+				onChange={setNote}
 				onKeyDown={(e) => {
 					if (e.key === "Enter" && !e.shiftKey) {
 						e.preventDefault();
