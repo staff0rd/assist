@@ -1,3 +1,10 @@
+# [0.1136.0](https://github.com/staff0rd/assist/compare/v0.1135.2...v0.1136.0) (2026-11-13)
+
+
+### Features
+
+* honour codex-default for codexModel ([8518587](https://github.com/staff0rd/assist/commit/8518587a7f41c8e692770622137531acfcf7a9ec))
+
 ## [0.1135.2](https://github.com/staff0rd/assist/compare/v0.1135.1...v0.1135.2) (2026-11-13)
 
 
