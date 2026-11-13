@@ -8,6 +8,8 @@ export function isSessionStarting(
 	session: SessionInfo,
 	initialized: Set<string>,
 ): boolean {
+	// why: an SDK session has no terminal output to mark it initialized; the daemon reports sdk only once its query process exists
+	if (session.sdk) return false;
 	return (
 		!initialized.has(session.id) &&
 		session.status !== "done" &&
