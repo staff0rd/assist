@@ -1,3 +1,10 @@
+# [0.1140.0](https://github.com/staff0rd/assist/compare/v0.1139.4...v0.1140.0) (2026-11-13)
+
+
+### Features
+
+* suggest skills in the SDK composer ([ad4ea51](https://github.com/staff0rd/assist/commit/ad4ea513ab9c67a0f9f59f3620f90b95a4558ba4))
+
 ## [0.1139.4](https://github.com/staff0rd/assist/compare/v0.1139.3...v0.1139.4) (2026-11-13)
 
 
