@@ -1,3 +1,10 @@
+## [0.1139.4](https://github.com/staff0rd/assist/compare/v0.1139.3...v0.1139.4) (2026-11-13)
+
+
+### Bug Fixes
+
+* order sessions across nodes by start ([5c8d52a](https://github.com/staff0rd/assist/commit/5c8d52a844a4f6428dbaee7b381cba1cda69444d))
+
 ## [0.1139.3](https://github.com/staff0rd/assist/compare/v0.1139.2...v0.1139.3) (2026-11-13)
 
 
