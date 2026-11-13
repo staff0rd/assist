@@ -54,6 +54,16 @@ const highlighted = () =>
 		.find((o) => o.getAttribute("aria-selected") === "true")?.textContent;
 
 describe("SdkComposer", () => {
+	it("focuses the field when shown", () => {
+		const { field } = setup({ status: "waiting" });
+		expect(document.activeElement).toBe(field);
+	});
+
+	it("does not focus the field while resuming", () => {
+		const { field } = setup({ status: "waiting", sdkResuming: true });
+		expect(document.activeElement).not.toBe(field);
+	});
+
 	it("sends on Enter as one pasted message", () => {
 		const { field, sendInput } = setup({ status: "waiting" });
 		fireEvent.keyDown(field, { key: "Enter" });
