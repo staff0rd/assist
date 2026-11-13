@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import type { QuestionFieldProps } from "../../App/SessionContent/PrPreviewSlideInPane/QuestionPane/QuestionFieldProps";
+import { QuestionContext } from "../../App/SessionContent/PrPreviewSlideInPane/QuestionPane/QuestionContext";
 import { usePeekedOption } from "../../App/SessionContent/PrPreviewSlideInPane/QuestionPane/usePeekedOption";
 import { PhoneQuestionOptions } from "./PhoneQuestionOptions";
 import { PhoneQuestionPreview } from "./PhoneQuestionPreview";
@@ -20,6 +21,7 @@ export function PhoneQuestionFields({
 			aria-label={question.question}
 			sx={{ display: "flex", flexDirection: "column", gap: 1 }}
 		>
+			<QuestionContext context={question.context} />
 			<Box sx={{ fontSize: 18, fontWeight: 600, lineHeight: 1.3, mb: 0.5 }}>
 				{question.question}
 			</Box>

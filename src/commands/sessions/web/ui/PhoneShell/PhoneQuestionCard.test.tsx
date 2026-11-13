@@ -3,6 +3,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { useState } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import type { AskQuestion } from "../../../shared/askQuestionInputSchema";
 import type { PrPreview } from "../../../shared/SessionInfoBase";
 import { createDesignTheme } from "../designSystem/createDesignTheme";
 import { PhoneQuestionCard } from "./PhoneQuestionCard";
@@ -57,7 +58,7 @@ const singleSelect = [
 	},
 ];
 
-const previewOf = (qs: typeof questions): PrPreview => ({
+const previewOf = (qs: AskQuestion[]): PrPreview => ({
 	requestId: "r1",
 	title: "Claude is asking 2 questions",
 	body: JSON.stringify({ questions: qs }),
@@ -65,7 +66,7 @@ const previewOf = (qs: typeof questions): PrPreview => ({
 	kind: "question",
 });
 
-function card(qs = questions) {
+function card(qs: AskQuestion[] = questions) {
 	const onDecision = vi.fn();
 	render(
 		<ThemeProvider theme={createDesignTheme("dark")}>
@@ -84,6 +85,22 @@ const button = (name: string) =>
 	screen.getByRole("button", { name }) as HTMLButtonElement;
 
 describe("PhoneQuestionCard", () => {
+	it("shows a question's context above the question", () => {
+		card([{ ...questions[0]!, context: "Two features changed." }]);
+		const context = screen.getByText("Two features changed.");
+		const question = screen.getByText("How should I commit?");
+		expect(
+			context.compareDocumentPosition(question) &
+				Node.DOCUMENT_POSITION_FOLLOWING,
+		).toBeTruthy();
+	});
+
+	it("shows nothing extra when a question has no context", () => {
+		card([questions[0]!]);
+		const group = screen.getByRole("group", { name: "How should I commit?" });
+		expect(group.firstElementChild?.textContent).toBe("How should I commit?");
+	});
+
 	it("pages through questions and answers with single, multi and Other", () => {
 		const onDecision = card();
 		expect(screen.getByText("1 of 2")).toBeTruthy();

@@ -8,6 +8,7 @@ const askQuestionOptionSchema = z.object({
 
 const askQuestionSchema = z.object({
 	question: z.string().min(1),
+	context: z.string().optional(),
 	header: z.string().min(1),
 	multiSelect: z.boolean(),
 	options: z

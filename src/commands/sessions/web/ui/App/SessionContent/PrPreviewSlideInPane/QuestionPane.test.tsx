@@ -89,6 +89,22 @@ const answerButton = () =>
 	screen.getByRole("button", { name: "Answer" }) as HTMLButtonElement;
 
 describe("QuestionPane", () => {
+	it("shows a question's context above the question", () => {
+		pane([{ ...questions[0], context: "The list is getting long." }]);
+		const context = screen.getByText("The list is getting long.");
+		const question = screen.getByText("Which layout?");
+		expect(
+			context.compareDocumentPosition(question) &
+				Node.DOCUMENT_POSITION_FOLLOWING,
+		).toBeTruthy();
+	});
+
+	it("shows nothing extra when a question has no context", () => {
+		pane([questions[0]]);
+		const legend = screen.getByText("Which layout?").parentElement!;
+		expect(legend.children).toHaveLength(2);
+	});
+
 	it("enables Answer only once every question has an answer", () => {
 		pane();
 		expect(answerButton().disabled).toBe(true);

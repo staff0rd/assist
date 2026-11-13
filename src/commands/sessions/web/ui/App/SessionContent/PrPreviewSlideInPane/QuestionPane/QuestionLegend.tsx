@@ -1,5 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import type { AskQuestion } from "../../../../../../shared/askQuestionInputSchema";
+import { QuestionContext } from "./QuestionContext";
 
 export function QuestionLegend({ question }: { question: AskQuestion }) {
 	return (
@@ -17,6 +18,7 @@ export function QuestionLegend({ question }: { question: AskQuestion }) {
 			>
 				{question.header} · {question.multiSelect ? "pick any" : "pick one"}
 			</Typography>
+			<QuestionContext context={question.context} />
 			<Typography variant="h6" component="span" sx={{ fontWeight: 600 }}>
 				{question.question}
 			</Typography>
