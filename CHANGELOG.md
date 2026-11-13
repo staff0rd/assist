@@ -1,3 +1,10 @@
+# [0.1131.0](https://github.com/staff0rd/assist/compare/v0.1130.1...v0.1131.0) (2026-11-13)
+
+
+### Features
+
+* edit queued review comments ([5fc723a](https://github.com/staff0rd/assist/commit/5fc723a7053994fb45f46892cd2c8f96b7ea9578))
+
 ## [0.1130.1](https://github.com/staff0rd/assist/compare/v0.1130.0...v0.1130.1) (2026-11-13)
 
 
