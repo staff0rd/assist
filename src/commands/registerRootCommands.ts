@@ -7,8 +7,8 @@ import { init as lintInit } from "./lint/init";
 import { lint } from "./lint/lint";
 import { notify } from "./notify";
 import { rootConfigHelp } from "./rootConfigHelp";
+import { registerStatusLine } from "./registerStatusLine";
 import { screenshot } from "./screenshot";
-import { statusLine } from "./statusLine";
 import { update } from "./update";
 import { init as vscodeInit } from "./vscode/init";
 
@@ -65,13 +65,7 @@ export function registerRootCommands(program: Command): void {
 	registerLint(program);
 	registerVscode(program);
 
-	internalCommand(
-		program
-			.command("status-line")
-			.description("Format Claude Code status line from JSON stdin")
-			.action(statusLine),
-		"Claude Code's status line",
-	);
+	registerStatusLine(program);
 
 	registerNotify(program);
 

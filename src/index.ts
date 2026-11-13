@@ -1,9 +1,11 @@
 #!/usr/bin/env node
-import { createProgram } from "./createProgram";
-import { reportCliError } from "./reportCliError";
-import { closeDb } from "./shared/db/getDb";
+import { isStatusLineInvocation } from "./isStatusLineInvocation";
 
-createProgram()
-	.parseAsync()
-	.catch(reportCliError)
-	.finally(() => closeDb());
+// why: status-line is spawned on every Claude Code status update, so it skips loading the command tree
+if (isStatusLineInvocation(process.argv)) {
+	const { runStatusLine } = await import("./commands/runStatusLine");
+	await runStatusLine();
+} else {
+	const { runCli } = await import("./runCli");
+	await runCli();
+}
