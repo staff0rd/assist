@@ -1,3 +1,15 @@
+# [0.1139.0](https://github.com/staff0rd/assist/compare/v0.1138.0...v0.1139.0) (2026-11-13)
+
+
+### Bug Fixes
+
+* list leftovers in node menu, not card ([4df8d07](https://github.com/staff0rd/assist/commit/4df8d074a8bee8583100471535ce7bf0f8de9cac))
+
+
+### Features
+
+* resume SDK sessions and record usage ([10e6c2b](https://github.com/staff0rd/assist/commit/10e6c2b8f803c8021e70c7f60db805b691e21ba2))
+
 # [0.1138.0](https://github.com/staff0rd/assist/compare/v0.1137.0...v0.1138.0) (2026-11-13)
 
 
