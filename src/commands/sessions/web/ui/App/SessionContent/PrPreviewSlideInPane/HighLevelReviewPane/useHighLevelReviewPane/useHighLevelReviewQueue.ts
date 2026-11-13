@@ -12,5 +12,11 @@ export function useHighLevelReviewQueue(saved?: HighLevelPaneProgress) {
 			setQueued((current) => [...current, comment]),
 		onRemove: (index: number) =>
 			setQueued((current) => current.filter((_, i) => i !== index)),
+		onEdit: (index: number, note: string) =>
+			setQueued((current) =>
+				current.map((comment, i) =>
+					i === index ? { ...comment, note } : comment,
+				),
+			),
 	};
 }

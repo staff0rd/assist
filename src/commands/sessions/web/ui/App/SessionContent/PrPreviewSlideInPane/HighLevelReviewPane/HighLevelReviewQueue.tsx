@@ -1,19 +1,16 @@
-import CloseIcon from "@mui/icons-material/Close";
-import { Box, IconButton, Stack, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import type { PreviewReviewComment } from "../../../../../../shared/PreviewDecision";
-
-function location({ path, startLine, endLine }: PreviewReviewComment): string {
-	return startLine === endLine
-		? `${path}:${startLine}`
-		: `${path}:${startLine}-${endLine}`;
-}
+import { QueuedCommentRow } from "./HighLevelReviewQueue/QueuedCommentRow";
+import { queuedCommentLocation } from "./HighLevelReviewQueue/queuedCommentLocation";
 
 export function HighLevelReviewQueue({
 	queued,
 	onRemove,
+	onEdit,
 }: {
 	queued: PreviewReviewComment[];
 	onRemove: (index: number) => void;
+	onEdit: (index: number, note: string) => void;
 }) {
 	if (queued.length === 0) return null;
 	return (
@@ -29,27 +26,12 @@ export function HighLevelReviewQueue({
 				{`Queued for review (${queued.length})`}
 			</Typography>
 			{queued.map((comment, index) => (
-				<Stack
-					key={`${location(comment)}:${index}`}
-					direction="row"
-					spacing={1}
-					sx={{ alignItems: "flex-start" }}
-				>
-					<Typography variant="body2" sx={{ flex: 1, minWidth: 0 }}>
-						<Box component="code" sx={{ fontSize: 12, mr: 1 }}>
-							{location(comment)}
-						</Box>
-						{comment.note}
-					</Typography>
-					<IconButton
-						size="small"
-						aria-label={`Remove the queued comment on ${location(comment)}`}
-						onClick={() => onRemove(index)}
-						sx={{ p: 0.25 }}
-					>
-						<CloseIcon sx={{ fontSize: 14 }} />
-					</IconButton>
-				</Stack>
+				<QueuedCommentRow
+					key={`${queuedCommentLocation(comment)}:${index}`}
+					comment={comment}
+					onRemove={() => onRemove(index)}
+					onEdit={(note) => onEdit(index, note)}
+				/>
 			))}
 		</Box>
 	);

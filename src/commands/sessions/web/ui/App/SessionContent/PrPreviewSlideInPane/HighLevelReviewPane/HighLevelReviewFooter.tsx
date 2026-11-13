@@ -18,7 +18,11 @@ export function HighLevelReviewFooter({
 }) {
 	return (
 		<>
-			<HighLevelReviewQueue queued={queue.queued} onRemove={queue.onRemove} />
+			<HighLevelReviewQueue
+				queued={queue.queued}
+				onRemove={queue.onRemove}
+				onEdit={queue.onEdit}
+			/>
 			<HighLevelReviewActions
 				failed={
 					payload.checks.filter((check) => check.status === "fail").length

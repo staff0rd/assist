@@ -240,6 +240,94 @@ describe("high-level review queue", () => {
 		expect(lastDecision(onDecision)).toMatchObject({ reviewComments: [] });
 	});
 
+	describe("editing a queued comment", () => {
+		const editLabel = "Edit the queued comment on src/app.test.ts:4";
+		const noteLabel = "Note for the queued comment on src/app.test.ts:4";
+
+		function queueAndEdit() {
+			const rendered = renderPane();
+			writeTestComment("asserts nothing useful");
+			fireEvent.click(screen.getByRole("button", { name: "Add to review" }));
+			fireEvent.click(screen.getByLabelText(editLabel));
+			return rendered;
+		}
+
+		function noteBox() {
+			return screen.getByLabelText(noteLabel) as HTMLTextAreaElement;
+		}
+
+		it("prefills the note and saves only the note", () => {
+			const { onDecision } = queueAndEdit();
+
+			expect(noteBox().value).toBe("asserts nothing useful");
+			fireEvent.change(noteBox(), { target: { value: "asserts nothing" } });
+			fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+			expect(screen.queryByLabelText(noteLabel)).toBeNull();
+			expect(screen.getByText("asserts nothing")).toBeTruthy();
+			expect(lastDecision(onDecision)).toMatchObject({
+				reviewComments: [{ ...queued, note: "asserts nothing" }],
+			});
+		});
+
+		it("saves on Enter but not Shift+Enter", () => {
+			const { onDecision } = queueAndEdit();
+
+			fireEvent.change(noteBox(), { target: { value: "reworded" } });
+			fireEvent.keyDown(noteBox(), { key: "Enter", shiftKey: true });
+			expect(screen.getByLabelText(noteLabel)).toBeTruthy();
+			fireEvent.keyDown(noteBox(), { key: "Enter" });
+
+			expect(screen.queryByLabelText(noteLabel)).toBeNull();
+			expect(lastDecision(onDecision)).toMatchObject({
+				reviewComments: [{ ...queued, note: "reworded" }],
+			});
+		});
+
+		it.each([
+			[
+				"Cancel",
+				() => fireEvent.click(screen.getByRole("button", { name: "Cancel" })),
+			],
+			["Esc", () => fireEvent.keyDown(noteBox(), { key: "Escape" })],
+		])("leaves the note unchanged on %s", (_, cancel) => {
+			const { onDecision } = queueAndEdit();
+
+			fireEvent.change(noteBox(), { target: { value: "discarded" } });
+			cancel();
+
+			expect(screen.queryByLabelText(noteLabel)).toBeNull();
+			expect(screen.getByText("asserts nothing useful")).toBeTruthy();
+			expect(lastDecision(onDecision)).toMatchObject({
+				reviewComments: [queued],
+			});
+		});
+
+		it("disables Save while the note is blank", () => {
+			queueAndEdit();
+
+			fireEvent.change(noteBox(), { target: { value: "   " } });
+
+			expect(
+				(screen.getByRole("button", { name: "Save" }) as HTMLButtonElement)
+					.disabled,
+			).toBe(true);
+		});
+
+		it("keeps an edited note across a reload", () => {
+			queueAndEdit();
+			fireEvent.change(noteBox(), { target: { value: "reworded" } });
+			fireEvent.click(screen.getByRole("button", { name: "Save" }));
+			cleanup();
+
+			const { onDecision } = renderPane();
+
+			expect(lastDecision(onDecision)).toMatchObject({
+				reviewComments: [{ ...queued, note: "reworded" }],
+			});
+		});
+	});
+
 	it("keeps a queued comment, ticks and check comments across a reload", () => {
 		renderPane();
 		writeTestComment("asserts nothing useful");
