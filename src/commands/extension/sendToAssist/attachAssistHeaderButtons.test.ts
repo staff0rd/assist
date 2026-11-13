@@ -131,13 +131,30 @@ describe("attachAssistHeaderButtons", () => {
 		expect(buttons()).toHaveLength(0);
 	});
 
-	it("opens a focused menu of review modes and PR actions on a pull request", async () => {
+	it("opens a focused prompt field above review modes and PR actions on a pull request", async () => {
 		await openOn("/org/repo/pull/3/files");
 		expect(menuItems().map((item) => item.textContent)).toEqual(
 			[...reviewButtonModes, ...prActions].map(({ label }) => label),
 		);
-		expect(popover()?.activeElement).toBe(menuItems()[0]);
-		expect(popover()?.querySelector("textarea")).toBeNull();
+		expect(popover()?.activeElement).toBe(popover()?.querySelector("textarea"));
+	});
+
+	it("sends a typed question for the pull request with no args", async () => {
+		const sendMessage = vi.fn().mockResolvedValue({ ok: true, message: "ok" });
+		vi.stubGlobal("browser", { runtime: { sendMessage } });
+		await openOn("/org/repo/pull/3");
+		const field = popover()?.querySelector("textarea");
+		if (!field) throw new Error("no prompt field");
+		await act(async () => {
+			fireEvent.change(field, { target: { value: "Why the retry?" } });
+			fireEvent.keyDown(field, { key: "Enter" });
+		});
+		expect(sendMessage).toHaveBeenCalledWith({
+			type: "assist-send",
+			url: `${location.origin}/org/repo/pull/3`,
+			instructions: "Why the retry?",
+		});
+		expect(popover()).toBeFalsy();
 	});
 
 	it("sends the picked mode's args for the pull request", async () => {

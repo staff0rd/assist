@@ -66,3 +66,25 @@ describe("assistPopoverContent", () => {
 		expect(writeText).not.toHaveBeenCalled();
 	});
 });
+
+describe("review popover prompt", () => {
+	it("sends the question with no args on Enter", () => {
+		const send = vi.fn();
+		const dismiss = vi.fn();
+		render(assistPopoverContent("review", { send, dismiss }));
+		fireEvent.change(field(), { target: { value: "What changed?" } });
+		fireEvent.keyDown(field(), { key: "Enter" });
+		expect(dismiss).toHaveBeenCalledWith(false);
+		expect(send).toHaveBeenCalledWith({ instructions: "What changed?" });
+	});
+
+	it("has no prompt field on Azure DevOps yet", () => {
+		render(
+			assistPopoverContent("azure-devops-review", {
+				send: vi.fn(),
+				dismiss: vi.fn(),
+			}),
+		);
+		expect(screen.queryByLabelText("Instructions for assist")).toBeNull();
+	});
+});

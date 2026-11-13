@@ -10,7 +10,8 @@ vi.mock("./findCloneByOrigin", () => ({ findCloneByOrigin: vi.fn() }));
 
 const mockResolve = vi.mocked(resolveRepoLocation);
 const mockFind = vi.mocked(findCloneByOrigin);
-const URL = "https://github.com/org/repo/pull/12#discussion_r34";
+const URL = "https://github.com/org/repo/issues/12#issuecomment-34";
+const PR = "https://github.com/org/repo/pull/12#discussion_r34";
 
 afterEach(() => vi.clearAllMocks());
 
@@ -34,6 +35,17 @@ describe("planGithubSession", () => {
 		expect(
 			planGithubSession({ url: URL, instructions: " fix it " }, "/base"),
 		).toMatchObject({ prompt: `${URL}\n\nfix it` });
+	});
+
+	it("tells a PR prompt to read the PR remotely instead of checking it out", () => {
+		mockResolve.mockReturnValue({ cwd: "/base/repo" });
+		const plan = planGithubSession({ url: PR, instructions: "why?" }, "/base");
+		expect(plan).toMatchObject({ ok: true, cwd: "/base/repo" });
+		const { prompt } = plan as { prompt: string };
+		expect(prompt.startsWith(`${PR}\n\n`)).toBe(true);
+		expect(prompt).toContain("gh pr diff https://github.com/org/repo/pull/12");
+		expect(prompt).toContain("do not check out its branch");
+		expect(prompt.endsWith("\n\nwhy?")).toBe(true);
 	});
 
 	it.each(["draft", "bug"])(

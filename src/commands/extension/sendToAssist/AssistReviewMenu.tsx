@@ -1,60 +1,39 @@
-import { MenuList, Paper } from "@mui/material";
-import { type FocusEvent, type KeyboardEvent, useState } from "react";
-import { azureDevopsPrActions } from "../../../shared/azureDevops/azureDevopsPrActions";
-import { prActions } from "../../../shared/prActions";
-import { reviewOptionDefaults } from "../../../shared/reviewOptionFlags";
-import { ReviewMenuRow } from "../../sessions/web/ui/App/ReviewMenuRow";
-import { reviewModeEntries } from "../../sessions/web/ui/App/reviewModeEntries";
+import { Paper } from "@mui/material";
+import { useRef } from "react";
+import { AssistReviewMenuList } from "./AssistReviewMenuList";
+import { AssistReviewPromptField } from "./AssistReviewPromptField";
+import { closeWhenFocusLeaves } from "./closeWhenFocusLeaves";
+import { focusFirstMenuItem } from "./focusFirstMenuItem";
 import { popoverPaperSx } from "./popoverPaperSx";
-import { reviewModeItems } from "./reviewModeItems";
-import { useAssistHarness } from "./useAssistHarness";
 
 export function AssistReviewMenu({
 	actionsOnly = false,
 	onPick,
+	onPrompt,
 	onClose,
 }: {
 	actionsOnly?: boolean;
 	onPick: (args: string[]) => void;
+	onPrompt?: (instructions: string) => void;
 	onClose: (restoreFocus: boolean) => void;
 }) {
-	const [options, setOptions] = useState(reviewOptionDefaults);
-	const capabilities = useAssistHarness();
-
-	const onKeyDown = (event: KeyboardEvent) => {
-		if (event.key !== "Escape") return;
-		event.preventDefault();
-		onClose(true);
-	};
-
-	const closeWhenFocusLeaves = (event: FocusEvent<HTMLElement>) => {
-		if (event.currentTarget.contains(event.relatedTarget as Node | null))
-			return;
-		if (document.hasFocus()) onClose(false);
-	};
-
+	const menuRef = useRef<HTMLUListElement>(null);
 	return (
-		<Paper sx={popoverPaperSx}>
-			<MenuList
-				autoFocusItem
-				dense
-				aria-label="Start an assist session for this PR"
-				onKeyDown={onKeyDown}
-				onBlur={closeWhenFocusLeaves}
-			>
-				{!actionsOnly &&
-					reviewModeItems(capabilities, options, setOptions, onPick)}
-				{reviewModeEntries(
-					capabilities,
-					actionsOnly ? azureDevopsPrActions : prActions,
-				).map((entry) => (
-					<ReviewMenuRow
-						key={entry.label}
-						entry={entry}
-						onSelect={(_, args) => onPick(args)}
-					/>
-				))}
-			</MenuList>
+		<Paper sx={popoverPaperSx} onBlur={closeWhenFocusLeaves(false, onClose)}>
+			{onPrompt && (
+				<AssistReviewPromptField
+					onPrompt={onPrompt}
+					onClose={onClose}
+					focusMenu={() => focusFirstMenuItem(menuRef.current)}
+				/>
+			)}
+			<AssistReviewMenuList
+				menuRef={menuRef}
+				actionsOnly={actionsOnly}
+				autoFocusItem={!onPrompt}
+				onPick={onPick}
+				onClose={onClose}
+			/>
 		</Paper>
 	);
 }
