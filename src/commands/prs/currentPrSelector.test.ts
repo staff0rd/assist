@@ -33,6 +33,17 @@ describe("currentPrSelector", () => {
 			);
 		});
 
+		it("should use the fork's head branch when the local branch is named differently", () => {
+			gitConfig({
+				"branch.local-name.remote": "git@github.com:Turtlator/assist.git",
+				"branch.local-name.merge": "refs/heads/fix-poll",
+			});
+
+			expect(currentPrSelector("local-name", "staff0rd")).toBe(
+				"Turtlator:fix-poll",
+			);
+		});
+
 		it("should resolve a named fork remote to its owner", () => {
 			gitConfig({
 				"branch.fix-poll.remote": "turtlator",

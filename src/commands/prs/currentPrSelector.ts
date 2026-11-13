@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { parseGitHubUrl } from "./parseGitHubUrl";
 
 const PULL_REF = /^refs\/pull\/(\d+)\/head$/;
+const HEAD_REF = /^refs\/heads\/(.+)$/;
 
 function gitOrNull(args: string[]): string | null {
 	try {
@@ -31,11 +32,12 @@ function remoteOwner(remote: string): string | null {
 // A fork PR's head branch lives in the fork, so a bare branch name doesn't
 // match it in the base repo; gh needs the PR number or `owner:branch`.
 export function currentPrSelector(branch: string, baseOrg: string): string {
-	const pull = branchConfig(branch, "merge")?.match(PULL_REF);
+	const merge = branchConfig(branch, "merge");
+	const pull = merge?.match(PULL_REF);
 	if (pull) return pull[1];
 	const remote = branchConfig(branch, "remote");
 	const owner = remote ? remoteOwner(remote) : null;
 	if (owner && owner.toLowerCase() !== baseOrg.toLowerCase())
-		return `${owner}:${branch}`;
+		return `${owner}:${merge?.match(HEAD_REF)?.[1] ?? branch}`;
 	return branch;
 }
