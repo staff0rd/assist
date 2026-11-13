@@ -1,3 +1,19 @@
+# [0.1143.0](https://github.com/staff0rd/assist/compare/v0.1142.0...v0.1143.0) (2026-11-13)
+
+
+### Bug Fixes
+
+* let /bug author phases ([0b1eba3](https://github.com/staff0rd/assist/commit/0b1eba3884631c91324a651e3f8813ec7f55f76a))
+* serialise and back off diff polls ([4d32a02](https://github.com/staff0rd/assist/commit/4d32a0251a95ad974faf91c50672d44100d2db80))
+* serialise and back off git-status polls ([ee0f481](https://github.com/staff0rd/assist/commit/ee0f481a79621170bcc035ed29481b512e21818a))
+
+
+### Features
+
+* highlight recognised slash commands ([f0f9100](https://github.com/staff0rd/assist/commit/f0f9100acfecbb475c51a5299a9ba680fe8a35d4))
+* prompt about ADO PRs from extension ([828c2a6](https://github.com/staff0rd/assist/commit/828c2a6f3e68c86ae8bdb11d1f8e0624cb1b01f2))
+* suggest skills in reply inputs ([551ae7b](https://github.com/staff0rd/assist/commit/551ae7b3be835dda5a078fba3e12e0f7c9d34931))
+
 # [0.1142.0](https://github.com/staff0rd/assist/compare/v0.1141.1...v0.1142.0) (2026-11-13)
 
 
