@@ -269,17 +269,28 @@ describe("gitStatus", () => {
 	});
 
 	describe("polled again for the same session", () => {
-		const repo = { head: "head-one", status: "", diff: "M\ta.ts\n" };
+		const repo = {
+			head: "head-one",
+			status: "",
+			diff: "M\ta.ts\n",
+			blob: "blob-one",
+		};
 		const diffsRun = () =>
 			execGitMock.mock.calls.filter(([, args]) => args[1] === "--name-status")
 				.length;
 
 		beforeEach(() => {
-			Object.assign(repo, { head: "head-one", status: "", diff: "M\ta.ts\n" });
+			Object.assign(repo, {
+				head: "head-one",
+				status: "",
+				diff: "M\ta.ts\n",
+				blob: "blob-one",
+			});
 			withChangeSet([{ base: "base-one", paths: ["a.ts"] }]);
 			withGit((args) => {
 				if (args[0] === "rev-parse") return `${repo.head}\n`;
 				if (args[0] === "status") return repo.status;
+				if (args[0] === "hash-object") return `${repo.blob}\n`;
 				return args[1] === "--name-status" ? repo.diff : "";
 			});
 		});
@@ -298,6 +309,17 @@ describe("gitStatus", () => {
 			await request();
 
 			expect(diffsRun()).toBe(2);
+		});
+
+		it("recounts when an item file's contents change but its status does not", async () => {
+			repo.status = " M a.ts\n";
+			await request();
+			repo.blob = "blob-two";
+			repo.diff = "";
+			const { counts } = await request();
+
+			expect(diffsRun()).toBe(2);
+			expect(counts.modified).toEqual([]);
 		});
 
 		it("recounts when HEAD moves", async () => {
