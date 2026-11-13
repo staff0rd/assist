@@ -12,6 +12,7 @@ export async function parseCodexSessionFile(
 	try {
 		const meta = codexRolloutMeta(await readCodexHeadLines(filePath));
 		if (!meta.sessionId) return null;
+		const lastActivity = await mtime(filePath);
 		const name = meta.firstMessage.slice(0, 80);
 		const markers = backlogRunMarkers(meta.firstMessage);
 		return {
@@ -19,7 +20,8 @@ export async function parseCodexSessionFile(
 			name: name || `Session ${meta.sessionId.slice(0, 8)}`,
 			project: meta.cwd ? path.basename(meta.cwd) : "",
 			cwd: meta.cwd,
-			timestamp: meta.timestamp || (await mtime(filePath)),
+			timestamp: meta.timestamp || lastActivity,
+			lastActivity,
 			origin: "wsl",
 			harness: "codex",
 			...deriveHistoryFields(markers.commandName, markers.commandArgs, name),

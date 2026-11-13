@@ -1,4 +1,4 @@
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, utimesSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
@@ -65,5 +65,15 @@ describe("parseCodexSessionFile", () => {
 		expect(
 			await parseCodexSessionFile(rolloutFile([{ type: "event_msg" }])),
 		).toBeNull();
+	});
+
+	it("records the rollout's mtime as last activity", async () => {
+		const file = rolloutFile([sessionMeta]);
+		const modified = new Date("2026-08-10T02:00:00.000Z");
+		utimesSync(file, modified, modified);
+
+		const session = await parseCodexSessionFile(file);
+
+		expect(session?.lastActivity).toBe(modified.toISOString());
 	});
 });

@@ -20,6 +20,7 @@ vi.mock("./codex/discoverCodexHistoryEntries", () => ({
 				name: "codex",
 				cwd: "/repo",
 				timestamp: new Date(0).toISOString(),
+				lastActivity: new Date(2000).toISOString(),
 				harness: "codex",
 			},
 		},
@@ -30,7 +31,10 @@ vi.mock("./parseSessionFile", () => ({
 		sessionId: filePath.replace(/^\/p\/|\.jsonl$/g, ""),
 		name: filePath,
 		cwd: "/repo",
-		timestamp: new Date(0).toISOString(),
+		timestamp: new Date(filePath.endsWith("1.jsonl") ? 0 : 5000).toISOString(),
+		lastActivity: filePath.endsWith("1.jsonl")
+			? new Date(9000).toISOString()
+			: undefined,
 		origin,
 	}),
 }));
@@ -57,5 +61,13 @@ describe("discoverHistoryEntries", () => {
 			"claude-2": undefined,
 			"codex-1": "Tidy docs",
 		});
+	});
+
+	it("orders by last activity, falling back to the start timestamp", async () => {
+		const ids = (await discoverHistoryEntries()).map(
+			({ session }) => session.sessionId,
+		);
+
+		expect(ids).toEqual(["claude-1", "claude-2", "codex-1"]);
 	});
 });

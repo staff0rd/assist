@@ -21,7 +21,7 @@ export function HistoryCardFooter({ session }: { session: HistoricalSession }) {
 				/>
 			)}
 			<Typography variant="caption" color="text.disabled">
-				{formatRelativeTime(session.timestamp)}
+				{formatRelativeTime(session.lastActivity ?? session.timestamp)}
 			</Typography>
 		</Box>
 	);

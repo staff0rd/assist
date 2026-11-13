@@ -13,6 +13,7 @@ export type HistoricalSession = {
 	project: string;
 	cwd: string;
 	timestamp: string;
+	lastActivity?: string;
 	origin: SessionOrigin;
 	harness?: HarnessKind;
 	sessionType?: SessionType;
@@ -32,15 +33,15 @@ export async function parseSessionFile(
 		const meta = extractSessionMeta(await readHeadLines(handle));
 		if (!meta.sessionId) return null;
 
-		const timestamp =
-			meta.timestamp || (await fs.promises.stat(filePath)).mtime.toISOString();
+		const lastActivity = (await fs.promises.stat(filePath)).mtime.toISOString();
 
 		return {
 			sessionId: meta.sessionId,
 			name: meta.name || `Session ${meta.sessionId.slice(0, 8)}`,
 			project: deriveProject(meta.cwd, filePath, origin),
 			cwd: meta.cwd,
-			timestamp,
+			timestamp: meta.timestamp || lastActivity,
+			lastActivity,
 			origin,
 			...deriveHistoryFields(meta.commandName, meta.commandArgs, meta.name),
 		};

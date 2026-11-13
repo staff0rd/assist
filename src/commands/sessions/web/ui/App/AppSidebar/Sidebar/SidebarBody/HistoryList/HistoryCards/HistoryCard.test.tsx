@@ -98,3 +98,19 @@ describe("HistoryCard harness", () => {
 		expect(screen.queryByText("Claude")).toBeNull();
 	});
 });
+
+describe("HistoryCard relative time", () => {
+	it("shows when the session was last active", () => {
+		render(
+			<HistoryCard
+				session={{
+					...session,
+					lastActivity: new Date(Date.now() - 5 * 60_000).toISOString(),
+				}}
+				onView={() => {}}
+				onResume={() => {}}
+			/>,
+		);
+		expect(screen.getByText("5m ago")).toBeTruthy();
+	});
+});

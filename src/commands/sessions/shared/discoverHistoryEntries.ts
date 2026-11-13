@@ -1,3 +1,4 @@
+import { compareByLastActivity } from "./compareByLastActivity";
 import { discoverCodexHistoryEntries } from "./codex/discoverCodexHistoryEntries";
 import type { HistoryEntry } from "./HistoryEntry";
 import { loadSessionTitles } from "./loadSessionTitles";
@@ -22,10 +23,6 @@ export async function discoverHistoryEntries(): Promise<HistoryEntry[]> {
 		if (title) session.title = title;
 	}
 
-	entries.sort(
-		(a, b) =>
-			new Date(b.session.timestamp).getTime() -
-			new Date(a.session.timestamp).getTime(),
-	);
+	entries.sort((a, b) => compareByLastActivity(a.session, b.session));
 	return entries;
 }

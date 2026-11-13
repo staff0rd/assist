@@ -83,6 +83,7 @@ export type HistoricalSession = {
 	project: string;
 	cwd: string;
 	timestamp: string;
+	lastActivity?: string;
 	repoGroup?: RepoGroup;
 	cwdMissing?: boolean;
 	origin?: SessionOrigin;
