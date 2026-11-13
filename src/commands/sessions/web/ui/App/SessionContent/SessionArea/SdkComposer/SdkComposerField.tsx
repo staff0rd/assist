@@ -3,6 +3,7 @@ import InputBase from "@mui/material/InputBase";
 import { SlashSuggestionList } from "../../../../slashSuggestions/SlashSuggestionList";
 import { SdkComposerBackdrop } from "./SdkComposerBackdrop";
 import { sdkComposerSx } from "./sdkComposerSx";
+import { useComposerAutofocus } from "./useComposerAutofocus";
 import { useComposerBackdrop } from "./useComposerBackdrop";
 import type { useSdkComposer } from "./useSdkComposer";
 
@@ -13,6 +14,7 @@ export function SdkComposerField({
 }) {
 	const { slash } = c;
 	const backdrop = useComposerBackdrop(c.text, c.commands, c.enabled);
+	useComposerAutofocus(slash.inputRef, c.enabled);
 	return (
 		<>
 			{slash.suggestions && (
