@@ -1,3 +1,18 @@
+# [0.1141.0](https://github.com/staff0rd/assist/compare/v0.1140.2...v0.1141.0) (2026-11-13)
+
+
+### Bug Fixes
+
+* recount on dirty item file edits ([7dd6eb4](https://github.com/staff0rd/assist/commit/7dd6eb42fbaddcbe6ff4ce5c39d94a6a10b6df97))
+* reuse item counts between unchanged polls ([73afa1b](https://github.com/staff0rd/assist/commit/73afa1b76a0bd41bb0f72db8751cb346373c0a2d))
+* share item counts between overlapping polls ([f76fc9a](https://github.com/staff0rd/assist/commit/f76fc9a7f70aa17faacec25ac6048da4379d1828))
+* treat fetched PR branch tips as pushed ([290108d](https://github.com/staff0rd/assist/commit/290108d6fcc9e6dfc1e303cb96eed1d11b03377b))
+
+
+### Features
+
+* add start over to phone actions ([93459cb](https://github.com/staff0rd/assist/commit/93459cbfe4553f9b21a2b18c38d248b8af20af56))
+
 ## [0.1140.2](https://github.com/staff0rd/assist/compare/v0.1140.1...v0.1140.2) (2026-11-13)
 
 
