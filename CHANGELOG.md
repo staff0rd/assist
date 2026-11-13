@@ -1,3 +1,10 @@
+## [0.1139.3](https://github.com/staff0rd/assist/compare/v0.1139.2...v0.1139.3) (2026-11-13)
+
+
+### Bug Fixes
+
+* nest backlog sessions per node ([5328304](https://github.com/staff0rd/assist/commit/5328304df1cae071de29e0d447fbf2f5537f95fc))
+
 ## [0.1139.2](https://github.com/staff0rd/assist/compare/v0.1139.1...v0.1139.2) (2026-11-13)
 
 
