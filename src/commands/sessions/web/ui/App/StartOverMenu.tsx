@@ -1,43 +1,35 @@
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-import { IconButton, Menu, MenuItem } from "@mui/material";
-import { useState } from "react";
+import { Menu, MenuItem } from "@mui/material";
 import { ConfirmDialog } from "../../../../backlog/web/ui/components/ConfirmDialog";
 import { useShiftSkipConfirm } from "../useShiftSkipConfirm";
 
 export function StartOverMenu({
 	id,
 	onStartOver,
+	anchor,
+	onClose,
 }: {
 	id: string;
 	onStartOver: () => void;
+	anchor: HTMLElement | null;
+	onClose: () => void;
 }) {
-	const [anchor, setAnchor] = useState<HTMLElement | null>(null);
-	const startOver = useShiftSkipConfirm(onStartOver);
+	const startOver = useShiftSkipConfirm(() => {
+		onClose();
+		onStartOver();
+	});
 	return (
 		<>
-			<IconButton
-				size="small"
-				aria-label="Restart options"
-				aria-haspopup="menu"
-				aria-expanded={anchor !== null}
-				onClick={(event) => {
-					event.stopPropagation();
-					setAnchor(event.currentTarget);
-				}}
-			>
-				<ArrowDropDownIcon sx={{ fontSize: 16 }} />
-			</IconButton>
 			<Menu
 				anchorEl={anchor}
 				open={anchor !== null}
-				onClose={() => setAnchor(null)}
+				onClose={onClose}
 				onClick={(event) => event.stopPropagation()}
 			>
 				<MenuItem
 					title={startOver.withHint("Start over")}
 					{...startOver.triggerHandlers}
 					onClick={(event) => {
-						setAnchor(null);
+						onClose();
 						startOver.triggerHandlers.onClick(event);
 					}}
 				>

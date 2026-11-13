@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { LabelledActionsContext } from "./useLabelledActionsContext";
 import { RestartButton } from "./RestartButton";
 
 afterEach(cleanup);
@@ -26,6 +27,28 @@ describe("RestartButton", () => {
 		expect(onStartOver).toHaveBeenCalledOnce();
 		expect(onRestart).not.toHaveBeenCalled();
 	});
+
+	it.each([false, true])(
+		"joins both segments in one button group (labelled=%s)",
+		(labelled) => {
+			render(
+				<LabelledActionsContext.Provider value={labelled}>
+					<RestartButton id="54" onRestart={vi.fn()} onStartOver={vi.fn()} />
+				</LabelledActionsContext.Provider>,
+			);
+			const group = screen.getByRole("group", { name: "Restart session" });
+			expect(
+				screen
+					.getByRole("button", { name: "Restart" })
+					.closest(".MuiButtonGroup-root"),
+			).toBe(group);
+			expect(
+				screen
+					.getByRole("button", { name: "Restart options" })
+					.closest(".MuiButtonGroup-root"),
+			).toBe(group);
+		},
+	);
 
 	it("names the session id in its tooltip so cards map to daemon.log ids", () => {
 		render(<RestartButton id="54" onRestart={() => {}} />);
