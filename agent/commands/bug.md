@@ -42,7 +42,17 @@ If Step 3 produced a design, link it from the description as `/design` describes
 
 - (conditions that confirm the bug is fixed)
 
-Do NOT generate a plan — the implementer will determine how to fix it.
+**Plan:** (optional phases)
+
+- Phase 1: (name) — tasks...
+
+Phases go in the plan, never in the acceptance criteria — an acceptance criterion that reads as a phase (e.g. `Phase 1: ...`) is rejected by `propose`.
+
+- If the user said how to split or sequence the fix (e.g. "make phase 1 do X"), author those phases as they asked.
+- Otherwise, author phases only when your investigation makes the fix clear — you know which code changes and how. Keep them to vertical slices that each pass `assist verify` on their own (usually one phase for a bug).
+- If the fix is not clear, leave the plan empty; the implementer will determine how to fix it.
+
+Do not author a `Review` phase — the runner appends it to every plan, and `propose` rejects one.
 
 ### Writing the description
 
@@ -69,10 +79,15 @@ cat <<'JSON' | assist backlog propose --json - 2>&1
   "name": "Bug title",
   "type": "bug",
   "description": "**Repro:**\n\n1. ...\n2. ...\n\n**Expected:** ...\n\n**Actual:** ...",
-  "acceptanceCriteria": ["criterion 1", "criterion 2"]
+  "acceptanceCriteria": ["criterion 1", "criterion 2"],
+  "phases": [
+    { "name": "Phase one name", "tasks": ["Task 1", "Task 2"] }
+  ]
 }
 JSON
 ```
+
+Omit `phases` when you are not authoring a plan. Each phase needs at least one task; add `manualChecks` to a phase only when its checks are genuinely hard to automate.
 
 The payload is strict JSON — an unknown key is an error. `\n` inside the `description` string is a JSON escape and becomes a real newline, which is what the markdown rendering needs.
 

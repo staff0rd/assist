@@ -1,6 +1,8 @@
 import { z } from "zod";
 import { REVIEW_PHASE_NAME } from "../buildPhasePrompt";
 
+const PHASE_DEFINITION = /^\W*phase\s+\d+\s*[:.)\-–—]/i;
+
 export const proposedPhaseSchema = z.strictObject({
 	name: z
 		.string()
@@ -20,7 +22,18 @@ export const proposedItemSchema = z.strictObject({
 	name: z.string().trim().min(1, "name is required"),
 	type: z.enum(["story", "bug"]),
 	description: z.string().optional(),
-	acceptanceCriteria: z.array(z.string().trim().min(1)).default([]),
+	acceptanceCriteria: z
+		.array(
+			z
+				.string()
+				.trim()
+				.min(1)
+				.refine(
+					(criterion) => !PHASE_DEFINITION.test(criterion),
+					"reads as a phase definition — move it to `phases` as { name, tasks } and keep acceptance criteria to conditions that confirm the item is done",
+				),
+		)
+		.default([]),
 	phases: z.array(proposedPhaseSchema).default([]),
 });
 

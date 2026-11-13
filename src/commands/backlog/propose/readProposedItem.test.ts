@@ -120,6 +120,44 @@ describe("readProposedItem", () => {
 		);
 	});
 
+	it.each([
+		"Phase 1: make the fix",
+		"phase 2 - add tests",
+		"**Phase 3:** polish",
+		"Phase 1 — wire it up",
+	])(
+		"exits non-zero when an acceptance criterion reads as a phase: %s",
+		async (criterion) => {
+			const errorSpy = expectFailure();
+
+			await expect(
+				readProposedItem(
+					writePayload({
+						name: "n",
+						type: "bug",
+						acceptanceCriteria: ["It works", criterion],
+					}),
+				),
+			).rejects.toThrow("process.exit");
+			const output = errorSpy.mock.calls.join("\n");
+			expect(output).toContain("acceptanceCriteria.1");
+			expect(output).toContain("move it to `phases`");
+		},
+	);
+
+	it("accepts acceptance criteria that mention phases without defining one", async () => {
+		const criteria = [
+			"The phase 1 summary is shown",
+			"Phases appear in the plan, not the criteria",
+		];
+
+		const item = await readProposedItem(
+			writePayload({ name: "n", type: "bug", acceptanceCriteria: criteria }),
+		);
+
+		expect(item.acceptanceCriteria).toEqual(criteria);
+	});
+
 	it("exits non-zero on an unknown field inside a phase", async () => {
 		const errorSpy = expectFailure();
 
