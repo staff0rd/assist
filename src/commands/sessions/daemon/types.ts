@@ -108,6 +108,7 @@ export type Session = {
 	activeViewerNode?: string;
 	sdkActivity?: string;
 	sdkQueued?: string[];
+	sdkBackgroundTasks?: string[];
 	sdkInterrupting?: boolean;
 	sdkResuming?: boolean;
 	usedPct?: number;

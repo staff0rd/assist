@@ -9,6 +9,7 @@ export type SdkSessionEvent =
 	| { kind: "status"; status: "running" | "waiting" }
 	| { kind: "activity"; text: string | null }
 	| { kind: "queued"; texts: string[] }
+	| { kind: "background"; tasks: string[] }
 	| { kind: "interrupting"; pending: boolean }
 	| { kind: "resumed" };
 

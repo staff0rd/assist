@@ -25,6 +25,9 @@ export function SdkTail({ session }: { session: SessionInfo }) {
 				<TextRow key={`${i}:${text}`} role="user" text={text} term="" queued />
 			))}
 			{activity && <SdkTailRow text={activity} />}
+			{session.sdkBackgroundTasks?.map((task, i) => (
+				<SdkTailRow key={`${i}:${task}`} text={`Background · ${task}`} />
+			))}
 		</>
 	);
 }

@@ -4,6 +4,7 @@ import type { SdkSessionControl } from "./createSdkSessionProcess";
 import type { SdkTurnTracker } from "./createSdkTurnTracker";
 import { createSdkUsageObserver } from "./createSdkUsageObserver";
 import { logSdkMessage } from "./logSdkMessage";
+import { sdkBackgroundTasks } from "./sdkBackgroundTasks";
 import { sdkActivityText } from "./sdkActivityText";
 import { sdkTurnStatus } from "./sdkTurnStatus";
 
@@ -21,6 +22,8 @@ export async function runSdkQuery(
 			observeUsage(message);
 			const status = sdkTurnStatus(message);
 			if (status) turn.setStatus(status);
+			const background = sdkBackgroundTasks(message);
+			if (background) control.emit({ kind: "background", tasks: background });
 			if (message.type === "assistant" && message.parent_tool_use_id === null)
 				turn.setActivity(sdkActivityText(message.message.content));
 		}

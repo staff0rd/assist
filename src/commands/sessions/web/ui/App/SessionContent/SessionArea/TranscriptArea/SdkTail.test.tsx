@@ -41,4 +41,19 @@ describe("SdkTail", () => {
 			"Working · Bash ls",
 		);
 	});
+
+	it("shows live background tasks while waiting", () => {
+		render(
+			<SdkTail
+				session={makeSessionInfo({
+					sdk: true,
+					status: "waiting",
+					sdkBackgroundTasks: ["vite dev"],
+				})}
+			/>,
+		);
+		expect(screen.getByRole("status").textContent).toContain(
+			"Background · vite dev",
+		);
+	});
 });

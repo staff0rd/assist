@@ -56,6 +56,15 @@ describe("wireSdkEvents", () => {
 		expect(session.sdkInterrupting).toBeUndefined();
 	});
 
+	it("replaces the background task set and broadcasts it", () => {
+		const { control, session, notify } = sdkSession("waiting");
+		control.emit({ kind: "background", tasks: ["vite dev"] });
+		expect(session.sdkBackgroundTasks).toEqual(["vite dev"]);
+		control.emit({ kind: "background", tasks: [] });
+		expect(session.sdkBackgroundTasks).toBeUndefined();
+		expect(notify).toHaveBeenCalledTimes(2);
+	});
+
 	it("ignores events once the session is done", () => {
 		const { control, onStatusChange } = sdkSession("done");
 		control.emit({ kind: "status", status: "running" });

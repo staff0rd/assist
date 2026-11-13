@@ -13,6 +13,11 @@ function applyViewEvent(
 	} else if (event.kind === "queued") {
 		session.sdkQueued = event.texts.length ? event.texts : undefined;
 		daemonLog(`session ${session.id} sdk queued: ${event.texts.length}`);
+	} else if (event.kind === "background") {
+		session.sdkBackgroundTasks = event.tasks.length ? event.tasks : undefined;
+		daemonLog(
+			`session ${session.id} sdk background tasks: ${event.tasks.length}`,
+		);
 	} else if (event.kind === "resumed") {
 		session.sdkResuming = undefined;
 		daemonLog(`session ${session.id} sdk resumed: composer unlocked`);
@@ -29,6 +34,7 @@ export function wireSdkEvents(
 	onStatusChange: OnStatusChange,
 	notify?: () => void,
 ): void {
+	session.sdkBackgroundTasks = undefined;
 	session.pty?.sdk?.onEvent((event) => {
 		if (session.status === "done" || session.status === "stopped") return;
 		if (event.kind !== "status") {

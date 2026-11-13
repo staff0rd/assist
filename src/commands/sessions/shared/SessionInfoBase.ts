@@ -93,6 +93,7 @@ export type SessionInfoBase = {
 	sdk?: boolean;
 	sdkActivity?: string;
 	sdkQueued?: string[];
+	sdkBackgroundTasks?: string[];
 	sdkInterrupting?: boolean;
 	sdkResuming?: boolean;
 	cols?: number;

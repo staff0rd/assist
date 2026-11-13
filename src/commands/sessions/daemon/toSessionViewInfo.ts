@@ -11,6 +11,7 @@ export function toSessionViewInfo({
 	pty,
 	sdkActivity,
 	sdkQueued,
+	sdkBackgroundTasks,
 	sdkInterrupting,
 	sdkResuming,
 }: Session) {
@@ -18,6 +19,7 @@ export function toSessionViewInfo({
 		sdk: pty?.sdk ? true : undefined,
 		sdkActivity,
 		sdkQueued,
+		sdkBackgroundTasks,
 		sdkInterrupting,
 		sdkResuming,
 		transfer,
