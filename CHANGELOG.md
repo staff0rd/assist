@@ -1,3 +1,10 @@
+## [0.1143.3](https://github.com/staff0rd/assist/compare/v0.1143.2...v0.1143.3) (2026-11-13)
+
+
+### Bug Fixes
+
+* show SDK background tasks ([63e13d5](https://github.com/staff0rd/assist/commit/63e13d5fb453e17d2729ca55c3319164eb44c7c6))
+
 ## [0.1143.2](https://github.com/staff0rd/assist/compare/v0.1143.1...v0.1143.2) (2026-11-13)
 
 
