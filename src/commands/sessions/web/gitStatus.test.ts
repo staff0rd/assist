@@ -326,6 +326,12 @@ describe("gitStatus", () => {
 			expect(diffsRun()).toBe(2);
 		});
 
+		it("shares one count between overlapping polls", async () => {
+			await Promise.all([request(), request()]);
+
+			expect(diffsRun()).toBe(1);
+		});
+
 		it("counts each session separately", async () => {
 			await request("/api/git-status?cwd=%2Frepo&session=sess-1");
 			await request("/api/git-status?cwd=%2Frepo&session=sess-2");

@@ -1,6 +1,6 @@
-import { execGit } from "./execGit";
 import { groupedCounts } from "./groupedCounts";
 import type { ChangeGroup } from "./itemChangeSet";
+import { itemCountsFingerprint } from "./itemCountsFingerprint";
 import type { GitStatusCounts } from "./parseGitStatus";
 
 const RECOUNT_AFTER_MS = 30_000;
@@ -10,30 +10,17 @@ const counted = new Map<
 	{ fingerprint: string; counts: GitStatusCounts; expiresAt: number }
 >();
 
-async function headCommit(cwd: string): Promise<string> {
-	try {
-		return (await execGit(cwd, ["rev-parse", "HEAD"])).trim();
-	} catch {
-		return "";
-	}
-}
+const counting = new Map<
+	string,
+	{ fingerprint: string; counts: Promise<GitStatusCounts> }
+>();
 
-export async function groupedCountsUnlessUnchanged(
+function remember(
 	scope: string,
-	cwd: string,
-	groups: ChangeGroup[],
-	uncommitted: GitStatusCounts,
-): Promise<GitStatusCounts> {
-	const fingerprint = JSON.stringify([
-		await headCommit(cwd),
-		groups,
-		uncommitted,
-	]);
+	fingerprint: string,
+	counts: GitStatusCounts,
+): void {
 	const now = Date.now();
-	const known = counted.get(scope);
-	if (known && known.fingerprint === fingerprint && known.expiresAt > now)
-		return known.counts;
-	const counts = await groupedCounts(cwd, groups);
 	for (const [other, entry] of counted) {
 		if (entry.expiresAt <= now) counted.delete(other);
 	}
@@ -42,5 +29,39 @@ export async function groupedCountsUnlessUnchanged(
 		counts,
 		expiresAt: now + RECOUNT_AFTER_MS,
 	});
+}
+
+function recalled(
+	scope: string,
+	fingerprint: string,
+): GitStatusCounts | undefined {
+	const known = counted.get(scope);
+	const fresh =
+		known?.fingerprint === fingerprint && known.expiresAt > Date.now();
+	return fresh ? known.counts : undefined;
+}
+
+export async function groupedCountsUnlessUnchanged(
+	scope: string,
+	cwd: string,
+	groups: ChangeGroup[],
+	uncommitted: GitStatusCounts,
+): Promise<GitStatusCounts> {
+	const fingerprint = await itemCountsFingerprint(cwd, groups, uncommitted);
+	const known = recalled(scope, fingerprint);
+	if (known) return known;
+
+	const pending = counting.get(scope);
+	if (pending?.fingerprint === fingerprint) return pending.counts;
+
+	const counts = groupedCounts(cwd, groups)
+		.then((result) => {
+			remember(scope, fingerprint, result);
+			return result;
+		})
+		.finally(() => {
+			if (counting.get(scope)?.counts === counts) counting.delete(scope);
+		});
+	counting.set(scope, { fingerprint, counts });
 	return counts;
 }
