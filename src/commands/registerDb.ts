@@ -1,6 +1,5 @@
 import type { Command } from "commander";
 import { toDatabaseConnectionError } from "../shared/db/DatabaseConnectionError";
-import { createPool } from "../shared/db/getDb";
 import { applyMigrations } from "../shared/db/migrations/applyMigrations";
 import { getMigrationStatus } from "../shared/db/migrations/getMigrationStatus";
 import { latestMigrationId } from "../shared/db/migrations";
@@ -12,6 +11,7 @@ import {
 	reportApplied,
 	reportMigrationStatus,
 } from "./db/reportMigrationStatus";
+import { createPool } from "../shared/db/createPool";
 
 async function withPool(
 	fn: (exec: ReturnType<typeof pgExecutor>) => Promise<void>,

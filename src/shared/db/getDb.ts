@@ -1,11 +1,11 @@
-import { Pool, type PoolClient } from "pg";
+import type { Pool, PoolClient } from "pg";
 import { seedNewsFeeds } from "../../commands/backlog/seedNewsFeeds";
 import { cleanupFalseResetSegments } from "./cleanupFalseResetSegments";
 import { toDatabaseConnectionError } from "./DatabaseConnectionError";
 import { type Db, makeOrmFromPool } from "./Db";
 import { assertMigrationsInSync } from "./migrations/assertMigrationsInSync";
 import { pgExecutor } from "./migrations/MigrationExecutor";
-import { getDatabaseUrl } from "./getDatabaseUrl";
+import { createPool } from "./createPool";
 
 async function runUsagePeakCleanup(orm: Db): Promise<void> {
 	try {
@@ -16,26 +16,6 @@ async function runUsagePeakCleanup(orm: Db): Promise<void> {
 			`${new Date().toISOString()} usage-peaks cleanup failed: ${String(error)}`,
 		);
 	}
-}
-
-// why: an unhandled 'error' from an idle client crashes the process; absorb it so the pool just reconnects.
-function logPoolError(error: Error): void {
-	console.error(
-		`${new Date().toISOString()} backlog pool error: ${error.message}`,
-	);
-}
-
-export function createPool(): Pool {
-	const pool = new Pool({
-		connectionString: getDatabaseUrl(),
-		max: 10,
-		// why: retire idle clients before managed Postgres (Supabase/Neon) drops them server-side, so we never check out a dead socket and stall on a timeout.
-		idleTimeoutMillis: 30_000,
-		// why: bound the wait for a free client so a degraded pool fails fast (500 + log line) rather than hanging for seconds.
-		connectionTimeoutMillis: 10_000,
-	});
-	pool.on("error", logPoolError);
-	return pool;
 }
 
 async function initDb(pool: Pool): Promise<Db> {
