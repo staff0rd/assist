@@ -1,3 +1,11 @@
+## [0.1143.4](https://github.com/staff0rd/assist/compare/v0.1143.3...v0.1143.4) (2026-11-13)
+
+
+### Bug Fixes
+
+* order history by last activity ([1c29d5a](https://github.com/staff0rd/assist/commit/1c29d5a0dfcd6228026274241044dad66c3d983b))
+* show last activity in phone history ([1564b12](https://github.com/staff0rd/assist/commit/1564b1292e2cc4ae7de3f9bfee5f17c2846ae735))
+
 ## [0.1143.3](https://github.com/staff0rd/assist/compare/v0.1143.2...v0.1143.3) (2026-11-13)
 
 
