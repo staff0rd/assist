@@ -94,45 +94,6 @@ describe("HamburgerMenu", () => {
 		expect(await screen.findByText("pc-windows")).toBeTruthy();
 	});
 
-	it("lists the targeted node's leftover workspaces with one removal command", async () => {
-		fetchMock.mockImplementation(async (url: string) => ({
-			ok: true,
-			json: async () =>
-				String(url).startsWith("/api/leftovers?node=win")
-					? {
-							nodeName: "win",
-							leftovers: [
-								{ path: "/git/repo-2", reason: "EACCES" },
-								{ path: "/git/repo-3", reason: "EACCES" },
-							],
-							command: "sudo rm -rf /git/repo-2 /git/repo-3",
-						}
-					: { nodeName: "wsl" },
-		}));
-		renderMenu(vi.fn(), () => {}, "win");
-
-		fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
-		fireEvent.click(await screen.findByText("2 leftover workspaces"));
-
-		expect(screen.getByText("Leftover workspaces on win")).toBeTruthy();
-		expect(
-			screen.getByText("sudo rm -rf /git/repo-2 /git/repo-3"),
-		).toBeTruthy();
-	});
-
-	it("shows no leftover item when the node has none", async () => {
-		fetchMock.mockResolvedValue({
-			ok: true,
-			json: async () => ({ nodeName: "wsl", leftovers: [], command: null }),
-		});
-		renderMenu(vi.fn());
-
-		fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
-
-		await screen.findByText("wsl");
-		expect(screen.queryByText(/leftover workspace/)).toBeNull();
-	});
-
 	it("launches an assist update session with no cwd on confirm", () => {
 		const launchAssist = vi.fn();
 		renderMenu(launchAssist);

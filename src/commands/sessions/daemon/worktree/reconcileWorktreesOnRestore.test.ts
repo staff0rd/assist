@@ -12,7 +12,7 @@ import {
 	readWorktreeRegistry,
 } from "./readWorktreeRegistry";
 import { recheckReapedWorktrees } from "./recheckReapedWorktrees";
-import { reportLeftoversEnabled } from "./reportLeftoversEnabled";
+import { cleanLeftoversEnabled } from "./cleanLeftoversEnabled";
 import { reapWorktree } from "./reapWorktree";
 import { reclaimVanishedWorktrees } from "./reclaimVanishedWorktrees";
 import { reconcileWorktreesOnRestore } from "./reconcileWorktreesOnRestore";
@@ -24,8 +24,8 @@ vi.mock("node:fs", async () =>
 		await vi.importActual<typeof fsMockModule>("../../../../test/mocks/fsMock")
 	).fsMock(),
 );
-vi.mock("./reportLeftoversEnabled", () => ({
-	reportLeftoversEnabled: vi.fn(() => true),
+vi.mock("./cleanLeftoversEnabled", () => ({
+	cleanLeftoversEnabled: vi.fn(() => true),
 }));
 vi.mock("./recheckReapedWorktrees", () => ({
 	recheckReapedWorktrees: vi.fn(() => Promise.resolve()),
@@ -89,7 +89,7 @@ function reconcile(sessions: Map<string, Session>) {
 describe("reconcileWorktreesOnRestore", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
-		vi.mocked(reportLeftoversEnabled).mockReturnValue(true);
+		vi.mocked(cleanLeftoversEnabled).mockReturnValue(true);
 		existsMock.mockReturnValue(true);
 		vi.mocked(realpathSync).mockImplementation((path) => String(path));
 		persistedMock.mockReturnValue([]);
@@ -149,10 +149,10 @@ describe("reconcileWorktreesOnRestore", () => {
 		expect(sessions.size).toBe(0);
 	});
 
-	it("records a durable orphan it cannot delete as a leftover without spawning a card", async () => {
+	it("marks a durable orphan it cannot delete for retry without spawning a card", async () => {
 		existsMock.mockImplementation((path) => !String(path).endsWith(".git"));
 		durabilityMock.mockResolvedValue({ durable: true, gone: true });
-		reapMock.mockResolvedValue({ removed: false, reason: "EACCES" });
+		reapMock.mockResolvedValue({ removed: false, reason: "EBUSY" });
 		const sessions = new Map<string, Session>();
 
 		await reconcile(sessions);
@@ -160,13 +160,32 @@ describe("reconcileWorktreesOnRestore", () => {
 		expect(sessions.size).toBe(0);
 		expect(vi.mocked(markLeftover)).toHaveBeenCalledWith(
 			"/git/repo-2",
-			"EACCES",
+			undefined,
 		);
-		expect(recheckReapedWorktrees).toHaveBeenCalledTimes(1);
+		expect(recheckReapedWorktrees).toHaveBeenCalledWith(
+			new Set(["/git/repo-2"]),
+		);
 	});
 
-	it("skips the reaped recheck and leftover recording when sessions.reportLeftovers is false", async () => {
-		vi.mocked(reportLeftoversEnabled).mockReturnValue(false);
+	it("records the deferred reason when the orphan's removal waits on Docker", async () => {
+		existsMock.mockImplementation((path) => !String(path).endsWith(".git"));
+		durabilityMock.mockResolvedValue({ durable: true, gone: true });
+		reapMock.mockResolvedValue({
+			removed: false,
+			reason: "Docker is not reachable",
+			deferred: true,
+		});
+
+		await reconcile(new Map<string, Session>());
+
+		expect(vi.mocked(markLeftover)).toHaveBeenCalledWith(
+			"/git/repo-2",
+			"Docker is not reachable",
+		);
+	});
+
+	it("skips the reaped recheck and leftover recording when sessions.cleanLeftovers is false", async () => {
+		vi.mocked(cleanLeftoversEnabled).mockReturnValue(false);
 		existsMock.mockImplementation((path) => !String(path).endsWith(".git"));
 		durabilityMock.mockResolvedValue({ durable: true, gone: true });
 		reapMock.mockResolvedValue({ removed: false, reason: "EACCES" });

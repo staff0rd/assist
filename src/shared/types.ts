@@ -325,7 +325,7 @@ const assistConfigShape = {
 			hotkeys: hotkeysSchema.optional(),
 			askQuestion: z.boolean().default(true),
 			askQuestionAutoSubmit: z.boolean().default(false),
-			reportLeftovers: z.boolean().default(true),
+			cleanLeftovers: z.boolean().default(true),
 		})
 		.optional(),
 	database: z

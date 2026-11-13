@@ -9,6 +9,7 @@ const LEGACY_SECTION_KEYS: Record<string, string[]> = {
 		"floatWaitingAfterMs",
 		"parkWaitingAfterMs",
 		"askQuestionAutoApprove",
+		"reportLeftovers",
 	],
 	worktree: ["watcher", "includeDrafts"],
 	devlog: ["skip"],

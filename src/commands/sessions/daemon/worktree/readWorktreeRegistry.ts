@@ -72,11 +72,22 @@ export function forgetWorktree(path: string): void {
 	saveJson(REGISTRY_FILE, data);
 }
 
-export function markLeftover(path: string, reason: string): void {
+/** Marks a path assist failed to delete as reaped, so each restart's
+ * recheckReapedWorktrees retries it; `deferredReason` is set only while the
+ * removal waits on Docker, which is what nodes doctor lists. */
+export function markLeftover(
+	path: string,
+	deferredReason: string | undefined,
+): void {
 	const data = loadJson<Registry>(REGISTRY_FILE);
 	const record = data[path];
 	if (!record) return;
-	data[path] = { ...record, reaped: true, leftover: reason };
+	const { leftover: _leftover, ...rest } = record;
+	data[path] = {
+		...rest,
+		reaped: true,
+		...(deferredReason ? { leftover: deferredReason } : {}),
+	};
 	saveJson(REGISTRY_FILE, data);
 }
 

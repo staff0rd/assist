@@ -4,12 +4,13 @@ import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { makeSession } from "../../../test/mothers/makeSession";
 import { discardTree } from "./discardTree";
-import { forgetWorktree } from "./worktree/readWorktreeRegistry";
+import { forgetWorktree, markLeftover } from "./worktree/readWorktreeRegistry";
 import { checkDurability } from "./worktree/treeDurability";
 
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./worktree/readWorktreeRegistry", () => ({
 	forgetWorktree: vi.fn(),
+	markLeftover: vi.fn(),
 	worktreeAttributionIncludingReaped: vi.fn(() => undefined),
 }));
 
@@ -45,7 +46,7 @@ describe.skipIf(runsAsRoot)(
 			});
 		});
 
-		it("releases the card to a dismissable error that says how to remove the directory", async () => {
+		it("discards the card and leaves the directory to the restart recheck", async () => {
 			const path = leftoverWithUndeletableChild();
 			const session = makeSession({
 				status: "stopped",
@@ -60,15 +61,14 @@ describe.skipIf(runsAsRoot)(
 			await discardTree(session, discarded, notify);
 
 			expect(existsSync(path)).toBe(true);
-			expect(discarded).not.toHaveBeenCalled();
-			expect(notify).toHaveBeenCalled();
-			expect(session.status).toBe("error");
+			expect(discarded).toHaveBeenCalled();
 			expect(session.worktree).toBeUndefined();
-			expect(session.undurable).toBeUndefined();
-			expect(session.closing).toBeUndefined();
-			expect(session.subtitle).toContain("owned by another user");
-			expect(session.subtitle).toContain(`sudo rm -rf ${path}`);
+			expect(session.subtitle ?? "").not.toContain("rm -rf");
 			expect(vi.mocked(forgetWorktree)).not.toHaveBeenCalled();
+			expect(vi.mocked(markLeftover)).toHaveBeenCalledWith(
+				path,
+				expect.stringContaining("Docker is not reachable"),
+			);
 		});
 	},
 );

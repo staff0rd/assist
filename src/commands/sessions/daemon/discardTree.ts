@@ -2,6 +2,7 @@ import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { setStatus } from "./setStatus";
 import { holdsNoCheckout } from "./worktree/holdsNoCheckout";
+import { markLeftover } from "./worktree/readWorktreeRegistry";
 import { reapWorktree } from "./worktree/reapWorktree";
 
 export async function discardTree(
@@ -12,9 +13,12 @@ export async function discardTree(
 	if (session.worktree) {
 		const removal = await reapWorktree(session.worktree.path, true);
 		if (!removal.removed) {
-			if (holdsNoCheckout(session.worktree.path))
-				releaseUndeletableLeftover(session, removal.reason, notify);
-			else holdFailedDiscard(session, removal.reason, notify);
+			if (!holdsNoCheckout(session.worktree.path)) {
+				holdFailedDiscard(session, removal.reason, notify);
+				return;
+			}
+			handOffUndeletableLeftover(session, removal);
+			discarded();
 			return;
 		}
 		session.releasedFromClone = session.worktree.clone;
@@ -40,23 +44,16 @@ function holdFailedDiscard(
 	notify();
 }
 
-function releaseUndeletableLeftover(
+function handOffUndeletableLeftover(
 	session: Session,
-	reason: string,
-	notify: () => void,
+	removal: { reason: string; deferred?: boolean },
 ): void {
 	const path = session.worktree?.path;
+	if (!path) return;
+	markLeftover(path, removal.deferred ? removal.reason : undefined);
 	daemonLog(
-		`session ${session.id} discard could not delete ${path}, which holds no git checkout and so no work: ${reason}; card released to error so it can be dismissed`,
+		`session ${session.id} discard could not delete ${path}, which holds no git checkout and so no work: ${removal.reason}; marked reaped so each daemon restart retries its removal, and the card is discarded`,
 	);
-	const message = `Discard could not delete ${path}: ${reason}`;
-	if (session.worktree) session.releasedFromClone = session.worktree.clone;
+	session.releasedFromClone = session.worktree?.clone;
 	session.worktree = undefined;
-	session.closing = undefined;
-	session.undurable = undefined;
-	session.error = message;
-	session.subtitle = message;
-	session.scrollback += `\r\n\x1b[31m${message}\x1b[0m\r\n`;
-	setStatus(session, "error");
-	notify();
 }

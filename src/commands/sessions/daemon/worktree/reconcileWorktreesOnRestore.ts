@@ -11,7 +11,7 @@ import { logVanishedTree } from "./logVanishedTree";
 import { underTempRoot } from "./underTempRoot";
 import { recoverOrphan } from "./recoverOrphan";
 import { recheckReapedWorktrees } from "./recheckReapedWorktrees";
-import { reportLeftoversEnabled } from "./reportLeftoversEnabled";
+import { cleanLeftoversEnabled } from "./cleanLeftoversEnabled";
 
 export function reconcileWorktreesOnRestore(
 	sessions: Map<string, Session>,
@@ -28,6 +28,7 @@ async function recoverOrphanedWorktrees(
 	notify: () => void,
 ): Promise<void> {
 	const accounted = accountedTrees(sessions);
+	const attempted = new Set<string>();
 	const vanished = new Map<string, { path: string; branch: string }[]>();
 	for (const { path, clone, harness } of readWorktreeRegistry()) {
 		if (underTempRoot(path)) {
@@ -46,10 +47,13 @@ async function recoverOrphanedWorktrees(
 			continue;
 		}
 		if (accounted.has(path)) continue;
+		attempted.add(path);
 		await recoverOrphan(sessions, spawnWith, { path, clone, harness }, notify);
 	}
 	for (const [clone, paths] of vanished)
 		await reclaimVanishedWorktrees(clone, paths);
-	if (reportLeftoversEnabled())
-		await recheckReapedWorktrees(accountedTrees(sessions));
+	if (cleanLeftoversEnabled())
+		await recheckReapedWorktrees(
+			new Set([...accountedTrees(sessions), ...attempted]),
+		);
 }

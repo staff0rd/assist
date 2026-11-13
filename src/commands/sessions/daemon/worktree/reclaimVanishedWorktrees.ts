@@ -3,11 +3,13 @@ import { daemonLog } from "../daemonLog";
 import { git } from "./git";
 import { listLocalBranches } from "./listWorktreePaths";
 import { forgetWorktree } from "./readWorktreeRegistry";
+import { removeBindMountContainers } from "./removeBindMountContainers";
 
 export async function reclaimVanishedWorktrees(
 	clone: string,
 	paths: { path: string; branch: string }[],
 ): Promise<void> {
+	for (const { path } of paths) await removeBindMountContainers(path);
 	if (!existsSync(clone)) {
 		for (const { path } of paths) forgetWorktree(path);
 		daemonLog(

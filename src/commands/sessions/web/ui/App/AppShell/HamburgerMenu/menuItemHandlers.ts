@@ -24,7 +24,6 @@ export function menuItemHandlers(
 		onNavigate: close,
 		onFirefoxExtension: close,
 		onTestflight: closeAndShow("testflight"),
-		onLeftovers: closeAndShow("leftovers"),
 		onRestart: {
 			open: closeAndShow("restart"),
 			skip: closeAndRun(actions.restart),

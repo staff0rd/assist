@@ -34,6 +34,10 @@ vi.mock("./src/shared/harnessAdapters/piExtensionProbe", () => ({
 	piExtensionProbe: () => ({ supported: true }),
 }));
 
+vi.mock("./src/commands/sessions/daemon/worktree/docker", () => ({
+	docker: vi.fn(() => Promise.reject(new Error("docker is not run in tests"))),
+}));
+
 const storeDir = mkdtempSync(join(tmpdir(), "assist-test-store-"));
 process.env.ASSIST_STORE_DIR = storeDir;
 process.env.ASSIST_WATCHER_LOG_DIR = join(storeDir, "watchers");

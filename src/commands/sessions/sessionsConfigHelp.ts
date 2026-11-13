@@ -17,9 +17,9 @@ export const sessionsConfigHelp: ConfigHelpEntry[] = [
 		note: "ceiling on concurrent live sessions one daemon holds; spawning past it is refused, and restore respawns at most this many persisted sessions (default: 24)",
 	},
 	{
-		key: "sessions.reportLeftovers",
-		setter: "assist config set sessions.reportLeftovers false --node",
-		note: "default on: on daemon restart, recheck reaped worktree paths that reappeared (e.g. root-owned Docker bind-mount stubs) and list any leftover assist cannot delete, with a combined removal command, in the web node menu and `assist sessions nodes doctor`. Set false to skip both",
+		key: "sessions.cleanLeftovers",
+		setter: "assist config set sessions.cleanLeftovers false --node",
+		note: "default on: reaping a worktree removes Docker containers bind-mounting inside it, and each daemon restart deletes reaped worktree paths that reappeared with no .git (through Docker when root-owned; deferred to the next restart and listed in `assist sessions nodes doctor` while Docker is unreachable). Set false to skip both",
 	},
 	{
 		key: "sessions.newSessionMode",

@@ -8,6 +8,7 @@ import {
 	worktreeAttributionIncludingReaped,
 } from "./readWorktreeRegistry";
 import { reapWorktree } from "./reapWorktree";
+import { removeBindMountContainers } from "./removeBindMountContainers";
 import { stopInstall } from "./stopInstall";
 import type * as fsMockModule from "../../../../test/mocks/fsMock";
 import { checkDurability } from "./treeDurability";
@@ -29,6 +30,9 @@ vi.mock("./readWorktreeRegistry", () => ({
 	worktreeAttributionIncludingReaped: vi.fn(() => undefined),
 }));
 vi.mock("./stopInstall", () => ({ stopInstall: vi.fn() }));
+vi.mock("./removeBindMountContainers", () => ({
+	removeBindMountContainers: vi.fn(() => Promise.resolve()),
+}));
 vi.mock("./treeDurability", () => ({ checkDurability: vi.fn() }));
 
 const existsMock = vi.mocked(existsSync);
@@ -217,6 +221,29 @@ describe("reapWorktree", () => {
 
 		expect(gitMock).not.toHaveBeenCalled();
 		expect(forgetMock).toHaveBeenCalledWith("/git/repo-2");
+	});
+
+	it("removes containers bind-mounting inside the tree before removing it", async () => {
+		durabilityMock.mockResolvedValue({ durable: true });
+
+		await reapWorktree("/git/repo-2");
+
+		expect(vi.mocked(removeBindMountContainers)).toHaveBeenCalledWith(
+			"/git/repo-2",
+		);
+		expect(
+			vi.mocked(removeBindMountContainers).mock.invocationCallOrder[0],
+		).toBeLessThan(gitMock.mock.invocationCallOrder[0] ?? 0);
+	});
+
+	it("removes bind-mount containers even when the tree is already gone", async () => {
+		existsMock.mockReturnValue(false);
+
+		await reapWorktree("/git/repo-2");
+
+		expect(vi.mocked(removeBindMountContainers)).toHaveBeenCalledWith(
+			"/git/repo-2",
+		);
 	});
 
 	it("kills a seeding install before git touches the tree", async () => {

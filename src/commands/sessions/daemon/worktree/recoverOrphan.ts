@@ -9,7 +9,7 @@ import {
 	resurfaceOrphanedWorktree,
 } from "./resurfaceOrphanedWorktree";
 import { markLeftover } from "./readWorktreeRegistry";
-import { reportLeftoversEnabled } from "./reportLeftoversEnabled";
+import { cleanLeftoversEnabled } from "./cleanLeftoversEnabled";
 import { checkDurability } from "./treeDurability";
 
 export async function recoverOrphan(
@@ -25,11 +25,11 @@ export async function recoverOrphan(
 		if (
 			!removal.removed &&
 			holdsNoCheckout(orphan.path) &&
-			reportLeftoversEnabled()
+			cleanLeftoversEnabled()
 		) {
-			markLeftover(orphan.path, removal.reason);
+			markLeftover(orphan.path, removal.deferred ? removal.reason : undefined);
 			daemonLog(
-				`worktree ${orphan.path} could not be reaped; recorded as a leftover so restarts stop retrying it`,
+				`worktree ${orphan.path} could not be reaped; marked reaped so each daemon restart retries its removal${removal.deferred ? " once Docker is reachable" : ""}`,
 			);
 		}
 		return;

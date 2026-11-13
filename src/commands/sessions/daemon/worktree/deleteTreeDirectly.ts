@@ -2,8 +2,9 @@ import { statSync } from "node:fs";
 import { rm } from "node:fs/promises";
 import { join } from "node:path";
 import { daemonLog } from "../daemonLog";
-import { git } from "./git";
+import { deleteViaDocker } from "./deleteViaDocker";
 import type { TreeRemoval } from "./TreeRemoval";
+import { pruneBookkeeping } from "./pruneBookkeeping";
 
 export async function deleteTreeDirectly(
 	clone: string,
@@ -26,11 +27,19 @@ export async function deleteTreeDirectly(
 			retryDelay: 200,
 		});
 	} catch (error) {
-		const failure = deleteFailure(worktreePath, error);
+		if (!ownedByAnotherUser(error)) {
+			daemonLog(
+				`worktree ${worktreePath} directory delete failed, left in place for the next reconcile: ${reason(error)}`,
+			);
+			return { removed: false, reason: reason(error) };
+		}
 		daemonLog(
-			`worktree ${worktreePath} directory delete failed, left in place for the next reconcile: ${failure}`,
+			`worktree ${worktreePath} directory delete hit files owned by another user, falling back to Docker: ${reason(error)}`,
 		);
-		return { removed: false, reason: failure };
+		const viaDocker = await deleteViaDocker(worktreePath, reason(error));
+		if (!viaDocker.removed) return viaDocker;
+		await pruneBookkeeping(clone, worktreePath);
+		return viaDocker;
 	}
 	daemonLog(`worktree ${worktreePath} directory deleted directly`);
 	await pruneBookkeeping(clone, worktreePath);
@@ -45,26 +54,9 @@ function holdsAGitDirectoryRatherThanALink(worktreePath: string): boolean {
 	);
 }
 
-async function pruneBookkeeping(
-	clone: string,
-	worktreePath: string,
-): Promise<void> {
-	try {
-		await git(clone, ["worktree", "prune"]);
-		daemonLog(
-			`worktree bookkeeping pruned in clone ${clone} after deleting ${worktreePath} directly`,
-		);
-	} catch (error) {
-		daemonLog(
-			`worktree bookkeeping prune failed in clone ${clone} after deleting ${worktreePath}: ${reason(error)}`,
-		);
-	}
-}
-
-function deleteFailure(worktreePath: string, error: unknown): string {
+function ownedByAnotherUser(error: unknown): boolean {
 	const code = (error as NodeJS.ErrnoException | undefined)?.code;
-	if (code !== "EACCES" && code !== "EPERM") return reason(error);
-	return `${worktreePath} holds files owned by another user (e.g. root, from a Docker bind mount) that assist cannot delete; remove it with \`sudo rm -rf ${worktreePath}\` (${reason(error)})`;
+	return code === "EACCES" || code === "EPERM";
 }
 
 function reason(error: unknown): string {
