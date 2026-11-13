@@ -311,12 +311,53 @@ describe("itemChangeSet", () => {
 		it("retries a commit whose paths could not be listed", async () => {
 			config(true);
 			commits("one");
-			withRepo({ one: { parent: "base-one", paths: [] } });
+			withRepo({ one: { parent: "base-one", paths: ["a.ts"] } });
+			const listing = execGitMock.getMockImplementation();
+			execGitMock.mockImplementation(async (cwd, args) => {
+				if (args[0] === "diff-tree") throw new Error("diff-tree failed");
+				return listing?.(cwd, args) ?? "";
+			});
 			const session = nextSession();
 
 			expect(await itemChangeSet("/repo", session)).toBeUndefined();
 			withRepo({ one: { parent: "base-one", paths: ["a.ts"] } });
 			vi.advanceTimersByTime(60_000);
+			const changeSet = await itemChangeSet("/repo", session);
+
+			expect(changeSet?.groups).toEqual([
+				{ base: "base-one", paths: ["a.ts"] },
+			]);
+		});
+
+		it("does not resolve a commit that changed no paths again", async () => {
+			config(true);
+			commits("merge", "one");
+			withRepo({
+				merge: { parent: "base-merge", paths: [] },
+				one: { parent: "base-one", paths: ["a.ts"] },
+			});
+			const session = nextSession();
+
+			await itemChangeSet("/repo", session);
+			const resolvingOnce = gitCallsFor("merge");
+			vi.advanceTimersByTime(60_000);
+			await itemChangeSet("/repo", session);
+
+			expect(gitCallsFor("merge")).toBe(resolvingOnce);
+		});
+
+		it("drops a resolved commit that a history rewrite later removed", async () => {
+			config(true);
+			commits("one", "two");
+			withRepo({
+				one: { parent: "base-one", paths: ["a.ts"] },
+				two: { parent: "one", paths: ["b.ts"] },
+			});
+			const session = nextSession();
+
+			await itemChangeSet("/repo", session);
+			withRepo({ one: { parent: "base-one", paths: ["a.ts"] } });
+			vi.advanceTimersByTime(11 * 60_000);
 			const changeSet = await itemChangeSet("/repo", session);
 
 			expect(changeSet?.groups).toEqual([
