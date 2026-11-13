@@ -1,3 +1,10 @@
+# [0.1132.0](https://github.com/staff0rd/assist/compare/v0.1131.0...v0.1132.0) (2026-11-13)
+
+
+### Features
+
+* prompt about a PR from extension ([89e19fa](https://github.com/staff0rd/assist/commit/89e19fa4d4045cfe4fac7acf6ac977e80205f0e4))
+
 # [0.1131.0](https://github.com/staff0rd/assist/compare/v0.1130.1...v0.1131.0) (2026-11-13)
 
 
