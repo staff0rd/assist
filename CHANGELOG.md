@@ -1,3 +1,10 @@
+# [0.1138.0](https://github.com/staff0rd/assist/compare/v0.1137.0...v0.1138.0) (2026-11-13)
+
+
+### Features
+
+* add session start over ([a45c87e](https://github.com/staff0rd/assist/commit/a45c87eecec54c6d88bf4abdf15cdb1fba0298e7))
+
 # [0.1137.0](https://github.com/staff0rd/assist/compare/v0.1136.0...v0.1137.0) (2026-11-13)
 
 
