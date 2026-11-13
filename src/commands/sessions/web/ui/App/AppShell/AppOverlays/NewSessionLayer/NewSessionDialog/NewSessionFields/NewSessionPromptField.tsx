@@ -1,5 +1,6 @@
-import TextField from "@mui/material/TextField";
 import type { Ref, SyntheticEvent } from "react";
+import type { SlashCommand } from "../../../../../../../slashCommands/readSlashCommands";
+import { SlashTextField } from "../../../../../../slashSuggestions/SlashTextField";
 import { handleEnterSubmit } from "../../../../../handleEnterSubmit";
 
 const outline = ".MuiOutlinedInput-notchedOutline";
@@ -25,6 +26,7 @@ export function NewSessionPromptField({
 	inputRef,
 	autoFocus,
 	onTrack,
+	commands,
 }: {
 	value: string;
 	onChange: (prompt: string) => void;
@@ -32,12 +34,14 @@ export function NewSessionPromptField({
 	inputRef: Ref<HTMLTextAreaElement>;
 	autoFocus: boolean;
 	onTrack: (e: SyntheticEvent) => void;
+	commands: SlashCommand[];
 }) {
 	return (
-		<TextField
+		<SlashTextField
+			commands={commands}
 			sx={promptSx}
 			value={value}
-			onChange={(e) => onChange(e.target.value)}
+			onChange={onChange}
 			onKeyDown={handleEnterSubmit}
 			onFocus={onTrack}
 			onSelect={onTrack}

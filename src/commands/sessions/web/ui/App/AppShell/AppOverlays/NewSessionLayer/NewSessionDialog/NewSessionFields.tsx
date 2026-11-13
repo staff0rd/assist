@@ -1,5 +1,6 @@
 import Stack from "@mui/material/Stack";
 import type { ComponentProps } from "react";
+import { useSuggestedSlashCommands } from "../../../../../slashSuggestions/useSuggestedSlashCommands";
 import type { NodeClone } from "../../../../../useNodeClones";
 import { useRepoSelectionContext } from "../../../../../useRepoSelectionContext";
 import { MachineSelector } from "./NewSessionFields/MachineSelector";
@@ -17,6 +18,11 @@ export function NewSessionFields({
 }) {
 	const { draft, focus } = props;
 	const { repos } = useRepoSelectionContext();
+	const commands = useSuggestedSlashCommands(
+		props.harness,
+		draft.cwd,
+		draft.node,
+	);
 	return (
 		<NewSessionFieldsLayout
 			prompt={
@@ -27,6 +33,7 @@ export function NewSessionFields({
 					inputRef={focus.promptRef}
 					autoFocus={focus.autoFocus === "prompt"}
 					onTrack={focus.trackPrompt}
+					commands={commands}
 				/>
 			}
 		>

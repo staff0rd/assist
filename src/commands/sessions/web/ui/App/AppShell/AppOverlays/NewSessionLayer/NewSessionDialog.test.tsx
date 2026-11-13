@@ -9,13 +9,31 @@ import {
 	within,
 } from "@testing-library/react";
 import { useEffect, useState } from "react";
-import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
+import {
+	afterEach,
+	beforeAll,
+	beforeEach,
+	describe,
+	expect,
+	it,
+	vi,
+} from "vitest";
 import { NewSessionDialog } from "./NewSessionDialog";
 import type { NewSessionLaunchers } from "./launchNewSession";
 import type { NewSessionMode } from "./newSessionModes";
 import { useNewSessionDraft } from "./useNewSessionDraft";
 import type { LoadedDefaultMode } from "./useNewSessionDraft/useDefaultNewSessionMode";
 import { RepoSelectionContext } from "../../../../useRepoSelectionContext";
+
+vi.mock("../../../../slashSuggestions/useSlashCommands", () => ({
+	useSlashCommands: (cwd: string | undefined) =>
+		cwd
+			? [
+					{ name: "draft", scope: "user" },
+					{ name: "dream", scope: "project" },
+				]
+			: [],
+}));
 
 beforeAll(() => {
 	Element.prototype.scrollIntoView = vi.fn();
@@ -1049,5 +1067,68 @@ describe("NewSessionDialog keyboard", () => {
 
 		expect(onClose).toHaveBeenCalled();
 		expect(onCreate).not.toHaveBeenCalled();
+	});
+});
+
+describe("NewSessionDialog prompt slash suggestions", () => {
+	beforeEach(() => localStorage.clear());
+
+	function typePrompt(value: string) {
+		fireEvent.change(promptInput(), {
+			target: {
+				value,
+				selectionStart: value.length,
+				selectionEnd: value.length,
+			},
+		});
+	}
+
+	it("lists the repo's matching skills for /dr", () => {
+		renderDialog();
+		typePrompt("/dr");
+		expect(screen.getAllByRole("option").map((o) => o.textContent)).toEqual([
+			"/draft",
+			"/dreamproject",
+		]);
+	});
+
+	it("inserts the highlighted skill on Enter, and Enter then submits", () => {
+		const { onCreate } = renderDialog();
+		typePrompt("/dr");
+		fireEvent.keyDown(promptInput(), { key: "ArrowDown" });
+		fireEvent.keyDown(promptInput(), { key: "Enter" });
+		expect(promptInput().value).toBe("/dream ");
+		expect(screen.queryByRole("listbox")).toBeNull();
+		expect(onCreate).not.toHaveBeenCalled();
+		submitPrompt();
+		expect(onCreate).toHaveBeenCalledTimes(1);
+	});
+
+	it("inserts on Tab and on click", () => {
+		renderDialog();
+		typePrompt("/dr");
+		fireEvent.keyDown(promptInput(), { key: "Tab" });
+		expect(promptInput().value).toBe("/draft ");
+		typePrompt("then /dr");
+		fireEvent.click(screen.getAllByRole("option")[1]);
+		expect(promptInput().value).toBe("then /dream ");
+	});
+
+	it("closes the list on Esc without closing the dialog", () => {
+		const { onClose } = renderDialog();
+		typePrompt("/dr");
+		fireEvent.keyDown(promptInput(), { key: "Escape" });
+		expect(screen.queryByRole("listbox")).toBeNull();
+		expect(onClose).not.toHaveBeenCalled();
+		fireEvent.keyDown(promptInput(), { key: "Escape" });
+		expect(onClose).toHaveBeenCalled();
+	});
+
+	it("offers nothing once a harness without slash suggestions is picked", async () => {
+		await renderWithHarnesses();
+		fireEvent.click(promptSegment());
+		fireEvent.click(harnessItem("Codex"));
+		typePrompt("/dr");
+		expect(screen.queryByRole("listbox")).toBeNull();
 	});
 });

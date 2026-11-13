@@ -3,7 +3,7 @@ import type { SlashCommand } from "../../slashCommands/readSlashCommands";
 import { SlashSuggestionRow } from "./SlashSuggestionRow";
 import { slashSuggestionListSx as sx } from "./slashSuggestionListSx";
 
-type SlashSuggestions = {
+export type SlashSuggestions = {
 	query: string;
 	matches: SlashCommand[];
 	highlight: number;
@@ -12,16 +12,18 @@ type SlashSuggestions = {
 export function SlashSuggestionList({
 	suggestions,
 	onPick,
+	floating = false,
 }: {
 	suggestions: SlashSuggestions;
 	onPick: (name: string) => void;
+	floating?: boolean;
 }) {
 	return (
 		<Box
 			component="ul"
 			role="listbox"
 			aria-label="Skill suggestions"
-			sx={sx.list}
+			sx={{ ...sx.list, ...(floating && sx.floating) }}
 		>
 			{suggestions.matches.map((command, i) => (
 				<SlashSuggestionRow

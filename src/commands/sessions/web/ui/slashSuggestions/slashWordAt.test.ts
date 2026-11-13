@@ -41,6 +41,11 @@ describe("slashWordAt", () => {
 		expect(slashWordAt("/re ", 4)).toBeNull();
 		expect(slashWordAt("", 0)).toBeNull();
 	});
+
+	it("ignores a caret before the slash", () => {
+		expect(slashWordAt("/dr", 0)).toBeNull();
+		expect(slashWordAt("see /dr", 4)).toBeNull();
+	});
 });
 
 describe("replaceSlashWord", () => {

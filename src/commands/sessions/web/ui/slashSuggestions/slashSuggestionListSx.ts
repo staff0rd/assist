@@ -20,6 +20,7 @@ export const slashSuggestionListSx = {
 		borderRadius: (t: Theme) => `${t.tokens.radius.md}px`,
 		boxShadow: (t: Theme) => t.tokens.elevation.overlay,
 	},
+	floating: { position: "static", mt: 0.5, mb: 0 },
 	row: {
 		display: "flex",
 		flexDirection: "column",

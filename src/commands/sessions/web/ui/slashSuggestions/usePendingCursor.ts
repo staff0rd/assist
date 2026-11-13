@@ -16,5 +16,6 @@ export function usePendingCursor(value: string) {
 		placeCursor: (cursor: number) => {
 			pendingCursor.current = cursor;
 		},
+		isPlacing: () => pendingCursor.current !== null,
 	};
 }

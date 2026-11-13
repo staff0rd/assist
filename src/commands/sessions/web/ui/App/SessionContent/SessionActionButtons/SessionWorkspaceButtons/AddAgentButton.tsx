@@ -1,13 +1,10 @@
 import GroupAddOutlinedIcon from "@mui/icons-material/GroupAddOutlined";
-import Popover from "@mui/material/Popover";
 import { useState } from "react";
 import { ActionButton } from "../../../ActionButton";
+import { AddAgentPopover } from "./AddAgentButton/AddAgentPopover";
 import { canAddAgent } from "./AddAgentButton/canAddAgent";
-import { FreePromptForm } from "./AddAgentButton/FreePromptForm";
 import type { ShortcutName } from "../../../shortcutRegistry";
 import type { SessionInfo } from "../../../../types";
-import { usePersistedPrompt } from "../../../../usePersistedPrompt";
-import { useSessionLaunchContext } from "../../../../useSessionLaunchContext";
 
 export function AddAgentButton({
 	session,
@@ -16,9 +13,7 @@ export function AddAgentButton({
 	session: SessionInfo;
 	shortcut?: ShortcutName;
 }) {
-	const { launchAgentInStream } = useSessionLaunchContext();
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
-	const [prompt, setPrompt] = usePersistedPrompt(`add-agent:${session.id}`);
 	if (!canAddAgent(session)) return null;
 
 	return (
@@ -34,25 +29,11 @@ export function AddAgentButton({
 					setAnchorEl(e.currentTarget);
 				}}
 			/>
-			<Popover
+			<AddAgentPopover
+				session={session}
 				anchorEl={anchorEl}
-				open={Boolean(anchorEl)}
 				onClose={() => setAnchorEl(null)}
-				onClick={(e) => e.stopPropagation()}
-				anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-				transformOrigin={{ vertical: "top", horizontal: "right" }}
-			>
-				<FreePromptForm
-					anchored
-					value={prompt}
-					onChange={setPrompt}
-					onSubmit={() => {
-						launchAgentInStream(session.id, prompt, session.cwd);
-						setPrompt("");
-						setAnchorEl(null);
-					}}
-				/>
-			</Popover>
+			/>
 		</>
 	);
 }

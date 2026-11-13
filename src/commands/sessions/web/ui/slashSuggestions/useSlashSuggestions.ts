@@ -14,14 +14,16 @@ export function useSlashSuggestions(
 	onChange: (value: string) => void,
 ) {
 	const [cursor, setCursor] = useState(0);
-	const { inputRef, placeCursor } = usePendingCursor(value);
+	const { inputRef, placeCursor, isPlacing } = usePendingCursor(value);
 	const found = findSlashMatches(commands, value, cursor);
 	const matches = found?.matches ?? [];
 	const nav = useSlashListNav(found?.key ?? "", matches.length);
 	const open = matches.length > 0 && !nav.dismissed;
 
-	const trackCursor = (field: Field) =>
-		setCursor(field.selectionEnd ?? field.value.length);
+	const trackCursor = (field: Field) => {
+		// React fires onSelect after an inserting keydown, still reading the pre-insert caret.
+		if (!isPlacing()) setCursor(field.selectionEnd ?? field.value.length);
+	};
 
 	const pick = (name: string) => {
 		if (!found) return;
