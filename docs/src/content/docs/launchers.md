@@ -17,11 +17,13 @@ Each starts an agent mode in the terminal you run it from, like the matching mod
 
 ## Commands
 
-- `assist draft [description]` (alias `feat`) starts Claude in `/draft` mode.
-- `assist bug [description]` starts Claude in `/bug` mode.
-- `assist refine [id]` starts a harness in `/refine` mode to refine a backlog item. `--harness <claude|codex|pi>` overrides `harness.engine`.
-- `assist review-pr-comments [number]` starts Claude working through a pull request's review comments one by one, checking out PR `<number>` first when given. `--announce` posts the PR to Slack once every thread is handled.
-- `assist fix-conflict [number]` starts Claude resolving a pull request's merge conflicts against the remote default branch. `--rebase` rebases instead of merging.
+- `assist draft [description]` (alias `feat`) starts an agent in `/draft` mode.
+- `assist bug [description]` starts an agent in `/bug` mode.
+- `assist refine [id]` starts an agent in `/refine` mode to refine a backlog item.
+- `assist review-pr-comments [number]` starts an agent working through a pull request's review comments one by one, checking out PR `<number>` first when given. `--announce` posts the PR to Slack once every thread is handled.
+- `assist fix-conflict [number]` starts an agent resolving a pull request's merge conflicts against the remote default branch. `--rebase` rebases instead of merging.
+
+`draft` and `bug` take `--model <model>` to run on that model instead of their `harness.defaults.<type>.model`, or `--no-model` for the harness's own default.
 
 ## Chaining into the next item
 

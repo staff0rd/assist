@@ -48,7 +48,7 @@ The page shows the effective config for the repo selected in the toolbar, with k
 ::screenshot{file="config.png"}
 
 - Type in **Search** to narrow the list by key or description. Other pages link here with the search filled in, such as **Next settings** on [Next](../next/).
-- Each key shows a chip naming where its value comes from: `repo (git)`, `repo (db)`, `user (node)`, `user (db)` or `default`. Hover the chip to see the file or override it was read from.
+- The scope chips beside **Search** show only the keys whose value comes from the scopes you pick, such as everything this repo sets in **repo (db)**.- Each key shows a chip naming where its value comes from: `repo (git)`, `repo (db)`, `user (node)`, `user (db)` or `default`. Hover the chip to see the file or override it was read from.
 - Press the pencil to edit a key. Pick a scope with **repo (git)**, **repo (db)**, **user (node)** or **user (db)**, then **Save**. A dot marks the scopes that already hold a value.
 - **Clear** removes the key from the chosen scope, so the next scope down applies again.
 - Lists of entries, such as `run` or `deny`, are edited in place: add, duplicate, reorder or remove entries from each row's buttons.

@@ -25,7 +25,14 @@ Each rule has a code, unique across the repo, a short title and the rule itself.
 
 ## Adding a rule
 
-Run `/add-rule` with what the rule should say. A rule about how agents behave in every repo goes in your own rules instead ([`advice.rules`](../hooks-and-permissions/) in user (db)); ask for it to stay on this node to keep it there.
+Run `/add-rule` with what the rule should say, optionally followed by a flag:
+
+| Flag     | The rule goes                                                                        |
+| -------- | ------------------------------------------------------------------------------------ |
+| none     | Where the agent judges it fits, usually the `CLAUDE.md` nearest the files it's about |
+| `--user` | To every repo, on every node                                                         |
+| `--node` | To every repo, on this node only                                                     |
+| `--repo` | To this repo, on every node                                                          |
 
 In the [diff](../sessions-diff/#commenting) and [preview panes](../sessions-preview-panes/), **Add rule** in the comment box runs `/add-rule` with your note and the selected text. The agent adds the rule, then fixes the selected text so it follows it.
 

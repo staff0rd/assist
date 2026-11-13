@@ -18,7 +18,7 @@ screenshots:
     crop: "[data-testid=session-top-bar]"
 ---
 
-The session area, right of the sidebar, shows the selected session: the top bar, its terminal and your last message to it. The [diff](../sessions-diff/) and [preview panes](../sessions-preview-panes/) open beside the terminal.
+The session area shows the selected session: the top bar, its terminal and your last message to it, along with its [diff](../sessions-diff/) and [preview panes](../sessions-preview-panes/) when open.
 
 ## The top bar
 
@@ -49,7 +49,7 @@ The terminal is the agent itself, such as Claude Code, running live. You give it
 
 ## Your last message
 
-Your last prompt to the session sits over the top-left of the terminal, cut to one line. Hover to read all of it, or click to pin it open until you press :kbd[Esc] or click elsewhere. Scrolling over it steps back through your earlier prompts, with a counter showing which one you're on.
+Your last prompt to the session shows over the terminal, cut to one line. Hover to read all of it, or click to pin it open until you press :kbd[Esc] or click elsewhere. Scrolling over it steps back through your earlier prompts, with a counter showing which one you're on.
 
 ## Transcripts
 

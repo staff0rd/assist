@@ -34,6 +34,13 @@ screenshots:
     actions:
       - script: issue-editor
     crop: "[data-testid='capture-issue-editor']"
+  - file: browser-extension-link-status.png
+    alt: A pull request comment whose issue and pull request links each show their state icon and colour
+    url: https://github.com/staff0rd/sandbox/pull/12
+    actions:
+      - script: link-status
+    crop: "[data-capture-link-status]"
+    cropPadding: 16
 ---
 
 The assist extension for Firefox starts sessions from GitHub, Azure DevOps and Gmail pages and edits acceptance criteria in GitHub issues.
@@ -63,6 +70,12 @@ On a pull request, the header button opens the same menu as the dashboard's [Rev
 ::screenshot{file="browser-extension-review-menu.png"}
 
 On an Azure DevOps pull request it offers **Checkout** and **Address Comments**, which need the Azure CLI with its `azure-devops` extension, logged in with `az login`.
+
+## Issue and pull request status
+
+On GitHub, links to issues and pull requests in comments and descriptions show the item's state, such as open, merged or closed as not planned, with GitHub's icon and colour. The states come through the assist web server, so it must be running and `gh` logged in to an account that can read those repos.
+
+::screenshot{file="browser-extension-link-status.png"}
 
 ## Sending from Gmail
 

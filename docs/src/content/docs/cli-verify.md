@@ -11,6 +11,7 @@ covers:
   - cli:verify forbidden-strings
   - cli:verify config-keys
   - cli:verify advice-fragments
+  - cli:verify harness-follow-ups
   - cli:verify migrations
   - cli:lint
   - cli:coverage
@@ -58,4 +59,4 @@ These are ready-made checks to add as `verify:*` [run commands](../run-commands/
 
 ### Checks for the assist repo
 
-`assist verify config-keys` and `assist verify advice-fragments` check assist's own source: that every config key is documented in some command's `--help`, and that every shipped [repo instructions](../hooks-and-permissions/#repo-instructions) fragment can be named in `advice.sections`.
+`assist verify config-keys`, `assist verify advice-fragments` and `assist verify harness-follow-ups` check assist's own source: that every config key is documented in some command's `--help`, that every shipped [repo instructions](../hooks-and-permissions/#repo-instructions) fragment can be named in `advice.sections`, and that every backlog item named as the follow-up for a feature a [harness](../harnesses/) doesn't support exists and is still open.

@@ -8,11 +8,13 @@ covers:
   - config:autoUpdate.enabled
   - config:autoUpdate.restart
   - config:autoUpdate.idleMinutes
-  - route:/updates
 screenshots:
   - file: updates-panel.png
-    alt: The Updates panel
-    route: /updates
+    alt: The Nodes page, listing this node and a linked node with their versions and update state
+    route: /nodes
+    setup:
+      - peer: desktop
+    waitFor: text=desktop
 ---
 
 ## Automatic updates
@@ -29,18 +31,18 @@ assist config set autoUpdate.enabled false
 
 A global npm install is not updated automatically.
 
-## The Updates page
+## The Nodes page
 
-The Updates page opens from the version badge in the dashboard's [status bar](../sessions-overview/#the-status-bar), or with :kbd[Alt+Q]. It lists this node and each [linked node](../sessions-linked-nodes/), with the version each is running and where its updates are up to.
+The Nodes page opens from **Nodes** in the dashboard's menu, from the version badge in the [status bar](../sessions-overview/#the-status-bar), or with :kbd[Alt+Q]. It lists this node first, then each [linked node](../sessions-linked-nodes/), with the version each is running and one status chip saying where its updates or its link are up to.
 
 ::screenshot{file="updates-panel.png"}
 
-- **Restart** on a row restarts that node's daemon and web server onto the new build it has ready. **Restart ready nodes** restarts every node with one ready.
+- **Restart** on a row restarts that node's daemon and web server onto the new build it has ready, and **Restart web** restarts just its web server.
 - **Check now** checks every node for new commits straight away.
-- **Auto-restart** on a row (`autoUpdate.restart`) has that node restart onto a ready build by itself once every agent session on it has been waiting on you for a minute, or there are none.
-- **Pause** stops a node pulling updates until you **Resume** it.
-- **Open fix session** jumps to the session fixing a clone that couldn't fast-forward.
-- Expand a row for that node's update history.
+- **Open fix** jumps to the session fixing a clone that couldn't fast-forward.
+- **Pause updates** in a row's **⋯** menu stops that node pulling updates, until you **Resume updates**.
+- **Auto-restart** in the same menu (`autoUpdate.restart`) restarts the node onto a ready build by itself, once its agent sessions have all been waiting on you for a minute.
+- Expand a row for its connection and its update history.
 
 While you're using the dashboard, auto-restart holds off, on this node and on any linked node you're viewing, until you've been idle for two minutes. To change how long:
 

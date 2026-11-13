@@ -27,7 +27,7 @@ Install the harness, then run `assist sync`. It installs assist's slash commands
 
 ## Choosing a harness
 
-The New session dialog's prompt mode, a backlog item's **Build** and **Refine**, each have a menu that runs them **with Codex** or **with pi** instead. On the CLI, `--harness <claude|codex|pi>` does the same for [`assist refine`](../launchers/) and `assist backlog run`.
+Actions that start an agent offer **with Codex** or **with pi** wherever that harness can run them. On the CLI, every command that starts an agent takes `--harness <claude|codex|pi>`.
 
 To use another harness by default, set `harness.engine`:
 
@@ -44,7 +44,7 @@ assist config set harness.defaults.run.model opus
 
 ## Hiding a harness
 
-The **with Codex** and **with pi** menu entries show whenever that harness is installed. To hide them, turn the harness's key off:
+The **with Codex** and **with pi** menu entries show whenever that harness is installed and can run that action. To hide them, turn the harness's key off:
 
 ```bash
 assist config set harness.exposeCodexActions false

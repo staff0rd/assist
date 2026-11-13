@@ -30,4 +30,4 @@ Set `harness.codexModel` to a model the proxy serves, and every Codex session ru
 assist config set harness.codexModel gpt-5.1-codex
 ```
 
-Unset it to go back to Codex's own provider. The Codex reviewer in a [pull request review](../sessions-pr-review/#choosing-the-codex-model) has its own key, `review.codexModel`.
+Unset it to go back to Codex's own provider, or set it to `codex-default` in a repo to use Codex's own provider there even when a model is set for you elsewhere. The Codex reviewer in a [pull request review](../sessions-pr-review/#choosing-the-codex-model) has its own key, `review.codexModel`.

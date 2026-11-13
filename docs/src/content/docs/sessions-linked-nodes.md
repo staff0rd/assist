@@ -8,6 +8,16 @@ covers:
   - config:sessions.tailscaleServe
   - config:sessions.linkVersionCheck
 screenshots:
+  - file: sessions-add-node.png
+    alt: The Add node dialog on the Nodes page, with another node's web server URL entered
+    route: /nodes
+    waitFor: text=Add node
+    viewport:
+      width: 1280
+      height: 560
+    actions:
+      - click: "button:has-text('Add node')"
+      - type: https://desktop.tail1234.ts.net:3100
   - file: sessions-machine-picker.png
     alt: The node picker listing this node and a linked one, with a session from the linked node in the sidebar
     route: /sessions
@@ -36,9 +46,15 @@ screenshots:
       - "button:has-text('Transfer')"
 ---
 
-Each assist install is a node, with its own daemon, web server, sessions and repos. When one node links to another, its dashboard shows the other node's sessions alongside its own, and you can start, watch and drive sessions on either node from one browser tab. To link nodes, ask an agent to link them.
+Each assist install is a node, with its own daemon, web server, sessions and repos. When one node links to another, its dashboard shows the other node's sessions alongside its own, and you can start, watch and drive sessions on either node from one browser tab.
 
 A link works in one direction. To see both nodes from either node's dashboard, link each one to the other.
+
+## Adding and removing nodes
+
+Link and unlink nodes from the [Nodes page](../updating/#the-nodes-page). Press **Add node**, enter the other node's **Web server URL**, the address you open its dashboard at, and press **Check**. Once it shows the node's name and version, press **Link** to link it. To unlink a node, pick **Remove node…** from its row's **⋯** menu.
+
+::screenshot{file="sessions-add-node.png"}
 
 ## Naming a node
 
@@ -62,7 +78,7 @@ The New session dialog has its own **Node** choice for where the session runs. C
 
 ## Restarting and updating a linked node
 
-With a linked node picked, the dashboard menu's **Restart** and **Update assist** items act on that node, and its row on the [Updates panel](../updating/#automatic-updates) has the same actions.
+With a linked node picked, the dashboard menu's **Restart** and **Update assist** items act on that node, and its row on the [Nodes page](../updating/#the-nodes-page) has the same actions.
 
 ## Linking over Tailscale
 

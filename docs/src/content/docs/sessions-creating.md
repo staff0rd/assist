@@ -29,12 +29,14 @@ The **+** button in the toolbar, :kbd[Mod+N] or :kbd[Alt+N] opens the new-sessio
 
 ::screenshot{file="sessions-new.png"}
 
-| Mode   | Starts                                                                                                                         |
-| ------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| draft  | Claude drafts a backlog item from your description, asking questions as it goes                                                |
-| bug    | Claude files a bug with reproduction steps, expected and actual behaviour                                                      |
-| prompt | A plain agent session with your text as its first prompt. When Codex or pi is available, a menu on this mode picks the harness |
-| design | An interactive Claude session with assist's design system prompt appended                                                      |
+| Mode   | Starts                                                                            |
+| ------ | --------------------------------------------------------------------------------- |
+| draft  | An agent drafts a backlog item from your description, asking questions as it goes |
+| bug    | An agent files a bug with reproduction steps, expected and actual behaviour       |
+| prompt | A plain agent session with your text as its first prompt                          |
+| design | An interactive agent session with assist's design system prompt appended          |
+
+Each mode has a menu that picks the [harness](../harnesses/) to run it with, and the model to run it on. It opens on that mode's [default harness and model](../harnesses/#choosing-a-harness), and a harness or model you pick stays picked when you switch modes.
 
 Draft and bug need a repo. When the repo isn't cloned on the node you picked, the button offers to clone it first. Hold :kbd[Shift] as you click **Start draft** or **File bug** and the item the session proposes is approved and its run started.
 

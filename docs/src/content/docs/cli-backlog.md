@@ -96,7 +96,7 @@ These work on the current repo's [backlog](../backlog/). Item ids are written `a
 ## Running
 
 - `assist next [id]` (or `assist backlog next`) runs the item already in progress, or one you pick, then offers the next. With `[id]` it runs that item first; with no items left it starts `/draft`. `--once` stops after one item. In a terminal started by `assist next`, `assist draft`, `assist bug` or `assist refine`, `/next [id]` ends the current session and moves on to item `<id>`, or to whatever `assist next` picks.
-- `assist backlog run <id>` :badge[internal] runs an item's plan from the phase it is on. `--harness <claude|codex|pi>` overrides `harness.engine`, and `--no-write` runs the harness without write access. Called by the dashboard's Build and `assist next`.
+- `assist backlog run <id>` :badge[internal] runs an item's plan from the phase it is on. `--model <model>` overrides `harness.defaults.run.model` (`--no-model` runs on the harness's own default), and `--no-write` runs the harness without write access. Called by the dashboard's Build and `assist next`.
 - `assist backlog refine [id]` :badge[internal] is the same as [`assist refine`](../launchers/). Called by agents working on backlog items.
 - `assist backlog rewind <id> <phase> --reason <reason>` :badge[internal] sends an item back to an earlier phase. Called by the review phase of a backlog run.
 - `assist backlog phase-done <id> <phase> <summary>` :badge[internal] marks a phase complete and records its summary. Called by the agent running each phase of a backlog run.

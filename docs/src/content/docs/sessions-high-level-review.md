@@ -184,6 +184,8 @@ Select lines in a diff, a test's source or the manual testing steps and type a n
 - **Send to agent** types it into the session.
 - **Add to review** adds it to the comments posted with the review. Comments on lines in the pull request's diff are posted on those lines.
 
+Comments added to the review are listed under **Queued for review** at the foot of the pane. Press ✎ on one to edit its note, or ✕ to remove it.
+
 ## Finishing
 
 - **Approve**, **Comment** or **Request changes** posts your verdict to the pull request as a GitHub review, with your item comments, each slice's under its title, and queued comments. Unless you approve with no comments, what will be posted opens for approval first.

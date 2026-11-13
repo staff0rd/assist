@@ -10,7 +10,10 @@ function extensionApiStub(icon: string): string {
 		const store = {};
 		globalThis.browser = {
 			runtime: {
-				sendMessage: async () => ({ ok: true }),
+				sendMessage: async (message) =>
+					message?.type === "assist-link-status"
+						? { ok: true, states: globalThis.assistCaptureLinkStates ?? {} }
+						: { ok: true },
 				getURL: () => ${JSON.stringify(icon)},
 				onMessage: { addListener: () => undefined },
 			},

@@ -176,13 +176,24 @@ The tab bar along the bottom switches between **Sessions**, **Backlog** and **Hi
 
 ::screenshot{file="ios-app-backlog.png"}
 
+Tap a backlog item to open it. Pick the node and harness to run on, then tap **Start** to run it, or **Refine** to start refining it in a new session.
+
 ## Acting on a session
 
-Tap **⋯** on a session's screen, or long-press its row in the list, for its actions. On a backlog item's session, **Mark done…** marks the item done and ends the session, with any dev server started from it. On a backlog run, **Auto-advance phases** is the dashboard's [Continue](../backlog-running/#steering-a-run) toggle, and **Transfer to node** moves the run to another node.
+Tap **⋯** on a session's screen, or long-press its row in the list, for its actions:
+
+- **Mark done…** marks a backlog item done and ends its session.
+- **Auto-advance phases** is the dashboard's [Continue](../backlog-running/#steering-a-run) toggle for a backlog run.
+- **Transfer to node** moves a backlog run to another node.
+- Tap the `#` number in the header to copy the session's id.
 
 ::screenshot{file="ios-app-actions.png"}
 
-Sessions asking you a question or proposing a backlog item sit under **Answer here** at the top of the list, above **Needs you**. A session waiting on a manual check shows the check on its screen: try it, add an optional note, and tap **Works** or **Doesn't work**. During a [backlog run](../backlog-running/), **Later phase** moves the check to a later phase of the item instead.
+Sessions asking you a question or proposing a backlog item are listed under **Answer here**. Backlog runs in their review phase are listed under **Review**, with a count of those waiting on you; tap it to collapse them. A session waiting on a manual check shows the check on its screen: try it, add an optional note, and tap **Works** or **Doesn't work**. During a [backlog run](../backlog-running/), **Later phase** moves the check to a later phase of the item instead.
+
+## Replying to a session
+
+In a Claude session, typing a word starting with `/` in the reply bar lists your skills and commands that match it, followed by the repo's own. Tap one to put it in your reply.
 
 ## Reviewing previews
 

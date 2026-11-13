@@ -33,7 +33,7 @@ screenshots:
 
 ## The dashboard
 
-The **Sessions** page is where you run and watch coding agents. The sidebar on the left lists every live session as a card, grouped by repo, and the session area on the right shows the selected session's terminal.
+The **Sessions** page is where you run and watch coding agents. The sidebar lists every live session as a card, grouped by repo, and the session area shows the selected session's terminal.
 
 A session is either an agent (Claude, Codex or pi) working on a prompt or an assist command such as `/draft`, or a **run** session that executes one of the repo's `run` entries, such as a dev server.
 
@@ -61,7 +61,7 @@ From left to right:
   - [Backlog](../backlog/) (:kbd[Alt+2]) — the selected repo's backlog items.
   - [Next](../next/) (:kbd[Alt+3]) — what to pick up next.
   - [Inbox](../inbox/) (:kbd[Alt+4]) — messages from people that need a reply, with a count of how many.
-- **Repo picker** (:kbd[Alt+R]) chooses the repo the toolbar acts on. It lists the repo the web server started in plus every repo a session has run in; type to filter. Selecting a card switches it to that card's repo.
+- **Repo picker** (:kbd[Alt+R]) chooses the repo the toolbar acts on. It lists the repo the web server started in and every repo a session has run in, then every other repo under `clone.baseDir` (default `~/git`); type to filter. Selecting a card switches it to that card's repo.
 - **VS Code** opens the selected repo in VS Code, and **GitHub** opens it on GitHub.
 - **+** (:kbd[Mod+N] or :kbd[Alt+N]) opens the new-session dialog (see [Creating sessions](../sessions-creating/)).
 - A **PRs** menu appears when the repo has open [pull requests](../pull-requests/#the-prs-menu), and a run menu when the repo has [`run` entries](../run-commands/).
@@ -81,7 +81,7 @@ The bar along the bottom of every page holds:
 
 - The **usage figures** on the left, your current 5-hour and 7-day usage per harness. Hover them for the breakdown, or click to open the [Usage](../usage/) page.
 - A **failed requests** count, when requests from the page have failed. Click it to list them, with each one's time, path, node and outcome, and **Clear** to empty the list. When you have a clone of assist, the bug button on a request starts a `/bug` session in it to report the failure.
-- The **version badge** (:kbd[Alt+Q]) on the right, which shows how many updates are ready and opens the [Updates](../updating/#the-updates-page) page.
+- The **version badge** (:kbd[Alt+Q]) on the right, which shows how many updates are ready and opens the [Nodes](../updating/#the-nodes-page) page.
 
 ## Releases and News
 

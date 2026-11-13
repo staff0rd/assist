@@ -62,6 +62,12 @@ The Codex reviewer runs the Codex CLI under the account you signed in to it with
 assist config set review.codexModel gpt-5-codex
 ```
 
+To run it on Codex's own model again in a repo where a model is set for you elsewhere, set it to `codex-default`:
+
+```bash
+assist config set review.codexModel codex-default
+```
+
 ## Reviewing in CI
 
 Reviewing every pull request with Claude and Codex in GitHub Actions has moved out of assist to [yoke](https://github.com/MakerXStudio/yoke). Follow its instructions to set it up in a repo.

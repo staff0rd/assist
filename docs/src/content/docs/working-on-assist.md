@@ -28,7 +28,7 @@ With this set up, every change a session commits ends up running in your install
 
 1. Sessions run in worktrees with trunk-based work on, so each commit pushes straight to the clone's branch on `origin` instead of raising a PR.
 2. The installed clone sees its upstream move, pulls, and runs its `auto-build` run entry.
-3. Restart onto the new build from the [Updates page](../updating/#the-updates-page).
+3. Restart onto the new build from the [Nodes page](../updating/#the-nodes-page).
 
 Turn it on from the clone:
 

@@ -37,7 +37,7 @@ The dashboard can be driven without the mouse. Most shortcuts are :kbd[Alt] plus
 | Keys                                    | Action                                                                             |
 | --------------------------------------- | ---------------------------------------------------------------------------------- |
 | :kbd[Alt+1] … :kbd[Alt+6]               | Select the Nth top-level tab                                                       |
-| :kbd[Alt+Q]                             | Open the Updates page (the version badge)                                          |
+| :kbd[Alt+Q]                             | Open the Nodes page (the version badge)                                            |
 | :kbd[Alt+W]                             | Open the config page                                                               |
 | :kbd[Alt+E]                             | Open the menu, focused on its first item                                           |
 | :kbd[Alt+R]                             | Focus the repo picker; :kbd[Tab] and :kbd[Shift+Tab] then move along the toolbar   |

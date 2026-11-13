@@ -59,7 +59,7 @@ The diff shows what a session has changed in its working copy, so you can review
 
 ## Opening the diff
 
-Click the change counts on a session's card or in its [top bar](../sessions-session-area/#the-top-bar), or press :kbd[Alt+D], to open the diff beside the terminal. Click the counts, press :kbd[Alt+D] again or click **Close** at the bottom of the panel to close it.
+Click the change counts on a session's card or in its [top bar](../sessions-session-area/#the-top-bar), or press :kbd[Alt+D], to open the diff. Click the counts, press :kbd[Alt+D] again or click **Close** at the bottom of the panel to close it.
 
 ::screenshot{file="sessions-diff-panel.png"}
 
@@ -93,6 +93,7 @@ assist config set sessions.includeCommittedChanges false
 - Click a file's header to collapse it, or use **Collapse all files** and **Expand all files**.
 - **Unified view** and **Split view** switch the layout. The choice is remembered.
 - A markdown file's **Preview** button shows it rendered.
+- Click the bars around a modified file's changes to show more of the code around them.
 
 ## Commenting
 

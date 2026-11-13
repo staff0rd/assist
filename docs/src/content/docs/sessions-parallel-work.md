@@ -11,6 +11,7 @@ covers:
   - config:worktree.copy
   - config:worktree.commitBeforePhaseEnd
   - config:worktree.commitBeforeManualChecks
+  - config:sessions.cleanLeftovers
 ---
 
 ## Several sessions on one repo
@@ -33,6 +34,12 @@ With it on:
 A worktree is removed only when the last session holding it is done or closed, and only when nothing in it is unpushed. Closing a session that still holds unpushed changes stops it instead: the card stays on the board as **stopped**, and the only actions are resume, restart or an explicit discard. Discard always asks first and names what it is about to destroy.
 
 The same applies to a session in the clone's own working copy, though the clone itself is never removed.
+
+Removing a worktree also removes any Docker containers bind-mounting a folder inside it, and each daemon restart deletes removed worktree folders that reappeared without their git checkout. To leave both alone:
+
+```bash
+assist config set sessions.cleanLeftovers false --node
+```
 
 ## Worktree settings
 

@@ -7,6 +7,7 @@ covers:
   - cli:sync
   - claude:sync
   - config:sync.autoConfirm
+  - config:sync.preferences
   - config:database.url
   - cli:db migrate
 screenshots:
@@ -40,6 +41,25 @@ Sync asks before overwriting an existing `settings.json`. Pass `--yes` to skip t
 ```bash
 assist config set sync.autoConfirm true
 ```
+
+To also merge assist's [author preferences](#author-preferences) into your Claude `settings.json` when syncing:
+
+```bash
+assist config set sync.preferences true --node
+```
+
+## Author preferences
+
+With `sync.preferences` on, `assist sync` sets these in your Claude `settings.json`:
+
+| Setting                     | Value          | Effect                                            |
+| --------------------------- | -------------- | ------------------------------------------------- |
+| `autoMemoryEnabled`         | `false`        | Claude doesn't save memories on its own           |
+| `feedbackDrafts`            | `off`          | Turns off Claude's feedback drafts                |
+| `attribution.commit`        | empty          | Commits carry no Claude attribution               |
+| `attribution.pr`            | empty          | Pull requests carry no Claude attribution         |
+| `env.CLAUDE_AFK_TIMEOUT_MS` | `2147483647`   | Claude never treats you as away from the keyboard |
+| `permissions.deny`          | `SendFeedback` | Claude can't send feedback to Anthropic           |
 
 ## Set up the database
 

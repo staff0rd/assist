@@ -13,7 +13,7 @@ Sessions belong to a background daemon, not the web server or the browser tab. C
 
 ## Restarting it
 
-When a new build is ready, **Restart** on the [Updates panel](../updating/#automatic-updates) restarts the daemon. Claude sessions carry on their conversations, with fresh scrollback; run sessions come back as not-restored cards you can retry. To check on, stop or clear out the daemon, use [`assist daemon`](../cli-daemon/).
+When a new build is ready, **Restart** on the [Nodes page](../updating/#the-nodes-page) restarts the daemon. Claude sessions carry on their conversations, with fresh scrollback; run sessions come back as not-restored cards you can retry. To check on, stop or clear out the daemon, use [`assist daemon`](../cli-daemon/).
 
 ## Session limit
 

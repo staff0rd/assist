@@ -102,7 +102,7 @@ The header holds:
 - The status picker sets the item to todo, in-progress, done or won't do.
 - The Jira or GitHub issue the item is linked to, which opens it.
 
-Below are the **Description** and **Acceptance Criteria**, followed by the **Plan**, **Activity** and **Comments**. On a wide window, the navigator on the right jumps to each section and phase.
+It shows the **Description**, **Acceptance Criteria**, **Plan**, **Activity** and **Comments**. Click a section or phase in the navigator to jump to it.
 
 ### Plan
 

@@ -178,11 +178,11 @@ screenshots:
       - click: "[aria-label='Fill the window with preview']"
 ---
 
-When an agent has something for you to approve or read, it opens a preview pane beside its terminal: a proposal or decision to approve, a pull request, a backlog item or comment to create, or links and snippets to copy.
+When an agent has something for you to approve or read, it opens a preview pane on its session: a proposal or decision to approve, a pull request, a backlog item or comment to create, or links and snippets to copy.
 
 ## Working in a pane
 
-- The width toggle in the pane's header widens it over the terminal or shrinks it back beside it.
+- The width toggle in the pane's header widens it over the terminal or shrinks it back.
 - :kbd[Alt+D] moves focus to the pane's main button, such as **Approve**, and pressing it again returns to the terminal with the pane left open.
 - **Approve** accepts what is shown and the agent carries on. **Reject** turns it down, and the agent revises it and shows you the next version.
 
