@@ -30,7 +30,7 @@ export function PhoneHistoryRow({
 			<ChevronRightIcon fontSize="small" sx={phoneRowChevronSx} />
 			<Box sx={phoneRowMetaSx}>
 				<span>{repoLabel(entry.cwd)}</span>
-				<span>{formatRelativeTime(entry.timestamp)}</span>
+				<span>{formatRelativeTime(entry.lastActivity ?? entry.timestamp)}</span>
 				{entry.node && entry.node !== localNode && (
 					<Box component="span" sx={tokenBadgeSx("neutral")}>
 						{entry.node}
