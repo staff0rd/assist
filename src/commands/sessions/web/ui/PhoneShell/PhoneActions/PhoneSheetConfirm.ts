@@ -1,1 +1,1 @@
-export type PhoneSheetConfirm = "end" | "markDone";
+export type PhoneSheetConfirm = "end" | "markDone" | "startOver";

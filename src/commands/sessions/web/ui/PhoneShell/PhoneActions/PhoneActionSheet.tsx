@@ -48,6 +48,10 @@ export function PhoneActionSheet({
 					dismiss(shown, opts);
 					onClose();
 				}}
+				onStartOver={() => {
+					socket.startOverSession(shown.id);
+					onClose();
+				}}
 				onCancel={onClose}
 			>
 				<PhoneSessionActions

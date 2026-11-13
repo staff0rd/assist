@@ -1,14 +1,12 @@
-import ReplayIcon from "@mui/icons-material/Replay";
 import Box from "@mui/material/Box";
-import { sessionActionHandlers } from "../../App/sessionActionHandlers";
 import { nodeListSx } from "../../HomeNodeGate/nodeListSx";
 import type { SessionInfo } from "../../types";
 import type { SessionSocket } from "../../useSessionSocket";
 import { PhoneEndItem } from "./PhoneEndItem";
 import { PhoneMarkDoneItem } from "./PhoneMarkDoneItem";
 import type { PhoneSheetConfirm } from "./PhoneSheetConfirm";
-import { PhoneSheetItem } from "./PhoneSheetItem";
 import { PhoneTransferItem } from "./PhoneTransferItem";
+import { PhoneRelaunchItems } from "./PhoneRelaunchItems";
 
 type Props = {
 	session: SessionInfo;
@@ -23,31 +21,14 @@ export function PhoneLifecycleGroup({
 	onDone,
 	onConfirm,
 }: Props) {
-	const { onRetry, onRestart } = sessionActionHandlers(session, {
-		onRetry: socket.retrySession,
-		onRestart: socket.restartSession,
-		onDismiss: socket.dismissSession,
-	});
-	const then = (run: () => void) => () => {
-		run();
-		onDone();
-	};
 	return (
 		<Box sx={nodeListSx.group}>
-			{onRetry && (
-				<PhoneSheetItem
-					label="Retry session"
-					icon={<ReplayIcon fontSize="small" />}
-					onClick={then(onRetry)}
-				/>
-			)}
-			{onRestart && (
-				<PhoneSheetItem
-					label="Restart session"
-					icon={<ReplayIcon fontSize="small" />}
-					onClick={then(onRestart)}
-				/>
-			)}
+			<PhoneRelaunchItems
+				session={session}
+				socket={socket}
+				onDone={onDone}
+				onConfirm={onConfirm}
+			/>
 			<PhoneTransferItem session={session} socket={socket} onDone={onDone} />
 			<PhoneMarkDoneItem
 				session={session}
