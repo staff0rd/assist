@@ -1,5 +1,8 @@
 import Box from "@mui/material/Box";
-import type { FetchSessionTranscript } from "./LiveTranscriptArea";
+import type {
+	FetchSessionTranscript,
+	InterruptSession,
+} from "./LiveTranscriptArea";
 import { SessionBody } from "./SessionBody";
 import {
 	type SendPrDecision,
@@ -27,6 +30,7 @@ export function SessionTerminalColumn({
 	sendPrDecision: SendPrDecision;
 	transcript: Transcript | null;
 	fetchSessionTranscript: FetchSessionTranscript;
+	interruptSession: InterruptSession;
 }) {
 	const { history, onFetchHistory } = useLastMessageHistory(activeSession?.id);
 

@@ -40,6 +40,7 @@ export function SessionContent({ socket }: { socket: SessionSocket }) {
 				viewingTranscriptSessionId={socket.viewingTranscriptSessionId}
 				transcript={socket.transcript}
 				fetchSessionTranscript={socket.fetchSessionTranscript}
+				interruptSession={socket.interruptSession}
 				sendPrDecision={socket.sendPrDecision}
 			/>
 		</LastMessageHistoryContext.Provider>

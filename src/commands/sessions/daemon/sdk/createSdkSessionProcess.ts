@@ -6,6 +6,7 @@ import type {
 import { daemonLog } from "../daemonLog";
 import { killSdkChild } from "./killSdkChild";
 import { noopDisposable, sdkTerminalStub } from "./sdkTerminalStub";
+import { type SdkTurnControls, sdkSessionHandle } from "./sdkSessionHandle";
 
 type ExitListener = (e: { exitCode: number; signal?: number }) => void;
 
@@ -15,6 +16,7 @@ export type SdkSessionControl = {
 	exit: (exitCode: number) => void;
 	attach: (child: ChildProcess) => void;
 	aborted: () => boolean;
+	bind: (controls: SdkTurnControls) => void;
 };
 
 export function createSdkSessionProcess(
@@ -22,7 +24,7 @@ export function createSdkSessionProcess(
 	abort: AbortController,
 ): SdkSessionControl {
 	const label = `session ${sessionId ?? "?"}`;
-	const eventListeners: ((event: SdkSessionEvent) => void)[] = [];
+	const sdk = sdkSessionHandle(label);
 	const exitListeners: ExitListener[] = [];
 	let child: ChildProcess | undefined;
 	let exited = false;
@@ -43,14 +45,12 @@ export function createSdkSessionProcess(
 			exitListeners.push(listener);
 			return noopDisposable;
 		},
-		sdk: { onEvent: (listener) => eventListeners.push(listener) },
+		sdk: sdk.handle,
 	};
 
 	return {
 		process: sessionProcess,
-		emit: (event) => {
-			for (const listener of eventListeners) listener(event);
-		},
+		emit: sdk.emit,
 		exit: (exitCode) => {
 			if (exited) return;
 			exited = true;
@@ -61,5 +61,6 @@ export function createSdkSessionProcess(
 			child = spawned;
 		},
 		aborted: () => abort.signal.aborted,
+		bind: sdk.bind,
 	};
 }

@@ -1,6 +1,25 @@
+import type { SdkSessionEvent } from "../../../shared/harnessAdapters/types";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import type { OnStatusChange } from "./types";
+
+function applyViewEvent(
+	session: Session,
+	event: Exclude<SdkSessionEvent, { kind: "status" }>,
+): void {
+	if (event.kind === "activity") {
+		session.sdkActivity = event.text ?? undefined;
+		daemonLog(`session ${session.id} sdk activity: ${event.text ?? "cleared"}`);
+	} else if (event.kind === "queued") {
+		session.sdkQueued = event.texts.length ? event.texts : undefined;
+		daemonLog(`session ${session.id} sdk queued: ${event.texts.length}`);
+	} else {
+		session.sdkInterrupting = event.pending || undefined;
+		daemonLog(
+			`session ${session.id} sdk interrupt ${event.pending ? "pending" : "landed"}`,
+		);
+	}
+}
 
 export function wireSdkEvents(
 	session: Session,
@@ -9,11 +28,8 @@ export function wireSdkEvents(
 ): void {
 	session.pty?.sdk?.onEvent((event) => {
 		if (session.status === "done" || session.status === "stopped") return;
-		if (event.kind === "activity") {
-			session.sdkActivity = event.text ?? undefined;
-			daemonLog(
-				`session ${session.id} sdk activity: ${event.text ?? "cleared"}`,
-			);
+		if (event.kind !== "status") {
+			applyViewEvent(session, event);
 			notify?.();
 			return;
 		}

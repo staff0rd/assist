@@ -1,3 +1,4 @@
+import { sdkComposerState } from "../App/SessionContent/SessionArea/SdkComposer/sdkComposerState";
 import { displayStatus } from "../displayStatus";
 import { isAwaitingUser } from "../isAwaitingUser";
 import type { SessionInfo } from "../types";
@@ -13,8 +14,8 @@ export function PhoneSessionDock({
 	io: ReturnType<typeof usePhoneSessionIo>;
 	keyboardOpen: boolean;
 }) {
-	// why: the dock's keys and reply field drive a terminal, which an SDK session does not have
-	if (session.sdk) return null;
+	const sdk = session.sdk ? sdkComposerState(session) : undefined;
+	if (sdk && !sdk.live) return null;
 	return (
 		<PhoneInputDock
 			harness={session.harness}
@@ -22,8 +23,14 @@ export function PhoneSessionDock({
 			node={session.node}
 			waiting={isAwaitingUser(displayStatus(session))}
 			keyboardOpen={keyboardOpen}
-			onKey={io.onKey}
+			// why: the key strip drives a terminal, which an SDK session does not have
+			onKey={sdk ? undefined : io.onKey}
 			onSend={io.onSend}
+			stop={
+				sdk?.running
+					? { disabled: sdk.stopping, onStop: io.onInterrupt }
+					: undefined
+			}
 		/>
 	);
 }

@@ -67,6 +67,10 @@ export function stopSessionAction(send: SendFn) {
 	return (id: string) => send({ type: "stop", sessionId: id });
 }
 
+export function interruptSessionAction(send: SendFn) {
+	return (id: string) => send({ type: "interrupt", sessionId: id });
+}
+
 export type TransferSessionFn = (
 	id: string,
 	target: string,

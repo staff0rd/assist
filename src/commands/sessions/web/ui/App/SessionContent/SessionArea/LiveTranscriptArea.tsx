@@ -1,9 +1,10 @@
 import { useEffect } from "react";
 import type { SessionInfo, Transcript } from "../../../types";
 import { TranscriptArea } from "./TranscriptArea";
-import { SdkTailRow } from "./TranscriptArea/SdkTailRow";
+import { SdkTail } from "./TranscriptArea/SdkTail";
 
 export type FetchSessionTranscript = (sessionId: string) => void;
+export type InterruptSession = (sessionId: string) => void;
 
 export function LiveTranscriptArea({
 	session,
@@ -27,11 +28,12 @@ export function LiveTranscriptArea({
 		lastUserMessage,
 		lastAssistantMessage,
 	]);
-	const tail =
-		status === "running" ? (
-			<SdkTailRow text={sdkActivity ?? "Working"} />
-		) : undefined;
 	return (
-		<TranscriptArea sessionId={id} transcript={transcript} tail={tail} follow />
+		<TranscriptArea
+			sessionId={id}
+			transcript={transcript}
+			tail={<SdkTail session={session} />}
+			follow
+		/>
 	);
 }

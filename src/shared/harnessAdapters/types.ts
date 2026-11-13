@@ -7,13 +7,21 @@ import type { CapabilityId } from "./capabilityDefinitions";
 
 export type SdkSessionEvent =
 	| { kind: "status"; status: "running" | "waiting" }
-	| { kind: "activity"; text: string | null };
+	| { kind: "activity"; text: string | null }
+	| { kind: "queued"; texts: string[] }
+	| { kind: "interrupting"; pending: boolean };
+
+type SdkSessionHandle = {
+	onEvent: (listener: (event: SdkSessionEvent) => void) => void;
+	send: (text: string) => void;
+	interrupt: () => void;
+};
 
 export type SessionProcess = Pick<
 	IPty,
 	"pid" | "cols" | "rows" | "write" | "resize" | "kill" | "onData" | "onExit"
 > & {
-	sdk?: { onEvent: (listener: (event: SdkSessionEvent) => void) => void };
+	sdk?: SdkSessionHandle;
 };
 
 export type CapabilityStatus =
@@ -118,7 +126,8 @@ export type ConversationEvent =
 			operations: ToolOperation[];
 			at?: string;
 	  }
-	| { kind: "toolResult"; text: string; at?: string };
+	| { kind: "toolResult"; text: string; at?: string }
+	| { kind: "interrupt"; at?: string };
 
 type ConversationLifecycle = {
 	status: "running" | "waiting" | null;

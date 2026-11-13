@@ -4,7 +4,8 @@ import { parseRolloutEntry } from "./codex/parseRolloutEntry";
 export type TranscriptMessage =
 	| { role: "user"; text: string }
 	| { role: "assistant"; text: string }
-	| { role: "tool"; tool: string; target: string };
+	| { role: "tool"; tool: string; target: string }
+	| { role: "interrupt" };
 
 export function transcriptMessages(
 	reader: ConversationReader,
@@ -19,6 +20,7 @@ export function transcriptMessages(
 			return [{ role: event.role, text: event.text }];
 		if (event.kind === "tool")
 			return [{ role: "tool", tool: event.tool, target: event.target }];
+		if (event.kind === "interrupt") return [{ role: "interrupt" }];
 		return [];
 	});
 }

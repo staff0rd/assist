@@ -71,6 +71,7 @@ function renderArea(
 					transcript={null}
 					sendPrDecision={() => {}}
 					fetchSessionTranscript={() => {}}
+					interruptSession={() => {}}
 				/>
 			</DiffPanelsProvider>
 		</StarredSessionsProvider>,
@@ -130,6 +131,7 @@ describe("SessionArea transcript view", () => {
 				viewingTranscriptSessionId="abc"
 				sendPrDecision={() => {}}
 				fetchSessionTranscript={() => {}}
+				interruptSession={() => {}}
 				lifecycle={{
 					onRetry: () => {},
 					onRestart: () => {},
@@ -165,6 +167,7 @@ describe("SessionArea transcript view", () => {
 				viewingTranscriptSessionId="abc"
 				sendPrDecision={() => {}}
 				fetchSessionTranscript={() => {}}
+				interruptSession={() => {}}
 				lifecycle={{
 					onRetry: () => {},
 					onRestart: () => {},
@@ -236,6 +239,7 @@ function renderWithTopBar(
 					transcript={null}
 					sendPrDecision={vi.fn()}
 					fetchSessionTranscript={() => {}}
+					interruptSession={() => {}}
 					lifecycle={{
 						onRetry: vi.fn(),
 						onRestart: vi.fn(),

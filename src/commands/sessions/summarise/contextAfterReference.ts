@@ -13,7 +13,7 @@ function isOpeningReference(text: string): boolean {
 }
 
 function eventText(event: ConversationEvent): string {
-	return event.kind === "tool" ? "" : event.text.trim();
+	return "text" in event ? event.text.trim() : "";
 }
 
 export function contextAfterReference(

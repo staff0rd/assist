@@ -1,15 +1,18 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { HighlightedText } from "./TextRow/HighlightedText";
+import { TextRowLabel } from "./TextRow/TextRowLabel";
 
 export function TextRow({
 	role,
 	text,
 	term,
+	queued,
 }: {
 	role: "user" | "assistant";
 	text: string;
 	term: string;
+	queued?: boolean;
 }) {
 	const isUser = role === "user";
 	const accent = isUser ? "info.main" : "success.main";
@@ -21,23 +24,15 @@ export function TextRow({
 				py: 1,
 				pr: 1,
 				borderLeft: 2,
+				borderLeftStyle: queued ? "dashed" : "solid",
 				borderColor: accent,
+				opacity: queued ? 0.65 : 1,
 				borderTopRightRadius: 1,
 				borderBottomRightRadius: 1,
 				bgcolor: isUser ? "action.hover" : "transparent",
 			}}
 		>
-			<Typography
-				variant="caption"
-				sx={{
-					color: accent,
-					fontWeight: 600,
-					display: "block",
-					mb: 0.5,
-				}}
-			>
-				{isUser ? "User" : "Assistant"}
-			</Typography>
+			<TextRowLabel isUser={isUser} accent={accent} queued={queued} />
 			<Typography
 				variant="body2"
 				sx={{

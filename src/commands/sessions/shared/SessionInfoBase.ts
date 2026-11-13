@@ -92,6 +92,8 @@ export type SessionInfoBase = {
 	lastAssistantMessage?: string;
 	sdk?: boolean;
 	sdkActivity?: string;
+	sdkQueued?: string[];
+	sdkInterrupting?: boolean;
 	cols?: number;
 	rows?: number;
 	activeViewer?: string;

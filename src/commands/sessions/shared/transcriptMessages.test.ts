@@ -170,4 +170,23 @@ describe("transcriptMessages from a Claude transcript", () => {
 		]);
 		expect(messages).toEqual([{ role: "assistant", text: "answer" }]);
 	});
+
+	it("marks an interrupted turn", () => {
+		const messages = parseClaudeTranscriptLines([
+			line({
+				type: "user",
+				message: {
+					role: "user",
+					content: [
+						{
+							type: "text",
+							text: "[Request interrupted by user for tool use]",
+						},
+					],
+				},
+			}),
+		]);
+
+		expect(messages).toEqual([{ role: "interrupt" }]);
+	});
 });

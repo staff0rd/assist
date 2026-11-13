@@ -3,7 +3,7 @@ import type { HarnessKind } from "../../../../../shared/harnesses";
 import { harnessCapability } from "../../../../../shared/harnessAdapters/harnessCapability";
 import { safeAreaInsets } from "../designSystem/safeAreaInsets";
 import { PhoneKeyStrip } from "./PhoneKeyStrip";
-import { PhoneReplyBar } from "./PhoneReplyBar";
+import { PhoneReplyBar, type ReplyStop } from "./PhoneReplyBar";
 import { useSlashCommands } from "./PhoneSlashSuggestions/useSlashCommands";
 
 type Props = {
@@ -12,8 +12,9 @@ type Props = {
 	node?: string;
 	waiting: boolean;
 	keyboardOpen: boolean;
-	onKey: (data: string) => void;
+	onKey?: (data: string) => void;
 	onSend: (text: string) => void;
+	stop?: ReplyStop;
 };
 
 export function PhoneInputDock({
@@ -24,6 +25,7 @@ export function PhoneInputDock({
 	keyboardOpen,
 	onKey,
 	onSend,
+	stop,
 }: Props) {
 	const suggest = harnessCapability(harness, "slashCommands.suggest").supported;
 	const commands = useSlashCommands(suggest ? cwd : undefined, node);
@@ -37,10 +39,17 @@ export function PhoneInputDock({
 				pb: keyboardOpen ? 0 : safeAreaInsets.bottom,
 			}}
 		>
-			<Box sx={{ order: keyboardOpen ? 1 : 0 }}>
-				<PhoneKeyStrip waiting={waiting} onKey={onKey} />
-			</Box>
-			<PhoneReplyBar harness={harness} commands={commands} onSend={onSend} />
+			{onKey && (
+				<Box sx={{ order: keyboardOpen ? 1 : 0 }}>
+					<PhoneKeyStrip waiting={waiting} onKey={onKey} />
+				</Box>
+			)}
+			<PhoneReplyBar
+				harness={harness}
+				commands={commands}
+				onSend={onSend}
+				stop={stop}
+			/>
 		</Box>
 	);
 }

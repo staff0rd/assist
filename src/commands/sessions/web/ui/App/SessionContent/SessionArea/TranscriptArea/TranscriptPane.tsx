@@ -7,13 +7,16 @@ import type { TranscriptMessage } from "../../../../types";
 
 type KeyedMessage = TranscriptMessage & { key: string };
 
+function messageKey(m: TranscriptMessage): string {
+	if (m.role === "tool") return `tool:${m.tool}:${m.target}`;
+	if (m.role === "interrupt") return "interrupt";
+	return `${m.role}:${m.text.slice(0, 40)}`;
+}
+
 function withKeys(messages: TranscriptMessage[]): KeyedMessage[] {
 	const counts = new Map<string, number>();
 	return messages.map((m) => {
-		const base =
-			m.role === "tool"
-				? `tool:${m.tool}:${m.target}`
-				: `${m.role}:${m.text.slice(0, 40)}`;
+		const base = messageKey(m);
 		const n = counts.get(base) ?? 0;
 		counts.set(base, n + 1);
 		return { ...m, key: `${base}#${n}` };

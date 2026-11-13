@@ -1,6 +1,9 @@
 import Box from "@mui/material/Box";
 import type { SessionInfo, Transcript } from "../../../types";
-import type { FetchSessionTranscript } from "./LiveTranscriptArea";
+import type {
+	FetchSessionTranscript,
+	InterruptSession,
+} from "./LiveTranscriptArea";
 import { SdkTranscriptOverlay } from "./SdkTranscriptOverlay";
 import { TerminalArea, type TerminalAreaProps } from "./TerminalArea";
 
@@ -17,11 +20,13 @@ export function SessionBody({
 	activeSession,
 	transcript,
 	fetchSessionTranscript,
+	interruptSession,
 	...terminal
 }: TerminalAreaProps & {
 	activeSession: SessionInfo | undefined;
 	transcript: Transcript | null;
 	fetchSessionTranscript: FetchSessionTranscript;
+	interruptSession: InterruptSession;
 }) {
 	const sdkSession = activeSession?.sdk ? activeSession : undefined;
 	// why: an SDK session has no terminal, so it gets no xterm pane at all
@@ -38,6 +43,8 @@ export function SessionBody({
 					session={sdkSession}
 					transcript={transcript}
 					fetchSessionTranscript={fetchSessionTranscript}
+					sendInput={terminal.sendInput}
+					interruptSession={interruptSession}
 				/>
 			)}
 		</Box>

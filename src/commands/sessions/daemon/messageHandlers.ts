@@ -4,6 +4,7 @@ import { handleAutoUpdate } from "./autoUpdate/handleAutoUpdate";
 import { handleAutoUpdateControl } from "./autoUpdate/handleAutoUpdateControl";
 import { sendTo } from "./broadcast";
 import { handleHelloRequest } from "./handleHelloRequest";
+import { handleInterrupt } from "./handleInterrupt";
 import { handleWebLog } from "./handleWebLog";
 import { handleSearchHistory } from "./historySearch/handleSearchHistory";
 import { creator } from "./creator";
@@ -77,6 +78,7 @@ export const messageHandlers: Record<string, Handler> = {
 	dismiss: handleDismiss,
 	discard: routed((_client, m, d) => m.discardSession(d.sessionId as string)),
 	stop: routed((_client, m, d) => m.stopSession(d.sessionId as string)),
+	interrupt: handleInterrupt,
 	transfer: handleTransfer,
 	"cancel-transfer": handleCancelTransfer,
 	...sessionSettingHandlers,

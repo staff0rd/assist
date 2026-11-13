@@ -1,3 +1,4 @@
+import { normalizeUser } from "../../commands/sessions/shared/normalizeUser";
 import { renderUserPrompt } from "../../commands/sessions/shared/renderUserPrompt";
 import { claudeAssistantEvents } from "./claudeAssistantEvents";
 import { claudeContentBlocksOf } from "./claudeContentBlocksOf";
@@ -21,6 +22,8 @@ function userEvents(entry: Entry, at?: string): ConversationEvent[] {
 	const events: ConversationEvent[] = [];
 	const text = renderUserPrompt(entry, Number.POSITIVE_INFINITY);
 	if (text) events.push({ kind: "message", role: "user", text, at });
+	else if (normalizeUser(entry).kind === "interrupt")
+		events.push({ kind: "interrupt", at });
 	for (const block of claudeContentBlocksOf(contentOf(entry))) {
 		if (block.type !== "tool_result" || block.is_error) continue;
 		const body = resultText(block.content).trim();

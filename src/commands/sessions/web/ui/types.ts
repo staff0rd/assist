@@ -104,7 +104,8 @@ export type SidebarTab = "active" | "history";
 export type TranscriptMessage =
 	| { role: "user"; text: string }
 	| { role: "assistant"; text: string }
-	| { role: "tool"; tool: string; target: string };
+	| { role: "tool"; tool: string; target: string }
+	| { role: "interrupt" };
 
 export type Transcript = {
 	sessionId: string;

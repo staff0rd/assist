@@ -1,4 +1,4 @@
-import { skipsTerminalPath } from "./skipsTerminalPath";
+import { isSdkSession } from "./isSdkSession";
 import { clearPause, requestPause } from "../../backlog/consumePause";
 import type { Session, SessionStatus } from "./createSession";
 import { claimViewer, type ViewerClaim } from "./claimViewer";
@@ -6,6 +6,7 @@ import { daemonLog } from "./daemonLog";
 import { dropsInactiveViewerResponse } from "./dropsInactiveViewerResponse";
 import { isTerminalResponse } from "./isTerminalResponse";
 import { watchPromptSubmit } from "./watchPromptSubmit";
+import { writeToSdkSession } from "./writeToSdkSession";
 
 export function writeToSession(
 	sessions: Map<string, Session>,
@@ -16,7 +17,7 @@ export function writeToSession(
 ): void {
 	const s = sessions.get(id);
 	if (!s || s.status === "done") return;
-	if (skipsTerminalPath(s, "input")) return;
+	if (isSdkSession(s)) return writeToSdkSession(s, data);
 	const response = isTerminalResponse(data);
 	if (dropsInactiveViewerResponse(s, response, viewer)) return;
 	s.pty?.write(data);

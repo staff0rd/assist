@@ -23,6 +23,17 @@ export const phoneReplyBarSx = {
 		fontSize: 16,
 		"&.Mui-focused": { borderColor: "primary.main" },
 	},
+	stop: {
+		flex: "none",
+		border: 1,
+		borderColor: "error.main",
+		color: "error.main",
+		"&.Mui-disabled": {
+			borderColor: "error.main",
+			color: "error.main",
+			opacity: 0.5,
+		},
+	},
 	send: {
 		flex: "none",
 		bgcolor: "primary.main",

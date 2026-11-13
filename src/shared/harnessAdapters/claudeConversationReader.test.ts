@@ -63,9 +63,17 @@ describe("claudeConversationReader", () => {
 		});
 	});
 
-	it("excludes captured replayed system content, meta, sidechain, interrupts, task notifications and failed results", () => {
+	it("excludes captured replayed system content, meta, sidechain, task notifications and failed results", () => {
 		expect(excluded.length).toBeGreaterThan(0);
-		expect(reader.events(excluded)).toEqual([]);
+		expect(
+			reader.events(excluded).filter(({ kind }) => kind !== "interrupt"),
+		).toEqual([]);
+	});
+
+	it("marks interrupts without turning them into prompts", () => {
+		expect(
+			reader.events(excluded).filter(({ kind }) => kind === "interrupt"),
+		).not.toEqual([]);
 	});
 
 	it("reports a pending question as asking and a finished turn as waiting", () => {

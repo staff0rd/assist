@@ -3,6 +3,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import type { TranscriptMessage } from "../../../../../types";
 import { TextRow } from "./TranscriptRow/TextRow";
+import { TranscriptDivider } from "./TranscriptRow/TranscriptDivider";
 
 export function TranscriptRow({
 	message,
@@ -11,6 +12,8 @@ export function TranscriptRow({
 	message: TranscriptMessage;
 	term: string;
 }) {
+	if (message.role === "interrupt")
+		return <TranscriptDivider label="Interrupted by you" />;
 	if (message.role === "tool")
 		return <ToolRow tool={message.tool} target={message.target} />;
 	return <TextRow role={message.role} text={message.text} term={term} />;

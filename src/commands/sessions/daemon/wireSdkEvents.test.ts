@@ -36,6 +36,18 @@ describe("wireSdkEvents", () => {
 		expect(notify).toHaveBeenCalledTimes(2);
 	});
 
+	it("records queued messages and the pending interrupt", () => {
+		const { control, session } = sdkSession("running");
+		control.emit({ kind: "queued", texts: ["next"] });
+		control.emit({ kind: "interrupting", pending: true });
+		expect(session.sdkQueued).toEqual(["next"]);
+		expect(session.sdkInterrupting).toBe(true);
+		control.emit({ kind: "queued", texts: [] });
+		control.emit({ kind: "interrupting", pending: false });
+		expect(session.sdkQueued).toBeUndefined();
+		expect(session.sdkInterrupting).toBeUndefined();
+	});
+
 	it("ignores events once the session is done", () => {
 		const { control, onStatusChange } = sdkSession("done");
 		control.emit({ kind: "status", status: "running" });

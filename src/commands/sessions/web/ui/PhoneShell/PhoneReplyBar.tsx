@@ -4,18 +4,23 @@ import type { HarnessKind } from "../../../../../shared/harnesses";
 import { harnessLabel } from "../../../../../shared/harnessAdapters/harnessLabel";
 import type { SlashCommand } from "../../slashCommands/readSlashCommands";
 import { PhoneReplySend } from "./PhoneReplySend";
+import { PhoneReplyStop } from "./PhoneReplyStop";
 import { PhoneSlashSuggestions } from "./PhoneSlashSuggestions/PhoneSlashSuggestions";
 import { useSlashReply } from "./PhoneSlashSuggestions/useSlashReply";
 import { phoneReplyBarSx } from "./phoneReplyBarSx";
+
+export type ReplyStop = { disabled: boolean; onStop: () => void };
 
 export function PhoneReplyBar({
 	harness,
 	commands = [],
 	onSend,
+	stop,
 }: {
 	harness?: HarnessKind;
 	commands?: SlashCommand[];
 	onSend: (text: string) => void;
+	stop?: ReplyStop;
 }) {
 	const reply = useSlashReply(commands);
 	const { text, suggestions } = reply;
@@ -46,6 +51,7 @@ export function PhoneReplyBar({
 					sx={phoneReplyBarSx.field}
 					inputProps={{ "aria-label": "Reply" }}
 				/>
+				{stop && <PhoneReplyStop {...stop} />}
 				<PhoneReplySend disabled={!text.trim()} onSend={send} />
 			</Box>
 		</>

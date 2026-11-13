@@ -8,6 +8,10 @@ import { replayScrollback } from "./replayScrollback";
 import { resizeSession } from "./resizeSession";
 import { createSdkSessionProcess } from "./sdk/createSdkSessionProcess";
 import { writeToSession } from "./writeToSession";
+import {
+	bracketedPaste,
+	SUBMIT,
+} from "../shared/pasteAndSubmit/bracketedPaste";
 
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./viewerSize", () => ({ rememberViewerSize: vi.fn() }));
@@ -43,6 +47,19 @@ describe("PTY-only paths on a Claude (SDK) session", () => {
 		writeToSession(sessions, "1", "ls\r", vi.fn());
 		expect(write).not.toHaveBeenCalled();
 		skipped("input");
+	});
+
+	it("sends a pasted prompt as an SDK message and ignores its submit", () => {
+		const { sessions, write } = sdkSessions();
+		const send = vi.spyOn(
+			sessions.get("1")?.pty?.sdk as { send: (t: string) => void },
+			"send",
+		);
+		writeToSession(sessions, "1", bracketedPaste("fix it\nplease"), vi.fn());
+		writeToSession(sessions, "1", SUBMIT, vi.fn());
+		expect(send).toHaveBeenCalledTimes(1);
+		expect(send).toHaveBeenCalledWith("fix it\nplease");
+		expect(write).not.toHaveBeenCalled();
 	});
 
 	it("skips resize with a log line", () => {

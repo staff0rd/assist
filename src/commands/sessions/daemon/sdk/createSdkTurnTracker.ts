@@ -1,24 +1,47 @@
 import { daemonLog } from "../daemonLog";
+import { createSdkInterrupt } from "./createSdkInterrupt";
+import { createSdkMessageQueue, quoteForLog } from "./createSdkMessageQueue";
 import type { SdkSessionControl } from "./createSdkSessionProcess";
+import { createSdkTurnEmitter } from "./createSdkTurnEmitter";
 import type { SdkTurnStatus } from "./sdkTurnStatus";
+
+export type SdkTurnTracker = ReturnType<typeof createSdkTurnTracker>;
 
 export function createSdkTurnTracker(
 	label: string,
 	control: SdkSessionControl,
+	push: (text: string) => void,
 ) {
-	let status: SdkTurnStatus | undefined;
-	let activity: string | null = null;
-	const setActivity = (next: string | null) => {
-		if (next === activity) return;
-		activity = next;
-		control.emit({ kind: "activity", text: next });
-	};
+	let busy = false;
+	const emit = createSdkTurnEmitter(label, control);
+	const queue = createSdkMessageQueue(label, control, push);
+	const interrupt = createSdkInterrupt(label, (pending) =>
+		control.emit({ kind: "interrupting", pending }),
+	);
 	const setStatus = (next: SdkTurnStatus) => {
-		if (next === "waiting") setActivity(null);
-		if (next === status) return;
-		status = next;
-		daemonLog(`${label} sdk status: ${next}`);
-		control.emit({ kind: "status", status: next });
+		busy = next === "running";
+		if (next === "waiting") {
+			emit.activity(null);
+			interrupt.clear();
+			busy = queue.flush();
+			if (busy) return;
+		}
+		emit.status(next);
 	};
-	return { setActivity, setStatus };
+	return {
+		setActivity: emit.activity,
+		setStatus,
+		start: (prompt: string) => {
+			busy = true;
+			push(prompt);
+		},
+		send: (text: string) => {
+			if (busy) return queue.add(text);
+			daemonLog(`${label} sdk message sent: ${quoteForLog(text)}`);
+			push(text);
+			setStatus("running");
+		},
+		interrupt: (request: () => Promise<void>) =>
+			interrupt.request(busy, request),
+	};
 }

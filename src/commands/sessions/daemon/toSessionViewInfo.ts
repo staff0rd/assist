@@ -10,10 +10,14 @@ export function toSessionViewInfo({
 	transfer,
 	pty,
 	sdkActivity,
+	sdkQueued,
+	sdkInterrupting,
 }: Session) {
 	return {
 		sdk: pty?.sdk ? true : undefined,
 		sdkActivity,
+		sdkQueued,
+		sdkInterrupting,
 		transfer,
 		lastUserMessage,
 		lastAssistantMessage,

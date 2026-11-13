@@ -24,5 +24,6 @@ export function usePhoneSessionIo(
 			socket.sendResize(id, cols, rows, mode),
 		onKey: (data: string) => sendInput(id, data),
 		onSend: (text: string) => pasteAndSubmit(sendInput, id, text),
+		onInterrupt: () => socket.interruptSession(id),
 	};
 }

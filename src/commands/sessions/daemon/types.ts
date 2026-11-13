@@ -108,6 +108,8 @@ export type Session = {
 	activeViewer?: string;
 	activeViewerNode?: string;
 	sdkActivity?: string;
+	sdkQueued?: string[];
+	sdkInterrupting?: boolean;
 	usedPct?: number;
 	activeMsFlushedForStretch?: { since: number; ms: number };
 	activeMsFlushChain?: Promise<void>;
