@@ -24,19 +24,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-          cache: "npm"
+          cache: "pnpm"
           cache-dependency-path: |
-            package-lock.json
-            docs/package-lock.json
+            pnpm-lock.yaml
+            docs/pnpm-lock.yaml
 
       - name: Install dependencies
         run: |
-          npm ci
-          npm ci --prefix docs
+          pnpm install --frozen-lockfile
+          pnpm install --frozen-lockfile --dir docs
 
       - name: Build
         env:
