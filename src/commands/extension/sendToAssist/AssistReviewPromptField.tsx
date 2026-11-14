@@ -31,7 +31,7 @@ export function AssistReviewPromptField({
 	};
 
 	return (
-		<Box sx={{ display: "flex", gap: 1, alignItems: "flex-start", p: 1 }}>
+		<Box sx={{ display: "flex", gap: 1, alignItems: "center", p: 1 }}>
 			<AssistInstructionsField
 				value={instructions}
 				onChange={setInstructions}
