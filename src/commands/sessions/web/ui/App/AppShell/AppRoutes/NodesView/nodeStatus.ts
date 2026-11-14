@@ -1,15 +1,15 @@
 import type { LinkStatus } from "../../../../../../daemon/links/LinkStatus";
-import { formatRelativeTime } from "../../../../formatRelativeTime";
 import type { NodeUpdateEntry } from "../../NodeUpdateEntry";
 import { updateState } from "../nodeUpdates/updateState";
 import type { UpdateStateKind } from "../nodeUpdates/UpdateStateKind";
-import { protocolDirection } from "./protocolDirection";
+import { linkStatus } from "./linkStatus";
 
 export type StatusKind =
 	| UpdateStateKind
 	| "disconnected"
 	| "connecting"
-	| "blocked";
+	| "blocked"
+	| "restarting";
 
 type StatusAction = "restart" | "fix" | "web";
 
@@ -20,32 +20,6 @@ export type NodeStatus = {
 	action?: StatusAction;
 	attention?: "warning" | "error";
 };
-
-function linkStatus(link: LinkStatus): NodeStatus | undefined {
-	if (link.state === "disconnected")
-		return {
-			kind: "disconnected",
-			label: "Disconnected",
-			line: link.errorAt
-				? `since ${formatRelativeTime(link.errorAt)} · update state unknown`
-				: "update state unknown",
-			attention: "error",
-		};
-	if (link.state === "connecting")
-		return {
-			kind: "connecting",
-			label: "Connecting…",
-			line: "waiting for the link",
-		};
-	if (link.state === "version-blocked")
-		return {
-			kind: "blocked",
-			label: "Link blocked",
-			line: `${protocolDirection(link)} link protocol · update it`,
-			attention: "warning",
-		};
-	return undefined;
-}
 
 function updateStatus(entry: NodeUpdateEntry): NodeStatus {
 	const state = updateState(entry);
@@ -64,7 +38,14 @@ function updateStatus(entry: NodeUpdateEntry): NodeStatus {
 export function nodeStatus(
 	link: LinkStatus | undefined,
 	entry: NodeUpdateEntry | undefined,
+	busy?: string,
 ): NodeStatus {
+	if (busy === "Restarting")
+		return {
+			kind: "restarting",
+			label: "Restarting…",
+			line: `waiting for ${link?.name ?? entry?.name ?? "the node"} to come back`,
+		};
 	const problem = link && linkStatus(link);
 	if (problem) return problem;
 	if (!entry)

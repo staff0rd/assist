@@ -6,6 +6,7 @@ import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 import PauseIcon from "@mui/icons-material/Pause";
 import PowerOffIcon from "@mui/icons-material/PowerSettingsNew";
 import ReplayIcon from "@mui/icons-material/Replay";
+import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import WarningIcon from "@mui/icons-material/Warning";
 import BlockIcon from "@mui/icons-material/Block";
 import LinkOffIcon from "@mui/icons-material/LinkOff";
@@ -29,6 +30,7 @@ const look: Record<StatusKind, { tone: Tone; icon: ReactNode }> = {
 	disconnected: { tone: "error", icon: <LinkOffIcon /> },
 	connecting: { tone: "neutral", icon: <HourglassEmptyIcon /> },
 	blocked: { tone: "warning", icon: <BlockIcon /> },
+	restarting: { tone: "neutral", icon: <RestartAltIcon /> },
 };
 
 function toneColor(theme: Theme, tone: Tone): string {

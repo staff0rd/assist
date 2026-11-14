@@ -22,7 +22,13 @@ export function NodesView({
 	const removal = useNodeRemoval(nodes);
 	const adding = useAddNodeDialog();
 	const rows = nodes
-		? nodeRows(nodes, entries, removal.removed, globalThis.location.origin)
+		? nodeRows(
+				nodes,
+				entries,
+				removal.removed,
+				globalThis.location.origin,
+				actions.notices.busy,
+			)
 		: [];
 
 	return (

@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import type { LinkStatus } from "../../../../../../daemon/links/LinkStatus";
 import type { NodeUpdateStatus } from "../../../../../../shared/NodeUpdateStatus";
 import type { NodeUpdateEntry } from "../../NodeUpdateEntry";
+import { nodeRows } from "./nodeRows";
 import { needsAttention, nodeStatus } from "./nodeStatus";
 
 function entry(overrides: Partial<NodeUpdateStatus> = {}): NodeUpdateEntry {
@@ -77,5 +78,49 @@ describe("nodeStatus", () => {
 		const status = nodeStatus(link("connected"), entry());
 		expect(status.kind).toBe("ok");
 		expect(needsAttention(status)).toBe(false);
+	});
+
+	it("shows a node this tab is restarting as restarting rather than disconnected", () => {
+		const status = nodeStatus(link("disconnected"), undefined, "Restarting");
+		expect(status).toMatchObject({
+			kind: "restarting",
+			label: "Restarting…",
+			line: "waiting for win to come back",
+		});
+		expect(needsAttention(status)).toBe(false);
+	});
+
+	it("ignores busy markers other than restarting", () => {
+		expect(nodeStatus(link("disconnected"), ready, "Pausing").kind).toBe(
+			"disconnected",
+		);
+	});
+});
+
+describe("nodeRows", () => {
+	const nodes = {
+		local: "wsl",
+		links: [link("disconnected"), { ...link("connected"), name: "mac" }],
+	};
+
+	it("marks each restarting node from the busy markers", () => {
+		const rows = nodeRows(nodes, [], new Set(), "http://wsl:3100", {
+			wsl: "Restarting",
+			win: "Restarting",
+		});
+		expect(rows.map((r) => r.status.kind)).toEqual([
+			"restarting",
+			"restarting",
+			"loading",
+		]);
+	});
+
+	it("keeps the real status without busy markers", () => {
+		const rows = nodeRows(nodes, [], new Set(), "http://wsl:3100");
+		expect(rows.map((r) => r.status.kind)).toEqual([
+			"loading",
+			"disconnected",
+			"loading",
+		]);
 	});
 });
