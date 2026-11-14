@@ -1,8 +1,9 @@
 import { highLevelChangedFileCount } from "../../../../../../../review/highLevel/highLevelChangedFileCount";
-import { highLevelTestCount } from "../../../../../../../review/highLevel/highLevelTestCount";
 import type { HighLevelPreviewPayload } from "../../../../../../../review/highLevel/types";
 import { type HighLevelArea, highLevelAreaCheck } from "./highLevelAreaCheck";
+import { highLevelDescriptionChecks } from "./highLevelDescriptionChecks";
 import type { HighLevelSliceView } from "./highLevelSliceViews";
+import { sliceEntry } from "./highLevelReviewEntries/sliceEntry";
 
 export type HighLevelReviewEntry = {
 	view?: HighLevelSliceView;
@@ -11,6 +12,7 @@ export type HighLevelReviewEntry = {
 	areas: HighLevelArea[];
 	disabled: ReadonlySet<HighLevelArea>;
 	counts: Partial<Record<HighLevelArea, number>>;
+	failures: Partial<Record<HighLevelArea, number>>;
 };
 
 function overview(payload: HighLevelPreviewPayload): HighLevelReviewEntry {
@@ -34,20 +36,10 @@ function overview(payload: HighLevelPreviewPayload): HighLevelReviewEntry {
 			manual: payload.manualTesting?.steps.length ?? 0,
 			all: highLevelChangedFileCount(payload.structure),
 		},
-	};
-}
-
-function sliceEntry(view: HighLevelSliceView): HighLevelReviewEntry {
-	return {
-		view,
-		additions: view.slice.additions,
-		deletions: view.slice.deletions,
-		areas: ["structure", "tests", "critical"],
-		disabled: new Set(view.critical.length === 0 ? ["critical"] : []),
-		counts: {
-			structure: highLevelChangedFileCount(view.structure),
-			tests: highLevelTestCount(view.tests),
-			critical: view.critical.length,
+		failures: {
+			description: highLevelDescriptionChecks(payload.checks).filter(
+				(check) => check.status === "fail",
+			).length,
 		},
 	};
 }

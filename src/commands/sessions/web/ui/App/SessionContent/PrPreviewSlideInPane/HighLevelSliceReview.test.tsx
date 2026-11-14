@@ -27,6 +27,14 @@ function manual(
 	};
 }
 
+function deterministic(
+	id: Extract<HighLevelCheckResult, { kind: "deterministic" }>["id"],
+	status: "pass" | "fail",
+	reason: string,
+): HighLevelCheckResult {
+	return { id, kind: "deterministic", title: id, backing: id, status, reason };
+}
+
 const checks: HighLevelCheckResult[] = [
 	{
 		id: "no-merge-conflicts",
@@ -143,11 +151,44 @@ describe("HighLevelSliceReview", () => {
 			/>,
 		);
 
-		expect(screen.getByRole("heading", { name: "What" })).toBeTruthy();
+		expect(screen.getByRole("heading", { name: /^What/ })).toBeTruthy();
 		expect(screen.getByText("a thing").tagName).toBe("STRONG");
 		expect(
 			screen.getByRole("link", { name: /View on GitHub/ }).getAttribute("href"),
 		).toBe("https://github.com/org/repo/pull/7");
+	});
+
+	it("shows the description checks as chips and badges the tab on failure", () => {
+		render(
+			<HighLevelReviewPane
+				preview={preview({
+					body: "## What\nA.\n\n## Why\nB. Fixes #3.",
+					checks: [
+						...checks,
+						deterministic("description-what-why", "pass", "both present"),
+						deterministic(
+							"description-word-cap",
+							"fail",
+							"412 words, 112 over",
+						),
+						deterministic("description-links-issue", "pass", "links #3"),
+					],
+				})}
+				onDecision={vi.fn()}
+			/>,
+		);
+
+		const chips = within(
+			screen.getByRole("list", { name: "Description checks" }),
+		).getAllByRole("listitem");
+		expect(chips.map((chip) => chip.textContent)).toEqual([
+			"passWhat & Why: both present",
+			"failWord cap: 412 words, 112 over",
+			"passLinked issue: links #3",
+		]);
+		expect(within(chips[1]).getByTitle("fail")).toBeTruthy();
+		expect(area(/Description/).textContent).toBe("Description1 fail");
+		expect(screen.getByText("#3").className).toBe("issue-ref");
 	});
 
 	it("shows No description for an empty body", () => {

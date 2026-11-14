@@ -1,29 +1,22 @@
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
 import RadioButtonUncheckedIcon from "@mui/icons-material/RadioButtonUnchecked";
-import { Box, ButtonBase } from "@mui/material";
+import { Box, ButtonBase, type Theme } from "@mui/material";
+import { tabSx } from "./HighLevelAreaTab/tabSx";
 
-function tabSx(selected: boolean) {
-	return {
-		height: "100%",
-		px: 1.25,
-		gap: 0.75,
-		flexShrink: 0,
-		fontSize: 12,
-		fontWeight: 500,
-		letterSpacing: "0.04em",
-		textTransform: "uppercase",
-		whiteSpace: "nowrap",
-		color: selected ? "primary.main" : "text.secondary",
-		borderBottom: 2,
-		borderColor: selected ? "primary.main" : "transparent",
-		"&:hover": { color: selected ? "primary.main" : "text.primary" },
-		"&.Mui-disabled": { color: "text.disabled" },
-	} as const;
-}
+const failureBadgeSx = {
+	fontFamily: "fontFamilyMono",
+	fontSize: 10,
+	letterSpacing: 0,
+	px: 0.625,
+	borderRadius: 0.5,
+	bgcolor: (t: Theme) => t.tokens.color.wash.error,
+	color: "error.main",
+} as const;
 
 export function HighLevelAreaTab({
 	label,
 	count,
+	failures,
 	tick,
 	selected,
 	disabled,
@@ -31,6 +24,7 @@ export function HighLevelAreaTab({
 }: {
 	label: string;
 	count: number | undefined;
+	failures: number;
 	tick: boolean | undefined;
 	selected: boolean;
 	disabled: boolean;
@@ -58,6 +52,11 @@ export function HighLevelAreaTab({
 					sx={{ fontFamily: "fontFamilyMono", color: "text.disabled" }}
 				>
 					{count}
+				</Box>
+			)}
+			{failures > 0 && (
+				<Box component="span" sx={failureBadgeSx}>
+					{failures} fail
 				</Box>
 			)}
 		</ButtonBase>

@@ -1,22 +1,47 @@
 import OpenInNewIcon from "@mui/icons-material/OpenInNew";
 import { Box, Link, Typography } from "@mui/material";
-import { AssistantMarkdown } from "../../SessionArea/TranscriptArea/TranscriptPane/TranscriptRow/TextRow/AssistantMarkdown";
+import { useMemo } from "react";
+import { MarkdownHtml } from "../../../../../../../backlog/web/ui/components/MarkdownHtml";
+import type { HighLevelCheckResult } from "../../../../../../../review/highLevel/types";
+import { assistantMarkdownSx } from "../../SessionArea/TranscriptArea/TranscriptPane/TranscriptRow/TextRow/assistantMarkdownSx";
+import { descriptionMarksSx } from "./HighLevelDescription/descriptionMarksSx";
+import { HighLevelDescriptionChips } from "./HighLevelDescription/HighLevelDescriptionChips";
+import { matchedIssueReference } from "./HighLevelDescription/matchedIssueReference";
+import { renderDescriptionMarkdown } from "./HighLevelDescription/renderDescriptionMarkdown";
+import { highLevelDescriptionChecks } from "./highLevelDescriptionChecks";
 
 export function HighLevelDescription({
 	body,
 	repo,
 	prNumber,
+	checks,
+	showChecks,
 }: {
 	body: string;
 	repo: string;
 	prNumber: number;
+	checks: HighLevelCheckResult[];
+	showChecks: boolean;
 }) {
+	const html = useMemo(
+		() => renderDescriptionMarkdown(body, matchedIssueReference(body, checks)),
+		[body, checks],
+	);
 	return (
 		<Box
 			sx={{ display: "flex", flexDirection: "column", gap: 1.5, minWidth: 0 }}
 		>
+			{showChecks && (
+				<HighLevelDescriptionChips
+					checks={highLevelDescriptionChecks(checks)}
+				/>
+			)}
 			{body.trim() ? (
-				<AssistantMarkdown text={body} />
+				<MarkdownHtml
+					className="markdown"
+					sx={[assistantMarkdownSx, descriptionMarksSx]}
+					html={html}
+				/>
 			) : (
 				<Typography variant="body2" sx={{ color: "text.secondary" }}>
 					No description

@@ -43,6 +43,7 @@ export function HighLevelAreaTabs({
 						key={candidate}
 						label={highLevelAreaLabels[candidate]}
 						count={entry.counts[candidate]}
+						failures={entry.failures[candidate] ?? 0}
 						tick={key === undefined ? undefined : ticked(key)}
 						selected={candidate === area}
 						disabled={entry.disabled.has(candidate)}

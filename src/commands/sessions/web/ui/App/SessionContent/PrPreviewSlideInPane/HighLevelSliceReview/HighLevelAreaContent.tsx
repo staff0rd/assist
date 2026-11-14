@@ -35,6 +35,8 @@ export function HighLevelAreaContent({
 				body={payload.body}
 				repo={payload.repo}
 				prNumber={payload.prNumber}
+				checks={payload.checks}
+				showChecks={area === "description"}
 			/>
 		);
 	if (area === "all")

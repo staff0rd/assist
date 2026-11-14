@@ -1,13 +1,5 @@
+import { findIssueReference } from "./findIssueReference";
 import type { CheckOutcome } from "./types";
-
-const ISSUE_URL_PATTERN =
-	/https?:\/\/github\.com\/[\w.-]+\/[\w.-]+\/issues\/\d+/g;
-const CROSS_REPO_PATTERN = /\b[\w.-]+\/[\w.-]+#\d+/g;
-const SAME_REPO_PATTERN = /(?<![\w/#-])#\d+\b/g;
-
-function firstMatch(body: string, pattern: RegExp): string | null {
-	return body.match(pattern)?.[0] ?? null;
-}
 
 export function checkDescriptionLinksIssue(
 	body: string,
@@ -18,10 +10,7 @@ export function checkDescriptionLinksIssue(
 			status: "pass",
 			reason: `Development-linked to ${linkedIssues[0]}`,
 		};
-	const reference =
-		firstMatch(body, ISSUE_URL_PATTERN) ??
-		firstMatch(body, CROSS_REPO_PATTERN) ??
-		firstMatch(body, SAME_REPO_PATTERN);
+	const reference = findIssueReference(body);
 	if (!reference)
 		return {
 			status: "fail",
