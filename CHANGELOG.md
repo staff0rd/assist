@@ -1,3 +1,10 @@
+## [0.1158.1](https://github.com/staff0rd/assist/compare/v0.1158.0...v0.1158.1) (2026-11-14)
+
+
+### Bug Fixes
+
+* show program names, not commands ([cfff46f](https://github.com/staff0rd/assist/commit/cfff46fd2ea171c836eab664fcaef1f7ecc4917e))
+
 # [0.1158.0](https://github.com/staff0rd/assist/compare/v0.1157.0...v0.1158.0) (2026-11-14)
 
 
