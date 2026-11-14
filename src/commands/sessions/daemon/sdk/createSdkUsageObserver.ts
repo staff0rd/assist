@@ -1,12 +1,18 @@
 import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
 import { findSessionJsonlPath } from "../../shared/findSessionJsonlPath";
 import { daemonLog } from "../daemonLog";
+import { createSdkContextRefresh } from "./createSdkContextRefresh";
+import type { SdkContextReader } from "./sdkContextReader";
 import { sdkContextTokens, sdkContextUsedPct } from "./sdkContextUsedPct";
-import { sdkRateLimits } from "./sdkRateLimits";
+import { recordSdkRateLimits } from "./recordSdkRateLimits";
 import { sdkUsageSink } from "./sdkUsageSink";
 
-export function createSdkUsageObserver(label: string) {
+export function createSdkUsageObserver(
+	label: string,
+	readContext?: SdkContextReader,
+) {
 	let contextTokens = 0;
+	const context = createSdkContextRefresh(label, readContext);
 	let model: string | undefined;
 	let transcriptPath: Promise<string | null> | undefined;
 	const transcriptFor = (claudeSessionId: string) => {
@@ -15,21 +21,18 @@ export function createSdkUsageObserver(label: string) {
 	};
 	return (message: SDKMessage): void => {
 		const sink = sdkUsageSink();
-		if (message.type === "rate_limit_event") {
-			const limits = sdkRateLimits(message.rate_limit_info);
-			if (!limits) return;
-			daemonLog(
-				`${label} sdk rate limits: 5h ${limits.five_hour?.used_percentage ?? "-"}% 7d ${limits.seven_day?.used_percentage ?? "-"}%`,
-			);
-			sink?.limits(limits);
-		} else if (
+		if (message.type === "rate_limit_event")
+			recordSdkRateLimits(label, message.rate_limit_info);
+		else if (
 			message.type === "assistant" &&
 			message.parent_tool_use_id === null
 		) {
 			contextTokens = sdkContextTokens(message.message.usage) || contextTokens;
 			model = message.message.model ?? model;
+			context.refresh(message.session_id);
 		} else if (message.type === "result") {
-			const usedPct = sdkContextUsedPct(contextTokens, model, message);
+			const usedPct =
+				context.latest() ?? sdkContextUsedPct(contextTokens, model, message);
 			const claudeSessionId = message.session_id;
 			daemonLog(
 				`${label} sdk usage: claude session ${claudeSessionId} context ${usedPct ?? "-"}%`,

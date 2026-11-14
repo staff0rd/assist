@@ -1,6 +1,6 @@
 import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
-import { describe, expect, it } from "vitest";
-import { sdkBackgroundTasks } from "./sdkBackgroundTasks";
+import { beforeEach, describe, expect, it } from "vitest";
+import { createSdkBackgroundTasks } from "./createSdkBackgroundTasks";
 
 const changed = (tasks: unknown[]) =>
 	({
@@ -10,6 +10,22 @@ const changed = (tasks: unknown[]) =>
 		uuid: "u",
 		session_id: "s",
 	}) as unknown as SDKMessage;
+
+const bashCall = (command: string, description: string) =>
+	({
+		type: "assistant",
+		parent_tool_use_id: null,
+		message: {
+			content: [
+				{ type: "tool_use", name: "Bash", input: { command, description } },
+			],
+		},
+	}) as unknown as SDKMessage;
+
+let sdkBackgroundTasks: ReturnType<typeof createSdkBackgroundTasks>;
+beforeEach(() => {
+	sdkBackgroundTasks = createSdkBackgroundTasks();
+});
 
 describe("sdkBackgroundTasks", () => {
 	it("lists live non-ambient task descriptions", () => {
@@ -41,10 +57,25 @@ describe("sdkBackgroundTasks", () => {
 					},
 				]),
 			),
-		).toEqual([
-			"cd /repo; cat > /tmp/q.json <<'JSON'",
-			`vite ${"x".repeat(74)}…`,
-		]);
+		).toEqual(["cat > /tmp/q.json <<'JSON'", `vite ${"x".repeat(74)}…`]);
+	});
+
+	it("labels a shell task with the description of the Bash call that started it", () => {
+		const command = "cd /repo && assist ask-check --json - < /tmp/c.json\n";
+		expect(
+			sdkBackgroundTasks(bashCall(command, "Raise manual check")),
+		).toBeUndefined();
+		expect(
+			sdkBackgroundTasks(
+				changed([
+					{
+						task_id: "a",
+						task_type: "local_bash",
+						description: command.trim(),
+					},
+				]),
+			),
+		).toEqual(["Raise manual check"]);
 	});
 
 	it("returns an empty set when every task ended", () => {

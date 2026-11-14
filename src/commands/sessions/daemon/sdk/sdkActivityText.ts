@@ -1,4 +1,5 @@
 import { activityLine } from "./activityLine";
+import { commandActivityLine } from "./commandActivityLine";
 
 type ContentBlock = {
 	type: string;
@@ -18,17 +19,13 @@ const TARGET_KEYS = [
 	"skill",
 ];
 
-const LEADING_CD = /^cd\s+(?:"[^"]*"|'[^']*'|\S+)\s*(?:;|&&)\s*/;
-
 function toolTarget(input: unknown): string {
 	if (!input || typeof input !== "object") return "";
 	const record = input as Record<string, unknown>;
 	const key = TARGET_KEYS.find((k) => typeof record[k] === "string");
 	if (!key) return "";
 	const value = record[key] as string;
-	return activityLine(
-		key === "command" ? value.trim().replace(LEADING_CD, "") : value,
-	);
+	return key === "command" ? commandActivityLine(value) : activityLine(value);
 }
 
 export function sdkActivityText(content: readonly ContentBlock[]): string {

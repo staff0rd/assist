@@ -80,4 +80,29 @@ describe("createSdkUsageObserver", () => {
 			expect(sink.usage).toHaveBeenCalledWith("abc", "/t/abc.jsonl", undefined),
 		);
 	});
+
+	it("refreshes context % from the query after each main-loop response", async () => {
+		const observe = createSdkUsageObserver("session 1", async () => 41.6);
+		observe(
+			message({
+				type: "assistant",
+				parent_tool_use_id: null,
+				session_id: "abc",
+				message: { model: "opus", content: [], usage: { input_tokens: 10 } },
+			}),
+		);
+		await vi.waitFor(() =>
+			expect(sink.usage).toHaveBeenCalledWith("abc", undefined, 42),
+		);
+		observe(
+			message({
+				type: "result",
+				session_id: "abc",
+				modelUsage: { opus: { contextWindow: 200_000 } },
+			}),
+		);
+		await vi.waitFor(() =>
+			expect(sink.usage).toHaveBeenCalledWith("abc", "/t/abc.jsonl", 42),
+		);
+	});
 });
