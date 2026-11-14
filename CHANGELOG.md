@@ -1,3 +1,10 @@
+## [0.1148.2](https://github.com/staff0rd/assist/compare/v0.1148.1...v0.1148.2) (2026-11-14)
+
+
+### Bug Fixes
+
+* slimmer wrench head for checks ([0d7060a](https://github.com/staff0rd/assist/commit/0d7060a7153d5511d6d8789e9f55110cb2c3c0d1))
+
 ## [0.1148.1](https://github.com/staff0rd/assist/compare/v0.1148.0...v0.1148.1) (2026-11-14)
 
 
