@@ -1,3 +1,10 @@
+# [0.1153.0](https://github.com/staff0rd/assist/compare/v0.1152.0...v0.1153.0) (2026-11-14)
+
+
+### Features
+
+* suggest next prompt in SDK composer ([00c7612](https://github.com/staff0rd/assist/commit/00c7612006a68e60899c2c8c177b9b5b7821e733))
+
 # [0.1152.0](https://github.com/staff0rd/assist/compare/v0.1151.0...v0.1152.0) (2026-11-14)
 
 
