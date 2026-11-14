@@ -10,5 +10,9 @@ export function processLine(session: SessionInfo) {
 			process.ioBytesPerSec === undefined
 				? undefined
 				: formatIoRate(process.ioBytesPerSec),
+		idle:
+			process.idleMinutes === undefined
+				? undefined
+				: `idle ${process.idleMinutes}m`,
 	};
 }

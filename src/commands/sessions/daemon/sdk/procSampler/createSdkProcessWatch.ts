@@ -1,9 +1,9 @@
 import type { SdkProcessInfo } from "../../../../../shared/harnessAdapters/types";
+import { createLeafProcessTracker } from "./createLeafProcessTracker";
 import { dedupeProcessEmit } from "./dedupeProcessEmit";
 import { CLOCK_TICKS_PER_SECOND, readUptimeTicks } from "./readUptimeTicks";
 import { sampleLeafProcess } from "./sampleLeafProcess";
 import { startSerialInterval } from "./startSerialInterval";
-import { type TimedSample, toSdkProcessInfo } from "./toSdkProcessInfo";
 
 const SAMPLE_INTERVAL_MS = 2000;
 // why: the tool's shell can start just before its tool_use message reaches the daemon
@@ -26,22 +26,20 @@ export function createSdkProcessWatch(
 ) {
 	let generation = 0;
 	let stopTimer: (() => void) | undefined;
-	let previous: TimedSample | undefined;
+	const tracker = createLeafProcessTracker(now);
 	const publish = dedupeProcessEmit(emit);
 
 	const tick = async (run: number, pid: number, since: number) => {
 		const sample = await sampleLeafProcess(procRoot, pid, since);
 		if (run !== generation) return;
-		const current = sample ? { sample, at: now() } : undefined;
-		publish(current ? toSdkProcessInfo(current, previous) : null);
-		previous = current;
+		publish(tracker.next(sample));
 	};
 
 	const stop = () => {
 		generation++;
 		stopTimer?.();
 		stopTimer = undefined;
-		previous = undefined;
+		tracker.reset();
 		publish(null);
 	};
 

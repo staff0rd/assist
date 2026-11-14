@@ -5,7 +5,11 @@ import type { ReviewerResult } from "../../commands/review/runStreamingChild";
 import type { SpawnResult } from "../spawnInherit";
 import type { CapabilityId } from "./capabilityDefinitions";
 
-export type SdkProcessInfo = { command: string; ioBytesPerSec?: number };
+export type SdkProcessInfo = {
+	command: string;
+	ioBytesPerSec?: number;
+	idleMinutes?: number;
+};
 
 export type SdkSessionEvent =
 	| { kind: "status"; status: "running" | "waiting" }

@@ -167,6 +167,30 @@ describe("SdkTail", () => {
 		);
 	});
 
+	it("flags an idle leaf process in the warning colour", () => {
+		render(
+			<SdkTail
+				session={makeSessionInfo({
+					sdk: true,
+					status: "running",
+					sdkActivity: "Working · Bash",
+					sdkProcess: {
+						command: "sleep 600",
+						ioBytesPerSec: 0,
+						idleMinutes: 3,
+					},
+				})}
+			/>,
+		);
+		expect(screen.getByRole("status").textContent).toContain(
+			"sleep 600 · IO 0 B/s · idle 3m",
+		);
+		const idle = screen.getByText("idle 3m");
+		expect(getComputedStyle(idle).color).not.toBe(
+			getComputedStyle(screen.getByRole("status")).color,
+		);
+	});
+
 	it("hides the elapsed time while the turn is stopping", () => {
 		render(
 			<SdkTail
