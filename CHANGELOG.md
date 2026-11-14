@@ -1,3 +1,10 @@
+## [0.1168.1](https://github.com/staff0rd/assist/compare/v0.1168.0...v0.1168.1) (2026-11-14)
+
+
+### Bug Fixes
+
+* put description on its own line ([af67151](https://github.com/staff0rd/assist/commit/af67151e61d4aa80541c4165c7bbadd8660a29ac))
+
 # [0.1168.0](https://github.com/staff0rd/assist/compare/v0.1167.0...v0.1168.0) (2026-11-14)
 
 
