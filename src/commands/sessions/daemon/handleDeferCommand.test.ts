@@ -95,6 +95,20 @@ describe("defer-command handler", () => {
 		);
 	});
 
+	it("labels a nested command by its subcommands", () => {
+		const sdk = { send: vi.fn() };
+		handleDeferCommand({ send: vi.fn() }, managerWith(sdk).manager, {
+			...request,
+			argv: ["backlog", "propose", "--json", "-"],
+		});
+
+		finishWith({ output: "Added item a1\n", exitCode: 0 });
+
+		expect(sdk.send).toHaveBeenCalledWith(
+			"`assist backlog propose` finished with exit code 0:\n\nAdded item a1",
+		);
+	});
+
 	it("delivers nothing when the preview was superseded", () => {
 		const sdk = { send: vi.fn() };
 		handleDeferCommand({ send: vi.fn() }, managerWith(sdk).manager, request);

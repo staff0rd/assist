@@ -1,6 +1,7 @@
 import { supersededPreviewMessage } from "../shared/supersededPreviewMessage";
 import { sendTo } from "./broadcast";
 import { daemonLog } from "./daemonLog";
+import { deferredCommandLabel } from "./deferredCommandLabel";
 import { formatDeferredResult } from "./formatDeferredResult";
 import type { Handler } from "./routed";
 import { type DeferredResult, runDeferredCommand } from "./runDeferredCommand";
@@ -32,7 +33,7 @@ function deliver(
 export const handleDeferCommand: Handler = (client, m, d) => {
 	const id = String(d.sessionId);
 	const argv = Array.isArray(d.argv) ? d.argv.map(String) : [];
-	const command = argv[0] ?? "?";
+	const command = deferredCommandLabel(argv);
 	if (!m.session(id)?.pty?.sdk) {
 		daemonLog(
 			`defer-command ${command} declined: session ${id} is not a live Claude (SDK) session`,

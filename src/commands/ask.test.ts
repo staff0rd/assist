@@ -10,7 +10,7 @@ vi.mock("./sessions/shared/requestPreviewDecision", () => ({
 const mockDeferToDaemon = vi.fn();
 
 vi.mock("./sessions/shared/deferToDaemon", () => ({
-	deferToDaemon: (stdin?: string) => mockDeferToDaemon(stdin),
+	deferToDaemon: () => mockDeferToDaemon(),
 }));
 
 import { ask } from "./ask";
@@ -62,12 +62,14 @@ describe("ask", () => {
 		expect(errored.join("\n")).toContain("--body is empty");
 	});
 
-	it("returns without blocking once the daemon takes the preview", async () => {
+	it("exits 0 without blocking once the daemon takes the preview", async () => {
 		mockDeferToDaemon.mockResolvedValue(true);
 
-		await ask({ title: "Plan", body: "# Plan" });
+		await expect(ask({ title: "Plan", body: "# Plan" })).rejects.toThrow(
+			"process.exit(0)",
+		);
 
-		expect(mockDeferToDaemon).toHaveBeenCalledWith(undefined);
+		expect(mockDeferToDaemon).toHaveBeenCalled();
 		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
 	});
 

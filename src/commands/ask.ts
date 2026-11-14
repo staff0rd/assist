@@ -1,6 +1,5 @@
 import { randomUUID } from "node:crypto";
 import { readBodyArgument } from "./prs/readBodyArgument";
-import { deferToDaemon } from "./sessions/shared/deferToDaemon";
 import { awaitPreviewApproval } from "./sessions/shared/awaitPreviewApproval";
 import { printApprovedComments } from "./sessions/shared/printApprovedComments";
 
@@ -18,7 +17,6 @@ export async function ask(options: {
 		console.log(body);
 		return;
 	}
-	if (await deferToDaemon(options.body === "-" ? body : undefined)) return;
 
 	const decision = await awaitPreviewApproval(
 		options.title,

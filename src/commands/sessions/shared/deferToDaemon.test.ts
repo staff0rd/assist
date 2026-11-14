@@ -5,6 +5,7 @@ vi.mock("../daemon/requestDaemonReply", () => ({
 	requestDaemonReply: (...args: unknown[]) => mockReply(...args),
 }));
 
+import { capturedStdin } from "./capturedStdin";
 import { deferToDaemon } from "./deferToDaemon";
 
 describe("deferToDaemon", () => {
@@ -41,6 +42,19 @@ describe("deferToDaemon", () => {
 			"defer-command-result",
 		);
 		expect(logged.join("\n")).toContain("End your turn now");
+	});
+
+	it("forwards the stdin the command already read", async () => {
+		mockReply.mockResolvedValue({ accepted: true });
+		capturedStdin.text = '{"questions":[]}';
+
+		await deferToDaemon();
+
+		expect(mockReply).toHaveBeenCalledWith(
+			expect.objectContaining({ stdin: '{"questions":[]}' }),
+			"defer-command-result",
+		);
+		capturedStdin.text = undefined;
 	});
 
 	it("keeps the blocking path when the daemon declines", async () => {

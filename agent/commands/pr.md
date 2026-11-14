@@ -6,6 +6,8 @@ Run `assist prs raise --help` and follow its guidance exactly to compose and rai
 
 ## After a successful raise
 
+In a Claude SDK session (`ASSIST_SDK_AGENT=1`) a web-previewed raise returns at once: end your turn and do nothing else, and its outcome arrives as your next message.
+
 Only once the PR has actually been placed (skip this if the raise was rejected in the web preview or errored — there is nothing to watch), start watching CI in the background so you can keep working:
 
 - Run `gh pr checks --watch` as a background task. It resolves the current branch's PR on its own, so no arguments are needed. Do not block on it — continue with other work while it polls.

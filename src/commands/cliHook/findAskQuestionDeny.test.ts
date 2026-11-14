@@ -69,6 +69,16 @@ describe("findAskQuestionDeny", () => {
 		expect(decision?.permissionDecisionReason).toContain(json);
 	});
 
+	it("tells a Claude SDK session to end its turn instead of using a background task", async () => {
+		const pty = await findAskQuestionDeny("{}");
+		vi.stubEnv("ASSIST_SDK_AGENT", "1");
+		const sdk = await findAskQuestionDeny("{}");
+
+		expect(pty?.permissionDecisionReason).toContain("as a background task");
+		expect(sdk?.permissionDecisionReason).toContain("end your turn");
+		expect(sdk?.permissionDecisionReason).not.toContain("background task");
+	});
+
 	it("allows outside an assist session", async () => {
 		vi.stubEnv("ASSIST_SESSION", "");
 		expect(await findAskQuestionDeny("{}")).toBeUndefined();

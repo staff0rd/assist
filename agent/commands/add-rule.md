@@ -59,10 +59,10 @@ It appends the rule to `advice.rules` in `user (db)` with no R-code. For `user (
 
 Use single quotes around the rule text to avoid shell escaping issues.
 
-Run `assist rules add` as a background task and do no other work until it returns. In a web session it opens the rule, its title and where it will land in the preview pane, and writes nothing until the user decides:
+Run `assist rules add` as a background task and do no other work until it returns. In a web session it opens the rule, its title and where it will land in the preview pane, and writes nothing until the user decides. In a Claude SDK session (`ASSIST_SDK_AGENT=1`), run `assist rules add` in the foreground instead: it returns at once, so end your turn and do nothing else — the command's output and exit code arrive as your next message, and a superseded run delivers nothing.
 
 - **Approved** — it exits 0 having written the rule. Show the command output — it names the allocated code (or, for an `advice.rules` rule, the title) and where it went — then tell the user in one line which rule was added and where.
-- **Rejected** — it exits non-zero having written nothing, printing the reason and every inline comment. Revise the wording, title or scope to address each one, then re-run `assist rules add` with the revision as a background task again. Do not move on to Step 5 until a version is approved.
+- **Rejected** — it exits non-zero having written nothing, printing the reason and every inline comment. Revise the wording, title or scope to address each one, then re-run `assist rules add` with the revision again, the same way. Do not move on to Step 5 until a version is approved.
 - **Superseded** — an earlier run whose preview a re-run replaced exits 0 saying so; ignore its result.
 
 Outside a web session it writes immediately and exits 0.

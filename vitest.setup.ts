@@ -54,6 +54,10 @@ function clearResumeEnvInheritedFromADaemonResumedSession() {
 
 clearResumeEnvInheritedFromADaemonResumedSession();
 
+// why: a test run from a Claude SDK session would otherwise hand every preview it opens to the real daemon
+delete process.env.ASSIST_SDK_AGENT;
+delete process.env.ASSIST_DEFERRED_RUN;
+
 afterAll(async () => {
 	rmSync(storeDir, { recursive: true, force: true });
 	const key = Symbol.for("assist.sharedTestPglite");

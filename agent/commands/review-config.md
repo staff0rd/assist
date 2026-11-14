@@ -48,6 +48,8 @@ assist ask --title 'High-level review config' --body - < <scratch file>
 - **Rejected (non-zero exit)** — write nothing. Address the reason and each comment, re-check any changed glob still matches files, revise the scratch file and re-run `assist ask`.
 - **Superseded (exit 0)** — you re-ran `assist ask` while this one was pending, which is how to revise it; do not stop the earlier task first. Ignore this result and wait for the newer one.
 
+In a Claude SDK session (`ASSIST_SDK_AGENT=1`), run it in the foreground instead: it returns at once, so end your turn and do nothing else — the command's output and exit code arrive as your next message, and a superseded run delivers nothing.
+
 Outside a web session `assist ask` only prints the markdown and exits 0 without a decision: ask the user in chat instead, and write only once they have answered.
 
 ## Step 4: Write the answers

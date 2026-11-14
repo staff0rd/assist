@@ -64,6 +64,12 @@ vi.mock("../sessions/shared/requestAssistSession", () => ({
 		mockRequestAssistSession(...args),
 }));
 
+const mockRequestDaemonReply = vi.fn();
+
+vi.mock("../sessions/daemon/requestDaemonReply", () => ({
+	requestDaemonReply: (...args: unknown[]) => mockRequestDaemonReply(...args),
+}));
+
 vi.mock("../sessions/shared/requestPreviewDecision", () => ({
 	requestPreviewDecision: (...args: unknown[]) =>
 		mockRequestPreviewDecision(...args),
@@ -114,6 +120,7 @@ beforeEach(async () => {
 	process.exitCode = undefined;
 	mockRequestPreviewDecision.mockReset();
 	mockRequestAssistSession.mockReset();
+	mockRequestDaemonReply.mockReset();
 	logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
 	delete process.env.ASSIST_SESSION;
 	delete process.env.ASSIST_SESSION_ID;
@@ -532,5 +539,59 @@ describe("propose when the proposal ledger cannot be written", () => {
 		);
 		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
 		expect(await allItems()).toEqual([]);
+	});
+});
+
+describe("propose in a Claude SDK session", () => {
+	beforeEach(() => {
+		vi.stubEnv("ASSIST_SESSION", "1");
+		vi.stubEnv("ASSIST_SESSION_ID", "7");
+		vi.stubEnv("ASSIST_SDK_AGENT", "1");
+		vi.spyOn(process, "exit").mockImplementation(((code?: number) => {
+			throw new Error(`process.exit(${code})`);
+		}) as never);
+	});
+
+	afterEach(() => {
+		vi.unstubAllEnvs();
+	});
+
+	it("hands the preview to the daemon and exits 0 without creating anything", async () => {
+		mockRequestDaemonReply.mockResolvedValue({ accepted: true });
+
+		await expect(propose({ json: writePayload(story) })).rejects.toThrow(
+			"process.exit(0)",
+		);
+
+		expect(mockRequestDaemonReply).toHaveBeenCalledWith(
+			expect.objectContaining({ type: "defer-command", sessionId: "7" }),
+			"defer-command-result",
+		);
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+		expect(await allItems()).toEqual([]);
+		expect(logSpy.mock.calls.map((c) => c.join(" ")).join("\n")).toContain(
+			"End your turn now",
+		);
+	});
+
+	it("creates the item and every phase when the daemon's deferred run is approved", async () => {
+		vi.stubEnv("ASSIST_DEFERRED_RUN", "1");
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+
+		await propose({ json: writePayload(story) });
+
+		expect(mockRequestDaemonReply).not.toHaveBeenCalled();
+		const [item] = await allItems();
+		expect(item.name).toBe("Preview backlog items");
+		expect(
+			await orm
+				.select({ name: planPhases.name })
+				.from(planPhases)
+				.where(eq(planPhases.itemId, item.id))
+				.orderBy(asc(planPhases.idx)),
+		).toEqual([{ name: "Render the plan" }, { name: "Insert the phases" }]);
+		expect(logSpy.mock.calls.map((c) => c.join(" ")).join("\n")).toContain(
+			"Added item",
+		);
 	});
 });

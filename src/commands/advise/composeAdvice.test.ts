@@ -110,7 +110,7 @@ describe("composeAdvice", () => {
 		expect(markdown).toContain("## Asking for a manual check");
 		expect(markdown).toContain("assist ask-check --json -");
 		expect(markdown).toContain(
-			"keep waiting on the pending `ask-check`; don't re-run, supersede or stop it",
+			"leave the pending `ask-check` open; don't re-run, supersede or stop it",
 		);
 		expect(markdown).toContain("assist ask-question --json -");
 		expect(markdown).toContain("assist ask --title");
