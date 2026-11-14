@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { makeSession } from "../../../test/mothers/makeSession";
 import { appendTranscriptEcho } from "./appendTranscriptEcho";
 import type { Session } from "./createSession";
-import { recordCheckNoteEcho } from "./recordCheckNoteEcho";
+import { recordPaneEcho } from "./recordPaneEcho";
 
 vi.mock("./appendTranscriptEcho", () => ({ appendTranscriptEcho: vi.fn() }));
 vi.mock("../shared/conversationOf", () => ({
@@ -28,7 +28,7 @@ describe("recordCheckNoteEcho", () => {
 
 	it("echoes a check note for an SDK session", () => {
 		const session = checkSession(true);
-		recordCheckNoteEcho(session, {
+		recordPaneEcho(session, {
 			answers: { result: "works", note: "  looks good  " },
 		});
 		expect(appendTranscriptEcho).toHaveBeenCalledWith("conv-1", {
@@ -39,16 +39,35 @@ describe("recordCheckNoteEcho", () => {
 	});
 
 	it("records nothing for an empty note", () => {
-		recordCheckNoteEcho(checkSession(true), {
+		recordPaneEcho(checkSession(true), {
 			answers: { result: "works", note: "   " },
 		});
 		expect(appendTranscriptEcho).not.toHaveBeenCalled();
 	});
 
 	it("records nothing for a non-SDK session", () => {
-		recordCheckNoteEcho(checkSession(false), {
+		recordPaneEcho(checkSession(false), {
 			answers: { result: "works", note: "a note" },
 		});
 		expect(appendTranscriptEcho).not.toHaveBeenCalled();
+	});
+
+	it("echoes an ask reject reason", () => {
+		const session = makeSession({
+			id: "1",
+			pty: { sdk: {} } as Session["pty"],
+			pendingPrPreview: {
+				requestId: "r1",
+				title: "Plan",
+				body: "",
+				prNumber: null,
+				kind: "ask",
+			},
+		});
+		recordPaneEcho(session, { decision: "reject", reason: "Redo it" });
+		expect(appendTranscriptEcho).toHaveBeenCalledWith("conv-1", {
+			at: expect.any(String),
+			text: "Redo it",
+		});
 	});
 });

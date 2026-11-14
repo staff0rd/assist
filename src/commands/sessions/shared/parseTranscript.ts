@@ -1,4 +1,5 @@
 import * as fs from "node:fs";
+import { readTranscriptEchoes } from "../daemon/readTranscriptEchoes";
 import { locateConversation } from "./locateConversation";
 import {
 	type TranscriptMessage,
@@ -12,7 +13,11 @@ export async function parseTranscript(
 	if (!located) return [];
 	try {
 		const raw = await fs.promises.readFile(located.filePath, "utf8");
-		return transcriptMessages(located.reader, raw.split("\n"));
+		return transcriptMessages(
+			located.reader,
+			raw.split("\n"),
+			await readTranscriptEchoes(conversationId),
+		);
 	} catch {
 		return [];
 	}
