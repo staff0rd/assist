@@ -1,3 +1,11 @@
+## [0.1147.1](https://github.com/staff0rd/assist/compare/v0.1147.0...v0.1147.1) (2026-11-14)
+
+
+### Bug Fixes
+
+* keep transcript scroll when read up ([043b1d3](https://github.com/staff0rd/assist/commit/043b1d3d18a511bdf138bfac75275547711a20ee))
+* label SDK tasks and live context % ([3fe77f3](https://github.com/staff0rd/assist/commit/3fe77f356c95b77047bcb7dbbe0c7e531bcfccf7))
+
 # [0.1147.0](https://github.com/staff0rd/assist/compare/v0.1146.1...v0.1147.0) (2026-11-14)
 
 
