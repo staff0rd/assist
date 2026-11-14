@@ -1,0 +1,16 @@
+export const callRowSx = {
+	display: "flex",
+	alignItems: "center",
+	gap: 1,
+	width: "100%",
+	justifyContent: "flex-start",
+	py: 0.5,
+	pl: 1,
+	minWidth: 0,
+	borderRadius: 1,
+	typography: "caption",
+	color: "text.secondary",
+	textAlign: "left",
+	"&:hover": { bgcolor: "action.hover" },
+	"&.Mui-focusVisible": { outline: 2, outlineColor: "primary.main" },
+} as const;

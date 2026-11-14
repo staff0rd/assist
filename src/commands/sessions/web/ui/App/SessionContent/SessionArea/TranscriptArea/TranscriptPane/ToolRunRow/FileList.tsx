@@ -1,12 +1,9 @@
 import Box from "@mui/material/Box";
 import { Fragment } from "react";
+import { baseName } from "./baseName";
 
 const CAP = 2;
 const mono = { fontFamily: "fontFamilyMono" } as const;
-
-function baseName(path: string): string {
-	return path.split(/[\\/]/).pop() || path;
-}
 
 export function FileList({
 	label,

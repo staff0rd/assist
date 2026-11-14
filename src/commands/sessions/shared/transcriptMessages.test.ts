@@ -127,6 +127,31 @@ describe("transcriptMessages from a Claude transcript", () => {
 		]);
 	});
 
+	it("carries a tool call's description alongside its target", () => {
+		const messages = parseClaudeTranscriptLines([
+			line({
+				type: "assistant",
+				message: {
+					content: [
+						{
+							type: "tool_use",
+							name: "Bash",
+							input: { command: "ls -la", description: "List files" },
+						},
+					],
+				},
+			}),
+		]);
+		expect(messages).toEqual([
+			{
+				role: "tool",
+				tool: "Bash",
+				target: "ls -la",
+				description: "List files",
+			},
+		]);
+	});
+
 	it("skips tool_result, meta and sidechain entries and renders a slash-command opener", () => {
 		const messages = parseClaudeTranscriptLines([
 			line({ type: "user", isMeta: true, message: { content: "meta" } }),

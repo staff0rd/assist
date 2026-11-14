@@ -4,8 +4,8 @@ import ButtonBase from "@mui/material/ButtonBase";
 import { useState } from "react";
 import type { KeyedToolMessage } from "./groupToolRuns";
 import { summariseToolRun } from "./ToolRunRow/summariseToolRun";
+import { ToolCallRow } from "./ToolRunRow/ToolCallRow";
 import { ToolRunSummaryText } from "./ToolRunRow/ToolRunSummaryText";
-import { ToolRow } from "./TranscriptRow/ToolRow";
 
 const summarySx = {
 	display: "flex",
@@ -44,7 +44,7 @@ export function ToolRunRow({ calls }: { calls: KeyedToolMessage[] }) {
 			{expanded && (
 				<Box sx={{ ml: 1.75, pl: 0.5, borderLeft: 1, borderColor: "divider" }}>
 					{calls.map((c) => (
-						<ToolRow
+						<ToolCallRow
 							key={c.key}
 							tool={c.tool}
 							target={c.target}

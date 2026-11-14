@@ -1,4 +1,4 @@
-const EDIT_TOOLS = new Set([
+export const EDIT_TOOLS = new Set([
 	"Edit",
 	"MultiEdit",
 	"Write",

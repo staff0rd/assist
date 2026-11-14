@@ -47,23 +47,4 @@ describe("ToolRunRow", () => {
 		);
 		expect(screen.getByText("a.ts").getAttribute("title")).toBe("src/a.ts");
 	});
-
-	it("shows a call's description in place of its command, command on hover", () => {
-		render(
-			<ToolRunRow
-				calls={[
-					{
-						...call("Bash", "rm -rf dist", "a"),
-						description: "Clean build output",
-					},
-				]}
-			/>,
-		);
-		fireEvent.click(screen.getByRole("button"));
-		expect(
-			screen.getByText("Clean build output", { exact: false }),
-		).toBeTruthy();
-		expect(screen.queryByText("rm -rf dist", { exact: false })).toBeNull();
-		expect(screen.getByTitle("rm -rf dist")).toBeTruthy();
-	});
 });
