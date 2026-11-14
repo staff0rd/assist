@@ -1,3 +1,11 @@
+# [0.1167.0](https://github.com/staff0rd/assist/compare/v0.1166.0...v0.1167.0) (2026-11-14)
+
+
+### Features
+
+* flag idle SDK leaf process ([5060270](https://github.com/staff0rd/assist/commit/5060270d30288426defe37a7e605f62fd45ec706))
+* widgets icon for Artifact tool rows ([2c4de45](https://github.com/staff0rd/assist/commit/2c4de4572aae57349853389eb81aae2e539baf21))
+
 # [0.1166.0](https://github.com/staff0rd/assist/compare/v0.1165.0...v0.1166.0) (2026-11-14)
 
 
