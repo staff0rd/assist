@@ -1,3 +1,20 @@
+# [0.1152.0](https://github.com/staff0rd/assist/compare/v0.1151.0...v0.1152.0) (2026-11-14)
+
+
+### Bug Fixes
+
+* centre PR popover Prompt button ([093d68c](https://github.com/staff0rd/assist/commit/093d68c33843dbdb7a2ae0697bcc08f2b997d0fe))
+* reload docs preview on recapture ([6ee179d](https://github.com/staff0rd/assist/commit/6ee179da4d073dc034e3a4f2047b08db36abd489))
+* reshape design review eye glyph ([0203625](https://github.com/staff0rd/assist/commit/02036253913ffa5955257e9b6f68f5caa6940da1))
+* stop hung lookups pinning git counts ([c530d38](https://github.com/staff0rd/assist/commit/c530d38736cf7b4b04e8e9ea05e0ea41e1c47cd4))
+* stop superseded preview SDK task ([8c5b7b3](https://github.com/staff0rd/assist/commit/8c5b7b37a266e29411e05294d81f99c1a4bd0123))
+
+
+### Features
+
+* comments reopen done docs changes ([376cd8f](https://github.com/staff0rd/assist/commit/376cd8fa3a6a2b77b1499a1103bee096b48a39cf))
+* show leaf process on SDK activity ([baf9f28](https://github.com/staff0rd/assist/commit/baf9f2814a60056bc40bf9b25f709be3657be569))
+
 # [0.1151.0](https://github.com/staff0rd/assist/compare/v0.1150.0...v0.1151.0) (2026-11-14)
 
 
