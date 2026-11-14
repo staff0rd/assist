@@ -150,7 +150,7 @@ describe("SessionArea transcript view", () => {
 			/>,
 		);
 		expect(screen.getByText("hello there")).toBeTruthy();
-		expect(screen.getByText("1 tool call")).toBeTruthy();
+		expect(screen.getByText("x.ts")).toBeTruthy();
 		expect(screen.getByText("done")).toBeTruthy();
 		expect(screen.queryByTestId("pane-1")).toBeNull();
 	});

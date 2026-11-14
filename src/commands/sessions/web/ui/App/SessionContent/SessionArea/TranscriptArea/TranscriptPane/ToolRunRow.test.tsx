@@ -14,39 +14,18 @@ const call = (tool: string, target: string, key: string) => ({
 });
 
 describe("ToolRunRow", () => {
-	it("starts collapsed and toggles the per-call rows", () => {
-		render(<ToolRunRow calls={[call("Bash", "ls -la", "a")]} />);
-		const button = screen.getByRole("button");
-		expect(button.textContent).toContain("1 tool call·Bash");
-		expect(button.getAttribute("aria-expanded")).toBe("false");
-		expect(screen.queryByText("ls -la", { exact: false })).toBeNull();
-
-		fireEvent.click(button);
-		expect(button.getAttribute("aria-expanded")).toBe("true");
-		expect(screen.getByRole("button", { name: /Bash\s*ls$/ })).toBeTruthy();
-
-		fireEvent.click(button);
-		expect(screen.queryByRole("button", { name: /Bash\s*ls$/ })).toBeNull();
-	});
-
-	it("lists edited then read file names, capped with +N and full path on hover", () => {
+	it("shows every call's row without a click", () => {
 		render(
 			<ToolRunRow
-				calls={[
-					call("Read", "src/a.ts", "a"),
-					call("Read", "src/b.ts", "b"),
-					call("Read", "src/c.ts", "c"),
-					call("Read", "src/d.ts", "d"),
-					call("Edit", "src/d.ts", "e"),
-					call("Bash", "ls", "f"),
-					call("Bash", "ls", "g"),
-				]}
+				calls={[call("Bash", "ls -la", "a"), call("Edit", "src/d.ts", "b")]}
 			/>,
 		);
-		expect(screen.getByRole("button").textContent).toBe(
-			"7 tool calls·EDITEDd.ts·READa.ts, b.ts +1·Bash ×2",
-		);
-		expect(screen.getByText("a.ts").getAttribute("title")).toBe("src/a.ts");
+		const buttons = screen.getAllByRole("button");
+		expect(buttons).toHaveLength(2);
+		expect(screen.getByRole("button", { name: /Bash\s*ls$/ })).toBeTruthy();
+		expect(screen.getByRole("button", { name: /Edit\s*d\.ts$/ })).toBeTruthy();
+		for (const button of buttons)
+			expect(button.getAttribute("aria-expanded")).toBe("false");
 	});
 
 	it("shows a call's description, revealing its command on click", () => {
@@ -60,7 +39,6 @@ describe("ToolRunRow", () => {
 				]}
 			/>,
 		);
-		fireEvent.click(screen.getByRole("button"));
 		const line = screen.getByRole("button", { name: /Clean build output/ });
 		expect(line.getAttribute("aria-expanded")).toBe("false");
 		expect(screen.queryByText("rm -rf dist")).toBeNull();
@@ -75,7 +53,6 @@ describe("ToolRunRow", () => {
 
 	it("names a file tool's file, revealing its full path on click", () => {
 		render(<ToolRunRow calls={[call("Read", "src/deep/a.ts", "a")]} />);
-		fireEvent.click(screen.getByRole("button"));
 		const line = screen.getByRole("button", { name: /Read\s*a\.ts/ });
 		fireEvent.click(line);
 		expect(screen.getByText("src/deep/a.ts")).toBeTruthy();
@@ -83,7 +60,6 @@ describe("ToolRunRow", () => {
 
 	it("keeps its buttons out of transcript comment selection", () => {
 		render(<ToolRunRow calls={[call("Bash", "ls", "a")]} />);
-		fireEvent.click(screen.getByRole("button"));
 		for (const button of screen.getAllByRole("button"))
 			expect(skipsSelection(button)).toBe(true);
 	});

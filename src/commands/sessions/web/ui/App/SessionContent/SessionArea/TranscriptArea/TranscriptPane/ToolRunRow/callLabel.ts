@@ -1,8 +1,14 @@
 import { baseName } from "./baseName";
 import { commandPrograms } from "./commandPrograms";
-import { EDIT_TOOLS } from "./summariseToolRun";
 
 const SHORT = 40;
+const EDIT_TOOLS = new Set([
+	"Edit",
+	"MultiEdit",
+	"Write",
+	"NotebookEdit",
+	"apply_patch",
+]);
 const SHELL_TOOLS = new Set(["Bash", "exec_command", "shell", "local_shell"]);
 
 export function callLabel(call: {
