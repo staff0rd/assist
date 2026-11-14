@@ -1,8 +1,9 @@
-import { type KeyboardEvent, useState } from "react";
+import type { KeyboardEvent } from "react";
 import { bracketedPaste } from "../../../../../../shared/pasteAndSubmit/bracketedPaste";
 import { useSlashSuggestions } from "../../../../slashSuggestions/useSlashSuggestions";
 import { useSuggestedSlashCommands } from "../../../../slashSuggestions/useSuggestedSlashCommands";
 import type { SessionInfo } from "../../../../types";
+import { usePersistedPrompt } from "../../../../usePersistedPrompt";
 import { backslashLineBreak } from "./backslashLineBreak";
 import { sdkComposerState } from "./sdkComposerState";
 
@@ -11,7 +12,7 @@ export function useSdkComposer(
 	sendInput: (sessionId: string, data: string) => void,
 	interruptSession: (sessionId: string) => void,
 ) {
-	const [text, setText] = useState("");
+	const [text, setText] = usePersistedPrompt(`sdk-composer:${session.id}`);
 	const commands = useSuggestedSlashCommands(
 		session.harness,
 		session.cwd,

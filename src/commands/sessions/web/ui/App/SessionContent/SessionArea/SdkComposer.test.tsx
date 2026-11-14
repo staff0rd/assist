@@ -20,7 +20,10 @@ beforeAll(() => {
 	Element.prototype.scrollIntoView = vi.fn();
 });
 
-afterEach(cleanup);
+afterEach(() => {
+	cleanup();
+	localStorage.clear();
+});
 
 function setup(
 	overrides: Partial<SessionInfo> = {},
@@ -71,6 +74,36 @@ describe("SdkComposer", () => {
 			"1",
 			bracketedPaste("run the tests"),
 		);
+	});
+
+	describe("draft", () => {
+		const remount = (id: string) => {
+			cleanup();
+			render(
+				<SdkComposer
+					session={makeSessionInfo({ id, sdk: true, status: "waiting" })}
+					sendInput={vi.fn()}
+					interruptSession={vi.fn()}
+				/>,
+			);
+			return screen.getByLabelText("Message Claude");
+		};
+
+		it("restores the unsent draft after a remount", () => {
+			setup({ status: "waiting" }, "half-typed message");
+			expect(value(remount("1"))).toBe("half-typed message");
+		});
+
+		it("keeps drafts separate per session", () => {
+			setup({ status: "waiting" }, "half-typed message");
+			expect(value(remount("2"))).toBe("");
+		});
+
+		it("clears the saved draft once sent", () => {
+			const { field } = setup({ status: "waiting" });
+			fireEvent.keyDown(field, { key: "Enter" });
+			expect(value(remount("1"))).toBe("");
+		});
 	});
 
 	describe("backslash Enter", () => {
