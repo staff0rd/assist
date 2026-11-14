@@ -10,6 +10,7 @@ import { NewsView } from "./AppRoutes/NewsView";
 import { NextView } from "./AppRoutes/NextView";
 import { nodesRoutes } from "./AppRoutes/nodesRoutes";
 import { ReleasesView } from "../ReleasesView";
+import { RulesView } from "../RulesView";
 import { countRender } from "../../renderCounters";
 import { RenderRateHud } from "./AppRoutes/RenderRateHud";
 import { SessionContent } from "../SessionContent";
@@ -42,6 +43,7 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 					<Route path="news" element={<NewsView />} />
 					<Route path="inbox" element={<InboxView />} />
 					<Route path="releases" element={<ReleasesView />} />
+					<Route path="rules" element={<RulesView />} />
 					<Route path="usage" element={<UsageHistoryView />} />
 					<Route path="backups" element={<BackupsView />} />
 					<Route path="config" element={<ConfigView />} />
