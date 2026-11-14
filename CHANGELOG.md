@@ -1,3 +1,17 @@
+# [0.1150.0](https://github.com/staff0rd/assist/compare/v0.1149.0...v0.1150.0) (2026-11-14)
+
+
+### Bug Fixes
+
+* keep SDK composer draft per session ([1299505](https://github.com/staff0rd/assist/commit/129950578866122cd6a5cdc524c9b8250ed6fbdc))
+
+
+### Features
+
+* echo check notes in SDK transcript ([e323b6d](https://github.com/staff0rd/assist/commit/e323b6d3f1e5f3b9bb2e645ef277af74af550cb9))
+* fold transcript tool runs into a row ([bca5937](https://github.com/staff0rd/assist/commit/bca59375ce62280941d96f68a7ce6c927e1b0f44))
+* restore docs feedback draft on reload ([5e546e3](https://github.com/staff0rd/assist/commit/5e546e320bc30e9dc14f475c7113b16e44d8c6d4))
+
 # [0.1149.0](https://github.com/staff0rd/assist/compare/v0.1148.2...v0.1149.0) (2026-11-14)
 
 
