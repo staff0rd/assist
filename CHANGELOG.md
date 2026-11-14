@@ -1,3 +1,11 @@
+## [0.1158.2](https://github.com/staff0rd/assist/compare/v0.1158.1...v0.1158.2) (2026-11-14)
+
+
+### Bug Fixes
+
+* tolerate unknown harness in usage ([d9bd56a](https://github.com/staff0rd/assist/commit/d9bd56af8f1725981730e0aabeacae383bd1acf1))
+* tolerate unknown harness kinds ([9d78638](https://github.com/staff0rd/assist/commit/9d78638396147ad827df2f60bd7579f1fde42681))
+
 ## [0.1158.1](https://github.com/staff0rd/assist/compare/v0.1158.0...v0.1158.1) (2026-11-14)
 
 
