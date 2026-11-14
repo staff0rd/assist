@@ -1,3 +1,10 @@
+# [0.1172.0](https://github.com/staff0rd/assist/compare/v0.1171.0...v0.1172.0) (2026-11-14)
+
+
+### Features
+
+* add npm install benchmark script ([a8ecf6d](https://github.com/staff0rd/assist/commit/a8ecf6d236c93b0dd92f4d9e62a6bed50823295d))
+
 # [0.1171.0](https://github.com/staff0rd/assist/compare/v0.1170.0...v0.1171.0) (2026-11-14)
 
 
