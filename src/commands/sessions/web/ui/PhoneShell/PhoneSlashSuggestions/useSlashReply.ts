@@ -13,5 +13,9 @@ export function useSlashReply(commands: SlashCommand[]) {
 		trackCursor: slash.trackCursor,
 		pick: slash.pick,
 		clear: () => setText(""),
+		fill: (value: string) => {
+			setText(value);
+			slash.inputRef.current?.focus();
+		},
 	};
 }

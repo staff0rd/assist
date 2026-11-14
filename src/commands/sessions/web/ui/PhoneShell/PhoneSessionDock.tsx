@@ -27,6 +27,7 @@ export function PhoneSessionDock({
 			onKey={sdk ? undefined : io.onKey}
 			onSend={io.onSend}
 			locked={sdk?.resuming ? sdk.placeholder : undefined}
+			suggestion={sdk?.suggestion}
 			stop={
 				sdk?.running
 					? { disabled: sdk.stopping, onStop: io.onInterrupt }

@@ -23,6 +23,9 @@ function type(value: string, cursor = value.length) {
 const options = () =>
 	screen.queryAllByRole("option").map((option) => option.textContent);
 
+const chip = () =>
+	screen.queryByRole("button", { name: "Use suggestion: run the tests" });
+
 describe("PhoneReplyBar", () => {
 	it("addresses Claude when the session has no harness", () => {
 		render(<PhoneReplyBar onSend={() => {}} />);
@@ -63,5 +66,32 @@ describe("PhoneReplyBar", () => {
 		type("/dr");
 		fireEvent.click(screen.getByLabelText("Send"));
 		expect(onSend).toHaveBeenCalledWith("/dr");
+	});
+
+	it("shows the suggestion chip while the field is empty and fills it on tap", () => {
+		const onSend = vi.fn();
+		render(<PhoneReplyBar suggestion="run the tests" onSend={onSend} />);
+		fireEvent.click(chip() as HTMLElement);
+		const field = screen.getByLabelText("Reply") as HTMLTextAreaElement;
+		expect(field.value).toBe("run the tests");
+		expect(onSend).not.toHaveBeenCalled();
+		expect(chip()).toBeNull();
+	});
+
+	it("hides the suggestion chip once the user types", () => {
+		render(<PhoneReplyBar suggestion="run the tests" onSend={() => {}} />);
+		type("no");
+		expect(chip()).toBeNull();
+	});
+
+	it("hides the suggestion chip while the field is locked", () => {
+		render(
+			<PhoneReplyBar
+				suggestion="run the tests"
+				locked="Resuming conversation…"
+				onSend={() => {}}
+			/>,
+		);
+		expect(chip()).toBeNull();
 	});
 });

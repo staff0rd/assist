@@ -4,6 +4,7 @@ import type { SlashCommand } from "../../slashCommands/readSlashCommands";
 import { PhoneReplyField } from "./PhoneReplyField";
 import { PhoneReplySend } from "./PhoneReplySend";
 import { PhoneReplyStop } from "./PhoneReplyStop";
+import { PhoneSuggestionChip } from "./PhoneSuggestionChip";
 import { PhoneSlashSuggestions } from "./PhoneSlashSuggestions/PhoneSlashSuggestions";
 import { useSlashReply } from "./PhoneSlashSuggestions/useSlashReply";
 import { phoneReplyBarSx } from "./phoneReplyBarSx";
@@ -16,12 +17,14 @@ export function PhoneReplyBar({
 	onSend,
 	stop,
 	locked,
+	suggestion,
 }: {
 	harness?: HarnessKind;
 	commands?: SlashCommand[];
 	onSend: (text: string) => void;
 	stop?: ReplyStop;
 	locked?: string;
+	suggestion?: string;
 }) {
 	const reply = useSlashReply(commands);
 	const { text, suggestions } = reply;
@@ -33,6 +36,12 @@ export function PhoneReplyBar({
 
 	return (
 		<>
+			{suggestion && !text && !locked && (
+				<PhoneSuggestionChip
+					suggestion={suggestion}
+					onPick={() => reply.fill(suggestion)}
+				/>
+			)}
 			{suggestions && (
 				<PhoneSlashSuggestions
 					matches={suggestions.matches}
