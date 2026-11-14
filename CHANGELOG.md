@@ -1,3 +1,18 @@
+# [0.1158.0](https://github.com/staff0rd/assist/compare/v0.1157.0...v0.1158.0) (2026-11-14)
+
+
+### Bug Fixes
+
+* design every UI change in draft and refine ([73a62e3](https://github.com/staff0rd/assist/commit/73a62e388a49b09c8097c41154866d1a09e9ee79))
+* keep tool run rows out of comments ([65f08d9](https://github.com/staff0rd/assist/commit/65f08d907256b94cc08e7361bb53b2f217fa2246))
+
+
+### Features
+
+* click tool call rows for command ([7c11695](https://github.com/staff0rd/assist/commit/7c1169594ecb0da39f87c4f84fc2f7e92e47920f))
+* hand queued SDK messages to pending ([636d6e4](https://github.com/staff0rd/assist/commit/636d6e44f298fe36f08026d4d511a2b2614caaa3))
+* rules page listing every rule scope ([78e6d94](https://github.com/staff0rd/assist/commit/78e6d949821e9e3a9e02023f1d3d1337f1507601))
+
 # [0.1157.0](https://github.com/staff0rd/assist/compare/v0.1156.0...v0.1157.0) (2026-11-14)
 
 
