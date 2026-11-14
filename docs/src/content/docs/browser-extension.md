@@ -19,7 +19,7 @@ screenshots:
       - "text=/Esc to/ >> visible=true"
     cropPadding: 16
   - file: browser-extension-review-menu.png
-    alt: The assist button's menu on a GitHub pull request, listing review modes, options and pull request actions
+    alt: The assist button's menu on a GitHub pull request, with Ask about this PR above review modes, options and pull request actions
     url: https://github.com/staff0rd/sandbox/pull/12
     actions:
       - script: show-header-actions
@@ -65,11 +65,11 @@ The extension adds an **assist** button beside each comment and review on a pull
 
 The repo must be cloned under `clone.baseDir`.
 
-On a pull request, the header button opens the same menu as the dashboard's [Review menu](../sessions-pr-review/#choosing-a-review): its review modes and options, **Checkout**, **Address Comments** and **Fix conflicts**.
+On a pull request, the header button opens the dashboard's [Review menu](../sessions-pr-review/#choosing-a-review), with **Ask about this PR** to prompt about it without checking it out.
 
 ::screenshot{file="browser-extension-review-menu.png"}
 
-On an Azure DevOps pull request it offers **Checkout** and **Address Comments**, which need the Azure CLI with its `azure-devops` extension, logged in with `az login`.
+On an Azure DevOps pull request it offers **Ask about this PR**, **Checkout** and **Address Comments**, which need the Azure CLI with its `azure-devops` extension, logged in with `az login`.
 
 ## Issue and pull request status
 

@@ -185,6 +185,7 @@ Tap **⋯** on a session's screen, or long-press its row in the list, for its ac
 - **Mark done…** marks a backlog item done and ends its session.
 - **Auto-advance phases** is the dashboard's [Continue](../backlog-running/#steering-a-run) toggle for a backlog run.
 - **Transfer to node** moves a backlog run to another node.
+- :icon[Replay] **Start over session**, beside :icon[Replay] **Restart session**, discards the conversation and starts a new one with only the session's first prompt.
 - Tap the `#` number in the header to copy the session's id.
 
 ::screenshot{file="ios-app-actions.png"}

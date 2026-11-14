@@ -73,3 +73,4 @@ Start the `docs` run entry (`server: docs`, `docs:preview` on 4173) from the das
 - **R14** — **Toggled settings by key** — For a setting the UI toggles, name only its config key, not an assist config set command
 - **R15** — **No failure paths** — Do not document how a command fails or falls back, such as exit codes or what the agent does instead
 - **R17** — **No layout narrative** — Do not describe how the screen is laid out or how the layout adapts to the window (beside, below, widths, breakpoints); give a control's position only when the user needs it to find that control
+- **R18** — **No lists of places** — Say where a feature applies by the kind of place it covers, not by listing every screen, field or button it shows up in
