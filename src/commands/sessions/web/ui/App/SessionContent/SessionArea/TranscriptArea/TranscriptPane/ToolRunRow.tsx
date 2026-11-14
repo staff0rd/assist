@@ -4,6 +4,7 @@ import ButtonBase from "@mui/material/ButtonBase";
 import { useState } from "react";
 import type { KeyedToolMessage } from "./groupToolRuns";
 import { summariseToolRun } from "./ToolRunRow/summariseToolRun";
+import { ToolRunSummaryText } from "./ToolRunRow/ToolRunSummaryText";
 import { ToolRow } from "./TranscriptRow/ToolRow";
 
 const summarySx = {
@@ -38,7 +39,7 @@ export function ToolRunRow({ calls }: { calls: KeyedToolMessage[] }) {
 						transform: expanded ? "rotate(90deg)" : "none",
 					}}
 				/>
-				{summariseToolRun(calls)}
+				<ToolRunSummaryText summary={summariseToolRun(calls)} />
 			</ButtonBase>
 			{expanded && (
 				<Box sx={{ pl: 2.5 }}>
