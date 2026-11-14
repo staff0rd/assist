@@ -15,6 +15,16 @@ function assistant(content: unknown[], parent: string | null = null) {
 	} as unknown as SDKMessage;
 }
 
+function progress(seconds: number, parent: string | null = null) {
+	return {
+		type: "tool_progress",
+		tool_use_id: "toolu_9",
+		tool_name: "Bash",
+		parent_tool_use_id: parent,
+		elapsed_time_seconds: seconds,
+	} as unknown as SDKMessage;
+}
+
 const result = { type: "result", subtype: "success" } as unknown as SDKMessage;
 
 async function* stream(messages: SDKMessage[]) {
@@ -57,6 +67,32 @@ describe("runSdkQuery", () => {
 			{ kind: "status", status: "waiting" },
 		]);
 		expect(exits).toEqual([0]);
+	});
+
+	it("emits the top-level tool call's elapsed seconds, resyncing every 10s and clearing with the activity", async () => {
+		const { events } = await run(
+			stream([
+				assistant([
+					{ type: "tool_use", name: "Bash", input: { command: "npm i" } },
+				]),
+				progress(1.4),
+				progress(2.2),
+				progress(30, "toolu_1"),
+				progress(11.6),
+				assistant([{ type: "text" }]),
+				result,
+			]),
+		);
+		expect(events).toEqual([
+			{ kind: "status", status: "running" },
+			{ kind: "activity", text: "Working · Bash npm i" },
+			{ kind: "elapsed", seconds: 1 },
+			{ kind: "elapsed", seconds: 11 },
+			{ kind: "activity", text: "Working" },
+			{ kind: "elapsed", seconds: null },
+			{ kind: "activity", text: null },
+			{ kind: "status", status: "waiting" },
+		]);
 	});
 
 	it("ignores subagent messages", async () => {

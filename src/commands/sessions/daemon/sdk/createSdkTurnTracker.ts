@@ -30,6 +30,7 @@ export function createSdkTurnTracker(
 	};
 	return {
 		setActivity: emit.activity,
+		setElapsed: emit.elapsed,
 		setStatus,
 		start: (prompt: string) => {
 			busy = true;

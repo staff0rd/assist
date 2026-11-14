@@ -93,6 +93,7 @@ export type SessionInfoBase = {
 	lastEchoAt?: string;
 	sdk?: boolean;
 	sdkActivity?: string;
+	sdkActivityElapsed?: number;
 	sdkQueued?: string[];
 	sdkBackgroundTasks?: string[];
 	sdkInterrupting?: boolean;

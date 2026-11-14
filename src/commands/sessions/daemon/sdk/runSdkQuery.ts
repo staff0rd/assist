@@ -6,8 +6,8 @@ import { createSdkBackgroundTasks } from "./createSdkBackgroundTasks";
 import { createSdkUsageObserver } from "./createSdkUsageObserver";
 import { sdkContextReader } from "./sdkContextReader";
 import { logSdkMessage } from "./logSdkMessage";
-import { sdkActivityText } from "./sdkActivityText";
 import { sdkTurnStatus } from "./sdkTurnStatus";
+import { trackSdkTurnProgress } from "./trackSdkTurnProgress";
 
 export async function runSdkQuery(
 	messages: AsyncIterable<SDKMessage>,
@@ -29,8 +29,7 @@ export async function runSdkQuery(
 			if (status) turn.setStatus(status);
 			const background = sdkBackgroundTasks(message);
 			if (background) control.emit({ kind: "background", tasks: background });
-			if (message.type === "assistant" && message.parent_tool_use_id === null)
-				turn.setActivity(sdkActivityText(message.message.content));
+			trackSdkTurnProgress(message, turn);
 		}
 		daemonLog(`${label} sdk query finished`);
 		control.exit(0);

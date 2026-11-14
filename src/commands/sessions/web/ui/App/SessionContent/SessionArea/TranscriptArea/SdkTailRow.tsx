@@ -29,7 +29,13 @@ const dotSx = (delay: string) =>
 
 const SEPARATOR = " · ";
 
-export function SdkTailRow({ text }: { text: string }) {
+export function SdkTailRow({
+	text,
+	suffix,
+}: {
+	text: string;
+	suffix?: string;
+}) {
 	const split = text.indexOf(SEPARATOR);
 	const lead = split === -1 ? text : text.slice(0, split);
 	const detail = split === -1 ? "" : text.slice(split + SEPARATOR.length);
@@ -50,6 +56,7 @@ export function SdkTailRow({ text }: { text: string }) {
 						</Box>
 					</>
 				)}
+				{suffix && `${SEPARATOR}${suffix}`}
 			</span>
 		</Box>
 	);

@@ -8,6 +8,7 @@ import type { CapabilityId } from "./capabilityDefinitions";
 export type SdkSessionEvent =
 	| { kind: "status"; status: "running" | "waiting" }
 	| { kind: "activity"; text: string | null }
+	| { kind: "elapsed"; seconds: number | null }
 	| { kind: "queued"; texts: string[] }
 	| { kind: "background"; tasks: string[] }
 	| { kind: "interrupting"; pending: boolean }

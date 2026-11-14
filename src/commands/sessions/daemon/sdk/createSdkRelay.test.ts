@@ -60,6 +60,7 @@ describe("createSdkRelay", () => {
 		expect(query.sdk.send).not.toHaveBeenCalled();
 		expect(events).toEqual([
 			{ kind: "activity", text: null },
+			{ kind: "elapsed", seconds: null },
 			{ kind: "queued", texts: [] },
 			{ kind: "background", tasks: [] },
 			{ kind: "interrupting", pending: false },
