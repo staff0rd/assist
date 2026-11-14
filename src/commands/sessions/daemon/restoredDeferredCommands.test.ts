@@ -43,6 +43,13 @@ describe("restoredDeferredCommands", () => {
 		expect(restoreBase("2", loaded).deferredCommands).toEqual([command]);
 	});
 
+	it("round-trips a pending command's persisted env", () => {
+		const withEnv = { ...command, env: { ASSIST_BACKLOG_ITEM_ID: "a1673" } };
+		const loaded = persistedSessionSchema.parse(persistedJson([withEnv]));
+
+		expect(restoreBase("5", loaded).deferredCommands).toEqual([withEnv]);
+	});
+
 	it("loads a legacy label-only entry and drops it with a log line", () => {
 		const parsed = persistedSessionSchema.safeParse(
 			persistedJson(["ask-question", command]),

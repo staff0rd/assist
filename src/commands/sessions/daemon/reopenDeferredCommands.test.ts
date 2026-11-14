@@ -20,11 +20,14 @@ const command = {
 	cwd: "/repo",
 };
 
-function setup(sdk?: { send: ReturnType<typeof vi.fn> }) {
+function setup(
+	sdk?: { send: ReturnType<typeof vi.fn> },
+	pending: Record<string, unknown> = command,
+) {
 	const session = {
 		id: "9",
 		pty: sdk ? { sdk } : null,
-		deferredCommands: [command],
+		deferredCommands: [pending],
 	} as unknown as Session;
 	const sessions = new Map([["9", session]]);
 	const manager = {
@@ -68,6 +71,21 @@ describe("reopenDeferredCommands", () => {
 			"`assist backlog propose` finished with exit code 0:\n\nAdded item a1",
 		);
 		expect(session.deferredCommands).toBeUndefined();
+	});
+
+	it("re-runs a pending command with its persisted backlog item id", () => {
+		setup(
+			{ send: vi.fn() },
+			{
+				...command,
+				env: { ASSIST_BACKLOG_ITEM_ID: "a1673" },
+			},
+		);
+
+		expect(mockRun.mock.calls[0][0].env).toMatchObject({
+			ASSIST_SESSION_ID: "9",
+			ASSIST_BACKLOG_ITEM_ID: "a1673",
+		});
 	});
 
 	it("delivers nothing when the reopened preview is superseded", () => {

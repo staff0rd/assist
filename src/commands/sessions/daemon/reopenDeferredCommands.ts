@@ -31,7 +31,10 @@ function reopen(
 	m: SessionLookup,
 ): void {
 	const pid = runDeferredCommand(
-		{ ...command, env: workflowQueryEnv(process.env, id, undefined) },
+		{
+			...command,
+			env: { ...workflowQueryEnv(process.env, id, undefined), ...command.env },
+		},
 		(result) => deliverDeferredResult(m, id, command, result),
 	);
 	daemonLog(

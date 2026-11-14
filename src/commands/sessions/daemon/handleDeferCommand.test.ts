@@ -150,6 +150,22 @@ describe("defer-command handler", () => {
 		expect(sessions.get("7")?.deferredCommands).toBeUndefined();
 	});
 
+	it("tracks only the allow-listed env keys of the caller's env", () => {
+		const { sessions, manager } = managerWith({ send: vi.fn() });
+		const env = {
+			ASSIST_SESSION_ID: "7",
+			ASSIST_BACKLOG_ITEM_ID: "a1673",
+			PATH: "/usr/bin",
+			SECRET_TOKEN: "s3cret",
+		};
+		handleDeferCommand({ send: vi.fn() }, manager, { ...request, env });
+
+		expect(sessions.get("7")?.deferredCommands).toEqual([
+			{ ...pending, env: { ASSIST_BACKLOG_ITEM_ID: "a1673" } },
+		]);
+		expect(mockRun.mock.calls[0][0].env).toEqual(env);
+	});
+
 	it("stops tracking a superseded preview", () => {
 		const { sessions, manager } = managerWith({ send: vi.fn() });
 		handleDeferCommand({ send: vi.fn() }, manager, request);

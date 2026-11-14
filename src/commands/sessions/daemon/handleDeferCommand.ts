@@ -1,5 +1,6 @@
 import { sendTo } from "./broadcast";
 import { daemonLog } from "./daemonLog";
+import { deferredCommandEnv } from "./deferredCommandEnv";
 import { deferredCommandLabel } from "./deferredCommandLabel";
 import type { Handler } from "./routed";
 import { runDeferredCommand } from "./runDeferredCommand";
@@ -18,15 +19,16 @@ export const handleDeferCommand: Handler = (client, m, d) => {
 		sendTo(client, { type: "defer-command-result", accepted: false });
 		return;
 	}
+	const env = (d.env ?? {}) as Record<string, string>;
 	const command = {
 		argv,
 		stdin: typeof d.stdin === "string" ? d.stdin : undefined,
 		cwd: String(d.cwd),
+		env: deferredCommandEnv(env),
 	};
 	trackDeferredCommand(session, command);
-	const pid = runDeferredCommand(
-		{ ...command, env: (d.env ?? {}) as Record<string, string> },
-		(result) => deliverDeferredResult(m, id, command, result),
+	const pid = runDeferredCommand({ ...command, env }, (result) =>
+		deliverDeferredResult(m, id, command, result),
 	);
 	daemonLog(
 		`defer-command ${label} started: session ${id} pid ${pid ?? "none"}`,
