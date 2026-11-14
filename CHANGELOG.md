@@ -1,3 +1,10 @@
+# [0.1164.0](https://github.com/staff0rd/assist/compare/v0.1163.0...v0.1164.0) (2026-11-14)
+
+
+### Features
+
+* rules button in top nav ([1e8a5c0](https://github.com/staff0rd/assist/commit/1e8a5c0913e4911c9028b2061a6c9e4133d145de))
+
 # [0.1163.0](https://github.com/staff0rd/assist/compare/v0.1162.0...v0.1163.0) (2026-11-14)
 
 
