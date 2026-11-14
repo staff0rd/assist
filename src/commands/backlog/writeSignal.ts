@@ -51,12 +51,13 @@ function resolveSignalTarget(
 export function writeSignal(
 	event: SignalEvent,
 	data?: Record<string, unknown>,
-): void {
+): string | undefined {
 	const target = resolveSignalTarget(event, data);
-	if (!target) return;
+	if (!target) return undefined;
 	const path = getSignalPath(target);
-	if (!path) return;
+	if (!path) return undefined;
 	const signal: Signal = { event, sessionId: target, ...data };
 	mkdirSync(dirname(path), { recursive: true });
 	writeFileSync(path, JSON.stringify(signal));
+	return target;
 }

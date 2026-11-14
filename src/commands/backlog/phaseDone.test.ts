@@ -23,6 +23,11 @@ vi.mock("./appendComment", () => ({
 	appendComment: vi.fn(),
 }));
 
+vi.mock("../sessions/closeSessionPreviewsRemote", () => ({
+	closeSessionPreviewsRemote: vi.fn(),
+}));
+
+import { closeSessionPreviewsRemote } from "../sessions/closeSessionPreviewsRemote";
 import { appendComment } from "./appendComment";
 import { loadItem } from "./loadItem";
 import { phaseDone } from "./phaseDone";
@@ -34,6 +39,7 @@ const mockGetReady = getReady as unknown as MockInstance;
 const mockLoadItem = loadItem as unknown as MockInstance;
 const mockSetCurrentPhase = setCurrentPhase as unknown as MockInstance;
 const mockAppendComment = appendComment as unknown as MockInstance;
+const mockClosePreviews = closeSessionPreviewsRemote as unknown as MockInstance;
 
 const orm = {} as never;
 
@@ -76,6 +82,27 @@ describe("phaseDone", () => {
 		expect(marker.itemId).toBe(1);
 		expect(marker.phaseIndex).toBe(0);
 		cleanup();
+	});
+
+	it("should close the previews of the session the signal targets", async () => {
+		process.env.ASSIST_SESSION_ID = "other-session";
+
+		await phaseDone("a1", "1", "Done");
+
+		expect(mockClosePreviews).toHaveBeenCalledWith(
+			"test-session",
+			"phase done",
+		);
+		unlinkSync(getSignalPath("test-session") as string);
+	});
+
+	it("should not target a session when no run owns the item", async () => {
+		clearSignalOwner(1);
+		vi.spyOn(console, "log").mockImplementation(() => {});
+
+		await phaseDone("a1", "1", "Done");
+
+		expect(mockClosePreviews).toHaveBeenCalledWith(undefined, "phase done");
 	});
 
 	it("should advance currentPhase when item is not done", async () => {

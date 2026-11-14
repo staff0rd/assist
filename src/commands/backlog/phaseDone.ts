@@ -1,4 +1,5 @@
 import chalk from "chalk";
+import { closeSessionPreviewsRemote } from "../sessions/closeSessionPreviewsRemote";
 import { appendComment } from "./appendComment";
 import { formatItemId, parseItemId } from "./formatItemId";
 import { loadItem } from "./loadItem";
@@ -26,16 +27,17 @@ export async function phaseDone(
 		return;
 	}
 
-	function signal(): void {
-		writeSignal("phase-done", {
+	async function signal(): Promise<void> {
+		const target = writeSignal("phase-done", {
 			itemId,
 			phaseIndex,
 			completedAt: new Date().toISOString(),
 		});
+		await closeSessionPreviewsRemote(target, "phase done");
 	}
 
 	if (item.status === "done") {
-		signal();
+		await signal();
 		console.log(
 			chalk.dim(`Item ${label} already done, skipping phase advance.`),
 		);
@@ -47,7 +49,7 @@ export async function phaseDone(
 		type: "summary",
 	});
 	await setCurrentPhase(id, phaseNumber + 1);
-	signal();
+	await signal();
 	console.log(
 		chalk.green(`Phase ${phaseNumber} of item ${label} marked as complete.`),
 	);

@@ -14,6 +14,7 @@ import { handleWebLog } from "./handleWebLog";
 import { handleSearchHistory } from "./historySearch/handleSearchHistory";
 import { creator } from "./creator";
 import { daemonLog } from "./daemonLog";
+import { handleClosePreviews } from "./handleClosePreviews";
 import { handleCodexUsage } from "./handleCodexUsage";
 import { handleCreateRun } from "./handleCreateRun";
 import { handleDismiss } from "./handleDismiss";
@@ -104,6 +105,7 @@ export const messageHandlers: Record<string, Handler> = {
 	},
 	"pr-preview": (client, m, d) => m.prPreview.set(client, d),
 	"defer-command": handleDeferCommand,
+	"close-previews": handleClosePreviews,
 	"pr-decision": routed((_client, m, d) => m.prPreview.decide(d)),
 	"user-activity": handleUserActivity,
 	"ui-status": (_client, _m, d) =>
