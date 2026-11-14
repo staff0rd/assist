@@ -1,3 +1,10 @@
+# [0.1148.0](https://github.com/staff0rd/assist/compare/v0.1147.1...v0.1148.0) (2026-11-14)
+
+
+### Features
+
+* backslash-Enter adds a line break ([206566e](https://github.com/staff0rd/assist/commit/206566e21b4be933b4d794b393106b95b59bdc52))
+
 ## [0.1147.1](https://github.com/staff0rd/assist/compare/v0.1147.0...v0.1147.1) (2026-11-14)
 
 
