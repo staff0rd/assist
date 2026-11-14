@@ -2442,7 +2442,10 @@ Commands:
   list [options] [path]  List the rules from the `## Rules` section of every CLAUDE.md from a path's
                          directory up to the repo root (default: cwd)
   add [options] <text>   Add a rule to the `## Rules` section of the scope's CLAUDE.md, allocating
-                         the next repo-wide code and creating the section when absent
+                         the next repo-wide code and creating the section when absent. In a web
+                         session the rule opens in the preview pane first and is written only on
+                         approval; rejecting writes nothing and exits non-zero with the reason and
+                         comments
   index                  Record the directories that carry their own `## Rules` in the repo root's
                          CLAUDE.md, so scoped rules are discoverable from the root. Always
                          repo-wide, resolved from the cwd
@@ -2462,7 +2465,9 @@ Options:
 Usage: assist rules add [options] <text>
 
 Add a rule to the `## Rules` section of the scope's CLAUDE.md, allocating the next repo-wide code
-and creating the section when absent
+and creating the section when absent. In a web session the rule opens in the preview pane first and
+is written only on approval; rejecting writes nothing and exits non-zero with the reason and
+comments
 
 Options:
   --title <title>  As few words as possible summarising the rule, shown in the rule picker in place

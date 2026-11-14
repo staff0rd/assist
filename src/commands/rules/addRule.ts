@@ -1,10 +1,8 @@
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import chalk from "chalk";
-import { findRepoRoot } from "../../shared/findRepoRoot";
 import { insertRuleBullet } from "./insertRuleBullet";
-import { nextRuleCode } from "./nextRuleCode";
-import { resolveRuleScope } from "./resolveRuleScope";
+import { resolveRuleTarget } from "./resolveRuleTarget";
 import { updateScopedRulesIndex } from "./updateScopedRulesIndex";
 
 function read(file: string): string {
@@ -22,10 +20,7 @@ export function addRule(
 		return;
 	}
 
-	const target = resolveRuleScope(options.scope ?? process.cwd());
-	const targetDir = path.dirname(target);
-	const root = findRepoRoot(targetDir) ?? targetDir;
-	const code = nextRuleCode(root);
+	const { target, root, code } = resolveRuleTarget(options.scope);
 
 	writeFileSync(
 		target,

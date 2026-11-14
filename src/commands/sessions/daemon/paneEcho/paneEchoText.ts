@@ -25,6 +25,7 @@ export function paneEchoText(
 			return questionOtherText(preview.body, answersOf(d));
 		case "ask":
 		case "backlog-item":
+		case "rule":
 			return signOffText(d);
 		default:
 			return "";

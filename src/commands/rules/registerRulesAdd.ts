@@ -1,19 +1,13 @@
 import type { Command } from "commander";
 import { internalCommand } from "../../shared/internalCommand";
-type RulesAddOptions = {
-	scope?: string;
-	title?: string;
-	user?: boolean;
-	node?: boolean;
-	repo?: boolean | string;
-};
+import type { UserRuleOptions } from "./userRuleOptionsError";
 
 export function registerRulesAdd(rulesCommand: Command): void {
 	internalCommand(
 		rulesCommand
 			.command("add <text>")
 			.description(
-				"Add a rule to the `## Rules` section of the scope's CLAUDE.md, allocating the next repo-wide code and creating the section when absent",
+				"Add a rule to the `## Rules` section of the scope's CLAUDE.md, allocating the next repo-wide code and creating the section when absent. In a web session the rule opens in the preview pane first and is written only on approval; rejecting writes nothing and exits non-zero with the reason and comments",
 			)
 			.option(
 				"--title <title>",
@@ -35,12 +29,9 @@ export function registerRulesAdd(rulesCommand: Command): void {
 				"--repo [name]",
 				"As --user, but append to advice.rules in repo (db), the shared per-repo override every node sees, for the current repo or the named one",
 			)
-			.action(async (text: string, options: RulesAddOptions) => {
-				const { addRule } = await import("./addRule");
-				const { addUserRule } = await import("./addUserRule");
-				return options.user || options.node || options.repo !== undefined
-					? addUserRule(text, options)
-					: addRule(text, options);
+			.action(async (text: string, options: UserRuleOptions) => {
+				const { rulesAdd } = await import("./rulesAdd");
+				return rulesAdd(text, options);
 			}),
 		"/add-rule and /fix-rules",
 	);

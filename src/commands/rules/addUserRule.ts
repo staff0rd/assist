@@ -7,10 +7,8 @@ import { globalConfigFileLabel } from "../config/globalConfigFileLabel";
 import { addToRepoDb } from "./addToRepoDb";
 import { appendRule, type Rule } from "./appendRule";
 import { failRule } from "./failRule";
-import {
-	type UserRuleOptions,
-	userRuleOptionsError,
-} from "./userRuleOptionsError";
+import { adviceRuleError } from "./adviceRuleError";
+import type { UserRuleOptions } from "./userRuleOptionsError";
 
 async function addToUserDb(rule: Rule): Promise<void> {
 	const result = await applyUserConfigSet("advice.rules", (current) =>
@@ -43,11 +41,9 @@ export async function addUserRule(
 	globalConfigPath: string = getGlobalConfigPath(),
 	cwd: string = process.cwd(),
 ): Promise<void> {
-	const error = userRuleOptionsError(options);
+	const error = adviceRuleError(text, options);
 	if (error) return failRule(error);
 	const rule = { title: options.title?.trim() ?? "", text: text.trim() };
-	if (rule.text === "" || rule.title === "")
-		return failRule("advice.rules entries need both rule text and --title");
 	if (options.user) return addToUserDb(rule);
 	if (options.repo !== undefined) return addToRepoDb(rule, options.repo, cwd);
 	addToUserNode(rule, globalConfigPath);
