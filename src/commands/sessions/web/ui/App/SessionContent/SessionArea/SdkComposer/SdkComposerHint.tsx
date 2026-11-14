@@ -12,14 +12,21 @@ function Key({ label }: { label: string }) {
 export function SdkComposerHint({
 	running,
 	stopping,
+	suggestion,
 }: {
 	running: boolean;
 	stopping: boolean;
+	suggestion: boolean;
 }) {
 	if (stopping)
 		return <Box sx={sdkComposerSx.hint}>Waiting for Claude to stop</Box>;
 	return (
 		<Box sx={sdkComposerSx.hint}>
+			{suggestion && (
+				<span>
+					<Key label="Tab" /> use suggestion
+				</span>
+			)}
 			<span>
 				<Key label="Enter" /> send
 			</span>

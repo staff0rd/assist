@@ -95,6 +95,19 @@ describe("runSdkQuery", () => {
 		]);
 	});
 
+	it("emits the prompt suggestion that follows the result", async () => {
+		const { events } = await run(
+			stream([
+				result,
+				{
+					type: "prompt_suggestion",
+					suggestion: "commit this",
+				} as unknown as SDKMessage,
+			]),
+		);
+		expect(events).toContainEqual({ kind: "suggestion", text: "commit this" });
+	});
+
 	it("ignores subagent messages", async () => {
 		const { events } = await run(
 			stream([assistant([{ type: "tool_use", name: "Read" }], "toolu_1")]),

@@ -15,6 +15,7 @@ export function toSessionViewInfo({
 	sdkProcess,
 	sdkQueued,
 	sdkBackgroundTasks,
+	sdkPromptSuggestion,
 	sdkInterrupting,
 	sdkResuming,
 }: Session) {
@@ -25,6 +26,7 @@ export function toSessionViewInfo({
 		sdkProcess,
 		sdkQueued,
 		sdkBackgroundTasks,
+		sdkPromptSuggestion,
 		sdkInterrupting,
 		sdkResuming,
 		transfer,

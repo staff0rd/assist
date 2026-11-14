@@ -98,6 +98,7 @@ export type SessionInfoBase = {
 	sdkProcess?: SdkProcessInfo;
 	sdkQueued?: string[];
 	sdkBackgroundTasks?: string[];
+	sdkPromptSuggestion?: string;
 	sdkInterrupting?: boolean;
 	sdkResuming?: boolean;
 	cols?: number;

@@ -28,6 +28,7 @@ export function sdkQueryOptions(
 			spawnSdkChild(options, opts, control.attach),
 		abortController: abort,
 		model: opts.model,
+		promptSuggestions: true,
 		systemPrompt: { type: "preset", preset: "claude_code", append },
 	};
 }

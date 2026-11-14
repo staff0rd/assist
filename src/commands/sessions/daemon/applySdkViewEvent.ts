@@ -21,6 +21,8 @@ export function applySdkViewEvent(
 		daemonLog(
 			`session ${session.id} sdk background tasks: ${event.tasks.length}`,
 		);
+	} else if (event.kind === "suggestion") {
+		session.sdkPromptSuggestion = event.text ?? undefined;
 	} else if (event.kind === "resumed") {
 		session.sdkResuming = undefined;
 		daemonLog(`session ${session.id} sdk resumed: composer unlocked`);

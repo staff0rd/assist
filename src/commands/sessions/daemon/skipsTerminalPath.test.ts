@@ -42,6 +42,14 @@ const skipped = (path: string) =>
 describe("PTY-only paths on a Claude (SDK) session", () => {
 	beforeEach(() => vi.clearAllMocks());
 
+	it("clears the prompt suggestion when a message is sent", () => {
+		const { sessions } = sdkSessions();
+		const session = sessions.get("1") as Session;
+		session.sdkPromptSuggestion = "commit this";
+		writeToSession(sessions, "1", bracketedPaste("commit this"), vi.fn());
+		expect(session.sdkPromptSuggestion).toBeUndefined();
+	});
+
 	it("skips terminal input with a log line", () => {
 		const { sessions, write } = sdkSessions();
 		writeToSession(sessions, "1", "ls\r", vi.fn());

@@ -21,6 +21,7 @@ export function wireSdkEvents(
 			`session ${session.id} status from sdk: ${session.status} -> ${event.status}`,
 		);
 		session.permissionActive = false;
+		if (event.status === "running") session.sdkPromptSuggestion = undefined;
 		onStatusChange(session, event.status);
 	});
 }

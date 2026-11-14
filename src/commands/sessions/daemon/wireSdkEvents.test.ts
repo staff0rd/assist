@@ -65,6 +65,15 @@ describe("wireSdkEvents", () => {
 		expect(notify).toHaveBeenCalledTimes(2);
 	});
 
+	it("records the prompt suggestion and clears it when a turn starts", () => {
+		const { control, session, notify } = sdkSession("waiting");
+		control.emit({ kind: "suggestion", text: "commit this" });
+		expect(session.sdkPromptSuggestion).toBe("commit this");
+		expect(notify).toHaveBeenCalled();
+		control.emit({ kind: "status", status: "running" });
+		expect(session.sdkPromptSuggestion).toBeUndefined();
+	});
+
 	it("ignores events once the session is done", () => {
 		const { control, onStatusChange } = sdkSession("done");
 		control.emit({ kind: "status", status: "running" });

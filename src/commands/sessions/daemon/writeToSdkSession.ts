@@ -13,6 +13,7 @@ export function writeToSdkSession(session: Session, data: string): void {
 	const text = unwrapBracketedPaste(data);
 	if (text !== undefined) {
 		daemonLog(`session ${session.id} sdk message received from input`);
+		session.sdkPromptSuggestion = undefined;
 		session.pty?.sdk?.send(text);
 		return;
 	}

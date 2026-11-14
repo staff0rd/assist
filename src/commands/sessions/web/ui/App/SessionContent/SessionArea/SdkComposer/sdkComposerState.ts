@@ -13,6 +13,7 @@ export function sdkComposerState(session: SessionInfo) {
 	const running = session.status === "running";
 	const live = !ENDED.has(session.status);
 	const resuming = live && Boolean(session.sdkResuming);
+	const waiting = session.status === "waiting" && !resuming;
 	return {
 		running,
 		live,
@@ -20,5 +21,6 @@ export function sdkComposerState(session: SessionInfo) {
 		enabled: live && !resuming,
 		stopping: running && Boolean(session.sdkInterrupting),
 		placeholder: placeholder(live, resuming, running),
+		suggestion: waiting ? session.sdkPromptSuggestion : undefined,
 	};
 }

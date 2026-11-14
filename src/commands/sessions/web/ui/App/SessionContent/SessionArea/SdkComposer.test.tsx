@@ -277,4 +277,52 @@ describe("SdkComposer", () => {
 			expect(highlightedText()).toEqual([]);
 		});
 	});
+
+	describe("prompt suggestion", () => {
+		const suggested = (overrides: Partial<SessionInfo> = {}, initial = "") =>
+			setup(
+				{ status: "waiting", sdkPromptSuggestion: "commit this", ...overrides },
+				initial,
+			);
+		const tabHint = () => screen.queryByText("use suggestion");
+
+		it("shows the suggestion as ghost text in the empty field", () => {
+			const { field } = suggested();
+			expect(field.getAttribute("placeholder")).toBe("commit this");
+			expect(tabHint()).not.toBeNull();
+		});
+
+		it("fills the field on Tab without sending, then Enter sends", () => {
+			const { field, sendInput } = suggested();
+			fireEvent.keyDown(field, { key: "Tab" });
+			expect(value(field)).toBe("commit this");
+			expect(sendInput).not.toHaveBeenCalled();
+			fireEvent.keyDown(field, { key: "Enter" });
+			expect(sendInput).toHaveBeenCalledWith(
+				"1",
+				bracketedPaste("commit this"),
+			);
+		});
+
+		it("hides the ghost text once the user types", () => {
+			const { field } = suggested({}, "fix");
+			expect(field.getAttribute("placeholder")).not.toBe("commit this");
+			expect(tabHint()).toBeNull();
+			fireEvent.keyDown(field, { key: "Tab" });
+			expect(value(field)).toBe("fix");
+		});
+
+		it("is not shown while a turn is running", () => {
+			const { field } = suggested({ status: "running" });
+			expect(field.getAttribute("placeholder")).not.toBe("commit this");
+			fireEvent.keyDown(field, { key: "Tab" });
+			expect(value(field)).toBe("");
+		});
+
+		it("keeps Tab for the slash list when it is open", () => {
+			const { field } = suggested({}, "/dr");
+			fireEvent.keyDown(field, { key: "Tab" });
+			expect(value(field)).toBe("/draft ");
+		});
+	});
 });

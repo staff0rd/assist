@@ -116,6 +116,7 @@ export type Session = {
 	sdkProcess?: SdkProcessInfo;
 	sdkQueued?: string[];
 	sdkBackgroundTasks?: string[];
+	sdkPromptSuggestion?: string;
 	sdkInterrupting?: boolean;
 	sdkResuming?: boolean;
 	usedPct?: number;

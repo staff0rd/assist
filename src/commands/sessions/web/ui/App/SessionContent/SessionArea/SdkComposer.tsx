@@ -30,7 +30,11 @@ export function SdkComposer({
 						onSend={c.send}
 					/>
 				</Box>
-				<SdkComposerHint running={c.running} stopping={c.stopping} />
+				<SdkComposerHint
+					running={c.running}
+					stopping={c.stopping}
+					suggestion={Boolean(c.suggestion)}
+				/>
 			</Box>
 		</Box>
 	);

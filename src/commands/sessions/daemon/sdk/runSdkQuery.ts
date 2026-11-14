@@ -29,6 +29,8 @@ export async function runSdkQuery(
 			if (status) turn.setStatus(status);
 			const background = sdkBackgroundTasks(message);
 			if (background) control.emit({ kind: "background", tasks: background });
+			if (message.type === "prompt_suggestion")
+				control.emit({ kind: "suggestion", text: message.suggestion || null });
 			trackSdkTurnProgress(message, turn);
 		}
 		daemonLog(`${label} sdk query finished`);

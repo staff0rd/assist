@@ -14,6 +14,7 @@ export type SdkSessionEvent =
 	| { kind: "process"; process: SdkProcessInfo | null }
 	| { kind: "queued"; texts: string[] }
 	| { kind: "background"; tasks: string[] }
+	| { kind: "suggestion"; text: string | null }
 	| { kind: "interrupting"; pending: boolean }
 	| { kind: "resumed" };
 
