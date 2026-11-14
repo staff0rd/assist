@@ -8,6 +8,7 @@ import type {
 import { pendingChangeFor } from "./pendingChangeFor";
 import type { RuleActions } from "./RuleActions";
 import { RuleCode } from "./RuleCode";
+import { RuleCommentLayer } from "./RuleCommentLayer";
 import { RuleRowActions } from "./RuleRowActions";
 import { RuleRowForm, type RuleRowMode } from "./RuleRowForm";
 import { RuleRowText } from "./RuleRowText";
@@ -35,7 +36,9 @@ export function RuleRow({ rule, scope, actions }: Props) {
 	return (
 		<Box component="li" sx={ruleRowSx(ACTIONS, !!mode)}>
 			<RuleCode code={rule.code} />
-			<RuleRowText rule={rule} pending={pending} />
+			<RuleCommentLayer rule={rule} scope={scope} comments={actions.comments}>
+				<RuleRowText rule={rule} pending={pending} />
+			</RuleCommentLayer>
 			<RuleRowActions
 				className={ACTIONS}
 				label={label}
@@ -47,7 +50,7 @@ export function RuleRow({ rule, scope, actions }: Props) {
 				label={label}
 				rule={rule}
 				scope={scope}
-				actions={actions}
+				scopes={actions.scopes}
 				onPropose={propose}
 				onClose={close}
 			/>

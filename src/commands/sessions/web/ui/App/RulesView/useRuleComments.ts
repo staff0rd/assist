@@ -5,6 +5,7 @@ import { commentTarget } from "../commentTarget";
 import { formatRuleComment, type RuleComment } from "./formatRuleComment";
 
 export type RuleComments = {
+	cwd: string | undefined;
 	onComment?: ((comment: RuleComment) => void) | undefined;
 	unavailable?: string | undefined;
 	sentTo: string | null;
@@ -12,6 +13,7 @@ export type RuleComments = {
 };
 
 export function useRuleComments(
+	cwd: string,
 	sessions: SessionInfo[],
 	cardId: string | null,
 	sendInput: (sessionId: string, data: string) => void,
@@ -25,6 +27,7 @@ export function useRuleComments(
 			};
 
 	return {
+		cwd,
 		onComment: session
 			? (comment) => {
 					pasteAndSubmit(sendInput, session.id, formatRuleComment(comment));

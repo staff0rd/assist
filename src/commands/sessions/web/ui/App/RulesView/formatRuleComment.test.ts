@@ -13,10 +13,11 @@ describe("formatRuleComment", () => {
 					depth: 1,
 					rules: [],
 				},
+				quote: "Use tokens",
 				note: "Mention density",
 			}),
 		).toBe(
-			"Rule R9 in `ui/CLAUDE.md`\n\n```\nDesign system — Use tokens.\n```\n\nMention density",
+			"Rule R9 in `ui/CLAUDE.md`\n\n```\nUse tokens\n```\n\nMention density",
 		);
 	});
 
@@ -32,6 +33,7 @@ describe("formatRuleComment", () => {
 					depth: 0,
 					rules: [],
 				},
+				quote: "Links",
 				note: "Too strict",
 			}).split("\n")[0],
 		).toBe('Rule "Links" in advice.rules, Repo (db): github.com/org/assist');

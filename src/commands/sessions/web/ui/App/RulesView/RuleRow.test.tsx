@@ -35,7 +35,12 @@ function renderRow(overrides: Partial<RuleActions> = {}) {
 		scopes: [userDb, scope],
 		changes: [],
 		onPropose: vi.fn().mockResolvedValue(undefined),
-		comments: { onComment: vi.fn(), sentTo: null, clearSent: () => {} },
+		comments: {
+			cwd: "/repo",
+			onComment: vi.fn(),
+			sentTo: null,
+			clearSent: () => {},
+		},
 		...overrides,
 	};
 	render(
@@ -50,39 +55,6 @@ const click = (name: string) =>
 	fireEvent.click(screen.getByRole("button", { name }));
 
 describe("RuleRow", () => {
-	it("sends a comment with the rule and its scope", () => {
-		const { comments } = renderRow();
-
-		click("Comment on Design system");
-		fireEvent.change(screen.getByLabelText("Comment"), {
-			target: { value: "Mention density tokens" },
-		});
-		click("Send comment");
-
-		expect(comments.onComment).toHaveBeenCalledWith({
-			rule,
-			scope,
-			note: "Mention density tokens",
-		});
-		expect(screen.queryByLabelText("Comment")).toBeNull();
-	});
-
-	it("explains why a comment cannot be sent without a session", () => {
-		renderRow({
-			comments: {
-				unavailable: "Select a session card to comment on a rule.",
-				sentTo: null,
-				clearSent: () => {},
-			},
-		});
-
-		click("Comment on Design system");
-
-		expect(
-			screen.getByText("Select a session card to comment on a rule."),
-		).toBeTruthy();
-	});
-
 	it("sends a move for approval keeping the rule's wording", async () => {
 		const { onPropose } = renderRow();
 
@@ -130,6 +102,5 @@ describe("RuleRow", () => {
 			(screen.getByRole("button", { name }) as HTMLButtonElement).disabled;
 		expect(disabled("Move Design system")).toBe(true);
 		expect(disabled("Delete Design system")).toBe(true);
-		expect(disabled("Comment on Design system")).toBe(false);
 	});
 });

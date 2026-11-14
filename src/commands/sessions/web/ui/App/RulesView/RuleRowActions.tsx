@@ -18,14 +18,6 @@ export function RuleRowActions({ className, label, pending, onOpen }: Props) {
 			<Button
 				size="small"
 				color="inherit"
-				aria-label={`Comment on ${label}`}
-				onClick={() => onOpen("comment")}
-			>
-				Comment
-			</Button>
-			<Button
-				size="small"
-				color="inherit"
 				disabled={pending}
 				aria-label={`Move ${label}`}
 				onClick={() => onOpen("move")}

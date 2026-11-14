@@ -22,7 +22,7 @@ export function RulesView({ sessions, cardId, sendInput }: Props) {
 	const { scopes, loading, error, reload } = useRuleScopes(selectedCwd);
 	const { changes, propose, decide } = useRuleChanges(selectedCwd, reload);
 	const { failure, clearFailure, onDecide } = useRuleChangeFailure(decide);
-	const comments = useRuleComments(sessions, cardId, sendInput);
+	const comments = useRuleComments(selectedCwd, sessions, cardId, sendInput);
 	const [selectedId, setSelectedId] = useState<string>();
 	const [path, setPath] = useState("");
 	const reviewing = changes.length > 0;

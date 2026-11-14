@@ -1,7 +1,12 @@
 import type { RuleEntry, RuleScope } from "../../../../../rules/types";
 import { formatQuotedComment } from "../formatQuotedComment";
 
-export type RuleComment = { rule: RuleEntry; scope: RuleScope; note: string };
+export type RuleComment = {
+	rule: RuleEntry;
+	scope: RuleScope;
+	quote: string;
+	note: string;
+};
 
 function ruleHeading({ rule, scope }: RuleComment): string {
 	if (scope.kind === "claude-md")
@@ -11,7 +16,6 @@ function ruleHeading({ rule, scope }: RuleComment): string {
 }
 
 export function formatRuleComment(comment: RuleComment): string {
-	const { rule, note } = comment;
-	const quote = rule.title ? `${rule.title} — ${rule.text}` : rule.text;
+	const { quote, note } = comment;
 	return `${ruleHeading(comment)}\n\n${formatQuotedComment(quote, note)}`;
 }
