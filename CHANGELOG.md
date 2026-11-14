@@ -1,3 +1,10 @@
+# [0.1171.0](https://github.com/staff0rd/assist/compare/v0.1170.0...v0.1171.0) (2026-11-14)
+
+
+### Features
+
+* backlog done closes run previews ([b7758e8](https://github.com/staff0rd/assist/commit/b7758e8f8b21438a463783aba3b213a035a9ffe2))
+
 # [0.1170.0](https://github.com/staff0rd/assist/compare/v0.1169.1...v0.1170.0) (2026-11-14)
 
 
