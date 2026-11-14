@@ -4,6 +4,7 @@ import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { killPtyTree } from "./killPtyTree";
 import { reportUndeliveredPrompts } from "./reportUndeliveredPrompts";
+import { stopSessionShellCommands } from "./shell/stopShellCommand";
 import { otherTreeHolders } from "./worktree/otherTreeHolders";
 import { reapWorktree } from "./worktree/reapWorktree";
 
@@ -15,6 +16,7 @@ export function dismissSession(
 	if (!s) return false;
 	const sharedWith = otherTreeHolders(sessions, s);
 	if (s.status !== "done" && s.pty) killPtyTree(s.pty);
+	stopSessionShellCommands(s);
 	s.activityWatcher?.close();
 	s.transcriptWatcher?.close();
 	s.gitWatcher?.close();

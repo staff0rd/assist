@@ -8,11 +8,12 @@ type SdkComposerKeys = {
 	running: boolean;
 	send: () => void;
 	stop: () => void;
+	stopShell: (() => void) | undefined;
 };
 
 export function sdkComposerKeyDown(
 	e: KeyboardEvent,
-	{ slash, suggestion, running, send, stop }: SdkComposerKeys,
+	{ slash, suggestion, running, send, stop, stopShell }: SdkComposerKeys,
 ): void {
 	if (slash.onKeyDown(e)) return;
 	if (e.key === "Tab" && suggestion && !e.shiftKey) {
@@ -24,6 +25,9 @@ export function sdkComposerKeyDown(
 		const lineBreak = field && backslashLineBreak(field);
 		if (lineBreak) slash.replace(lineBreak);
 		else send();
+	} else if (e.key === "Escape" && stopShell) {
+		e.preventDefault();
+		stopShell();
 	} else if (e.key === "Escape" && running) {
 		e.preventDefault();
 		stop();

@@ -1,5 +1,6 @@
-import { type ChildProcess, execFile } from "node:child_process";
+import type { ChildProcess } from "node:child_process";
 import { daemonLog } from "../daemonLog";
+import { killTree } from "../killTree";
 
 const running = new Map<string, Set<ChildProcess>>();
 
@@ -28,24 +29,5 @@ export function stopInstall(worktreePath: string): void {
 			`worktree ${worktreePath} install still running at teardown; killing pid ${child.pid} so removal is not racing it`,
 		);
 		killTree(child.pid);
-	}
-}
-
-function killTree(pid: number): void {
-	if (process.platform === "win32") {
-		execFile(
-			"taskkill",
-			["/T", "/F", "/PID", String(pid)],
-			{ windowsHide: true },
-			() => {},
-		);
-		return;
-	}
-	try {
-		process.kill(-pid, "SIGKILL");
-	} catch {
-		try {
-			process.kill(pid, "SIGKILL");
-		} catch {}
 	}
 }

@@ -38,6 +38,7 @@ export function SdkComposer({
 					suggestion={Boolean(c.suggestion)}
 					shellCwd={c.shell ? cwdLabel(session.cwd) : undefined}
 					held={c.held}
+					shellRunning={c.shellRunning}
 				/>
 			</Box>
 		</Box>

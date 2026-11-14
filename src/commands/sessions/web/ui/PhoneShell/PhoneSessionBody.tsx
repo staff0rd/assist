@@ -37,6 +37,7 @@ export function PhoneSessionBody(props: {
 		<QueuedMessageProviders
 			dequeue={socket.dequeueMessage}
 			runShell={socket.runShellCommand}
+			stopShell={socket.stopShellCommand}
 		>
 			<Box sx={asking ? askTerminalSx : terminalSx}>
 				{session.sdk ? (

@@ -4,6 +4,7 @@ import type { Session } from "../createSession";
 import { daemonLog } from "../daemonLog";
 import { quoteForLog } from "../sdk/createSdkMessageQueue";
 import { spawnShellCommand } from "./spawnShellCommand";
+import { trackShellCommand, untrackShellCommand } from "./stopShellCommand";
 import { watchShellChild } from "./watchShellChild";
 
 /* why: `!` commands from the SDK composer run beside the claude query, not
@@ -29,6 +30,10 @@ export function runSdkShell(
 	daemonLog(
 		`${label} started: pid ${child.pid ?? "none"} in ${cwd}: ${quoteForLog(command)}`,
 	);
-	watchShellChild(child, row, label, notify);
+	trackShellCommand(session.id, row.id, child);
+	watchShellChild(child, row, label, () => {
+		if (row.state !== "running") untrackShellCommand(session.id, row.id);
+		notify();
+	});
 	notify();
 }

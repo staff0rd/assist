@@ -12,7 +12,7 @@ export function finishShellRow(
 	row.exitCode = exitCode;
 	row.durationMs = Date.now() - row.startedAt;
 	daemonLog(
-		`${label} exited: ${reason}, ${row.durationMs}ms, output held for the next message`,
+		`${label} ${row.stopped ? "stopped" : "exited"}: ${reason}, ${row.durationMs}ms, output held for the next message`,
 	);
 	return true;
 }

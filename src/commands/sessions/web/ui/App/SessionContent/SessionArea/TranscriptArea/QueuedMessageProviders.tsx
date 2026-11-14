@@ -8,6 +8,10 @@ import {
 	type RunShellCommand,
 } from "./useRunShellCommand";
 import {
+	StopShellCommandContext,
+	type StopShellCommand,
+} from "./useStopShellCommand";
+import {
 	DequeueMessageContext,
 	type DequeueMessage,
 } from "./useDequeueMessage";
@@ -15,10 +19,12 @@ import {
 export function QueuedMessageProviders({
 	dequeue,
 	runShell,
+	stopShell,
 	children,
 }: {
 	dequeue: DequeueMessage;
 	runShell: RunShellCommand;
+	stopShell: StopShellCommand;
 	children: ReactNode;
 }) {
 	const drafts = useMemo(createComposerDraftRegistry, []);
@@ -26,7 +32,9 @@ export function QueuedMessageProviders({
 		<DequeueMessageContext.Provider value={dequeue}>
 			<ComposerDraftContext.Provider value={drafts}>
 				<RunShellCommandContext.Provider value={runShell}>
-					{children}
+					<StopShellCommandContext.Provider value={stopShell}>
+						{children}
+					</StopShellCommandContext.Provider>
 				</RunShellCommandContext.Provider>
 			</ComposerDraftContext.Provider>
 		</DequeueMessageContext.Provider>

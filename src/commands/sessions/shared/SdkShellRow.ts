@@ -8,4 +8,5 @@ export type SdkShellRow = {
 	startedAt: number;
 	exitCode?: number;
 	durationMs?: number;
+	stopped?: boolean;
 };

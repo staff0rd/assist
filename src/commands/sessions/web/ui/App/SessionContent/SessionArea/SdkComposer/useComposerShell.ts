@@ -1,13 +1,16 @@
+import type { SessionInfo } from "../../../../types";
 import { useRunShellCommand } from "../TranscriptArea/useRunShellCommand";
 import { useShellMode } from "./useShellMode";
+import { useStopRunningShell } from "./useStopRunningShell";
 
-export function useComposerShell(sessionId: string) {
+export function useComposerShell(session: SessionInfo) {
 	const runShell = useRunShellCommand();
 	const mode = useShellMode(Boolean(runShell));
 	return {
 		...mode,
+		stopRunning: useStopRunningShell(session),
 		run: (command: string) => {
-			runShell?.(sessionId, command);
+			runShell?.(session.id, command);
 			mode.leave();
 		},
 	};

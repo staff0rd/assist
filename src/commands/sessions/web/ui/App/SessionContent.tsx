@@ -35,6 +35,7 @@ export function SessionContent({ socket }: { socket: SessionSocket }) {
 			<QueuedMessageProviders
 				dequeue={socket.dequeueMessage}
 				runShell={socket.runShellCommand}
+				stopShell={socket.stopShellCommand}
 			>
 				<SessionArea
 					lifecycle={lifecycle}

@@ -11,12 +11,14 @@ export function SdkComposerHint({
 	suggestion,
 	shellCwd,
 	held,
+	shellRunning,
 }: {
 	running: boolean;
 	stopping: boolean;
 	suggestion: boolean;
 	shellCwd?: string;
 	held: number;
+	shellRunning: boolean;
 }) {
 	if (stopping)
 		return <Box sx={sdkComposerSx.hint}>Waiting for Claude to stop</Box>;
@@ -27,7 +29,12 @@ export function SdkComposerHint({
 			) : (
 				<ShellKeys cwd={shellCwd} />
 			)}
-			{running && (
+			{shellRunning && (
+				<span>
+					<HintKey label="Esc" /> stop command
+				</span>
+			)}
+			{running && !shellRunning && (
 				<span>
 					<HintKey label="Esc" /> stop turn
 				</span>

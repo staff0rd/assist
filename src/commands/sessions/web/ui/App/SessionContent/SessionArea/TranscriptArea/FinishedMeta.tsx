@@ -5,18 +5,26 @@ import { shellSx } from "./shellSx";
 export function FinishedMeta({
 	sent,
 	exitCode,
+	stopped,
 	durationMs,
 }: {
 	sent: boolean;
 	exitCode?: number;
+	stopped?: boolean;
 	durationMs?: number;
 }) {
 	return (
 		<>
-			{exitCode !== undefined && (
-				<Box component="span" sx={exitCode === 0 ? shellSx.ok : shellSx.bad}>
-					exit {exitCode}
+			{stopped ? (
+				<Box component="span" sx={shellSx.bad}>
+					stopped
 				</Box>
+			) : (
+				exitCode !== undefined && (
+					<Box component="span" sx={exitCode === 0 ? shellSx.ok : shellSx.bad}>
+						exit {exitCode}
+					</Box>
+				)
 			)}
 			{durationMs !== undefined && (
 				<span>{formatShellDuration(durationMs)}</span>

@@ -90,4 +90,5 @@ export const shellSx = {
 	},
 	ok: { color: "success.main", fontFamily: "fontFamilyMono" },
 	bad: { color: "error.main", fontFamily: "fontFamilyMono" },
+	stop: { ml: "auto", py: 0, minWidth: 0 },
 } as const;

@@ -5,6 +5,7 @@ import { shellSx } from "./shellSx";
 import { useTickingSeconds } from "./useTickingSeconds";
 import { ShellOutput } from "./ShellOutput";
 import { FinishedMeta } from "./FinishedMeta";
+import { ShellStopButton } from "./ShellStopButton";
 
 type ShellRowStatus = "running" | "held" | "sent";
 
@@ -15,6 +16,8 @@ type Props = {
 	startedAt?: number;
 	exitCode?: number;
 	durationMs?: number;
+	stopped?: boolean;
+	onStop?: () => void;
 };
 
 function RunningMeta({ startedAt }: { startedAt: number }) {
@@ -39,11 +42,15 @@ export function ShellRow(props: Props) {
 			<ShellOutput output={output} />
 			<Box sx={shellSx.meta}>
 				{status === "running" ? (
-					<RunningMeta startedAt={startedAt ?? Date.now()} />
+					<>
+						<RunningMeta startedAt={startedAt ?? Date.now()} />
+						{props.onStop && <ShellStopButton onStop={props.onStop} />}
+					</>
 				) : (
 					<FinishedMeta
 						sent={status === "sent"}
 						exitCode={props.exitCode}
+						stopped={props.stopped}
 						durationMs={props.durationMs}
 					/>
 				)}
