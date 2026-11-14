@@ -11,6 +11,8 @@ export function applySdkViewEvent(
 		daemonLog(`session ${session.id} sdk activity: ${event.text ?? "cleared"}`);
 	} else if (event.kind === "elapsed") {
 		session.sdkActivityElapsed = event.seconds ?? undefined;
+	} else if (event.kind === "process") {
+		session.sdkProcess = event.process ?? undefined;
 	} else if (event.kind === "queued") {
 		session.sdkQueued = event.texts.length ? event.texts : undefined;
 		daemonLog(`session ${session.id} sdk queued: ${event.texts.length}`);

@@ -43,5 +43,7 @@ export async function runSdkQuery(
 			`${label} sdk query failed: ${error instanceof Error ? error.message : String(error)}`,
 		);
 		control.exit(1);
+	} finally {
+		turn.stopProcessWatch();
 	}
 }

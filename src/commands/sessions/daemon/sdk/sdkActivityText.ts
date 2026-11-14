@@ -28,11 +28,13 @@ function toolTarget(input: unknown): string {
 	return key === "command" ? commandActivityLine(value) : activityLine(value);
 }
 
+export const SDK_WORKING_ACTIVITY = "Working";
+
 export function sdkActivityText(content: readonly ContentBlock[]): string {
 	const tool = [...content]
 		.reverse()
 		.find((block) => block.type === "tool_use");
-	if (!tool?.name) return "Working";
+	if (!tool?.name) return SDK_WORKING_ACTIVITY;
 	const target = toolTarget(tool.input);
-	return `Working · ${tool.name}${target ? ` ${target}` : ""}`;
+	return `${SDK_WORKING_ACTIVITY} · ${tool.name}${target ? ` ${target}` : ""}`;
 }

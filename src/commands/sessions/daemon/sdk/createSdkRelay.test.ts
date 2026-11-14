@@ -62,6 +62,7 @@ describe("createSdkRelay", () => {
 		expect(events).toEqual([
 			{ kind: "activity", text: null },
 			{ kind: "elapsed", seconds: null },
+			{ kind: "process", process: null },
 			{ kind: "queued", texts: [] },
 			{ kind: "background", tasks: [] },
 			{ kind: "interrupting", pending: false },

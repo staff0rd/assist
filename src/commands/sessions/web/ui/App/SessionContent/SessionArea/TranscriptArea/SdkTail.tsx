@@ -1,10 +1,23 @@
 import type { SessionInfo } from "../../../../types";
 import { sdkComposerState } from "../SdkComposer/sdkComposerState";
+import { formatIoRate } from "./formatIoRate";
 import { formatToolElapsed } from "./formatToolElapsed";
 import { SdkTailRow } from "./SdkTailRow";
 import { TextRow } from "./TranscriptPane/TranscriptRow/TextRow";
 import { TranscriptDivider } from "./TranscriptPane/TranscriptRow/TranscriptDivider";
 import { useTickingSeconds } from "./useTickingSeconds";
+
+function processLine(session: SessionInfo) {
+	const process = session.sdkProcess;
+	if (!process || session.sdkInterrupting) return undefined;
+	return {
+		command: process.command,
+		rate:
+			process.ioBytesPerSec === undefined
+				? undefined
+				: formatIoRate(process.ioBytesPerSec),
+	};
+}
 
 function activityText(session: SessionInfo): string | undefined {
 	if (session.status !== "running") return undefined;
@@ -37,6 +50,7 @@ export function SdkTail({ session }: { session: SessionInfo }) {
 					suffix={
 						elapsed === undefined ? undefined : formatToolElapsed(elapsed)
 					}
+					process={processLine(session)}
 				/>
 			)}
 			{session.sdkBackgroundTasks?.map((task, i) => (

@@ -22,6 +22,7 @@ export function createSdkRelay(label: string) {
 		daemonLog(`${label} sdk query detached from workflow`);
 		emit({ kind: "activity", text: null });
 		emit({ kind: "elapsed", seconds: null });
+		emit({ kind: "process", process: null });
 		emit({ kind: "queued", texts: [] });
 		emit({ kind: "background", tasks: [] });
 		emit({ kind: "interrupting", pending: false });

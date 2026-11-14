@@ -1,6 +1,9 @@
 import type { FSWatcher } from "node:fs";
 import type { Activity } from "../../../shared/emitActivity";
-import type { SessionProcess } from "../../../shared/harnessAdapters/types";
+import type {
+	SdkProcessInfo,
+	SessionProcess,
+} from "../../../shared/harnessAdapters/types";
 import type { HarnessKind } from "../../../shared/harnesses";
 import type {
 	CommandType,
@@ -110,6 +113,7 @@ export type Session = {
 	activeViewerNode?: string;
 	sdkActivity?: string;
 	sdkActivityElapsed?: number;
+	sdkProcess?: SdkProcessInfo;
 	sdkQueued?: string[];
 	sdkBackgroundTasks?: string[];
 	sdkInterrupting?: boolean;

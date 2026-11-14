@@ -1,4 +1,5 @@
 import type { Activity } from "../../../shared/emitActivity";
+import type { SdkProcessInfo } from "../../../shared/harnessAdapters/types";
 import type { HarnessKind } from "../../../shared/harnesses";
 import type { SessionType } from "./deriveHistoryFields";
 import type { PreviewAttachment } from "./PreviewAttachment";
@@ -94,6 +95,7 @@ export type SessionInfoBase = {
 	sdk?: boolean;
 	sdkActivity?: string;
 	sdkActivityElapsed?: number;
+	sdkProcess?: SdkProcessInfo;
 	sdkQueued?: string[];
 	sdkBackgroundTasks?: string[];
 	sdkInterrupting?: boolean;

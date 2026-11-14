@@ -66,6 +66,23 @@ describe("SdkTail", () => {
 		);
 	});
 
+	it("shows the leaf process command and IO rate after the elapsed time", () => {
+		render(
+			<SdkTail
+				session={makeSessionInfo({
+					sdk: true,
+					status: "running",
+					sdkActivity: "Working · Bash npm i",
+					sdkActivityElapsed: 58,
+					sdkProcess: { command: "curl -O big.iso", ioBytesPerSec: 20480 },
+				})}
+			/>,
+		);
+		expect(screen.getByRole("status").textContent).toContain(
+			"Working · Bash npm i · 58s · curl -O big.iso · IO 20 KB/s",
+		);
+	});
+
 	it("hides the elapsed time while the turn is stopping", () => {
 		render(
 			<SdkTail
