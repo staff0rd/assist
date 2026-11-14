@@ -1,3 +1,11 @@
+# [0.1159.0](https://github.com/staff0rd/assist/compare/v0.1158.3...v0.1159.0) (2026-11-14)
+
+
+### Features
+
+* copyable code in check steps ([2b1ba60](https://github.com/staff0rd/assist/commit/2b1ba608bde3e0f9c765b0e63c362cb50d4837c9))
+* remove a queued SDK message ([2e90a0d](https://github.com/staff0rd/assist/commit/2e90a0d65d6fb2c1229972d84f4823c97b77cf5e))
+
 ## [0.1158.3](https://github.com/staff0rd/assist/compare/v0.1158.2...v0.1158.3) (2026-11-14)
 
 
