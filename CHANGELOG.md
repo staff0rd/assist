@@ -1,3 +1,10 @@
+# [0.1163.0](https://github.com/staff0rd/assist/compare/v0.1162.0...v0.1163.0) (2026-11-14)
+
+
+### Features
+
+* phone nav motion edge cases ([cdff7ca](https://github.com/staff0rd/assist/commit/cdff7caaff45463ce6a75059f3ee1bde72f4ca35))
+
 # [0.1162.0](https://github.com/staff0rd/assist/compare/v0.1161.0...v0.1162.0) (2026-11-14)
 
 
