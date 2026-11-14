@@ -1,3 +1,17 @@
+# [0.1165.0](https://github.com/staff0rd/assist/compare/v0.1164.0...v0.1165.0) (2026-11-14)
+
+
+### Bug Fixes
+
+* name the skill in Skill tool rows ([4c88b41](https://github.com/staff0rd/assist/commit/4c88b414d9dafed19ec8302cd8c7060780287859))
+
+
+### Features
+
+* courthouse icon for rules button ([c9c6993](https://github.com/staff0rd/assist/commit/c9c6993fa6be125bd3e00e9e4b140cc0be6b6448))
+* reopen lost previews on restore ([aece509](https://github.com/staff0rd/assist/commit/aece509828bfe36b72da24ab7395b19783ff8ab5))
+* show transcript tool calls uncollapsed ([8ff2307](https://github.com/staff0rd/assist/commit/8ff2307e240841a1b0cca4dcd01d798352ed5ef6))
+
 # [0.1164.0](https://github.com/staff0rd/assist/compare/v0.1163.0...v0.1164.0) (2026-11-14)
 
 
