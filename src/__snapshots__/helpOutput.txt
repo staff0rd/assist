@@ -1645,9 +1645,12 @@ Commands:
                                                   story not yet swept, without waiting for
                                                   docs.refreshAfter (refused when docs.refreshAfter
                                                   is unset: Refresh docs is off)
-  docs-screenshots <refresh-id>                   List a Refresh docs item's covered stories whose
+  docs-screenshots [options] <refresh-id>         List a Refresh docs item's covered stories whose
                                                   commits changed UI files (.tsx, .jsx, .css, .html,
-                                                  .swift, .vue, .svelte), each with those files
+                                                  .swift, .vue, .svelte), each with those files;
+                                                  exits non-zero until every one is mapped with
+                                                  --story to a screenshot declared on a docs page
+                                                  whose PNG is added or changed in the working tree
   run [options] <id>                              Run a backlog item's plan phase-by-phase
   search <query>                                  Search backlog items by keyword
   update-field [options] <id>                     Update fields on a backlog item
@@ -1928,10 +1931,12 @@ Options:
 Usage: assist backlog docs-screenshots [options] <refresh-id>
 
 List a Refresh docs item's covered stories whose commits changed UI files (.tsx, .jsx, .css, .html,
-.swift, .vue, .svelte), each with those files
+.swift, .vue, .svelte), each with those files; exits non-zero until every one is mapped with --story
+to a screenshot declared on a docs page whose PNG is added or changed in the working tree
 
 Options:
-  -h, --help  display help for command
+  --story <id=file.png>  Map a UI story to the screenshot that documents it (repeatable)
+  -h, --help             display help for command
 
 === assist backlog run --help
 Usage: assist backlog run [options] <id>

@@ -76,6 +76,8 @@ describe("createDocsRefreshItem", () => {
 		expect(tasks?.[3]).toContain(
 			`assist backlog docs-screenshots ${formatItemId(id)}`,
 		);
+		expect(tasks?.[3]).toContain("--story <id>=<file.png>");
+		expect(tasks?.[3]).toContain("must pass before the review ask");
 	});
 
 	it("ends with the user approving the docs diff before it is committed", async () => {
@@ -108,6 +110,7 @@ describe("createDocsRefreshItem", () => {
 		expect(task).toContain("no raw diff");
 		expect(task).toContain("the stories included");
 		expect(task).toContain("each skipped story with its one-line reason");
+		expect(task).toContain("each UI story with its screenshot");
 	});
 
 	it("adds a coverage task when the repo defines docs:coverage", async () => {
