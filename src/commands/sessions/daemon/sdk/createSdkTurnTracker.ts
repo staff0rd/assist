@@ -45,6 +45,7 @@ export function createSdkTurnTracker(
 			control.emit({ kind: "pending", texts: [text] });
 			setStatus("running");
 		},
+		dequeue: queue.remove,
 		interrupt: (request: () => Promise<void>) =>
 			interrupt.request(busy, request),
 	};

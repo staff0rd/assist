@@ -1,16 +1,7 @@
 import { daemonLog } from "./daemonLog";
-import { routed } from "./routed";
+import { routedSdk } from "./routedSdk";
 
-export const handleInterrupt = routed((_client, m, d) => {
-	const id = String(d.sessionId);
-	const session = m.session(id);
-	const sdk = session?.pty?.sdk;
-	if (!sdk) {
-		daemonLog(
-			`interrupt ignored: session ${id} ${session ? "is not a Claude (SDK) session" : "was not found"}`,
-		);
-		return;
-	}
+export const handleInterrupt = routedSdk("interrupt", (sdk, id) => {
 	daemonLog(`interrupt received: session ${id}`);
 	sdk.interrupt();
 });

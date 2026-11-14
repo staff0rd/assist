@@ -28,6 +28,7 @@ export async function startSdkQuery(
 		if (opts.resumeId) awaitResume(label, messages, control);
 		control.bind({
 			send: turn.send,
+			dequeue: turn.dequeue,
 			interrupt: () =>
 				turn.interrupt(async () => {
 					await messages.interrupt();

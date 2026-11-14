@@ -13,6 +13,7 @@ function makeQuery() {
 			listeners.push(listener),
 		send: vi.fn(),
 		interrupt: vi.fn(),
+		dequeue: vi.fn(() => true),
 		stopTask: vi.fn(),
 	};
 	return {
@@ -32,15 +33,17 @@ function relayWithEvents() {
 }
 
 describe("createSdkRelay", () => {
-	it("forwards messages, interrupts and events to the attached query", () => {
+	it("forwards messages, interrupts, dequeues and events to the attached query", () => {
 		const { relay, events } = relayWithEvents();
 		const { query, emit } = makeQuery();
 		relay.handle.attach?.(query, false);
 		relay.handle.send("hi");
 		relay.handle.interrupt();
+		expect(relay.handle.dequeue(0, "queued")).toBe(true);
 		emit({ kind: "activity", text: "Working · Bash" });
 		expect(query.sdk.send).toHaveBeenCalledWith("hi");
 		expect(query.sdk.interrupt).toHaveBeenCalled();
+		expect(query.sdk.dequeue).toHaveBeenCalledWith(0, "queued");
 		expect(events).toEqual([{ kind: "activity", text: "Working · Bash" }]);
 	});
 
@@ -57,6 +60,7 @@ describe("createSdkRelay", () => {
 		exit(0);
 		emit({ kind: "activity", text: "late" });
 		relay.handle.send("after");
+		expect(relay.handle.dequeue(0, "after")).toBe(false);
 		expect(relay.current()).toBeUndefined();
 		expect(query.sdk.send).not.toHaveBeenCalled();
 		expect(events).toEqual([

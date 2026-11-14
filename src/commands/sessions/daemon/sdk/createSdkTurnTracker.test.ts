@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SdkSessionEvent } from "../../../../shared/harnessAdapters/types";
+import { daemonLog } from "../daemonLog";
 import { createSdkSessionProcess } from "./createSdkSessionProcess";
 import { createSdkTurnTracker } from "./createSdkTurnTracker";
 
@@ -64,6 +65,42 @@ describe("createSdkTurnTracker", () => {
 			sent: "second\n\nthird",
 		});
 		expect(events).not.toContainEqual({ kind: "status", status: "waiting" });
+	});
+
+	it("removes a queued message matching its index and text", () => {
+		const { events, push, turn } = setup();
+		turn.start("first");
+		turn.send("second");
+		turn.send("third");
+		expect(turn.dequeue(0, "second")).toBe(true);
+		expect(events.at(-1)).toEqual({ kind: "queued", texts: ["third"] });
+		turn.setStatus("waiting");
+		expect(push).toHaveBeenLastCalledWith("third");
+	});
+
+	it("ignores a dequeue whose index and text no longer match", () => {
+		const { events, turn } = setup();
+		turn.start("first");
+		turn.send("second");
+		turn.send("third");
+		const before = events.length;
+		expect(turn.dequeue(1, "second")).toBe(false);
+		expect(turn.dequeue(2, "third")).toBe(false);
+		expect(events).toHaveLength(before);
+		expect(daemonLog).toHaveBeenLastCalledWith(
+			expect.stringContaining("dequeue ignored"),
+		);
+	});
+
+	it("ignores a dequeue after the queue has flushed", () => {
+		const { events, push, turn } = setup();
+		turn.start("first");
+		turn.send("second");
+		turn.setStatus("waiting");
+		const before = events.length;
+		expect(turn.dequeue(0, "second")).toBe(false);
+		expect(events).toHaveLength(before);
+		expect(push).toHaveBeenLastCalledWith("second");
 	});
 
 	it("marks the interrupt pending until the turn ends", async () => {

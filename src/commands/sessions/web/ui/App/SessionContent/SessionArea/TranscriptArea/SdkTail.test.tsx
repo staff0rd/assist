@@ -1,8 +1,15 @@
 // @vitest-environment jsdom
-import { act, cleanup, render, screen } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { makeSessionInfo } from "../../../../../../../../test/mothers/makeSessionInfo";
 import { SdkTail } from "./SdkTail";
+import { DequeueMessageContext } from "./useDequeueMessage";
 
 afterEach(() => {
 	cleanup();
@@ -10,6 +17,28 @@ afterEach(() => {
 });
 
 describe("SdkTail", () => {
+	it("removes a queued message by its index and text", () => {
+		const dequeue = vi.fn();
+		render(
+			<DequeueMessageContext.Provider value={dequeue}>
+				<SdkTail
+					session={makeSessionInfo({
+						id: "s1",
+						sdk: true,
+						status: "running",
+						sdkQueued: ["first", "second"],
+					})}
+				/>
+			</DequeueMessageContext.Provider>,
+		);
+		const buttons = screen.getAllByRole("button", {
+			name: "Remove queued message",
+		});
+		expect(buttons).toHaveLength(2);
+		fireEvent.click(buttons[1]);
+		expect(dequeue).toHaveBeenCalledWith("s1", 1, "second");
+	});
+
 	it("shows the restart divider and resuming row while the conversation resumes", () => {
 		render(
 			<SdkTail

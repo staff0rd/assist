@@ -29,6 +29,19 @@ export function createSdkMessageQueue(
 				`${label} sdk message queued behind running turn (${queued.length} queued): ${quoteForLog(text)}`,
 			);
 		},
+		remove: (index: number, text: string): boolean => {
+			if (queued[index] !== text) {
+				daemonLog(
+					`${label} sdk dequeue ignored: no queued message ${index} matching ${quoteForLog(text)} (${queued.length} queued; already sent or changed)`,
+				);
+				return false;
+			}
+			publish(queued.filter((_, i) => i !== index));
+			daemonLog(
+				`${label} sdk queued message ${index} removed (${queued.length} queued): ${quoteForLog(text)}`,
+			);
+			return true;
+		},
 		flush: (): boolean => {
 			if (!queued.length) return false;
 			daemonLog(`${label} sdk sending ${queued.length} queued message(s)`);

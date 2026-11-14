@@ -7,6 +7,7 @@ import { daemonLog } from "../daemonLog";
 export type SdkTurnControls = {
 	send: (text: string) => void;
 	interrupt: () => void;
+	dequeue: (index: number, text: string) => boolean;
 	stopTask: (taskId: string) => Promise<void>;
 };
 
@@ -19,6 +20,11 @@ export function sdkSessionHandle(label: string) {
 		onEvent: (listener) => listeners.push(listener),
 		send: (text) => (turn ? turn.send(text) : unbound("message")),
 		interrupt: () => (turn ? turn.interrupt() : unbound("interrupt")),
+		dequeue: (index, text) => {
+			if (turn) return turn.dequeue(index, text);
+			unbound("dequeue");
+			return false;
+		},
 		stopTask: (taskId) =>
 			turn
 				? turn.stopTask(taskId)

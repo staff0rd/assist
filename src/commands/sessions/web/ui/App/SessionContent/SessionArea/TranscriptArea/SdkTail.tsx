@@ -3,10 +3,10 @@ import { sdkComposerState } from "../SdkComposer/sdkComposerState";
 import { formatToolElapsed } from "./formatToolElapsed";
 import { SdkPendingRows } from "./SdkPendingRows";
 import { SdkTailRow } from "./SdkTailRow";
-import { TextRow } from "./TranscriptPane/TranscriptRow/TextRow";
 import { TranscriptDivider } from "./TranscriptPane/TranscriptRow/TranscriptDivider";
 import { useTickingSeconds } from "./useTickingSeconds";
 import { processLine } from "./processLine";
+import { SdkQueuedRows } from "./SdkQueuedRows";
 
 function activityText(session: SessionInfo): string | undefined {
 	if (session.status !== "running") return undefined;
@@ -37,9 +37,7 @@ export function SdkTail({
 	return (
 		<>
 			<SdkPendingRows session={session} transcript={transcript} />
-			{session.sdkQueued?.map((text, i) => (
-				<TextRow key={`${i}:${text}`} role="user" text={text} term="" queued />
-			))}
+			<SdkQueuedRows session={session} />
 			{activity && (
 				<SdkTailRow
 					text={activity}

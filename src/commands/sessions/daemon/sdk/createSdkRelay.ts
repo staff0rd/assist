@@ -4,6 +4,7 @@ import type {
 } from "../../../../shared/harnessAdapters/types";
 import { daemonLog } from "../daemonLog";
 import { emitClearedSdkState } from "./emitClearedSdkState";
+import { relaySdkActions } from "./relaySdkActions";
 
 type SdkHandle = NonNullable<SessionProcess["sdk"]>;
 
@@ -13,10 +14,6 @@ export function createSdkRelay(label: string) {
 	const emit = (event: SdkSessionEvent) => {
 		for (const listener of listeners) listener(event);
 	};
-	const dropped = (action: string) =>
-		daemonLog(
-			`${label} sdk ${action} dropped: no Claude (SDK) query is attached to this workflow`,
-		);
 	const detach = (query: SessionProcess) => {
 		if (current !== query) return;
 		current = undefined;
@@ -25,14 +22,7 @@ export function createSdkRelay(label: string) {
 	};
 	const handle: SdkHandle = {
 		onEvent: (listener) => listeners.push(listener),
-		send: (text) =>
-			current?.sdk ? current.sdk.send(text) : dropped("message"),
-		interrupt: () =>
-			current?.sdk ? current.sdk.interrupt() : dropped("interrupt"),
-		stopTask: (taskId) =>
-			current?.sdk
-				? current.sdk.stopTask(taskId)
-				: Promise.reject(new Error("no Claude (SDK) query attached")),
+		...relaySdkActions(label, () => current),
 		attach: (query, idle) => {
 			current = query;
 			daemonLog(

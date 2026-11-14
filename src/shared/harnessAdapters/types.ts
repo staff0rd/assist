@@ -23,6 +23,7 @@ type SdkSessionHandle = {
 	onEvent: (listener: (event: SdkSessionEvent) => void) => void;
 	send: (text: string) => void;
 	interrupt: () => void;
+	dequeue: (index: number, text: string) => boolean;
 	stopTask: (taskId: string) => Promise<void>;
 	attach?: (query: SessionProcess, idle: boolean) => void;
 };

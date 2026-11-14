@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { SessionArea } from "./SessionContent/SessionArea";
 import { LastMessageHistoryContext } from "./SessionContent/useLastMessageHistory";
 import type { SessionSocket } from "../useSessionSocket";
+import { DequeueMessageContext } from "./SessionContent/SessionArea/TranscriptArea/useDequeueMessage";
 
 export function SessionContent({ socket }: { socket: SessionSocket }) {
 	const lifecycle = useMemo(
@@ -31,20 +32,22 @@ export function SessionContent({ socket }: { socket: SessionSocket }) {
 	);
 	return (
 		<LastMessageHistoryContext.Provider value={lastMessageHistory}>
-			<SessionArea
-				lifecycle={lifecycle}
-				sessions={socket.sessions}
-				activeId={socket.activeId}
-				initialized={socket.initialized}
-				onOutput={socket.onOutput}
-				sendInput={socket.sendInput}
-				sendResize={socket.sendResize}
-				viewingTranscriptSessionId={socket.viewingTranscriptSessionId}
-				transcript={socket.transcript}
-				fetchSessionTranscript={socket.fetchSessionTranscript}
-				interruptSession={socket.interruptSession}
-				sendPrDecision={socket.sendPrDecision}
-			/>
+			<DequeueMessageContext.Provider value={socket.dequeueMessage}>
+				<SessionArea
+					lifecycle={lifecycle}
+					sessions={socket.sessions}
+					activeId={socket.activeId}
+					initialized={socket.initialized}
+					onOutput={socket.onOutput}
+					sendInput={socket.sendInput}
+					sendResize={socket.sendResize}
+					viewingTranscriptSessionId={socket.viewingTranscriptSessionId}
+					transcript={socket.transcript}
+					fetchSessionTranscript={socket.fetchSessionTranscript}
+					interruptSession={socket.interruptSession}
+					sendPrDecision={socket.sendPrDecision}
+				/>
+			</DequeueMessageContext.Provider>
 		</LastMessageHistoryContext.Provider>
 	);
 }

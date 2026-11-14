@@ -71,6 +71,11 @@ export function interruptSessionAction(send: SendFn) {
 	return (id: string) => send({ type: "interrupt", sessionId: id });
 }
 
+export function dequeueMessageAction(send: SendFn) {
+	return (id: string, index: number, text: string) =>
+		send({ type: "dequeue", sessionId: id, index, text });
+}
+
 export type TransferSessionFn = (
 	id: string,
 	target: string,

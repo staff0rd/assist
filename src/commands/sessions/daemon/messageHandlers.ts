@@ -4,6 +4,7 @@ import { handleAutoUpdate } from "./autoUpdate/handleAutoUpdate";
 import { handleAutoUpdateControl } from "./autoUpdate/handleAutoUpdateControl";
 import { sendTo } from "./broadcast";
 import { handleHelloRequest } from "./handleHelloRequest";
+import { handleDequeue } from "./handleDequeue";
 import { handleInterrupt } from "./handleInterrupt";
 import { handleSdkLaunch } from "./sdk/handleSdkLaunch";
 import { handleWebLog } from "./handleWebLog";
@@ -81,6 +82,7 @@ export const messageHandlers: Record<string, Handler> = {
 	discard: routed((_client, m, d) => m.discardSession(d.sessionId as string)),
 	stop: routed((_client, m, d) => m.stopSession(d.sessionId as string)),
 	interrupt: handleInterrupt,
+	dequeue: handleDequeue,
 	transfer: handleTransfer,
 	"cancel-transfer": handleCancelTransfer,
 	...sessionSettingHandlers,

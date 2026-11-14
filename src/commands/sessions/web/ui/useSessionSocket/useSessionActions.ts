@@ -2,6 +2,7 @@ import { type RefObject, useMemo } from "react";
 import {
 	cancelTransferAction,
 	createRunAction,
+	dequeueMessageAction,
 	inputAction,
 	interruptSessionAction,
 	resizeAction,
@@ -34,6 +35,7 @@ export function useSessionActions(
 		setStarred: useMemo(() => setStarredAction(send), [send]),
 		stopSession: useMemo(() => stopSessionAction(send), [send]),
 		interruptSession: useMemo(() => interruptSessionAction(send), [send]),
+		dequeueMessage: useMemo(() => dequeueMessageAction(send), [send]),
 		startRun: useMemo(() => createRunAction(send), [send]),
 		transferSession: useMemo(() => transferSessionAction(send), [send]),
 		cancelTransfer: useMemo(() => cancelTransferAction(send), [send]),
