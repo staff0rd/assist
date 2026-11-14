@@ -18,7 +18,7 @@ export function useDraftState() {
 	const [prompt, setPrompt] = usePersistedPrompt("new-session");
 	const choices = useDraftChoices();
 	const [focus, setFocus] = useState(initialFocus);
-	const { setCwd, setMode, setHarness, setPickedModel, setNode } = choices;
+	const { setCwd, setMode, setHarness, setPickedModel } = choices;
 
 	const clear = useCallback(() => {
 		setPrompt("");
@@ -26,9 +26,8 @@ export function useDraftState() {
 		setMode(undefined);
 		setHarness(undefined);
 		setPickedModel(undefined);
-		setNode(undefined);
 		setFocus(initialFocus);
-	}, [setPrompt, setCwd, setMode, setHarness, setPickedModel, setNode]);
+	}, [setPrompt, setCwd, setMode, setHarness, setPickedModel]);
 
 	return { prompt, ...choices, focus, setPrompt, setFocus, clear };
 }

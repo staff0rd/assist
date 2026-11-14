@@ -8,7 +8,7 @@ import {
 	waitFor,
 	within,
 } from "@testing-library/react";
-import { useEffect, useState } from "react";
+import { type ReactNode, useEffect, useState } from "react";
 import {
 	afterEach,
 	beforeAll,
@@ -24,6 +24,9 @@ import type { NewSessionMode } from "./newSessionModes";
 import { useNewSessionDraft } from "./useNewSessionDraft";
 import type { LoadedDefaultMode } from "./useNewSessionDraft/useDefaultNewSessionMode";
 import { RepoSelectionContext } from "../../../../useRepoSelectionContext";
+import type { NodesState } from "../../../../types";
+import { useNodeSelection } from "../../../../useNodeSelection";
+import { NodeSelectionContext } from "../../../../useNodeSelectionContext";
 
 vi.mock("../../../../slashSuggestions/useSlashCommands", () => ({
 	useSlashCommands: (cwd: string | undefined) =>
@@ -84,9 +87,31 @@ function DraftedDialog({
 	);
 }
 
+function NodeHost({
+	nodes,
+	children,
+}: {
+	nodes: NodesState | null;
+	children: ReactNode;
+}) {
+	const selection = useNodeSelection(nodes);
+	return (
+		<NodeSelectionContext.Provider value={selection}>
+			<output aria-label="Top nav node">{selection.selected}</output>
+			{selection.names.map((name) => (
+				<button key={name} type="button" onClick={() => selection.select(name)}>
+					Top nav {name}
+				</button>
+			))}
+			{children}
+		</NodeSelectionContext.Provider>
+	);
+}
+
 function renderDialog(
 	defaultMode: DefaultMode = "prompt",
 	capabilities = { exposeCodexActions: false, exposePiActions: false },
+	nodes: NodesState | null = null,
 ) {
 	const resolution = (available: boolean) =>
 		available
@@ -127,26 +152,28 @@ function renderDialog(
 	const onClose = vi.fn();
 	const setSelectedCwd = vi.fn();
 	render(
-		<RepoSelectionContext.Provider
-			value={{
-				repos,
-				selectedCwd: "/git/beta",
-				worktreeCwd: "/git/beta",
-				setSelectedCwd,
-				cloneOn: (cwd) => cwd,
-				originOf: () => undefined,
-			}}
-		>
-			<DraftedDialog
-				defaultMode={defaultMode}
-				launchers={{
-					onCreateDesign,
-					onCreateHarness,
-					onCreateAssist,
+		<NodeHost nodes={nodes}>
+			<RepoSelectionContext.Provider
+				value={{
+					repos,
+					selectedCwd: "/git/beta",
+					worktreeCwd: "/git/beta",
+					setSelectedCwd,
+					cloneOn: (cwd) => cwd,
+					originOf: () => undefined,
 				}}
-				onClose={onClose}
-			/>
-		</RepoSelectionContext.Provider>,
+			>
+				<DraftedDialog
+					defaultMode={defaultMode}
+					launchers={{
+						onCreateDesign,
+						onCreateHarness,
+						onCreateAssist,
+					}}
+					onClose={onClose}
+				/>
+			</RepoSelectionContext.Provider>
+		</NodeHost>,
 	);
 	return {
 		onCreate,
@@ -357,6 +384,76 @@ describe("NewSessionDialog repo combobox", () => {
 		submitPrompt();
 
 		expect(onCreate).toHaveBeenCalledWith("", "/git/beta");
+	});
+});
+
+describe("NewSessionDialog node selector", () => {
+	const nodes: NodesState = {
+		local: "wsl",
+		links: [{ name: "win", url: "ws://win", state: "connected" }],
+	};
+
+	beforeEach(() => localStorage.clear());
+
+	function renderWithNodes() {
+		return renderDialog(undefined, undefined, nodes);
+	}
+
+	function topNavNode() {
+		return screen.getByRole("status", { name: "Top nav node", hidden: true })
+			.textContent;
+	}
+
+	function pickNode(name: string) {
+		const radio = within(screen.getByRole("radiogroup", { name: "Node" }))
+			.getAllByRole("radio")
+			.find((option) => option.textContent === name);
+		if (!radio) throw new Error(`no ${name} node`);
+		fireEvent.click(radio);
+	}
+
+	it("switches and persists the top nav node when a node is picked, even if cancelled", () => {
+		const { onClose } = renderWithNodes();
+
+		pickNode("win");
+		fireEvent.keyDown(promptInput(), { key: "Escape" });
+
+		expect(topNavNode()).toBe("win");
+		expect(checkedIn("Node")).toBe("win");
+		expect(localStorage.getItem("assist.sessions.node")).toBe("win");
+		expect(onClose).toHaveBeenCalled();
+	});
+
+	it("opens on the top nav node", () => {
+		localStorage.setItem("assist.sessions.node", "win");
+		renderWithNodes();
+
+		expect(checkedIn("Node")).toBe("win");
+	});
+
+	it("follows a top nav node change", () => {
+		renderWithNodes();
+		expect(checkedIn("Node")).toBe("wsl");
+
+		fireEvent.click(
+			screen.getByRole("button", { name: "Top nav win", hidden: true }),
+		);
+
+		expect(checkedIn("Node")).toBe("win");
+	});
+
+	it("launches on the node picked in the dialog", () => {
+		const { onCreateHarness } = renderWithNodes();
+
+		pickNode("win");
+		submitPrompt();
+
+		expect(onCreateHarness).toHaveBeenCalledWith(
+			"claude",
+			"",
+			"/git/beta",
+			"win",
+		);
 	});
 });
 

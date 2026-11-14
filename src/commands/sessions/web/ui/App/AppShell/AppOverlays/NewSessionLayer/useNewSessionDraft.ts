@@ -10,7 +10,6 @@ import {
 } from "./useNewSessionDraft/useDefaultNewSessionMode";
 import { defaultModeError } from "./useNewSessionDraft/defaultModeError";
 import { draftHarness } from "./useNewSessionDraft/draftHarness";
-import { draftNode } from "./useNewSessionDraft/draftNode";
 import { type DraftFocus, useDraftState } from "./useDraftState";
 
 export type NewSessionDraft = {
@@ -43,7 +42,7 @@ export function useNewSessionDraft(
 	) => LoadedDefaultMode | null = useDefaultNewSessionMode,
 ): NewSessionDraft | null {
 	const { selectedCwd } = useRepoSelectionContext();
-	const nodeSelection = useNodeSelectionContext();
+	const { visible, selected, select } = useNodeSelectionContext();
 	const state = useDraftState();
 	const cwd = state.cwd ?? selectedCwd;
 	const defaultMode = useDefaultMode(cwd, opens);
@@ -59,6 +58,7 @@ export function useNewSessionDraft(
 		modePending: state.mode === undefined && defaultMode.pending,
 		modeError: defaultModeError(state.mode, defaultMode),
 		retryMode: defaultMode.retry,
-		node: draftNode(state.node, nodeSelection),
+		node: visible ? selected : undefined,
+		setNode: select,
 	};
 }
