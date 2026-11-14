@@ -7,7 +7,13 @@ describe("workflowQueryEnv", () => {
 		expect(env).toMatchObject({
 			ASSIST_SESSION_ID: "3",
 			ASSIST_ACTIVITY_ID: "3",
+			CLAUDE_CODE_ARTIFACT: "1",
 		});
+	});
+
+	it("keeps an explicit CLAUDE_CODE_ARTIFACT", () => {
+		const env = workflowQueryEnv({ CLAUDE_CODE_ARTIFACT: "0" }, "3", undefined);
+		expect(env.CLAUDE_CODE_ARTIFACT).toBe("0");
 	});
 
 	it("adds the launcher's env and drops the activity id for a workflow query", () => {
@@ -18,6 +24,7 @@ describe("workflowQueryEnv", () => {
 			PATH: "/bin",
 			ASSIST_SESSION: "1",
 			ASSIST_SESSION_ID: "3",
+			CLAUDE_CODE_ARTIFACT: "1",
 			ASSIST_BACKLOG_ITEM_ID: "42",
 		});
 	});
