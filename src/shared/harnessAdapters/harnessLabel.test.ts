@@ -1,5 +1,12 @@
+import type { HarnessKind } from "../harnesses";
 import { describe, expect, it } from "vitest";
-import { harnessLabel, resolveHarness } from "./harnessLabel";
+import {
+	harnessLabel,
+	harnessProductLabel,
+	resolveHarness,
+} from "./harnessLabel";
+
+const unknownHarness = "future-harness" as HarnessKind;
 
 describe("resolveHarness", () => {
 	it("defaults an absent harness to claude", () => {
@@ -20,5 +27,12 @@ describe("harnessLabel", () => {
 
 	it("falls back to the Claude label when absent", () => {
 		expect(harnessLabel(undefined)).toBe("Claude");
+	});
+});
+
+describe("unknown harness kinds", () => {
+	it("labels an unknown harness with its raw kind", () => {
+		expect(harnessLabel(unknownHarness)).toBe("future-harness");
+		expect(harnessProductLabel(unknownHarness)).toBe("future-harness");
 	});
 });

@@ -5,7 +5,7 @@ import { PhoneNodesSheet } from "./PhoneShell/PhoneNodesSheet";
 import { usePhoneNodeUpdates } from "./PhoneShell/PhoneNodeUpdates/usePhoneNodeUpdates";
 import { PhoneNewSessionSheet } from "./PhoneShell/PhoneNewSession/PhoneNewSessionSheet";
 import { useNewSessionSheet } from "./PhoneShell/PhoneNewSession/useNewSessionSheet";
-import { PhoneRoutes } from "./PhoneShell/PhoneRoutes";
+import { GuardedPhoneRoutes } from "./PhoneShell/GuardedPhoneRoutes";
 import { phoneShellSx } from "./PhoneShell/phoneShellSx";
 import { PhoneTabBar } from "./PhoneShell/PhoneTabBar";
 import { useHealthRecheck } from "./PhoneShell/useHealthRecheck";
@@ -35,7 +35,7 @@ export function PhoneShell() {
 				setSessionStarred={socket.setStarred}
 			>
 				<PhoneActionsLayer socket={socket}>
-					<PhoneRoutes
+					<GuardedPhoneRoutes
 						socket={socket}
 						keyboardOpen={viewport.keyboardOpen}
 						onOpenNodes={sheet.openList}

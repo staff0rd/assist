@@ -21,9 +21,11 @@ export function resolveHarness(harness: HarnessKind | undefined): HarnessKind {
 }
 
 export function harnessLabel(harness: HarnessKind | undefined): string {
-	return HARNESS_LABELS[resolveHarness(harness)];
+	const kind = resolveHarness(harness);
+	return (HARNESS_LABELS[kind] as string | undefined) ?? kind;
 }
 
 export function harnessProductLabel(harness: HarnessKind | undefined): string {
-	return HARNESS_PRODUCT_LABELS[resolveHarness(harness)];
+	const kind = resolveHarness(harness);
+	return (HARNESS_PRODUCT_LABELS[kind] as string | undefined) ?? kind;
 }
