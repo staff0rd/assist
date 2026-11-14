@@ -23,10 +23,10 @@ describe("ToolRunRow", () => {
 
 		fireEvent.click(button);
 		expect(button.getAttribute("aria-expanded")).toBe("true");
-		expect(screen.getByText("ls -la", { exact: false })).toBeTruthy();
+		expect(screen.getByRole("button", { name: /Bash\s*ls$/ })).toBeTruthy();
 
 		fireEvent.click(button);
-		expect(screen.queryByText("ls -la", { exact: false })).toBeNull();
+		expect(screen.queryByRole("button", { name: /Bash\s*ls$/ })).toBeNull();
 	});
 
 	it("lists edited then read file names, capped with +N and full path on hover", () => {

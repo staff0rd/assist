@@ -13,13 +13,17 @@ describe("callLabel", () => {
 		expect(callLabel({ tool: "Edit", target: "src\\c.ts" })).toBe("c.ts");
 	});
 
-	it("shortens long or multi-line commands", () => {
+	it("names a shell command's programs when it has no description", () => {
+		expect(callLabel({ tool: "Bash", target: "cd /r && rg x | head" })).toBe(
+			"rg, head",
+		);
+	});
+
+	it("shortens other tools' long or multi-line targets", () => {
 		expect(callLabel({ tool: "Grep", target: "foo" })).toBe("foo");
-		expect(callLabel({ tool: "Bash", target: "a".repeat(70) })).toBe(
-			`${"a".repeat(60)}…`,
+		expect(callLabel({ tool: "WebFetch", target: "a".repeat(50) })).toBe(
+			`${"a".repeat(40)}…`,
 		);
-		expect(callLabel({ tool: "Bash", target: "echo 1\necho 2" })).toBe(
-			"echo 1…",
-		);
+		expect(callLabel({ tool: "Grep", target: "a\nb" })).toBe("a…");
 	});
 });
