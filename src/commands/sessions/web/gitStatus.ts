@@ -25,16 +25,18 @@ export async function gitStatus(
 		const session = getConversationParam(req);
 		const changeSet = await itemChangeSet(cwd, session).catch(() => undefined);
 		const uncommitted = await workingTreeCounts(cwd);
-		if (!changeSet) {
+		const counts =
+			changeSet &&
+			(await groupedCountsUnlessUnchanged(
+				`${cwd} ${session?.harness ?? ""}:${session?.conversationId ?? ""}`,
+				cwd,
+				changeSet.groups,
+				uncommitted,
+			).catch(() => undefined));
+		if (!changeSet || !counts) {
 			respondJson(res, 200, { ...uncommitted, ...branch });
 			return;
 		}
-		const counts = await groupedCountsUnlessUnchanged(
-			`${cwd} ${session?.harness ?? ""}:${session?.conversationId ?? ""}`,
-			cwd,
-			changeSet.groups,
-			uncommitted,
-		);
 		respondJson(res, 200, {
 			...counts,
 			...branch,

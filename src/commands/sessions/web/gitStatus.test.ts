@@ -268,6 +268,26 @@ describe("gitStatus", () => {
 		});
 	});
 
+	it("falls back to the working tree when the item counts fail", async () => {
+		withChangeSet([{ base: "base-one", paths: ["a.ts"] }]);
+		execGitMock.mockImplementation(async (_cwd, args) => {
+			if (args[1] === "--name-status") throw new Error("diff hung");
+			return args[0] === "status" ? " M a.ts\n M bash-edit.ts\n" : "";
+		});
+
+		const { status, counts } = await request(
+			"/api/git-status?cwd=%2Ffailing-repo&session=s1&harness=claude-sdk",
+		);
+
+		expect(status).toBe(200);
+		expect(counts).toEqual({
+			new: [],
+			modified: ["a.ts", "bash-edit.ts"],
+			deleted: [],
+			...NO_BRANCH,
+		});
+	});
+
 	describe("polled again for the same session", () => {
 		const repo = {
 			head: "head-one",

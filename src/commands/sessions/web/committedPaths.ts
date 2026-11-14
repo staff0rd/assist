@@ -3,6 +3,7 @@ import type { ConversationTarget } from "../shared/sessionConversationTarget";
 import { itemCommits } from "./itemCommits";
 import { resolveCommitCached } from "./resolveCommitCached";
 import { transcriptCommits } from "./transcriptCommits";
+import { withTimeout } from "../../../shared/withTimeout";
 
 type CommittedPaths = { commits: CommitRef[]; bases: Map<string, string> };
 
@@ -11,6 +12,8 @@ const cache = new Map<string, { value: CommittedPaths; expiresAt: number }>();
 const inFlight = new Map<string, Promise<CommittedPaths>>();
 
 const CACHE_TTL_MS = 10_000;
+
+const LOOKUP_TIMEOUT_MS = 10_000;
 
 export async function committedPaths(
 	cwd: string,
@@ -23,7 +26,11 @@ export async function committedPaths(
 	const pending = inFlight.get(key);
 	if (pending) return pending;
 
-	const lookup = loadCommittedPaths(key, cwd, session)
+	const lookup = withTimeout(
+		loadCommittedPaths(key, cwd, session),
+		LOOKUP_TIMEOUT_MS,
+		"committed paths",
+	)
 		.then((value) => {
 			cache.set(key, { value, expiresAt: Date.now() + CACHE_TTL_MS });
 			return value;

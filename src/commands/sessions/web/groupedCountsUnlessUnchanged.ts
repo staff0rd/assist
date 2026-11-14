@@ -2,8 +2,11 @@ import { groupedCounts } from "./groupedCounts";
 import type { ChangeGroup } from "./itemChangeSet";
 import { itemCountsFingerprint } from "./itemCountsFingerprint";
 import type { GitStatusCounts } from "./parseGitStatus";
+import { withTimeout } from "../../../shared/withTimeout";
 
 const RECOUNT_AFTER_MS = 30_000;
+
+const COUNT_TIMEOUT_MS = 10_000;
 
 const counted = new Map<
 	string,
@@ -54,7 +57,11 @@ export async function groupedCountsUnlessUnchanged(
 	const pending = counting.get(scope);
 	if (pending?.fingerprint === fingerprint) return pending.counts;
 
-	const counts = groupedCounts(cwd, groups)
+	const counts = withTimeout(
+		groupedCounts(cwd, groups),
+		COUNT_TIMEOUT_MS,
+		"grouped counts",
+	)
 		.then((result) => {
 			remember(scope, fingerprint, result);
 			return result;
