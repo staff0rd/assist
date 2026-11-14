@@ -19,6 +19,7 @@ export function ToolCallRow({
 	return (
 		<Box>
 			<ButtonBase
+				data-preview-skip
 				aria-expanded={revealed}
 				disabled={!target}
 				onClick={() => setRevealed((r) => !r)}

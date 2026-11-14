@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { skipsSelection } from "../../../../textWalker";
 import { ToolRunRow } from "./ToolRunRow";
 
 afterEach(cleanup);
@@ -46,5 +47,44 @@ describe("ToolRunRow", () => {
 			"7 tool calls·EDITEDd.ts·READa.ts, b.ts +1·Bash ×2",
 		);
 		expect(screen.getByText("a.ts").getAttribute("title")).toBe("src/a.ts");
+	});
+
+	it("shows a call's description, revealing its command on click", () => {
+		render(
+			<ToolRunRow
+				calls={[
+					{
+						...call("Bash", "rm -rf dist", "a"),
+						description: "Clean build output",
+					},
+				]}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button"));
+		const line = screen.getByRole("button", { name: /Clean build output/ });
+		expect(line.getAttribute("aria-expanded")).toBe("false");
+		expect(screen.queryByText("rm -rf dist")).toBeNull();
+
+		fireEvent.click(line);
+		expect(line.getAttribute("aria-expanded")).toBe("true");
+		expect(screen.getByText("rm -rf dist")).toBeTruthy();
+
+		fireEvent.click(line);
+		expect(screen.queryByText("rm -rf dist")).toBeNull();
+	});
+
+	it("names a file tool's file, revealing its full path on click", () => {
+		render(<ToolRunRow calls={[call("Read", "src/deep/a.ts", "a")]} />);
+		fireEvent.click(screen.getByRole("button"));
+		const line = screen.getByRole("button", { name: /Read\s*a\.ts/ });
+		fireEvent.click(line);
+		expect(screen.getByText("src/deep/a.ts")).toBeTruthy();
+	});
+
+	it("keeps its buttons out of transcript comment selection", () => {
+		render(<ToolRunRow calls={[call("Bash", "ls", "a")]} />);
+		fireEvent.click(screen.getByRole("button"));
+		for (const button of screen.getAllByRole("button"))
+			expect(skipsSelection(button)).toBe(true);
 	});
 });

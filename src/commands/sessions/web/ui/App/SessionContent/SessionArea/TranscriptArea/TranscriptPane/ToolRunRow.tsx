@@ -28,6 +28,7 @@ export function ToolRunRow({ calls }: { calls: KeyedToolMessage[] }) {
 	return (
 		<Box sx={{ mb: 1 }}>
 			<ButtonBase
+				data-preview-skip
 				aria-expanded={expanded}
 				onClick={() => setExpanded((e) => !e)}
 				sx={summarySx}
