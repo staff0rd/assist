@@ -11,7 +11,10 @@ const THRESHOLDS: Record<HarnessKind, { red: number; yellow: number }> = {
 };
 
 export function contextLevel(pct: number, harness?: HarnessKind): ContextLevel {
-	const { red, yellow } = THRESHOLDS[resolveHarness(harness)];
+	const { red, yellow } =
+		(THRESHOLDS[resolveHarness(harness)] as
+			| (typeof THRESHOLDS)[HarnessKind]
+			| undefined) ?? THRESHOLDS.claude;
 	if (pct >= red) return "red";
 	if (pct >= yellow) return "yellow";
 	return "dim";

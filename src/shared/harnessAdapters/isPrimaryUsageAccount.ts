@@ -5,5 +5,8 @@ import { harnessUsageAccounts } from "./harnessUsageAccounts";
 export function isPrimaryUsageAccount(
 	harness: HarnessKind | undefined,
 ): boolean {
-	return !harnessUsageAccounts[resolveHarness(harness)].windowPrefix;
+	const account = harnessUsageAccounts[resolveHarness(harness)] as
+		| (typeof harnessUsageAccounts)[HarnessKind]
+		| undefined;
+	return account !== undefined && !account.windowPrefix;
 }

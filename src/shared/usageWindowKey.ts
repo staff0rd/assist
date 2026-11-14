@@ -19,7 +19,11 @@ export function usageWindowKey(
 	harness: HarnessKind | undefined,
 	window: RateLimitWindow,
 ): UsageWindowKey {
-	const prefix = harnessUsageAccounts[resolveHarness(harness)].windowPrefix;
+	const kind = resolveHarness(harness);
+	const account = harnessUsageAccounts[kind] as
+		| (typeof harnessUsageAccounts)[HarnessKind]
+		| undefined;
+	const prefix = account ? account.windowPrefix : kind;
 	return (prefix ? `${prefix}:${window}` : window) as UsageWindowKey;
 }
 

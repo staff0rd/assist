@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import type { HarnessKind } from "./harnesses";
 import { parseUsageWindowKey, usageWindowKey } from "./usageWindowKey";
 
 describe("usageWindowKey", () => {
@@ -10,6 +11,12 @@ describe("usageWindowKey", () => {
 	it("prefixes other harnesses", () => {
 		expect(usageWindowKey("codex", "five_hour")).toBe("codex:five_hour");
 		expect(usageWindowKey("pi", "seven_day")).toBe("pi:seven_day");
+	});
+
+	it("prefixes an unknown harness kind with its raw kind", () => {
+		expect(usageWindowKey("future-harness" as HarnessKind, "five_hour")).toBe(
+			"future-harness:five_hour",
+		);
 	});
 });
 
