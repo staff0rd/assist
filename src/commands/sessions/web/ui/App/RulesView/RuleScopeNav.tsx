@@ -10,6 +10,7 @@ type Props = {
 	scopes: RuleScope[];
 	selectedId: string | undefined;
 	onSelect: (id: string) => void;
+	isInEffect: (scope: RuleScope) => boolean;
 };
 
 const groupSx = {
@@ -22,7 +23,12 @@ const groupSx = {
 	letterSpacing: "0.06em",
 } as const;
 
-export function RuleScopeNav({ scopes, selectedId, onSelect }: Props) {
+export function RuleScopeNav({
+	scopes,
+	selectedId,
+	onSelect,
+	isInEffect,
+}: Props) {
 	return (
 		<Paper
 			variant="outlined"
@@ -45,6 +51,7 @@ export function RuleScopeNav({ scopes, selectedId, onSelect }: Props) {
 							<ScopeButton
 								scope={scope}
 								selected={scope.id === selectedId}
+								inEffect={isInEffect(scope)}
 								onSelect={onSelect}
 							/>
 						</Fragment>
