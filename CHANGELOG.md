@@ -1,3 +1,18 @@
+# [0.1168.0](https://github.com/staff0rd/assist/compare/v0.1167.0...v0.1168.0) (2026-11-14)
+
+
+### Bug Fixes
+
+* import renamed transcriptMarkdownSx ([7846c73](https://github.com/staff0rd/assist/commit/7846c73543733f16479a083e2d788672c2cfc78d))
+
+
+### Features
+
+* edit, move and delete rules ([e546645](https://github.com/staff0rd/assist/commit/e546645ea9247252978f3c4b27e0e1aaaf988ad4))
+* render markdown in user rows ([aa79046](https://github.com/staff0rd/assist/commit/aa79046012c35e9dbaafce951e20640335610a7d))
+* run ! shell commands in SDK composer ([4b5c0d6](https://github.com/staff0rd/assist/commit/4b5c0d663a28e6c321fc72b72208bb5039f97e68))
+* stop running ! shell commands ([2793f26](https://github.com/staff0rd/assist/commit/2793f266ab742da046f7cb0d4de440dc1ffb2337))
+
 # [0.1167.0](https://github.com/staff0rd/assist/compare/v0.1166.0...v0.1167.0) (2026-11-14)
 
 
