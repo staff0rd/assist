@@ -3,7 +3,7 @@ import { Box, Link, Typography } from "@mui/material";
 import { useMemo } from "react";
 import { MarkdownHtml } from "../../../../../../../backlog/web/ui/components/MarkdownHtml";
 import type { HighLevelCheckResult } from "../../../../../../../review/highLevel/types";
-import { assistantMarkdownSx } from "../../SessionArea/TranscriptArea/TranscriptPane/TranscriptRow/TextRow/assistantMarkdownSx";
+import { transcriptMarkdownSx } from "../../SessionArea/TranscriptArea/TranscriptPane/TranscriptRow/TextRow/transcriptMarkdownSx";
 import { descriptionMarksSx } from "./HighLevelDescription/descriptionMarksSx";
 import { HighLevelDescriptionChips } from "./HighLevelDescription/HighLevelDescriptionChips";
 import { matchedIssueReference } from "./HighLevelDescription/matchedIssueReference";
@@ -39,7 +39,7 @@ export function HighLevelDescription({
 			{body.trim() ? (
 				<MarkdownHtml
 					className="markdown"
-					sx={[assistantMarkdownSx, descriptionMarksSx]}
+					sx={[transcriptMarkdownSx, descriptionMarksSx]}
 					html={html}
 				/>
 			) : (
