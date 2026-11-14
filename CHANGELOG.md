@@ -1,3 +1,10 @@
+# [0.1169.0](https://github.com/staff0rd/assist/compare/v0.1168.1...v0.1169.0) (2026-11-14)
+
+
+### Features
+
+* comment on rules, move by scope ([5f4c19a](https://github.com/staff0rd/assist/commit/5f4c19a41310f07757d6a6f07c0ca34f8cee85f0))
+
 ## [0.1168.1](https://github.com/staff0rd/assist/compare/v0.1168.0...v0.1168.1) (2026-11-14)
 
 
