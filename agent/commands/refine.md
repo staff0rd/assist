@@ -101,11 +101,11 @@ After applying changes, show the updated item with `assist backlog view <id> 2>&
 
 ## Step 4: Design the UI change
 
-Check the item's Activity section (from `assist backlog view <id>`) for an existing `design` row, then decide whether a design is needed. A **substantial UI change** is a new screen, panel, view or component, or a reworked layout or interaction flow; a trivial UI change (a label, a button, a tweak to an existing control) or no UI change at all is not.
+Check the item's Activity section (from `assist backlog view <id>`) for an existing `design` row, then decide whether a design is needed. A UI change is anything the user sees in a UI — placement, style, layout, controls or copy, however small.
 
-- **No `design` activity** and the item, as refined, involves a substantial UI change — produce a new design.
-- **An existing `design` activity** and this refinement changes the UI substantially — update that design, republishing to its existing artifact URL rather than creating a new one.
-- Otherwise — skip this step entirely and do not mention it.
+- **No `design` activity** and the item, as refined, involves a UI change — produce a new design.
+- **An existing `design` activity** and this refinement changes the UI — update that design, republishing to its existing artifact URL rather than creating a new one.
+- Otherwise (no UI change) — skip this step.
 
 When a design is needed, do not ask whether to design it — follow `/design` (`{{skill:design}}`) for the item's UI, applying it to the item as refined. To update an existing design, read the artifact at its URL first and build on it, publishing back to the same URL. Then review it with `ask-design` rather than iterating in chat: read the **Designing a new backlog item's UI change** section of `/design` and follow the review rounds in its **Design and review** step, republishing to the same artifact URL between rounds until it is approved.
 
@@ -122,7 +122,7 @@ Then keep the item in sync with the design:
 
 ## Step 5: Iterate
 
-Ask if there is anything else to refine. Continue the conversation until the user is satisfied, revisiting Step 4 whenever a further refinement changes the UI substantially.
+Ask if there is anything else to refine. Continue the conversation until the user is satisfied, revisiting Step 4 whenever a further refinement changes the UI.
 
 ## Step 6: Signal completion
 

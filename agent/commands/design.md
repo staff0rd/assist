@@ -37,11 +37,11 @@ Without an `Artifact` tool, the HTML file is the deliverable: write it inside th
 
 ### Decide
 
-From what the user described and answered, decide whether the item involves a **substantial UI change** — a new screen, panel, view or component, or a reworked layout or interaction flow. A trivial UI change (a label, a button, a tweak to an existing control) or no UI change at all is not substantial: skip this section entirely and do not mention it.
+From what the user described and answered, decide whether the item changes anything the user sees in a UI — placement, style, layout, controls or copy, however small. Any such change gets a design. Skip this section only when the item has no UI change at all.
 
 ### Design and review
 
-If it is substantial, do not ask whether to design it — follow Steps 1-4 above for the item's UI, applying them to what the user described and answered in place of `$ARGUMENTS`. Publish the design as an artifact, then raise each review round with `ask-design` instead of iterating in chat. Write a short markdown summary of the design (what it shows and the choices to weigh in on) to a scratch file and run, as a background task, doing no other work until it returns:
+If it changes the UI, do not ask whether to design it — follow Steps 1-4 above for the item's UI, applying them to what the user described and answered in place of `$ARGUMENTS`. Publish the design as an artifact, then raise each review round with `ask-design` instead of iterating in chat. Write a short markdown summary of the design (what it shows and the choices to weigh in on) to a scratch file and run, as a background task, doing no other work until it returns:
 
 ```
 assist ask-design --url '<artifact-url>' --title '<design title>' --body - < <summary-file>

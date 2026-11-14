@@ -23,7 +23,7 @@ Skip questions the user has already answered. Stop asking as soon as you have en
 
 ## Step 3: Design the UI change
 
-Read the **Designing a new backlog item's UI change** section of `/design` (`{{skill:design}}`) and follow its Decide and Design and review steps for the fix. If it decides the fix's UI change is not substantial, skip this step silently. Otherwise its link step applies in Step 4 and its attach step in Step 5.
+Read the **Designing a new backlog item's UI change** section of `/design` (`{{skill:design}}`) and follow its Decide and Design and review steps for the fix. If it decides the fix has no UI change, skip this step. Otherwise its link step applies in Step 4 and its attach step in Step 5.
 
 ## Step 4: Compose the bug report
 
