@@ -33,6 +33,7 @@ export const persistedSessionSchema = z.object({
 	reviewStarted: z.boolean().optional(),
 	launchedFrom: z.string().optional(),
 	pendingPrompts: z.array(z.string()).optional(),
+	deferredCommands: z.array(z.string()).optional(),
 	interrupted: z.object({ reason: z.string(), at: z.number() }).optional(),
 	awaitingSeed: z.boolean().optional(),
 	undurable: z

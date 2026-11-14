@@ -86,6 +86,7 @@ export type Session = SdkViewState & {
 	permissionActive?: boolean;
 	pendingSubmit?: { fingerprint?: string; cancel: () => void };
 	pendingPrompts?: string[];
+	deferredCommands?: string[];
 	autoAdvance?: boolean;
 	autoApprove?: boolean;
 	starred?: boolean;

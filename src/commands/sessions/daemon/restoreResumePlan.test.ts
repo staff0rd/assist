@@ -11,16 +11,17 @@ const tasksMock = interruptedBackgroundTasks as unknown as ReturnType<
 	typeof vi.fn
 >;
 
-function persisted(interrupted?: {
-	reason: string;
-	at: number;
-}): PersistedSession {
+function persisted(
+	interrupted?: { reason: string; at: number },
+	deferredCommands?: string[],
+): PersistedSession {
 	return {
 		name: "Session 1",
 		commandType: "claude",
 		cwd: "/repo",
 		startedAt: 0,
 		interrupted,
+		deferredCommands,
 	};
 }
 
@@ -117,5 +118,27 @@ describe("restoreResumePlan", () => {
 
 	it("sends nothing to a session left idle", () => {
 		expect(resumePrompt({ idle: true })).toBeUndefined();
+	});
+
+	it("wakes an idle session whose pending preview the restart closed and asks it to re-run the command", () => {
+		const plan = restoreResumePlan(
+			persisted(restarted, ["ask", "backlog propose"]),
+			"waiting",
+		);
+
+		expect(plan.idle).toBe(false);
+		expect(plan.prompt).toContain("`assist ask`, `assist backlog propose`");
+		expect(plan.prompt).toContain("Run each of those commands again");
+		expect(plan.prompt).not.toContain("background task");
+		expect(plan.prompt).not.toContain("Continue from where you left off");
+	});
+
+	it("names the lost preview alongside killed background tasks", () => {
+		tasksMock.mockReturnValue(["b1"]);
+
+		const plan = restoreResumePlan(persisted(restarted, ["ask"]), "running");
+
+		expect(plan.prompt).toContain("(b1)");
+		expect(plan.prompt).toContain("`assist ask`");
 	});
 });

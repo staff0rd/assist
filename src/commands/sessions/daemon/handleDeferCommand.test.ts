@@ -1,7 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { supersededPreviewMessage } from "../shared/supersededPreviewMessage";
 import type { DeferredResult } from "./runDeferredCommand";
+import { createSdkSessionProcess } from "./sdk/createSdkSessionProcess";
+import { createSdkTurnTracker } from "./sdk/createSdkTurnTracker";
 import type { SessionManager } from "./SessionManager";
+import { daemonRestartInterruption } from "./SessionInterruption";
+import type { Session } from "./types";
 
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 
@@ -20,9 +24,9 @@ const request = {
 	env: { ASSIST_SESSION_ID: "7" },
 };
 
-function managerWith(sdk: { send: ReturnType<typeof vi.fn> } | undefined) {
-	const sessions = new Map(
-		sdk ? [["7", { id: "7", pty: { sdk } }]] : ([] as never[]),
+function managerWith(sdk: { send: (text: string) => void } | undefined) {
+	const sessions = new Map<string, Session>(
+		sdk ? [["7", { id: "7", pty: { sdk } } as unknown as Session]] : [],
 	);
 	return {
 		sessions,
@@ -130,5 +134,60 @@ describe("defer-command handler", () => {
 		finishWith({ output: "Approved.\n", exitCode: 0 });
 
 		expect(sdk.send).not.toHaveBeenCalled();
+	});
+
+	it("tracks the command as pending until its decision is delivered", () => {
+		const sdk = { send: vi.fn() };
+		const { sessions, manager } = managerWith(sdk);
+		handleDeferCommand({ send: vi.fn() }, manager, request);
+
+		expect(sessions.get("7")?.deferredCommands).toEqual(["ask"]);
+
+		finishWith({ output: "Approved.\n", exitCode: 0 });
+
+		expect(sessions.get("7")?.deferredCommands).toBeUndefined();
+	});
+
+	it("stops tracking a superseded preview", () => {
+		const { sessions, manager } = managerWith({ send: vi.fn() });
+		handleDeferCommand({ send: vi.fn() }, manager, request);
+
+		finishWith({ output: `${supersededPreviewMessage}\n`, exitCode: 0 });
+
+		expect(sessions.get("7")?.deferredCommands).toBeUndefined();
+	});
+
+	it("leaves a preview killed by a daemon restart pending and delivers nothing", () => {
+		const sdk = { send: vi.fn() };
+		const { sessions, manager } = managerWith(sdk);
+		handleDeferCommand({ send: vi.fn() }, manager, request);
+		const session = sessions.get("7") as Session;
+		session.interrupted = daemonRestartInterruption();
+
+		finishWith({ output: "", exitCode: 1 });
+
+		expect(sdk.send).not.toHaveBeenCalled();
+		expect(session.deferredCommands).toEqual(["ask"]);
+	});
+
+	it("keeps a preview pending while the user chats and queues its decision behind the running turn", () => {
+		const control = createSdkSessionProcess("7", new AbortController());
+		const push = vi.fn();
+		const turn = createSdkTurnTracker("session 7", control, push);
+		const { sessions, manager } = managerWith(turn);
+		handleDeferCommand({ send: vi.fn() }, manager, request);
+
+		turn.send("while you wait, what about X?");
+
+		expect(push).toHaveBeenCalledTimes(1);
+		expect(sessions.get("7")?.deferredCommands).toEqual(["ask"]);
+
+		finishWith({ output: "Approved.\n", exitCode: 0 });
+
+		expect(push).toHaveBeenCalledTimes(1);
+		turn.setStatus("waiting");
+		expect(push).toHaveBeenLastCalledWith(
+			"`assist ask` finished with exit code 0:\n\nApproved.",
+		);
 	});
 });
