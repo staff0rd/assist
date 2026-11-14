@@ -1,3 +1,10 @@
+# [0.1156.0](https://github.com/staff0rd/assist/compare/v0.1155.0...v0.1156.0) (2026-11-14)
+
+
+### Features
+
+* approve rules in the preview pane ([ddfb6d7](https://github.com/staff0rd/assist/commit/ddfb6d78479be7f4e9a8c067464643f221bca23a))
+
 # [0.1155.0](https://github.com/staff0rd/assist/compare/v0.1154.0...v0.1155.0) (2026-11-14)
 
 
