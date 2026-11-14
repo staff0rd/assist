@@ -86,6 +86,26 @@ describe("restartWeb", () => {
 		expect(order).toEqual(["finish", "daemon", "reExec"]);
 	});
 
+	it("waits for an in-flight build before restarting either process", async () => {
+		const order: string[] = [];
+		const waitForBuildFn = vi.fn(async () => {
+			order.push("build");
+		});
+		const restartDaemonFn = vi.fn(async () => {
+			order.push("daemon");
+		});
+		const reExecFn = vi.fn(() => order.push("reExec"));
+		const { res } = createRes();
+
+		await restartWeb(createReq("/api/restart?target=both"), res, {
+			restartDaemonFn,
+			reExecFn,
+			waitForBuildFn,
+		});
+
+		expect(order).toEqual(["build", "daemon", "reExec"]);
+	});
+
 	it("logs a forwarded restart with the viewer's node and trace id", async () => {
 		const log = vi.spyOn(console, "log").mockImplementation(() => {});
 		const { res } = createRes();

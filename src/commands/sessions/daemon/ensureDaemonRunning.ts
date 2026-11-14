@@ -7,6 +7,7 @@ import {
 	unlinkSync,
 	writeSync,
 } from "node:fs";
+import { waitForBuild } from "../../../build/waitForBuild";
 import { isDaemonRunning } from "./connectToDaemon";
 import { daemonPaths } from "./daemonPaths";
 
@@ -20,6 +21,7 @@ export async function ensureDaemonRunning(
 	reason = "unspecified",
 ): Promise<void> {
 	if (await isDaemonRunning()) return;
+	await waitForBuild();
 	mkdirSync(daemonPaths.dir, { recursive: true });
 	// O_EXCL lock arbitrates concurrent spawn attempts across processes;
 	// losers skip spawning and just poll for the socket

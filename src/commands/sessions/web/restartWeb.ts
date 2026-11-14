@@ -1,4 +1,5 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
+import { waitForBuild } from "../../../build/waitForBuild";
 import { respondJson } from "../../../shared/web";
 import { restartDaemon } from "../daemon/restartDaemon";
 import { linkedRequester } from "./linkedRequester";
@@ -11,6 +12,7 @@ const TARGETS: RestartTarget[] = ["daemon", "webserver", "both"];
 export type RestartWebDeps = {
 	restartDaemonFn?: () => Promise<void>;
 	reExecFn?: () => void;
+	waitForBuildFn?: () => Promise<void>;
 };
 
 export async function restartWeb(
@@ -44,7 +46,12 @@ export async function performRestart(
 	target: RestartTarget,
 	deps: RestartWebDeps = {},
 ): Promise<void> {
-	const { restartDaemonFn = restartDaemon, reExecFn = reExecWebServer } = deps;
+	const {
+		restartDaemonFn = restartDaemon,
+		reExecFn = reExecWebServer,
+		waitForBuildFn = waitForBuild,
+	} = deps;
+	await waitForBuildFn();
 	if (target === "daemon" || target === "both") {
 		await restartDaemonFn();
 	}

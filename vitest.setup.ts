@@ -34,6 +34,11 @@ vi.mock("./src/shared/harnessAdapters/piExtensionProbe", () => ({
 	piExtensionProbe: () => ({ supported: true }),
 }));
 
+// why: a parallel build of this repo holds its build lock, which would stall any test that reaches a restart or daemon spawn
+vi.mock("./src/build/waitForBuild", () => ({
+	waitForBuild: () => Promise.resolve(),
+}));
+
 vi.mock("./src/commands/sessions/daemon/worktree/docker", () => ({
 	docker: vi.fn(() => Promise.reject(new Error("docker is not run in tests"))),
 }));

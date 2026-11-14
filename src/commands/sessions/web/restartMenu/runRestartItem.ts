@@ -1,17 +1,20 @@
 import chalk from "chalk";
+import { waitForBuild } from "../../../../build/waitForBuild";
 import type { MenuItem } from "./menuItems";
 
 export type RestartActions = {
 	runRestartDaemon: () => Promise<void>;
 	reExec: () => void;
+	waitForBuildFn?: () => Promise<void>;
 };
 
 export async function runRestartItem(
 	item: MenuItem,
-	{ runRestartDaemon, reExec }: RestartActions,
+	{ runRestartDaemon, reExec, waitForBuildFn = waitForBuild }: RestartActions,
 ): Promise<void> {
 	if (item.disabled) return;
 	try {
+		await waitForBuildFn();
 		if (item.action === "restart-daemon" || item.action === "restart-both") {
 			console.log(chalk.cyan("Restarting sessions daemon…"));
 			await runRestartDaemon();

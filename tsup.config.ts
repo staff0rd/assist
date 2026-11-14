@@ -1,13 +1,20 @@
-import { cpSync, writeFileSync } from "node:fs";
+import { cpSync, rmSync, writeFileSync } from "node:fs";
 import { build } from "esbuild";
 import { defineConfig } from "tsup";
 import pkg from "./package.json";
+import { buildLockPath } from "./src/build/buildLockPath";
+import { swapBuildDir } from "./src/build/swapBuildDir";
+
+// why: the build lands in a staging dir that is swapped into dist at the end,
+// so dist/index.js never goes missing while running processes spawn assist
+const STAGING = "dist.next";
+const LOCK = buildLockPath(".");
 
 export default defineConfig({
 	entry: ["src/index.ts"],
 	format: ["esm"],
 	target: "node22",
-	outDir: "dist",
+	outDir: STAGING,
 	clean: true,
 	shims: true,
 	silent: true,
@@ -18,12 +25,22 @@ export default defineConfig({
 		"pg",
 		"@anthropic-ai/claude-agent-sdk",
 	],
+	plugins: [
+		{
+			name: "build-lock",
+			buildStart() {
+				writeFileSync(LOCK, String(process.pid));
+			},
+		},
+	],
 	onSuccess: async () => {
-		writeFileSync("dist/built-version", pkg.version);
-		cpSync("allowed.cli-reads", "dist/allowed.cli-reads");
-		cpSync("allowed.cli-writes", "dist/allowed.cli-writes");
-		cpSync("src/commands/deploy", "dist/commands/deploy", { recursive: true });
-		cpSync("netcap-extension", "dist/commands/netcap/netcap-extension", {
+		writeFileSync(`${STAGING}/built-version`, pkg.version);
+		cpSync("allowed.cli-reads", `${STAGING}/allowed.cli-reads`);
+		cpSync("allowed.cli-writes", `${STAGING}/allowed.cli-writes`);
+		cpSync("src/commands/deploy", `${STAGING}/commands/deploy`, {
+			recursive: true,
+		});
+		cpSync("netcap-extension", `${STAGING}/commands/netcap/netcap-extension`, {
 			recursive: true,
 		});
 		await build({
@@ -46,7 +63,7 @@ export default defineConfig({
 			jsxImportSource: "react",
 			define: { "process.env.NODE_ENV": '"production"' },
 		});
-		cpSync("extension", "dist/commands/extension/extension", {
+		cpSync("extension", `${STAGING}/commands/extension/extension`, {
 			recursive: true,
 		});
 		await build({
@@ -55,7 +72,7 @@ export default defineConfig({
 			minify: true,
 			format: "iife",
 			target: "es2020",
-			outfile: "dist/commands/sessions/web/bundle.js",
+			outfile: `${STAGING}/commands/sessions/web/bundle.js`,
 			loader: { ".woff2": "dataurl" },
 			jsx: "automatic",
 			jsxImportSource: "react",
@@ -70,7 +87,7 @@ export default defineConfig({
 			minify: true,
 			format: "iife",
 			target: "es2020",
-			outfile: "dist/commands/sessions/web/monaco.js",
+			outfile: `${STAGING}/commands/sessions/web/monaco.js`,
 			loader: { ".ttf": "dataurl" },
 		});
 		await build({
@@ -81,7 +98,9 @@ export default defineConfig({
 			minify: true,
 			format: "iife",
 			target: "es2020",
-			outfile: "dist/commands/sessions/web/monaco.worker.js",
+			outfile: `${STAGING}/commands/sessions/web/monaco.worker.js`,
 		});
+		swapBuildDir(STAGING, "dist");
+		rmSync(LOCK, { force: true });
 	},
 });

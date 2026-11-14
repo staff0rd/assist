@@ -2,6 +2,7 @@ import type { Socket } from "node:net";
 import { createInterface } from "node:readline";
 import { connectToDaemon } from "../daemon/connectToDaemon";
 import { ensureDaemonRunning } from "../daemon/ensureDaemonRunning";
+import { waitForBuild } from "../../../build/waitForBuild";
 import { reExecWebServer } from "./restartMenu/reExecWebServer";
 
 const RECONNECT_MS = 3_000;
@@ -44,7 +45,7 @@ function emit(line: string): void {
 			console.log(data.line);
 		if (data.type === "restart-webserver") {
 			console.log("restart webserver requested by the daemon");
-			reExecWebServer();
+			void waitForBuild().then(() => reExecWebServer());
 		}
 	} catch {}
 }

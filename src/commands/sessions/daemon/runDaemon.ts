@@ -1,4 +1,5 @@
 import { mkdirSync } from "node:fs";
+import { waitForBuild } from "../../../build/waitForBuild";
 import { broadcast } from "./broadcast";
 import { isDaemonRunning } from "./connectToDaemon";
 import { createAutoExit } from "./createAutoExit";
@@ -23,6 +24,8 @@ export async function runDaemon(): Promise<void> {
 		process.exitCode = 1;
 		return;
 	}
+	// why: restored sessions relaunch assist, which must not run mid-build
+	await waitForBuild({ log: daemonLog });
 
 	const checkAutoExit = createAutoExit(() => {
 		daemonLog("no sessions and no connected server; exiting");

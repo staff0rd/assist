@@ -1,3 +1,4 @@
+import { waitForBuild } from "../../../../build/waitForBuild";
 import { daemonLog } from "../daemonLog";
 import { appendWatcherLog } from "../worktree/appendWatcherLog";
 import type { TreeSpawnContext } from "../worktree/allocateAndBind";
@@ -18,7 +19,10 @@ export function loopDeps(
 	const clone = canonicalTreePath(installDir);
 	const logLine = lineRecorder((line) => daemonLog(`auto-update: ${line}`));
 	return {
-		runLap: (onOutput) => runUpdateLap(installDir, onOutput),
+		runLap: async (onOutput) => {
+			await waitForBuild({ installDir, log: logLine });
+			return runUpdateLap(installDir, onOutput);
+		},
 		record: (text) => {
 			appendWatcherLog(installDir, text);
 			logLine(text);
