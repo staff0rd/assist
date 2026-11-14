@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { phoneScrollAttr } from "./PhoneNavStack/phoneScrollAttr";
 import { useRef } from "react";
 import { useHomeNodeContext } from "../HomeNodeGate/useHomeNodeContext";
 import type { SessionInfo } from "../types";
@@ -50,7 +51,7 @@ export function PhoneSessionList({
 				title="Sessions"
 				right={<PhoneListNavActions onNewSession={onNewSession} />}
 			/>
-			<Box ref={bodyRef} sx={bodySx}>
+			<Box ref={bodyRef} sx={bodySx} {...phoneScrollAttr}>
 				<PullIndicator pull={pull} refreshing={refreshing} />
 				<PhoneSessionGroups sessions={sessions} localNode={localNode} />
 			</Box>

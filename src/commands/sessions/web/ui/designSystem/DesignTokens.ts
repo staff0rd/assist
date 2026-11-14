@@ -74,7 +74,7 @@ export type Density = "desktop" | "touch";
 
 type MotionTokens = {
 	push: { duration: number; easing: string; parallax: number };
-	crossfade: { duration: number };
+	crossfade: { duration: number; easing: string };
 	swipe: { edgeZone: number; activation: number };
 };
 

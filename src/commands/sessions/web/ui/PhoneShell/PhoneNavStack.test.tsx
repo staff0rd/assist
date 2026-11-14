@@ -38,7 +38,14 @@ const sheet = vi.hoisted(() => ({ open: false }));
 vi.mock("./PhoneRoutes", () => ({
 	PhoneRoutes: ({ location }: { location: Location }) => (
 		<Routes location={location}>
-			<Route path="/" element={<Open to="/backlog/a1" />} />
+			<Route
+				path="/"
+				element={
+					<div data-phone-scroll="" data-testid="home-scroll">
+						<Open to="/backlog/a1" />
+					</div>
+				}
+			/>
 			<Route path="/backlog" element={<div>backlog list</div>} />
 			<Route
 				path="/backlog/:id"
@@ -181,6 +188,17 @@ describe("PhoneNavStack", () => {
 		swipe(300);
 		await new Promise((r) => setTimeout(r, 0));
 		expect(onSession()).toBe(true);
+	});
+
+	it("restores the scroll of a page that unmounted while deeper", async () => {
+		renderAt("/");
+		screen.getByTestId("home-scroll").scrollTop = 240;
+		tap("open /backlog/a1");
+		tap("open /session/s1");
+		expect(screen.queryByTestId("home-scroll")).toBeNull();
+		tap("Back to a1");
+		tap("Back to Sessions");
+		expect(screen.getByTestId("home-scroll").scrollTop).toBe(240);
 	});
 
 	it("ignores a swipe on a tab root", async () => {

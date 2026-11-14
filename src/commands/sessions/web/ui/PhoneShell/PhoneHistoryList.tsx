@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { phoneScrollAttr } from "./PhoneNavStack/phoneScrollAttr";
 import { useEffect } from "react";
 import type { HistoricalSession } from "../types";
 import { PhoneHistoryRow } from "./PhoneHistoryRow";
@@ -26,7 +27,7 @@ export function PhoneHistoryList({
 	return (
 		<>
 			<PhoneNavBar title="History" />
-			<Box sx={bodySx}>
+			<Box sx={bodySx} {...phoneScrollAttr}>
 				{history.map((h) => (
 					<PhoneHistoryRow
 						key={`${h.node ?? ""}:${h.sessionId}`}

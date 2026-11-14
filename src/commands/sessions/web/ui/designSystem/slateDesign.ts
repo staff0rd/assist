@@ -242,7 +242,7 @@ export const slateDesign: DesignTokens = {
 			easing: "cubic-bezier(0.32, 0.72, 0, 1)",
 			parallax: 0.3,
 		},
-		crossfade: { duration: 200 },
+		crossfade: { duration: 200, easing: "ease-in-out" },
 		swipe: { edgeZone: 24, activation: 6 },
 	},
 	densities: {

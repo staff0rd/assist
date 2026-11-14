@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { phoneScrollAttr } from "../PhoneNavStack/phoneScrollAttr";
 import { useState } from "react";
 import type { SessionSocket } from "../../useSessionSocket";
 import { PhoneNavBar } from "../PhoneNavBar";
@@ -32,7 +33,7 @@ export function PhoneBacklogList({ socket }: { socket: SessionSocket }) {
 			{repos && repos.length > 0 && (
 				<PhoneRepoSelect repos={repos} repo={repo} onPick={pick} />
 			)}
-			<Box sx={bodySx}>
+			<Box sx={bodySx} {...phoneScrollAttr}>
 				{repo ? (
 					<PhoneBacklogSections
 						cwd={repo.cwd}

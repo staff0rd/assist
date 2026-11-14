@@ -1,9 +1,11 @@
 import Box from "@mui/material/Box";
 import { useTheme } from "@mui/material/styles";
+import { useForkRef } from "@mui/material/utils";
 import { ErrorBoundary } from "../App/AppShell/AppRoutes/AppLayout/ErrorBoundary";
 import type { NavStackLayer } from "./PhoneNavStack/navStackLayers";
 import { phonePageLabel } from "./PhoneNavStack/phonePageLabel";
 import { PhoneStackPageContext } from "./PhoneNavStack/usePhoneStackPage";
+import { useScrollMemory } from "./PhoneNavStack/useScrollMemory";
 import { PhoneRoutes, type PhoneRoutesProps } from "./PhoneRoutes";
 import type { PhoneTabRestore } from "./PhoneTabBar/usePhoneTabMemory";
 
@@ -33,9 +35,10 @@ export function PhoneStackLayer({
 	restore,
 }: Props) {
 	const { tokens } = useTheme();
+	const ref = useForkRef(pageRef, useScrollMemory(location.key));
 	return (
 		<Box
-			ref={pageRef}
+			ref={ref}
 			sx={pageSx}
 			style={{
 				zIndex: isMoving ? 3 : 1,

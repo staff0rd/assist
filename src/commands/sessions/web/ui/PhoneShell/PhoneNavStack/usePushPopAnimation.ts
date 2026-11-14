@@ -1,8 +1,14 @@
 import { useTheme } from "@mui/material/styles";
-import { useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import type { Location } from "react-router";
 import { animatePushPop } from "./animatePushPop";
+import { captureFrames } from "./captureFrames";
 import type { NavStackState } from "./nextNavStack";
+import { prefersReducedMotion } from "./prefersReducedMotion";
+
+function stop(animations: Animation[]) {
+	for (const a of animations) a.cancel();
+}
 
 export function usePushPopAnimation(
 	transition: NavStackState["transition"],
@@ -10,11 +16,14 @@ export function usePushPopAnimation(
 	under: Location | undefined,
 	settle: (id: number) => void,
 ) {
-	const motion = useTheme().tokens.motion.push;
+	const { motion } = useTheme().tokens;
 	const pages = useRef(new Map<string, HTMLElement>());
 	const dim = useRef<HTMLDivElement>(null);
-
+	const running = useRef<Animation[]>([]);
 	useLayoutEffect(() => {
+		const interruptedFrames = captureFrames(running.current);
+		stop(running.current);
+		running.current = [];
 		if (!transition || !moving) return;
 		const animations = animatePushPop(
 			transition.kind,
@@ -24,22 +33,19 @@ export function usePushPopAnimation(
 				dim: dim.current,
 			},
 			motion,
+			{ reduced: prefersReducedMotion(), from: interruptedFrames },
 		);
 		if (!animations) {
 			settle(transition.id);
 			return;
 		}
-		let live = true;
+		running.current = animations;
 		Promise.all(animations.map((a) => a.finished)).then(
-			() => live && settle(transition.id),
+			() => settle(transition.id),
 			() => undefined,
 		);
-		return () => {
-			live = false;
-			for (const a of animations) a.cancel();
-		};
 	}, [transition, moving, under, motion, settle]);
-
+	useEffect(() => () => stop(running.current), []);
 	const register = (key: string) => (el: HTMLElement | null) => {
 		if (el) pages.current.set(key, el);
 		else pages.current.delete(key);
