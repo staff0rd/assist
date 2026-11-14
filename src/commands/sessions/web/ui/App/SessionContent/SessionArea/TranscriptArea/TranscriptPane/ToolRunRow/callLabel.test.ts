@@ -19,10 +19,15 @@ describe("callLabel", () => {
 		);
 	});
 
+	it("keeps a URL target whole", () => {
+		const url = "https://claude.ai/artifact/Wu4fafVRcMMSRtzq3iUCBF";
+		expect(callLabel({ tool: "Artifact", target: url })).toBe(url);
+	});
+
 	it("shortens other tools' long or multi-line targets", () => {
 		expect(callLabel({ tool: "Grep", target: "foo" })).toBe("foo");
-		expect(callLabel({ tool: "WebFetch", target: "a".repeat(50) })).toBe(
-			`${"a".repeat(40)}…`,
+		expect(callLabel({ tool: "WebFetch", target: "a ".repeat(25) })).toBe(
+			`${"a ".repeat(20)}…`,
 		);
 		expect(callLabel({ tool: "Grep", target: "a\nb" })).toBe("a…");
 	});

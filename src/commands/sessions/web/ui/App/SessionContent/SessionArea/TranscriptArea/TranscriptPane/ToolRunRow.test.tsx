@@ -58,6 +58,15 @@ describe("ToolRunRow", () => {
 		expect(screen.getByText("src/deep/a.ts")).toBeTruthy();
 	});
 
+	it("shows a URL target whole as a link, kept out of selection", () => {
+		const url = "https://claude.ai/artifact/Wu4fafVRcMMSRtzq3iUCBF";
+		render(<ToolRunRow calls={[call("Artifact", url, "a")]} />);
+		const link = screen.getByRole("link", { name: url });
+		expect(link.getAttribute("href")).toBe(url);
+		expect(link.getAttribute("target")).toBe("_blank");
+		expect(skipsSelection(link)).toBe(true);
+	});
+
 	it("keeps its buttons out of transcript comment selection", () => {
 		render(<ToolRunRow calls={[call("Bash", "ls", "a")]} />);
 		for (const button of screen.getAllByRole("button"))

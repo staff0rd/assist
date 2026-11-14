@@ -1,5 +1,6 @@
 import { baseName } from "./baseName";
 import { commandPrograms } from "./commandPrograms";
+import { isUrlTarget } from "./isUrlTarget";
 
 const SHORT = 40;
 const EDIT_TOOLS = new Set([
@@ -18,6 +19,7 @@ export function callLabel(call: {
 }): string {
 	const target = call.target.trim();
 	if (call.description) return call.description;
+	if (isUrlTarget(target)) return target;
 	if (target && (call.tool === "Read" || EDIT_TOOLS.has(call.tool)))
 		return call.tool === "apply_patch" ? target : baseName(target);
 	if (SHELL_TOOLS.has(call.tool)) return commandPrograms(target);

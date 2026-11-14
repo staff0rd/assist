@@ -1,4 +1,6 @@
 import Box from "@mui/material/Box";
+import { isUrlTarget } from "./isUrlTarget";
+import { TargetLink } from "./TargetLink";
 
 export function RevealedTarget({ target }: { target: string }) {
 	return (
@@ -15,7 +17,7 @@ export function RevealedTarget({ target }: { target: string }) {
 				wordBreak: "break-all",
 			}}
 		>
-			{target}
+			{isUrlTarget(target) ? <TargetLink url={target.trim()} /> : target}
 		</Box>
 	);
 }
