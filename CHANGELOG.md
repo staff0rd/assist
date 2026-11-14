@@ -1,3 +1,16 @@
+# [0.1173.0](https://github.com/staff0rd/assist/compare/v0.1172.0...v0.1173.0) (2026-11-14)
+
+
+### Bug Fixes
+
+* drop stray item id on reopen ([9347ff3](https://github.com/staff0rd/assist/commit/9347ff3a22ebc1a50a68109ba2974c19f17d7d55))
+* keep backlog item id on reopened checks ([acf58da](https://github.com/staff0rd/assist/commit/acf58daa8da87c8211b89c6822b016d9033cb1af))
+
+
+### Features
+
+* benchmark pnpm and bun installs ([e6ca76a](https://github.com/staff0rd/assist/commit/e6ca76a4f4a2f10dd89dae5823551e25679d0107))
+
 # [0.1172.0](https://github.com/staff0rd/assist/compare/v0.1171.0...v0.1172.0) (2026-11-14)
 
 
