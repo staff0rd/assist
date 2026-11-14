@@ -39,6 +39,7 @@ export const slateDesign: DesignTokens = {
 			codeWash: "rgba(255, 255, 255, 0.08)",
 			overlay: { background: raised, text: fg },
 			scrim: "rgba(0, 0, 0, 0.5)",
+			pushDim: "rgba(0, 0, 0, 0.35)",
 			appBar: { background: surface, text: fg },
 			onAppBar: {
 				...onAppBar,
@@ -93,6 +94,7 @@ export const slateDesign: DesignTokens = {
 			overlay: "0 14px 34px rgba(0, 0, 0, 0.45)",
 			dialog: "0 30px 60px rgba(0, 0, 0, 0.5)",
 			stuckHeader: "0 8px 8px -9px rgba(0, 0, 0, 0.8)",
+			pushEdge: "-10px 0 28px rgba(0, 0, 0, 0.5)",
 		},
 	},
 	light: {
@@ -165,6 +167,7 @@ export const slateDesign: DesignTokens = {
 				contrastText: "#fff",
 			},
 			scrim: "rgba(15, 23, 42, 0.32)",
+			pushDim: "rgba(17, 17, 24, 0.1)",
 			statusBar: {
 				background: "#f3f4f6",
 				text: "rgba(0, 0, 0, 0.6)",
@@ -206,6 +209,7 @@ export const slateDesign: DesignTokens = {
 			overlay: "0 8px 24px rgba(15, 23, 42, 0.12)",
 			dialog: "0 24px 48px rgba(15, 23, 42, 0.18)",
 			stuckHeader: "0 6px 6px -7px rgba(0, 0, 0, 0.2)",
+			pushEdge: "-10px 0 28px rgba(17, 17, 24, 0.16)",
 		},
 	},
 	font: {
@@ -232,6 +236,15 @@ export const slateDesign: DesignTokens = {
 	radius: { sm: 6, md: 8 },
 	selection: { ringWidth: 2, titleWeight: 500 },
 	spacing: 8,
+	motion: {
+		push: {
+			duration: 420,
+			easing: "cubic-bezier(0.32, 0.72, 0, 1)",
+			parallax: 0.3,
+		},
+		crossfade: { duration: 200 },
+		swipe: { edgeZone: 24, activation: 6 },
+	},
 	densities: {
 		desktop: {
 			target: 30,

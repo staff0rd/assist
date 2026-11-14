@@ -1,63 +1,38 @@
-import { Navigate, Route, Routes } from "react-router";
+import { type Location, Navigate, Route, Routes } from "react-router";
 import type { SessionSocket } from "../useSessionSocket";
 import { phoneBacklogRoutes } from "./PhoneBacklog/phoneBacklogRoutes";
-import { PhoneHistoryList } from "./PhoneHistoryList";
-import { PhoneSessionList } from "./PhoneSessionList";
-import { PhoneSessionScreen } from "./PhoneSessionScreen";
-import { PhoneTranscriptScreen } from "./PhoneTranscriptScreen";
+import type { PhoneTabRestore } from "./PhoneTabBar/usePhoneTabMemory";
+import { PhoneTabRootLayout } from "./PhoneTabRootLayout";
+import { phoneSessionRoutes } from "./phoneSessionRoutes";
 import { usePhoneRefresh } from "./usePhoneRefresh";
 
-export function PhoneRoutes({
-	socket,
-	keyboardOpen,
-	onOpenNodes,
-	onNewSession,
-}: {
+export type PhoneRoutesProps = {
 	socket: SessionSocket;
 	keyboardOpen: boolean;
 	onOpenNodes: () => void;
 	onNewSession: () => void;
-}) {
-	const localNode = socket.nodes?.local;
-	const refresh = usePhoneRefresh(socket);
+};
 
+export function PhoneRoutes({
+	location,
+	restore,
+	...props
+}: PhoneRoutesProps & { location: Location; restore: PhoneTabRestore }) {
+	const refresh = usePhoneRefresh(props.socket);
 	return (
-		<Routes>
+		<Routes location={location}>
 			<Route
-				index
 				element={
-					<PhoneSessionList
-						sessions={socket.sessions}
-						localNode={localNode}
-						reconnecting={socket.reconnecting}
-						onRefresh={refresh}
-						onOpenNodes={onOpenNodes}
-						onNewSession={onNewSession}
+					<PhoneTabRootLayout
+						sessions={props.socket.sessions}
+						restore={restore}
 					/>
 				}
-			/>
-			<Route
-				path="session/:id"
-				element={
-					<PhoneSessionScreen socket={socket} keyboardOpen={keyboardOpen} />
-				}
-			/>
-			<Route
-				path="history"
-				element={
-					<PhoneHistoryList
-						history={socket.history}
-						localNode={localNode}
-						requestHistory={socket.requestHistory}
-					/>
-				}
-			/>
-			<Route
-				path="history/:id"
-				element={<PhoneTranscriptScreen socket={socket} />}
-			/>
-			{phoneBacklogRoutes(socket)}
-			<Route path="*" element={<Navigate to="/" replace />} />
+			>
+				{phoneSessionRoutes(props, refresh)}
+				{phoneBacklogRoutes(props.socket)}
+				<Route path="*" element={<Navigate to="/" replace />} />
+			</Route>
 		</Routes>
 	);
 }

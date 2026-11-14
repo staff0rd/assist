@@ -9,7 +9,9 @@ export function useLaunchLanding(inFlight: SessionInfo | undefined) {
 	const [launched, setLaunched] = useState(false);
 
 	useEffect(() => {
-		if (launched && inFlight) navigate(`/session/${inFlight.id}`);
+		if (!launched || !inFlight) return;
+		setLaunched(false);
+		navigate(`/session/${inFlight.id}`);
 	}, [launched, inFlight, navigate]);
 
 	useEffect(() => {

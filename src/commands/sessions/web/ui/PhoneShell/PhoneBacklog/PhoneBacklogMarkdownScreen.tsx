@@ -4,6 +4,7 @@ import type { BacklogItem } from "../../../../../backlog/web/ui/types";
 import { safeAreaInsets } from "../../designSystem/safeAreaInsets";
 import { PhoneBackButton } from "../PhoneBackButton";
 import { PhoneNavBar } from "../PhoneNavBar";
+import { backlogPageTitles } from "./backlogPageTitles";
 import { phoneEmptySx } from "../phoneEmptySx";
 import { usePhoneBacklogItem } from "./usePhoneBacklogItem";
 
@@ -21,11 +22,6 @@ const bodySx = {
 	overflowWrap: "anywhere",
 } as const;
 
-const titles: Record<Page, string> = {
-	description: "Description",
-	criteria: "Acceptance criteria",
-};
-
 function pageMarkdown(item: BacklogItem, page: Page): string {
 	if (page === "description") return item.description ?? "";
 	return item.acceptanceCriteria
@@ -37,10 +33,7 @@ export function PhoneBacklogMarkdownScreen({ page }: { page: Page }) {
 	const { load } = usePhoneBacklogItem();
 	return (
 		<>
-			<PhoneNavBar
-				left={<PhoneBackButton label="item" />}
-				title={titles[page]}
-			/>
+			<PhoneNavBar left={<PhoneBackButton />} title={backlogPageTitles[page]} />
 			{load.state === "loaded" ? (
 				<Box sx={bodySx}>
 					<MarkdownBlock

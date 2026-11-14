@@ -12,10 +12,7 @@ const goneSx = {
 export function PhoneSessionGone() {
 	return (
 		<>
-			<PhoneNavBar
-				left={<PhoneBackButton label="Sessions" to="/" />}
-				title="Session"
-			/>
+			<PhoneNavBar left={<PhoneBackButton />} title="Session" />
 			<Box sx={goneSx}>This session has ended.</Box>
 		</>
 	);

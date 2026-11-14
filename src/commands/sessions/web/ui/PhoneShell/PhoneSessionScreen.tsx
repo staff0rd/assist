@@ -28,7 +28,7 @@ export function PhoneSessionScreen({
 		<>
 			<PhoneNavBar
 				leadingTitle
-				left={<PhoneBackButton label="Sessions" to="/" />}
+				left={<PhoneBackButton />}
 				title={sessionTitle(session)}
 				right={<PhoneMoreButton session={session} />}
 			/>

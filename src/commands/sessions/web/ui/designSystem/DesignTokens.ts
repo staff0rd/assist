@@ -31,6 +31,7 @@ type ColorTokens = {
 	codeWash: string;
 	overlay: { background: string; text: string };
 	scrim: string;
+	pushDim: string;
 	appBar?: { background: string; text: string };
 	onAppBar: ChromeColors;
 	statusBar: StatusBarColors;
@@ -48,6 +49,7 @@ type ElevationTokens = {
 	overlay: string;
 	dialog: string;
 	stuckHeader: string;
+	pushEdge: string;
 };
 
 type ModeTokens = {
@@ -69,6 +71,12 @@ type TypeScale = {
 };
 
 export type Density = "desktop" | "touch";
+
+type MotionTokens = {
+	push: { duration: number; easing: string; parallax: number };
+	crossfade: { duration: number };
+	swipe: { edgeZone: number; activation: number };
+};
 
 type DensityTokens = {
 	target: number;
@@ -109,6 +117,7 @@ export type DesignTokens = {
 	radius: { sm: number; md: number };
 	selection: { ringWidth: number; titleWeight: number };
 	spacing: number;
+	motion: MotionTokens;
 	densities: Record<Density, DensityTokens>;
 };
 

@@ -2,7 +2,9 @@ import { useEffect, useRef } from "react";
 import { useLocation } from "react-router";
 import { owningPhoneTab } from "./owningPhoneTab";
 
-export function usePhoneTabMemory() {
+export type PhoneTabRestore = (tabPath: string) => string[];
+
+export function usePhoneTabMemory(): PhoneTabRestore {
 	const { pathname, search } = useLocation();
 	const lastPaths = useRef(new Map<string, string>());
 	const rootPaths = useRef(new Map<string, string>());

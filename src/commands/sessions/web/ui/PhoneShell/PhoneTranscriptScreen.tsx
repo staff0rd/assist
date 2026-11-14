@@ -6,6 +6,7 @@ import { safeAreaInsets } from "../designSystem/safeAreaInsets";
 import type { SessionSocket } from "../useSessionSocket";
 import { PhoneBackButton } from "./PhoneBackButton";
 import { PhoneNavBar } from "./PhoneNavBar";
+import { transcriptTitle } from "./transcriptTitle";
 
 const bodySx = {
 	flex: 1,
@@ -29,10 +30,7 @@ export function PhoneTranscriptScreen({ socket }: { socket: SessionSocket }) {
 
 	return (
 		<>
-			<PhoneNavBar
-				left={<PhoneBackButton label="History" to="/history" />}
-				title={entry?.title ?? entry?.name ?? "Transcript"}
-			/>
+			<PhoneNavBar left={<PhoneBackButton />} title={transcriptTitle(entry)} />
 			<Box sx={bodySx}>
 				<TranscriptArea sessionId={id} transcript={socket.transcript} />
 			</Box>

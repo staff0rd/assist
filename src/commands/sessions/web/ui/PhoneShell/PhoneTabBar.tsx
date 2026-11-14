@@ -6,12 +6,17 @@ import { groupSessionsByStatus } from "./groupSessionsByStatus";
 import { activePhoneTab } from "./PhoneTabBar/activePhoneTab";
 import { phoneTabBarSx as sx } from "./PhoneTabBar/phoneTabBarSx";
 import { phoneTabs } from "./PhoneTabBar/phoneTabs";
-import { usePhoneTabMemory } from "./PhoneTabBar/usePhoneTabMemory";
+import type { PhoneTabRestore } from "./PhoneTabBar/usePhoneTabMemory";
 
-export function PhoneTabBar({ sessions }: { sessions: SessionInfo[] }) {
+export function PhoneTabBar({
+	sessions,
+	restore,
+}: {
+	sessions: SessionInfo[];
+	restore: PhoneTabRestore;
+}) {
 	const { pathname, search } = useLocation();
 	const navigate = useNavigate();
-	const restore = usePhoneTabMemory();
 	const active = activePhoneTab(pathname);
 	if (!active) return null;
 	const { questions, needsYou: waiting } = groupSessionsByStatus(sessions);
@@ -27,7 +32,9 @@ export function PhoneTabBar({ sessions }: { sessions: SessionInfo[] }) {
 					onClick={() =>
 						path === active.path
 							? navigate({ pathname: path, search }, { replace: true })
-							: restore(path).forEach((entry) => navigate(entry))
+							: restore(path).forEach((entry) =>
+									navigate(entry, { state: { phoneTab: true } }),
+								)
 					}
 				>
 					<Box sx={sx.iconWrap}>

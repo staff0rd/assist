@@ -12,6 +12,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { createDesignTheme } from "../designSystem/createDesignTheme";
 import type { SessionInfo } from "../types";
 import { PhoneTabBar } from "./PhoneTabBar";
+import { usePhoneTabMemory } from "./PhoneTabBar/usePhoneTabMemory";
 
 afterEach(cleanup);
 
@@ -46,11 +47,15 @@ function Go() {
 	return null;
 }
 
+function TabBar({ sessions }: { sessions: SessionInfo[] }) {
+	return <PhoneTabBar sessions={sessions} restore={usePhoneTabMemory()} />;
+}
+
 function renderAt(path: string, sessions: SessionInfo[] = []) {
 	render(
 		<ThemeProvider theme={createDesignTheme("dark", "touch")}>
 			<MemoryRouter initialEntries={[path]}>
-				<PhoneTabBar sessions={sessions} />
+				<TabBar sessions={sessions} />
 				<Path />
 				<Go />
 			</MemoryRouter>
