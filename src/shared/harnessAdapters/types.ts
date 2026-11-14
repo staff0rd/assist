@@ -13,6 +13,7 @@ export type SdkSessionEvent =
 	| { kind: "elapsed"; seconds: number | null }
 	| { kind: "process"; process: SdkProcessInfo | null }
 	| { kind: "queued"; texts: string[] }
+	| { kind: "pending"; texts: string[] }
 	| { kind: "background"; tasks: string[] }
 	| { kind: "suggestion"; text: string | null }
 	| { kind: "interrupting"; pending: boolean }

@@ -111,4 +111,41 @@ describe("SdkTail", () => {
 			"Background · vite dev",
 		);
 	});
+
+	it("shows pending messages as user rows until the transcript's latest user rows contain them", () => {
+		const session = makeSessionInfo({
+			id: "s1",
+			sdk: true,
+			status: "running",
+			sdkPending: ["hello there", "and more"],
+		});
+		const { rerender } = render(
+			<SdkTail
+				session={session}
+				transcript={{
+					sessionId: "s1",
+					messages: [
+						{ role: "user", text: "earlier ask" },
+						{ role: "assistant", text: "earlier reply" },
+					],
+				}}
+			/>,
+		);
+		expect(screen.getByText("hello there")).toBeTruthy();
+		expect(screen.getByText("and more")).toBeTruthy();
+		rerender(
+			<SdkTail
+				session={session}
+				transcript={{
+					sessionId: "s1",
+					messages: [
+						{ role: "assistant", text: "earlier reply" },
+						{ role: "user", text: "hello there" },
+					],
+				}}
+			/>,
+		);
+		expect(screen.queryByText("hello there")).toBeNull();
+		expect(screen.getByText("and more")).toBeTruthy();
+	});
 });

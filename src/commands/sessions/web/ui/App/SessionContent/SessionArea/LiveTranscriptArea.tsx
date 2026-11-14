@@ -41,7 +41,7 @@ export function LiveTranscriptArea({
 		<TranscriptArea
 			sessionId={id}
 			transcript={transcript}
-			tail={<SdkTail session={session} />}
+			tail={<SdkTail session={session} transcript={transcript} />}
 			follow
 			commentLayer={commentLayer}
 		/>

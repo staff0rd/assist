@@ -1,23 +1,12 @@
-import type { SessionInfo } from "../../../../types";
+import type { SessionInfo, Transcript } from "../../../../types";
 import { sdkComposerState } from "../SdkComposer/sdkComposerState";
-import { formatIoRate } from "./formatIoRate";
 import { formatToolElapsed } from "./formatToolElapsed";
+import { SdkPendingRows } from "./SdkPendingRows";
 import { SdkTailRow } from "./SdkTailRow";
 import { TextRow } from "./TranscriptPane/TranscriptRow/TextRow";
 import { TranscriptDivider } from "./TranscriptPane/TranscriptRow/TranscriptDivider";
 import { useTickingSeconds } from "./useTickingSeconds";
-
-function processLine(session: SessionInfo) {
-	const process = session.sdkProcess;
-	if (!process || session.sdkInterrupting) return undefined;
-	return {
-		command: process.command,
-		rate:
-			process.ioBytesPerSec === undefined
-				? undefined
-				: formatIoRate(process.ioBytesPerSec),
-	};
-}
+import { processLine } from "./processLine";
 
 function activityText(session: SessionInfo): string | undefined {
 	if (session.status !== "running") return undefined;
@@ -25,7 +14,13 @@ function activityText(session: SessionInfo): string | undefined {
 	return session.sdkActivity ?? "Working";
 }
 
-export function SdkTail({ session }: { session: SessionInfo }) {
+export function SdkTail({
+	session,
+	transcript,
+}: {
+	session: SessionInfo;
+	transcript?: Transcript | null;
+}) {
 	const activity = activityText(session);
 	const elapsed = useTickingSeconds(
 		activity && !session.sdkInterrupting
@@ -41,6 +36,7 @@ export function SdkTail({ session }: { session: SessionInfo }) {
 		);
 	return (
 		<>
+			<SdkPendingRows session={session} transcript={transcript} />
 			{session.sdkQueued?.map((text, i) => (
 				<TextRow key={`${i}:${text}`} role="user" text={text} term="" queued />
 			))}

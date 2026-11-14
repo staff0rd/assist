@@ -227,4 +227,38 @@ describe("reconcileTranscriptStatus last user message", () => {
 		expect(s.lastUserMessage).toBe("run");
 		expect(notify).not.toHaveBeenCalled();
 	});
+
+	it("clears a pending message once the transcript's latest user row contains it", async () => {
+		readMock.mockResolvedValue([
+			...endTurn(),
+			{ type: "user", message: { content: "next please" } },
+		]);
+		const notify = vi.fn();
+		const s = makeSession({
+			transcriptPath,
+			status: "running",
+			sdkPending: ["next please", "unsent"],
+		});
+
+		await reconcileTranscriptStatus(s, vi.fn(), notify);
+
+		expect(s.sdkPending).toEqual(["unsent"]);
+		expect(notify).toHaveBeenCalled();
+	});
+
+	it("keeps a pending message that only matches an earlier turn's user row", async () => {
+		readMock.mockResolvedValue([
+			...endTurn(),
+			{ type: "user", message: { content: "other" } },
+		]);
+		const s = makeSession({
+			transcriptPath,
+			status: "running",
+			sdkPending: ["hi"],
+		});
+
+		await reconcileTranscriptStatus(s, vi.fn());
+
+		expect(s.sdkPending).toEqual(["hi"]);
+	});
 });

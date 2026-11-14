@@ -5,10 +5,9 @@ import type {
 } from "../../../../shared/harnessAdapters/types";
 import { daemonLog } from "../daemonLog";
 import { killSdkChild } from "./killSdkChild";
-import { noopDisposable, sdkTerminalStub } from "./sdkTerminalStub";
+import { createSdkExit } from "./createSdkExit";
+import { sdkTerminalStub } from "./sdkTerminalStub";
 import { type SdkTurnControls, sdkSessionHandle } from "./sdkSessionHandle";
-
-type ExitListener = (e: { exitCode: number; signal?: number }) => void;
 
 export type SdkSessionControl = {
 	process: SessionProcess;
@@ -25,9 +24,8 @@ export function createSdkSessionProcess(
 ): SdkSessionControl {
 	const label = `session ${sessionId ?? "?"}`;
 	const sdk = sdkSessionHandle(label);
-	const exitListeners: ExitListener[] = [];
 	let child: ChildProcess | undefined;
-	let exited = false;
+	const exit = createSdkExit(sdk.emit, () => child);
 
 	const sessionProcess: SessionProcess = {
 		get pid() {
@@ -41,22 +39,14 @@ export function createSdkSessionProcess(
 			abort.abort();
 			killSdkChild(child);
 		},
-		onExit: (listener) => {
-			exitListeners.push(listener);
-			return noopDisposable;
-		},
+		onExit: exit.onExit,
 		sdk: sdk.handle,
 	};
 
 	return {
 		process: sessionProcess,
 		emit: sdk.emit,
-		exit: (exitCode) => {
-			if (exited) return;
-			exited = true;
-			killSdkChild(child);
-			for (const listener of exitListeners) listener({ exitCode });
-		},
+		exit: exit.exit,
 		attach: (spawned) => {
 			child = spawned;
 		},

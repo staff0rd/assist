@@ -64,6 +64,7 @@ describe("createSdkRelay", () => {
 			{ kind: "elapsed", seconds: null },
 			{ kind: "process", process: null },
 			{ kind: "queued", texts: [] },
+			{ kind: "pending", texts: [] },
 			{ kind: "background", tasks: [] },
 			{ kind: "interrupting", pending: false },
 		]);

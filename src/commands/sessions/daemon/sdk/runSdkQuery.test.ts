@@ -65,6 +65,7 @@ describe("runSdkQuery", () => {
 			{ kind: "activity", text: "Working" },
 			{ kind: "activity", text: null },
 			{ kind: "status", status: "waiting" },
+			{ kind: "pending", texts: [] },
 		]);
 		expect(exits).toEqual([0]);
 	});
@@ -92,6 +93,7 @@ describe("runSdkQuery", () => {
 			{ kind: "elapsed", seconds: null },
 			{ kind: "activity", text: null },
 			{ kind: "status", status: "waiting" },
+			{ kind: "pending", texts: [] },
 		]);
 	});
 
@@ -112,7 +114,7 @@ describe("runSdkQuery", () => {
 		const { events } = await run(
 			stream([assistant([{ type: "tool_use", name: "Read" }], "toolu_1")]),
 		);
-		expect(events).toEqual([]);
+		expect(events).toEqual([{ kind: "pending", texts: [] }]);
 	});
 
 	it("exits cleanly when a kill aborts the query", async () => {

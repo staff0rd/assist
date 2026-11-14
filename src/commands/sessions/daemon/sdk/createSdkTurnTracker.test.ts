@@ -21,7 +21,29 @@ describe("createSdkTurnTracker", () => {
 		const { events, push, turn } = setup();
 		turn.send("hello");
 		expect(push).toHaveBeenCalledWith("hello");
-		expect(events).toEqual([{ kind: "status", status: "running" }]);
+		expect(events).toEqual([
+			{ kind: "pending", texts: ["hello"] },
+			{ kind: "status", status: "running" },
+		]);
+	});
+
+	it("does not mark a message queued mid-turn as pending", () => {
+		const { events, turn } = setup();
+		turn.start("first");
+		turn.send("second");
+		expect(events).not.toContainEqual(
+			expect.objectContaining({ kind: "pending" }),
+		);
+	});
+
+	it("clears pending messages when an interrupt is requested", () => {
+		const { events, turn } = setup();
+		turn.send("hello");
+		turn.interrupt(vi.fn(() => Promise.resolve()));
+		expect(events.slice(-2)).toEqual([
+			{ kind: "interrupting", pending: true },
+			{ kind: "pending", texts: [] },
+		]);
 	});
 
 	it("queues messages sent mid-turn and sends them together when it ends", () => {
@@ -47,7 +69,10 @@ describe("createSdkTurnTracker", () => {
 		turn.interrupt(request);
 		turn.interrupt(request);
 		expect(request).toHaveBeenCalledTimes(1);
-		expect(events).toEqual([{ kind: "interrupting", pending: true }]);
+		expect(events).toEqual([
+			{ kind: "interrupting", pending: true },
+			{ kind: "pending", texts: [] },
+		]);
 		turn.setStatus("waiting");
 		expect(events).toContainEqual({ kind: "interrupting", pending: false });
 	});

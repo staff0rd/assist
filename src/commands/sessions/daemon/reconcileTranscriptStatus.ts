@@ -1,6 +1,7 @@
 import { lookupConversation } from "../shared/conversationOf";
 import { readTranscriptTail } from "../shared/readTranscriptTail";
 import type { Session } from "./createSession";
+import { clearSeenSdkPending } from "./clearSeenSdkPending";
 import { daemonLog } from "./daemonLog";
 import type { OnStatusChange } from "./types";
 import { reportUnrecognisedShapes } from "./reportUnrecognisedShapes";
@@ -33,7 +34,9 @@ export async function reconcileTranscriptStatus(
 	session.transcriptFingerprint = fingerprint ?? undefined;
 
 	reportUnrecognisedShapes(session, reader, entries);
-	updateLastMessages(session, reader.events(entries), notify);
+	const events = reader.events(entries);
+	updateLastMessages(session, events, notify);
+	clearSeenSdkPending(session, events, notify);
 
 	if (isFinished(session)) return;
 

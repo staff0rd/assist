@@ -15,9 +15,10 @@ export function createSdkTurnTracker(
 	let busy = false;
 	const emit = createSdkTurnEmitter(label, control);
 	const queue = createSdkMessageQueue(label, control, push);
-	const interrupt = createSdkInterrupt(label, (pending) =>
-		control.emit({ kind: "interrupting", pending }),
-	);
+	const interrupt = createSdkInterrupt(label, (pending) => {
+		control.emit({ kind: "interrupting", pending });
+		if (pending) control.emit({ kind: "pending", texts: [] });
+	});
 	const setStatus = (next: SdkTurnStatus) => {
 		busy = next === "running";
 		if (next === "waiting") {
@@ -41,6 +42,7 @@ export function createSdkTurnTracker(
 			if (busy) return queue.add(text);
 			daemonLog(`${label} sdk message sent: ${quoteForLog(text)}`);
 			push(text);
+			control.emit({ kind: "pending", texts: [text] });
 			setStatus("running");
 		},
 		interrupt: (request: () => Promise<void>) =>

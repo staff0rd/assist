@@ -56,6 +56,23 @@ describe("wireSdkEvents", () => {
 		expect(session.sdkInterrupting).toBeUndefined();
 	});
 
+	it("appends pending messages, broadcasts them and clears them on an empty event", () => {
+		const { control, session, notify } = sdkSession("running");
+		control.emit({ kind: "pending", texts: ["one"] });
+		control.emit({ kind: "pending", texts: ["two"] });
+		expect(session.sdkPending).toEqual(["one", "two"]);
+		control.emit({ kind: "pending", texts: [] });
+		expect(session.sdkPending).toBeUndefined();
+		expect(notify).toHaveBeenCalledTimes(3);
+	});
+
+	it("clears pending messages when the query exits", () => {
+		const { control, session } = sdkSession("running");
+		control.emit({ kind: "pending", texts: ["one"] });
+		control.exit(0);
+		expect(session.sdkPending).toBeUndefined();
+	});
+
 	it("replaces the background task set and broadcasts it", () => {
 		const { control, session, notify } = sdkSession("waiting");
 		control.emit({ kind: "background", tasks: ["vite dev"] });
