@@ -1,12 +1,16 @@
 import type { KeyboardEvent } from "react";
-import { bracketedPaste } from "../../../../../../shared/pasteAndSubmit/bracketedPaste";
 import { useSlashSuggestions } from "../../../../slashSuggestions/useSlashSuggestions";
-import { useSuggestedSlashCommands } from "../../../../slashSuggestions/useSuggestedSlashCommands";
 import type { SessionInfo } from "../../../../types";
 import { usePersistedPrompt } from "../../../../usePersistedPrompt";
+import { composerPlaceholder } from "./composerPlaceholder";
+import { heldShellCount } from "./heldShellCount";
 import { sdkComposerKeyDown } from "./sdkComposerKeyDown";
+import { sdkComposerSendStop } from "./sdkComposerSendStop";
 import { sdkComposerState } from "./sdkComposerState";
+import { shellAwareEdit } from "./shellAwareEdit";
 import { useAppendQueuedToDraft } from "./useAppendQueuedToDraft";
+import { useComposerCommands } from "./useComposerCommands";
+import { useComposerShell } from "./useComposerShell";
 
 export function useSdkComposer(
 	session: SessionInfo,
@@ -14,24 +18,19 @@ export function useSdkComposer(
 	interruptSession: (sessionId: string) => void,
 ) {
 	const [text, setText] = usePersistedPrompt(`sdk-composer:${session.id}`);
-	const commands = useSuggestedSlashCommands(
-		session.harness,
-		session.cwd,
-		session.node,
-	);
+	const shell = useComposerShell(session.id);
+	const commands = useComposerCommands(session, shell.shell);
 	const slash = useSlashSuggestions(commands, text, setText);
 	useAppendQueuedToDraft(session.id, setText, slash.inputRef);
 	const state = sdkComposerState(session);
-	const suggestion = text ? undefined : state.suggestion;
-	const send = () => {
-		if (!text.trim() || !state.enabled) return;
-		sendInput(session.id, bracketedPaste(text));
-		setText("");
-	};
-	const stop = () => {
-		if (state.running && !state.stopping) interruptSession(session.id);
-	};
+	const suggestion = text || shell.shell ? undefined : state.suggestion;
+	const { send, stop } = sdkComposerSendStop({ text, setText }, state, shell, {
+		sessionId: session.id,
+		sendInput,
+		interruptSession,
+	});
 	const onKeyDown = (e: KeyboardEvent) =>
+		shell.leaveOnBackspace(e, text) ||
 		sdkComposerKeyDown(e, {
 			slash,
 			suggestion,
@@ -41,11 +40,18 @@ export function useSdkComposer(
 		});
 	return {
 		...state,
-		placeholder: suggestion ?? state.placeholder,
+		placeholder: composerPlaceholder(
+			shell.shell,
+			suggestion,
+			state.placeholder,
+		),
 		suggestion,
+		shell: shell.shell,
+		held: heldShellCount(session),
 		text,
 		commands,
 		slash,
+		edit: shellAwareEdit(shell, slash),
 		send,
 		stop,
 		onKeyDown,

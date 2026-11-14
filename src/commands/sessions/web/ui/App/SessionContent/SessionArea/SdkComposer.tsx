@@ -5,6 +5,7 @@ import { SdkComposerActions } from "./SdkComposer/SdkComposerActions";
 import { SdkComposerField } from "./SdkComposer/SdkComposerField";
 import { SdkComposerHint } from "./SdkComposer/SdkComposerHint";
 import { sdkComposerSx } from "./SdkComposer/sdkComposerSx";
+import { cwdLabel } from "./SdkComposer/cwdLabel";
 import { useSdkComposer } from "./SdkComposer/useSdkComposer";
 
 export function SdkComposer({
@@ -25,6 +26,7 @@ export function SdkComposer({
 					<SdkComposerActions
 						running={c.running}
 						stopping={c.stopping}
+						shell={c.shell}
 						canSend={c.enabled && Boolean(c.text.trim())}
 						onStop={c.stop}
 						onSend={c.send}
@@ -34,6 +36,8 @@ export function SdkComposer({
 					running={c.running}
 					stopping={c.stopping}
 					suggestion={Boolean(c.suggestion)}
+					shellCwd={c.shell ? cwdLabel(session.cwd) : undefined}
+					held={c.held}
 				/>
 			</Box>
 		</Box>

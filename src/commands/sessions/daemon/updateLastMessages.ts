@@ -22,6 +22,13 @@ function update(
 	return true;
 }
 
+/* why: a `!` command never reaches the transcript until it is sent with the
+ * next message, so while one is running or held it is the last thing typed. */
+function lastShellPrompt(session: Session): string | undefined {
+	const row = session.sdkShell?.at(-1);
+	return row && `! ${row.command}`;
+}
+
 export function updateLastMessages(
 	session: Session,
 	events: ConversationEvent[],
@@ -30,7 +37,8 @@ export function updateLastMessages(
 	const user = update(
 		session,
 		"lastUserMessage",
-		lastMessageText(events, "user", USER_MAX_LENGTH),
+		lastShellPrompt(session) ??
+			lastMessageText(events, "user", USER_MAX_LENGTH),
 		"user",
 	);
 	const assistant = update(

@@ -34,7 +34,10 @@ export function PhoneSessionBody(props: {
 		pendingCheck(session),
 	);
 	return (
-		<QueuedMessageProviders dequeue={socket.dequeueMessage}>
+		<QueuedMessageProviders
+			dequeue={socket.dequeueMessage}
+			runShell={socket.runShellCommand}
+		>
 			<Box sx={asking ? askTerminalSx : terminalSx}>
 				{session.sdk ? (
 					<Box sx={sdkBodySx}>

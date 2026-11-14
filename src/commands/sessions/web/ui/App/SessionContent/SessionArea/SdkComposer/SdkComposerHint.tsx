@@ -1,42 +1,41 @@
+import { HintKey } from "./HintKey";
 import Box from "@mui/material/Box";
+import { shellSx } from "../TranscriptArea/shellSx";
 import { sdkComposerSx } from "./sdkComposerSx";
-
-function Key({ label }: { label: string }) {
-	return (
-		<Box component="kbd" sx={sdkComposerSx.kbd}>
-			{label}
-		</Box>
-	);
-}
+import { ShellKeys } from "./ShellKeys";
+import { MessageKeys } from "./MessageKeys";
 
 export function SdkComposerHint({
 	running,
 	stopping,
 	suggestion,
+	shellCwd,
+	held,
 }: {
 	running: boolean;
 	stopping: boolean;
 	suggestion: boolean;
+	shellCwd?: string;
+	held: number;
 }) {
 	if (stopping)
 		return <Box sx={sdkComposerSx.hint}>Waiting for Claude to stop</Box>;
 	return (
 		<Box sx={sdkComposerSx.hint}>
-			{suggestion && (
-				<span>
-					<Key label="Tab" /> use suggestion
-				</span>
+			{shellCwd === undefined ? (
+				<MessageKeys suggestion={suggestion} />
+			) : (
+				<ShellKeys cwd={shellCwd} />
 			)}
-			<span>
-				<Key label="Enter" /> send
-			</span>
-			<span>
-				<Key label="Shift" />+<Key label="Enter" /> new line
-			</span>
 			{running && (
 				<span>
-					<Key label="Esc" /> stop turn
+					<HintKey label="Esc" /> stop turn
 				</span>
+			)}
+			{held > 0 && shellCwd === undefined && (
+				<Box component="span" sx={shellSx.attached}>
+					{held} shell result{held > 1 ? "s" : ""} will be attached
+				</Box>
 			)}
 		</Box>
 	);

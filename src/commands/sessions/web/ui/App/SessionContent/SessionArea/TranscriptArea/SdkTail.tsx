@@ -7,6 +7,7 @@ import { TranscriptDivider } from "./TranscriptPane/TranscriptRow/TranscriptDivi
 import { useTickingSeconds } from "./useTickingSeconds";
 import { processLine } from "./processLine";
 import { SdkQueuedRows } from "./SdkQueuedRows";
+import { SdkShellRows } from "./SdkShellRows";
 
 function activityText(session: SessionInfo): string | undefined {
 	if (session.status !== "running") return undefined;
@@ -44,6 +45,7 @@ export function SdkTail({
 	return (
 		<>
 			<SdkPendingRows session={session} transcript={transcript} />
+			<SdkShellRows session={session} />
 			<SdkQueuedRows session={session} />
 			{activity && (
 				<SdkTailRow

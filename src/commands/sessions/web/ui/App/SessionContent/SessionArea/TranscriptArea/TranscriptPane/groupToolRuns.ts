@@ -13,6 +13,7 @@ function messageKey(m: TranscriptMessage): string {
 	if (m.role === "tool") return `tool:${m.tool}:${m.target}`;
 	if (m.role === "interrupt") return "interrupt";
 	if (m.role === "restart") return "restart";
+	if (m.role === "shell") return `shell:${m.command.slice(0, 40)}`;
 	return `${m.role}:${m.text.slice(0, 40)}`;
 }
 

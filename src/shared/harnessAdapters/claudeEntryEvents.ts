@@ -2,6 +2,7 @@ import { normalizeUser } from "../../commands/sessions/shared/normalizeUser";
 import { renderUserPrompt } from "../../commands/sessions/shared/renderUserPrompt";
 import { claudeAssistantEvents } from "./claudeAssistantEvents";
 import { claudeContentBlocksOf } from "./claudeContentBlocksOf";
+import { claudeShellEvents } from "./claudeShellEvents";
 import type { ConversationEvent } from "./types";
 
 type Entry = Record<string, unknown>;
@@ -19,8 +20,11 @@ function resultText(content: unknown): string {
 }
 
 function userEvents(entry: Entry, at?: string): ConversationEvent[] {
-	const events: ConversationEvent[] = [];
-	const text = renderUserPrompt(entry, Number.POSITIVE_INFINITY);
+	const shell = claudeShellEvents(entry, at);
+	const events = shell.events;
+	const text = shell.textless
+		? undefined
+		: renderUserPrompt(entry, Number.POSITIVE_INFINITY);
 	if (text) events.push({ kind: "message", role: "user", text, at });
 	else {
 		const normalized = normalizeUser(entry);

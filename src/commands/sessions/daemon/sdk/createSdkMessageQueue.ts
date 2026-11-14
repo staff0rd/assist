@@ -45,7 +45,7 @@ export function createSdkMessageQueue(
 		flush: (): boolean => {
 			if (!queued.length) return false;
 			daemonLog(`${label} sdk sending ${queued.length} queued message(s)`);
-			const text = queued.join("\n\n");
+			const text = control.prefix(queued.join("\n\n"));
 			publish([], text);
 			push(text);
 			return true;

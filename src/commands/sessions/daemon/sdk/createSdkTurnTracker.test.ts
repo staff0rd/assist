@@ -6,8 +6,9 @@ import { createSdkTurnTracker } from "./createSdkTurnTracker";
 
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 
-function setup() {
+function setup(prefix?: () => string) {
 	const control = createSdkSessionProcess("7", new AbortController());
+	if (prefix) control.process.sdk?.setPrefix?.(prefix);
 	const events: SdkSessionEvent[] = [];
 	control.process.sdk?.onEvent((event) => events.push(event));
 	const push = vi.fn();
@@ -17,6 +18,26 @@ function setup() {
 
 describe("createSdkTurnTracker", () => {
 	beforeEach(() => vi.clearAllMocks());
+
+	it("puts held shell results in front of a message sent between turns", () => {
+		const { events, push, turn } = setup(() => "<bash-input>ls</bash-input>");
+		turn.send("hello");
+		const sent = "<bash-input>ls</bash-input>\n\nhello";
+		expect(push).toHaveBeenCalledWith(sent);
+		expect(events[0]).toEqual({ kind: "pending", texts: [sent] });
+	});
+
+	it("attaches shell results held by the time a queued message is flushed", () => {
+		let held = "";
+		const { push, turn } = setup(() => held);
+		turn.start("first");
+		turn.send("second");
+		held = "<bash-input>ls</bash-input>";
+		turn.setStatus("waiting");
+		expect(push).toHaveBeenLastCalledWith(
+			"<bash-input>ls</bash-input>\n\nsecond",
+		);
+	});
 
 	it("sends a message straight into the input when no turn is running", () => {
 		const { events, push, turn } = setup();

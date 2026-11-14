@@ -41,8 +41,9 @@ export function createSdkTurnTracker(
 		send: (text: string) => {
 			if (busy) return queue.add(text);
 			daemonLog(`${label} sdk message sent: ${quoteForLog(text)}`);
-			push(text);
-			control.emit({ kind: "pending", texts: [text] });
+			const message = control.prefix(text);
+			push(message);
+			control.emit({ kind: "pending", texts: [message] });
 			setStatus("running");
 		},
 		dequeue: queue.remove,

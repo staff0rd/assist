@@ -13,6 +13,7 @@ type Props = {
 	keyboardOpen: boolean;
 	onKey?: (data: string) => void;
 	onSend: (text: string) => void;
+	onRunShell?: (command: string) => void;
 	stop?: ReplyStop;
 	locked?: string;
 	suggestion?: string;
@@ -27,6 +28,7 @@ export function PhoneInputDock({
 	keyboardOpen,
 	onKey,
 	onSend,
+	onRunShell,
 	stop,
 	locked,
 	suggestion,
@@ -52,6 +54,7 @@ export function PhoneInputDock({
 				harness={harness}
 				commands={commands}
 				onSend={onSend}
+				onRunShell={onRunShell}
 				stop={stop}
 				locked={locked}
 				suggestion={suggestion}

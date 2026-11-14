@@ -8,6 +8,7 @@ export type TranscriptMessage =
 	| { role: "user"; text: string }
 	| { role: "assistant"; text: string }
 	| { role: "tool"; tool: string; target: string; description?: string }
+	| { role: "shell"; command: string; stdout: string; stderr: string }
 	| { role: "interrupt" }
 	| { role: "restart"; killed: number };
 
@@ -24,6 +25,10 @@ function toMessages(event: ConversationEvent): TranscriptMessage[] {
 				...(event.description && { description: event.description }),
 			},
 		];
+	if (event.kind === "shell") {
+		const { command, stdout, stderr } = event;
+		return [{ role: "shell", command, stdout, stderr }];
+	}
 	if (event.kind === "interrupt") return [{ role: "interrupt" }];
 	if (event.kind === "restart")
 		return [{ role: "restart", killed: event.killed }];

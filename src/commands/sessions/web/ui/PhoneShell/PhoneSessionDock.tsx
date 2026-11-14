@@ -1,4 +1,5 @@
 import { sdkComposerState } from "../App/SessionContent/SessionArea/SdkComposer/sdkComposerState";
+import { useRunShellCommand } from "../App/SessionContent/SessionArea/TranscriptArea/useRunShellCommand";
 import { displayStatus } from "../displayStatus";
 import { isAwaitingUser } from "../isAwaitingUser";
 import type { SessionInfo } from "../types";
@@ -14,6 +15,7 @@ export function PhoneSessionDock({
 	io: ReturnType<typeof usePhoneSessionIo>;
 	keyboardOpen: boolean;
 }) {
+	const runShell = useRunShellCommand();
 	const sdk = session.sdk ? sdkComposerState(session) : undefined;
 	if (sdk && !sdk.live) return null;
 	return (
@@ -26,6 +28,9 @@ export function PhoneSessionDock({
 			// why: the key strip drives a terminal, which an SDK session does not have
 			onKey={sdk ? undefined : io.onKey}
 			onSend={io.onSend}
+			onRunShell={
+				sdk && runShell ? (command) => runShell(session.id, command) : undefined
+			}
 			locked={sdk?.resuming ? sdk.placeholder : undefined}
 			suggestion={sdk?.suggestion}
 			draftSessionId={sdk && session.id}

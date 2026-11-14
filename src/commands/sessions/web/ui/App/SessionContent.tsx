@@ -32,7 +32,10 @@ export function SessionContent({ socket }: { socket: SessionSocket }) {
 	);
 	return (
 		<LastMessageHistoryContext.Provider value={lastMessageHistory}>
-			<QueuedMessageProviders dequeue={socket.dequeueMessage}>
+			<QueuedMessageProviders
+				dequeue={socket.dequeueMessage}
+				runShell={socket.runShellCommand}
+			>
 				<SessionArea
 					lifecycle={lifecycle}
 					sessions={socket.sessions}

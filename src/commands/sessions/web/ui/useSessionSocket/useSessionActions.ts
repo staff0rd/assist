@@ -16,6 +16,7 @@ import { useLaunchActions } from "./useSessionActions/useLaunchActions";
 import { useLifecycleActions } from "./useSessionActions/useLifecycleActions";
 import { outputAction } from "./useSessionActions/outputAction";
 import { dequeueMessageAction } from "../dequeueMessageAction";
+import { runShellCommandAction } from "../runShellCommandAction";
 
 type SendFn = (msg: object) => void;
 type OutputHandler = (data: string) => void;
@@ -36,6 +37,7 @@ export function useSessionActions(
 		stopSession: useMemo(() => stopSessionAction(send), [send]),
 		interruptSession: useMemo(() => interruptSessionAction(send), [send]),
 		dequeueMessage: useMemo(() => dequeueMessageAction(send), [send]),
+		runShellCommand: useMemo(() => runShellCommandAction(send), [send]),
 		startRun: useMemo(() => createRunAction(send), [send]),
 		transferSession: useMemo(() => transferSessionAction(send), [send]),
 		cancelTransfer: useMemo(() => cancelTransferAction(send), [send]),

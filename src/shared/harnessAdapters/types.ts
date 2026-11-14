@@ -29,6 +29,7 @@ type SdkSessionHandle = {
 	interrupt: () => void;
 	dequeue: (index: number, text: string) => boolean;
 	stopTask: (taskId: string) => Promise<void>;
+	setPrefix?: (provider: () => string) => void;
 	attach?: (query: SessionProcess, idle: boolean) => void;
 };
 
@@ -143,6 +144,13 @@ export type ConversationEvent =
 			at?: string;
 	  }
 	| { kind: "toolResult"; text: string; at?: string }
+	| {
+			kind: "shell";
+			command: string;
+			stdout: string;
+			stderr: string;
+			at?: string;
+	  }
 	| { kind: "interrupt"; at?: string }
 	| { kind: "restart"; killed: number; at?: string };
 

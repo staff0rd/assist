@@ -6,7 +6,11 @@ export function renderPrompt(raw: string): string {
 		return args ? `${name} ${args}` : name;
 	}
 	const bashInput = marker(raw, "bash-input");
-	if (bashInput) return `! ${bashInput}`;
+	if (bashInput)
+		return (
+			stripBlocks(raw.replace(/<bash-input>[\s\S]*?<\/bash-input>/g, "")) ||
+			`! ${bashInput}`
+		);
 	return stripBlocks(raw);
 }
 

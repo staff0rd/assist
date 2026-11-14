@@ -14,6 +14,7 @@ export type SdkTurnControls = {
 export function sdkSessionHandle(label: string) {
 	const listeners: ((event: SdkSessionEvent) => void)[] = [];
 	let turn: SdkTurnControls | undefined;
+	let prefixer: (() => string) | undefined;
 	const unbound = (action: string) =>
 		daemonLog(`${label} sdk ${action} dropped: query not started`);
 	const handle: NonNullable<SessionProcess["sdk"]> = {
@@ -29,11 +30,20 @@ export function sdkSessionHandle(label: string) {
 			turn
 				? turn.stopTask(taskId)
 				: Promise.reject(new Error("query not started")),
+		setPrefix: (provider) => {
+			prefixer = provider;
+		},
 	};
 	return {
 		handle,
 		emit: (event: SdkSessionEvent) => {
 			for (const listener of listeners) listener(event);
+		},
+		/* why: held shell results join a message only as it reaches Claude, so a
+		 * message queued mid-turn still picks up output that finished after it. */
+		prefix: (text: string): string => {
+			const blocks = prefixer?.();
+			return blocks ? `${blocks}\n\n${text}` : text;
 		},
 		bind: (controls: SdkTurnControls) => {
 			turn = controls;

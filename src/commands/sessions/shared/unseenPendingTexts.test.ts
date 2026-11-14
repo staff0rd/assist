@@ -38,4 +38,15 @@ describe("unseenPendingTexts", () => {
 			),
 		).toEqual([nudge]);
 	});
+
+	it("matches a message sent with shell results by its own text", () => {
+		const sent =
+			"<bash-input>ls</bash-input>\n<bash-stdout>a</bash-stdout><bash-stderr></bash-stderr>\n\nlook at a";
+		expect(
+			unseenPendingTexts(
+				[sent],
+				[{ role: "shell" }, { role: "user", text: "look at a" }],
+			),
+		).toEqual([]);
+	});
 });

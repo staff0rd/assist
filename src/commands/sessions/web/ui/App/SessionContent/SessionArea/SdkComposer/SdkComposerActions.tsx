@@ -1,17 +1,21 @@
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import PlayArrowRoundedIcon from "@mui/icons-material/PlayArrowRounded";
 import StopRoundedIcon from "@mui/icons-material/StopRounded";
 import IconButton from "@mui/material/IconButton";
+import { shellSx } from "../TranscriptArea/shellSx";
 import { sdkComposerSx } from "./sdkComposerSx";
 
 export function SdkComposerActions({
 	running,
 	stopping,
+	shell,
 	canSend,
 	onStop,
 	onSend,
 }: {
 	running: boolean;
 	stopping: boolean;
+	shell: boolean;
 	canSend: boolean;
 	onStop: () => void;
 	onSend: () => void;
@@ -30,13 +34,17 @@ export function SdkComposerActions({
 				</IconButton>
 			)}
 			<IconButton
-				aria-label="Send"
-				title="Send (Enter)"
-				sx={sdkComposerSx.send}
+				aria-label={shell ? "Run command" : "Send"}
+				title={shell ? "Run (Enter)" : "Send (Enter)"}
+				sx={[sdkComposerSx.send, shell && shellSx.run]}
 				disabled={!canSend}
 				onClick={onSend}
 			>
-				<ArrowUpwardIcon fontSize="small" />
+				{shell ? (
+					<PlayArrowRoundedIcon fontSize="small" />
+				) : (
+					<ArrowUpwardIcon fontSize="small" />
+				)}
 			</IconButton>
 		</>
 	);

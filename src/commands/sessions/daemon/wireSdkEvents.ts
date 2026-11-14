@@ -2,6 +2,7 @@ import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import type { OnStatusChange } from "./types";
 import { applySdkViewEvent } from "./applySdkViewEvent";
+import { takeHeldShellResults } from "./shell/takeHeldShellResults";
 
 export function wireSdkEvents(
 	session: Session,
@@ -9,6 +10,7 @@ export function wireSdkEvents(
 	notify?: () => void,
 ): void {
 	session.sdkBackgroundTasks = undefined;
+	session.pty?.sdk?.setPrefix?.(() => takeHeldShellResults(session, notify));
 	session.pty?.sdk?.onEvent((event) => {
 		if (session.status === "done" || session.status === "stopped") return;
 		if (event.kind !== "status") {

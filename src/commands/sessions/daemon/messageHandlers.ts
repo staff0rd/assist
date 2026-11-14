@@ -8,6 +8,7 @@ import { handleDeferCommand } from "./handleDeferCommand";
 import { handleDequeue } from "./handleDequeue";
 import { handleInterrupt } from "./handleInterrupt";
 import { handleSdkLaunch } from "./sdk/handleSdkLaunch";
+import { handleSdkShell } from "./shell/handleSdkShell";
 import { handleWebLog } from "./handleWebLog";
 import { handleSearchHistory } from "./historySearch/handleSearchHistory";
 import { creator } from "./creator";
@@ -77,6 +78,7 @@ export const messageHandlers: Record<string, Handler> = {
 	...pinHandlers,
 	"type-prompt": handleTypePrompt,
 	"sdk-launch": handleSdkLaunch,
+	"sdk-shell": handleSdkShell,
 	"type-prompt-to-writer": handleTypePromptToWriter,
 	...retryHandlers,
 	dismiss: handleDismiss,

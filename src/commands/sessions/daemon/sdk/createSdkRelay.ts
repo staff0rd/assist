@@ -11,6 +11,7 @@ type SdkHandle = NonNullable<SessionProcess["sdk"]>;
 export function createSdkRelay(label: string) {
 	const listeners: ((event: SdkSessionEvent) => void)[] = [];
 	let current: SessionProcess | undefined;
+	let prefixer: (() => string) | undefined;
 	const emit = (event: SdkSessionEvent) => {
 		for (const listener of listeners) listener(event);
 	};
@@ -23,8 +24,13 @@ export function createSdkRelay(label: string) {
 	const handle: SdkHandle = {
 		onEvent: (listener) => listeners.push(listener),
 		...relaySdkActions(label, () => current),
+		setPrefix: (provider) => {
+			prefixer = provider;
+			current?.sdk?.setPrefix?.(provider);
+		},
 		attach: (query, idle) => {
 			current = query;
+			if (prefixer) query.sdk?.setPrefix?.(prefixer);
 			daemonLog(
 				`${label} sdk query attached to workflow${idle ? ", awaiting input" : ""}`,
 			);

@@ -16,6 +16,7 @@ export type SdkSessionControl = {
 	attach: (child: ChildProcess) => void;
 	aborted: () => boolean;
 	bind: (controls: SdkTurnControls) => void;
+	prefix: (text: string) => string;
 };
 
 export function createSdkSessionProcess(
@@ -52,5 +53,6 @@ export function createSdkSessionProcess(
 		},
 		aborted: () => abort.signal.aborted,
 		bind: sdk.bind,
+		prefix: sdk.prefix,
 	};
 }

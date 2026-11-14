@@ -1,4 +1,5 @@
 import { parseRestartNudge } from "./parseRestartNudge";
+import { splitShellBlocks } from "./splitShellBlocks";
 
 type TranscriptRole = { role: string; text?: string };
 
@@ -16,10 +17,14 @@ function latestUserRows(rows: TranscriptRole[]) {
 
 const normalize = (text: string) => text.replace(/\s+/g, " ").trim();
 
+const ownText = (text: string) => splitShellBlocks(text)?.text ?? text;
+
 /* why: a pending message is shown before Claude writes it to the transcript,
  * so it is dropped once the transcript's latest user rows contain its text.
  * A flushed queue is one pending entry joined with blank lines; whitespace is
- * collapsed so it still matches the single row Claude records for it. A
+ * collapsed so it still matches the single row Claude records for it. Held
+ * shell results sent in front of a message are recorded as their own shell
+ * rows, so only the message's own text is matched. A
  * tagged restart nudge is recorded as a restart row with no text, so it
  * matches that row instead. */
 export function unseenPendingTexts(
@@ -31,7 +36,7 @@ export function unseenPendingTexts(
 	const seen = latest.texts.map(normalize);
 	return pending.filter((text) =>
 		parseRestartNudge(text) === null
-			? !seen.some((t) => t.includes(normalize(text)))
+			? !seen.some((t) => t.includes(normalize(ownText(text))))
 			: !latest.restart,
 	);
 }

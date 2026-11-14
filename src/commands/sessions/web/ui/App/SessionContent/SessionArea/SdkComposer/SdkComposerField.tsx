@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
-import InputBase from "@mui/material/InputBase";
 import { SlashSuggestionList } from "../../../../slashSuggestions/SlashSuggestionList";
 import { SdkComposerBackdrop } from "./SdkComposerBackdrop";
+import { SdkComposerInput } from "./SdkComposerInput";
 import { sdkComposerSx } from "./sdkComposerSx";
 import { useComposerAutofocus } from "./useComposerAutofocus";
 import { useComposerBackdrop } from "./useComposerBackdrop";
@@ -24,26 +24,7 @@ export function SdkComposerField({
 				/>
 			)}
 			<Box sx={sdkComposerSx.fieldWrap}>
-				<InputBase
-					multiline
-					fullWidth
-					maxRows={6}
-					value={c.text}
-					inputRef={slash.inputRef}
-					disabled={!c.enabled}
-					onChange={(e) => slash.edit(e.target)}
-					onSelect={(e) => slash.trackCursor(e.target as HTMLTextAreaElement)}
-					onKeyDown={c.onKeyDown}
-					placeholder={c.placeholder}
-					sx={[
-						sdkComposerSx.field,
-						backdrop.active && sdkComposerSx.fieldUnderBackdrop,
-					]}
-					inputProps={{
-						"aria-label": "Message Claude",
-						onScroll: backdrop.onScroll,
-					}}
-				/>
+				<SdkComposerInput c={c} backdrop={backdrop} />
 				{backdrop.active && (
 					<SdkComposerBackdrop
 						text={c.text}
