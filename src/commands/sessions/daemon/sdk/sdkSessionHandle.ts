@@ -7,6 +7,7 @@ import { daemonLog } from "../daemonLog";
 export type SdkTurnControls = {
 	send: (text: string) => void;
 	interrupt: () => void;
+	stopTask: (taskId: string) => Promise<void>;
 };
 
 export function sdkSessionHandle(label: string) {
@@ -18,6 +19,10 @@ export function sdkSessionHandle(label: string) {
 		onEvent: (listener) => listeners.push(listener),
 		send: (text) => (turn ? turn.send(text) : unbound("message")),
 		interrupt: () => (turn ? turn.interrupt() : unbound("interrupt")),
+		stopTask: (taskId) =>
+			turn
+				? turn.stopTask(taskId)
+				: Promise.reject(new Error("query not started")),
 	};
 	return {
 		handle,

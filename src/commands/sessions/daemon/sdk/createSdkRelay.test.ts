@@ -13,6 +13,7 @@ function makeQuery() {
 			listeners.push(listener),
 		send: vi.fn(),
 		interrupt: vi.fn(),
+		stopTask: vi.fn(),
 	};
 	return {
 		query: { ...fake.pty, sdk },

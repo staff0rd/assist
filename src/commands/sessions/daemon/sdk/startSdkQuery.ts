@@ -1,4 +1,4 @@
-import { type Query, query } from "@anthropic-ai/claude-agent-sdk";
+import { query } from "@anthropic-ai/claude-agent-sdk";
 import { daemonLog } from "../daemonLog";
 import { resolveClaudeExecutable } from "../resolveClaudeExecutable";
 import type { createSdkInput } from "./createSdkInput";
@@ -6,6 +6,7 @@ import type { SdkSessionControl } from "./createSdkSessionProcess";
 import type { SdkTurnTracker } from "./createSdkTurnTracker";
 import { runSdkQuery } from "./runSdkQuery";
 import { type SdkSpawnOpts, sdkQueryOptions } from "./sdkQueryOptions";
+import { awaitResume } from "./awaitResume";
 
 export async function startSdkQuery(
 	opts: SdkSpawnOpts,
@@ -31,6 +32,7 @@ export async function startSdkQuery(
 				turn.interrupt(async () => {
 					await messages.interrupt();
 				}),
+			stopTask: (taskId) => messages.stopTask(taskId),
 		});
 		await runSdkQuery(messages, opts.sessionId, control, turn);
 	} catch (error) {
@@ -39,21 +41,4 @@ export async function startSdkQuery(
 		);
 		control.exit(1);
 	}
-}
-
-function awaitResume(
-	label: string,
-	messages: Query,
-	control: SdkSessionControl,
-): void {
-	messages.initializationResult().then(
-		() => {
-			daemonLog(`${label} sdk resume complete`);
-			control.emit({ kind: "resumed" });
-		},
-		(error: unknown) =>
-			daemonLog(
-				`${label} sdk resume did not complete: ${error instanceof Error ? error.message : String(error)}`,
-			),
-	);
 }

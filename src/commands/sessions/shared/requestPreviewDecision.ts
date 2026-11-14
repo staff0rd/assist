@@ -1,4 +1,5 @@
 import { connectToDaemon } from "../daemon/connectToDaemon";
+import { currentClaudeTaskId } from "./currentClaudeTaskId";
 import { readSocketLines } from "../daemon/readSocketLines";
 import { parsePreviewDecision } from "./parsePreviewDecision";
 import type { PreviewDecision } from "./PreviewDecision";
@@ -33,7 +34,9 @@ export function requestPreviewDecision(
 			socket.on("close", () =>
 				finish(new Error("daemon closed before a decision was made")),
 			);
-			socket.write(`${JSON.stringify({ type: "pr-preview", ...request })}\n`);
+			socket.write(
+				`${JSON.stringify({ type: "pr-preview", ...request, taskId: currentClaudeTaskId() })}\n`,
+			);
 		}, reject);
 	});
 }

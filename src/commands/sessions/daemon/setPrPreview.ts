@@ -33,7 +33,7 @@ export function setPrPreview(
 	if (kind === "show") {
 		sendTo(client, { type: "show-ack", requestId: d.requestId });
 		if (placeShowPreview(session, preview)) return notify();
-	} else holdBlockingPreview(session, waiters, client, preview);
+	} else holdBlockingPreview(session, waiters, client, preview, d.taskId);
 	const target = previewTargetLabel(
 		kind,
 		d.itemType === "bug" ? "bug" : "story",

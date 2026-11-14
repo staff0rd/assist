@@ -9,6 +9,7 @@ export function holdBlockingPreview(
 	waiters: Map<string, SessionClient>,
 	client: SessionClient,
 	preview: PrPreview,
+	taskId: unknown,
 ): void {
 	const supersedes = supersedePendingPreview(
 		session,
@@ -16,6 +17,8 @@ export function holdBlockingPreview(
 		preview.requestId,
 	);
 	session.pendingPrPreview = supersedes ? { ...preview, supersedes } : preview;
+	session.pendingPreviewTaskId =
+		typeof taskId === "string" ? taskId : undefined;
 	if (session.pendingShow) {
 		daemonLog(
 			`pr-preview show closed: id=${session.id} requestId=${session.pendingShow.requestId} by=${preview.requestId}`,

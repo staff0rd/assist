@@ -32,6 +32,10 @@ export function createSdkRelay(label: string) {
 			current?.sdk ? current.sdk.send(text) : dropped("message"),
 		interrupt: () =>
 			current?.sdk ? current.sdk.interrupt() : dropped("interrupt"),
+		stopTask: (taskId) =>
+			current?.sdk
+				? current.sdk.stopTask(taskId)
+				: Promise.reject(new Error("no Claude (SDK) query attached")),
 		attach: (query, idle) => {
 			current = query;
 			daemonLog(

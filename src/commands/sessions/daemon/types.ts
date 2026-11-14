@@ -96,6 +96,7 @@ export type Session = {
 	reviewStarted?: boolean;
 	usageSeeded?: boolean;
 	pendingPrPreview?: PrPreview;
+	pendingPreviewTaskId?: string;
 	pendingShow?: PrPreview;
 	resumedOverPreview?: string;
 	pendingRestart?: () => void;
