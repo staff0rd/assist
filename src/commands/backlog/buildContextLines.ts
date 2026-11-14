@@ -11,7 +11,7 @@ export function buildContextLines(
 	return [
 		`You are implementing phase ${phaseNumber} of backlog item ${formatItemId(item.id)}: ${item.name}`,
 		"",
-		item.description ? `Description: ${item.description}` : "",
+		item.description ? `Description:\n${item.description}` : "",
 		"",
 		"Acceptance criteria:",
 		ac,

@@ -23,7 +23,7 @@ export function buildReviewPrompt(
 	return [
 		`You are reviewing backlog item ${itemId}: ${item.name}`,
 		"",
-		item.description ? `Description: ${item.description}` : "",
+		item.description ? `Description:\n${item.description}` : "",
 		"",
 		"This is the auto-generated review phase. Verify each acceptance criterion against the current implementation.",
 		"If you need to modify backlog items, run `assist backlog --help` to discover available commands.",

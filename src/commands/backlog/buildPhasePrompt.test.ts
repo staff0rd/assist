@@ -33,6 +33,18 @@ describe("buildPhasePrompt", () => {
 		loadConfigMock.mockReset();
 	});
 
+	it("puts the description on the line after Description:", () => {
+		loadConfigMock.mockReturnValue(makeAssistConfig());
+
+		expect(
+			buildPhasePrompt(
+				makeBacklogItem({ description: "## Background\nBody" }),
+				1,
+				phase,
+			),
+		).toContain("Description:\n## Background\nBody");
+	});
+
 	it("adds no commit instruction when neither key is set", () => {
 		mockWorktree({ enabled: true });
 

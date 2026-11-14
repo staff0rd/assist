@@ -3,6 +3,15 @@ import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 import { buildReviewPrompt } from "./buildReviewPrompt";
 
 describe("buildReviewPrompt", () => {
+	it("puts the description on the line after Description:", () => {
+		const prompt = buildReviewPrompt(
+			makeBacklogItem({ description: "## Background\nBody" }),
+			3,
+		);
+
+		expect(prompt).toContain("Description:\n## Background\nBody");
+	});
+
 	describe("commitBeforePhaseEnd", () => {
 		it("leaves the prompt unchanged when the flag is off", () => {
 			const prompt = buildReviewPrompt(makeBacklogItem(), 3, {
