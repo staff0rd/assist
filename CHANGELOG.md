@@ -1,3 +1,10 @@
+## [0.1169.1](https://github.com/staff0rd/assist/compare/v0.1169.0...v0.1169.1) (2026-11-14)
+
+
+### Bug Fixes
+
+* comment on rules by selecting text ([1615ee2](https://github.com/staff0rd/assist/commit/1615ee24b7624d5b40b8848c7edd1c30cc144c41))
+
 # [0.1169.0](https://github.com/staff0rd/assist/compare/v0.1168.1...v0.1169.0) (2026-11-14)
 
 
