@@ -17,7 +17,7 @@ export function nodeRows(
 	entries: NodeUpdateEntry[],
 	removed: ReadonlySet<string>,
 	origin: string,
-	busy: Readonly<Record<string, string>> = {},
+	restarting: ReadonlySet<string> = new Set(),
 ): NodeRowData[] {
 	const entryFor = (name: string) => entries.find((e) => e.name === name);
 	const self = entryFor(nodes.local);
@@ -32,7 +32,7 @@ export function nodeRows(
 				url: link.url,
 				link,
 				entry,
-				status: nodeStatus(link, entry, busy[link.name]),
+				status: nodeStatus(link, entry, restarting.has(link.name)),
 			};
 		});
 	return [
@@ -41,7 +41,7 @@ export function nodeRows(
 			local: true,
 			url: origin,
 			entry: self,
-			status: nodeStatus(undefined, self, busy[nodes.local]),
+			status: nodeStatus(undefined, self, restarting.has(nodes.local)),
 		},
 		...linked,
 	];

@@ -38,9 +38,9 @@ function updateStatus(entry: NodeUpdateEntry): NodeStatus {
 export function nodeStatus(
 	link: LinkStatus | undefined,
 	entry: NodeUpdateEntry | undefined,
-	busy?: string,
+	restarting = false,
 ): NodeStatus {
-	if (busy === "Restarting")
+	if (restarting)
 		return {
 			kind: "restarting",
 			label: "Restarting…",

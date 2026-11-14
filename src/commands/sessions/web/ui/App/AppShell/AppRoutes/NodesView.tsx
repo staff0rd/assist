@@ -10,6 +10,7 @@ import { nodeRows } from "./NodesView/nodeRows";
 import { pageNotices } from "./NodesView/pageNotices";
 import { useAddNodeDialog } from "./NodesView/useAddNodeDialog";
 import { useNodeRemoval } from "./NodesView/useNodeRemoval";
+import { useRestartingNodes } from "./NodesView/useRestartingNodes";
 
 export function NodesView({
 	selectSession,
@@ -21,13 +22,14 @@ export function NodesView({
 	const actions = useUpdateActions(selectSession);
 	const removal = useNodeRemoval(nodes);
 	const adding = useAddNodeDialog();
+	const restarting = useRestartingNodes(actions.notices);
 	const rows = nodes
 		? nodeRows(
 				nodes,
 				entries,
 				removal.removed,
 				globalThis.location.origin,
-				actions.notices.busy,
+				restarting,
 			)
 		: [];
 

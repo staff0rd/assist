@@ -43,6 +43,7 @@ beforeEach(() => {
 	});
 	notices = {
 		busy: {},
+		busySince: {},
 		mark: vi.fn(),
 		back: null,
 		setBack: vi.fn(),
