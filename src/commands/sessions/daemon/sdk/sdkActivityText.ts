@@ -7,6 +7,7 @@ type ContentBlock = {
 };
 
 const TARGET_KEYS = [
+	"description",
 	"command",
 	"file_path",
 	"notebook_path",
@@ -14,15 +15,20 @@ const TARGET_KEYS = [
 	"pattern",
 	"url",
 	"query",
-	"description",
 	"skill",
 ];
+
+const LEADING_CD = /^cd\s+(?:"[^"]*"|'[^']*'|\S+)\s*(?:;|&&)\s*/;
+
 function toolTarget(input: unknown): string {
 	if (!input || typeof input !== "object") return "";
 	const record = input as Record<string, unknown>;
 	const key = TARGET_KEYS.find((k) => typeof record[k] === "string");
 	if (!key) return "";
-	return activityLine(record[key] as string);
+	const value = record[key] as string;
+	return activityLine(
+		key === "command" ? value.trim().replace(LEADING_CD, "") : value,
+	);
 }
 
 export function sdkActivityText(content: readonly ContentBlock[]): string {
