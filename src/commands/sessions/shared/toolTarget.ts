@@ -9,6 +9,7 @@ export function toolTarget(input: unknown): string {
 		str(i.notebook_path) ||
 		str(i.command) ||
 		str(i.pattern) ||
+		str(i.skill) ||
 		str(i.url) ||
 		str(i.query) ||
 		str(i.description) ||
