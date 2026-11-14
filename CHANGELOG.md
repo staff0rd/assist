@@ -1,3 +1,18 @@
+# [0.1174.0](https://github.com/staff0rd/assist/compare/v0.1173.1...v0.1174.0) (2026-11-14)
+
+
+### Bug Fixes
+
+* auto-build installs with pnpm ([3f4f92a](https://github.com/staff0rd/assist/commit/3f4f92acb7574af287ace1bd2fada921175b5282))
+
+
+### Features
+
+* install docs with pnpm ([02f5d72](https://github.com/staff0rd/assist/commit/02f5d728546dcd8bc88e17b4724e69bddc175c1d))
+* install root package with pnpm ([4d56c06](https://github.com/staff0rd/assist/commit/4d56c06ef2a56d6c87c9265806347fb8d84cfece))
+* list refresh UI stories ([1b7e38f](https://github.com/staff0rd/assist/commit/1b7e38f8863549fbb988754cd91c458078b06dc1))
+* require screenshots for UI stories ([1dbf162](https://github.com/staff0rd/assist/commit/1dbf16292b4a851ae7af7b4d300eaeda0f67fdbd))
+
 ## [0.1173.1](https://github.com/staff0rd/assist/compare/v0.1173.0...v0.1173.1) (2026-11-14)
 
 
