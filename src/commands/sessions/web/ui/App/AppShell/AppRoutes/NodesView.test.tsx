@@ -82,7 +82,7 @@ function RestartProvider({ children }: { children: ReactNode }) {
 	);
 }
 
-function view(nodes: NodesState) {
+function view(nodes: NodesState, updates: NodeUpdateEntry[] = entries) {
 	return (
 		<MemoryRouter>
 			<NodeSelectionContext.Provider
@@ -95,7 +95,7 @@ function view(nodes: NodesState) {
 				}}
 			>
 				<NodeUpdatesContext.Provider
-					value={{ entries, loading: false, refresh: () => {} }}
+					value={{ entries: updates, loading: false, refresh: () => {} }}
 				>
 					<RestartProvider>
 						<NodesView selectSession={() => {}} />
@@ -284,6 +284,41 @@ describe("NodesView", () => {
 			).toBeTruthy(),
 		);
 		expect(row("win")).toBeTruthy();
+	});
+
+	describe("header actions", () => {
+		const restartReady = () =>
+			screen.getByRole("button", { name: /^Restart ready/ });
+
+		it("orders Add node, Check now, then Restart ready", () => {
+			render(view({ local: "mac", links: [win] }));
+			const labels = ["Add node", "Check now", "Restart ready"];
+			expect(
+				screen
+					.getAllByRole("button")
+					.map((b) => b.textContent ?? "")
+					.map((t) => labels.find((l) => t.startsWith(l)))
+					.filter(Boolean),
+			).toEqual(labels);
+			expect(
+				screen.getByRole("button", { name: "Add node" }).className,
+			).toContain("MuiButton-outlined");
+			expect(
+				screen.getByRole("button", { name: "Check now" }).className,
+			).toContain("MuiButton-outlined");
+		});
+
+		it("makes Restart ready contained when a node is ready", () => {
+			render(view({ local: "mac", links: [win] }));
+			expect(restartReady().className).toContain("MuiButton-contained");
+			expect(restartReady().hasAttribute("disabled")).toBe(false);
+		});
+
+		it("makes Restart ready outlined and disabled when no node is ready", () => {
+			render(view({ local: "mac", links: [win] }, [status("mac")]));
+			expect(restartReady().className).toContain("MuiButton-outlined");
+			expect(restartReady().hasAttribute("disabled")).toBe(true);
+		});
 	});
 
 	describe("Add node", () => {

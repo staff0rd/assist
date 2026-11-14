@@ -4,7 +4,7 @@ import Button from "@mui/material/Button";
 export function AddNodeButton({ onClick }: { onClick: () => void }) {
 	return (
 		<Button
-			variant="contained"
+			variant="outlined"
 			size="small"
 			startIcon={<AddIcon />}
 			onClick={onClick}

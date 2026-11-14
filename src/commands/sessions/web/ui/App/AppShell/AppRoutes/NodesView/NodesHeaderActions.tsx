@@ -25,6 +25,7 @@ export function NodesHeaderActions({
 	);
 	return (
 		<Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+			<AddNodeButton onClick={onAddNode} />
 			<Button
 				variant="outlined"
 				size="small"
@@ -38,7 +39,7 @@ export function NodesHeaderActions({
 				Check now
 			</Button>
 			<Button
-				variant="outlined"
+				variant={ready > 0 ? "contained" : "outlined"}
 				size="small"
 				disabled={ready === 0 || restarting}
 				onClick={() => {
@@ -50,7 +51,6 @@ export function NodesHeaderActions({
 			>
 				{ready ? `Restart ready (${ready})` : "Restart ready"}
 			</Button>
-			<AddNodeButton onClick={onAddNode} />
 		</Box>
 	);
 }
