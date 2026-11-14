@@ -25,8 +25,8 @@ export function watchPreviewInputs(onChange: () => void): void {
 		sidebar = next;
 		schedule();
 	});
-	watch(docsPaths.screenshotsDir, (event, name) => {
-		if (event === "rename" && name?.endsWith(".png")) schedule();
+	watch(docsPaths.screenshotsDir, (_event, name) => {
+		if (name?.endsWith(".png")) schedule();
 	});
 	watch(
 		join(docsPaths.repoRoot, "src/docs"),
