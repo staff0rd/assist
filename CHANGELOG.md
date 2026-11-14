@@ -1,3 +1,16 @@
+# [0.1160.0](https://github.com/staff0rd/assist/compare/v0.1159.0...v0.1160.0) (2026-11-14)
+
+
+### Features
+
+* Add node first, Restart ready primary ([7f836d9](https://github.com/staff0rd/assist/commit/7f836d93472d4a8f807ecc2b050fa9cca77def7c))
+* animate phone push/pop navigation ([6db63d7](https://github.com/staff0rd/assist/commit/6db63d78d9b4365d23870c446dda0888cf3734af))
+* ask decisions as SDK next turn ([cd7142a](https://github.com/staff0rd/assist/commit/cd7142a35b04ef35f1b595df94b009fdd09be74e))
+* dedupe restart divider while resuming ([9f4fb63](https://github.com/staff0rd/assist/commit/9f4fb6340d2f8e68edc099b5428064ef6475c64d))
+* dialog node pick sets top-nav node ([c67803e](https://github.com/staff0rd/assist/commit/c67803eb490608db13864d221650aabedb2aea43))
+* edit a queued SDK message ([54f9390](https://github.com/staff0rd/assist/commit/54f9390c9dbee14991f317351a3c84ad0d89b4eb))
+* restart nudges render as divider ([368c05f](https://github.com/staff0rd/assist/commit/368c05f1555a93da70a21712f676138af4c7b8d4))
+
 # [0.1159.0](https://github.com/staff0rd/assist/compare/v0.1158.3...v0.1159.0) (2026-11-14)
 
 
