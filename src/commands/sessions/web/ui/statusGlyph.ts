@@ -1,11 +1,10 @@
 import type { DisplayStatus } from "./displayStatus";
 
-export const statusGlyph: Record<DisplayStatus, string> = {
+export const statusGlyph: Record<Exclude<DisplayStatus, "check">, string> = {
 	running: "●",
 	idle: "●",
 	waiting: "◆",
 	question: "?",
-	check: "▲",
 	done: "✓",
 	error: "✕",
 	stopped: "○",

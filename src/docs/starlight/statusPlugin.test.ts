@@ -18,9 +18,15 @@ describe("statusPlugin", () => {
 		);
 	});
 
-	it("renders question and check statuses with their glyphs", () => {
+	it("renders question with its glyph", () => {
 		expect(render("question")).toContain(">?</span>");
-		expect(render("check")).toContain(">▲</span>");
+	});
+
+	it("renders check as a wrench head", () => {
+		const html = render("check");
+		expect(html).toContain("<svg");
+		expect(html).toContain("rotate(45 8 8)");
+		expect(html).not.toContain("▲");
 	});
 
 	it("names a dot status in hidden text", () => {

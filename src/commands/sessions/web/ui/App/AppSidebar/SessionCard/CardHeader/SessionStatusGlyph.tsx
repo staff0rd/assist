@@ -2,7 +2,7 @@ import { keyframes } from "@emotion/react";
 import Typography from "@mui/material/Typography";
 import { SessionRunningDot } from "../../../SessionRunningDot";
 import { statusColors } from "../../../statusColors";
-import { statusGlyph } from "../../../../statusGlyph";
+import { DisplayStatusGlyph } from "../../../../DisplayStatusGlyph";
 import type { DisplayStatus } from "../../../../displayStatus";
 import { isAwaitingUser } from "../../../../isAwaitingUser";
 
@@ -36,7 +36,7 @@ export function SessionStatusGlyph({ status }: { status: DisplayStatus }) {
 			}}
 			title={status}
 		>
-			{statusGlyph[status]}
+			<DisplayStatusGlyph status={status} />
 		</Typography>
 	);
 }

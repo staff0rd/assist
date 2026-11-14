@@ -2,7 +2,7 @@ import { keyframes } from "@emotion/react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import { statusPillSx } from "../../../../../../../../designSystem/statusPillSx";
-import { statusGlyph } from "../../../../../../../../statusGlyph";
+import { DisplayStatusGlyph } from "../../../../../../../../DisplayStatusGlyph";
 import { statusColors } from "../../../../../../../statusColors";
 import type { DisplayStatus } from "../../../../../../../../displayStatus";
 import { isAwaitingUser } from "../../../../../../../../isAwaitingUser";
@@ -34,7 +34,7 @@ export function SessionStatusDot({
 	if (label)
 		return (
 			<Box component="span" sx={statusPillSx(statusColors[status])}>
-				{statusGlyph[status]} {status}
+				<DisplayStatusGlyph status={status} /> {status}
 			</Box>
 		);
 

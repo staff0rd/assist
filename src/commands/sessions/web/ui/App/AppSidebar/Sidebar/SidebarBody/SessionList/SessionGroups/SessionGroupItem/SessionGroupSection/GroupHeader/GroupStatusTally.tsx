@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import { groupStatusTally } from "./GroupStatusTally/groupStatusTally";
 import type { SessionInfo } from "../../../../../../../../../types";
 import { statusColors } from "../../../../../../../../statusColors";
-import { statusGlyph } from "../../../../../../../../../statusGlyph";
+import { DisplayStatusGlyph } from "../../../../../../../../../DisplayStatusGlyph";
 
 const tallySx = {
 	display: "flex",
@@ -20,7 +20,7 @@ export function GroupStatusTally({ sessions }: { sessions: SessionInfo[] }) {
 			{groupStatusTally(sessions).map(({ status, count }) => (
 				<Typography key={status} variant="caption" data-tally={status}>
 					<Box component="span" sx={{ color: statusColors[status] }}>
-						{statusGlyph[status]}
+						<DisplayStatusGlyph status={status} />
 					</Box>{" "}
 					{count} {status}
 				</Typography>

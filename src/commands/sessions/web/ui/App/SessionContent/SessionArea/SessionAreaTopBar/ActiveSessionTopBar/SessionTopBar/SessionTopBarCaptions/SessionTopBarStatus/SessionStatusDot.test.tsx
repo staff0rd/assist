@@ -39,4 +39,12 @@ describe("SessionStatusDot", () => {
 
 		expect(getComputedStyle(screen.getByText("◆ waiting")).animation).toBe("");
 	});
+
+	it("labels a manual check with a wrench head", () => {
+		render(<SessionStatusDot status="check" label />);
+
+		const pill = screen.getByText("check", { exact: false });
+		expect(pill.querySelector("[data-testid='wrench-head']")).not.toBeNull();
+		expect(pill.textContent).toBe(" check");
+	});
 });

@@ -37,4 +37,19 @@ describe("PhoneStatusStrip", () => {
 		expect(screen.getByTestId("strip-node").textContent).toBe("pc");
 		expect(screen.queryByTestId("node-badge")).toBeNull();
 	});
+
+	it("marks a manual check with a wrench head", () => {
+		renderStrip({
+			status: "waiting",
+			pendingPrPreview: {
+				requestId: "req-1",
+				title: "Check",
+				body: "body",
+				prNumber: null,
+				kind: "check",
+			},
+		});
+		const pill = screen.getByTestId("wrench-head").parentElement;
+		expect(pill?.textContent).toBe(" Check");
+	});
 });

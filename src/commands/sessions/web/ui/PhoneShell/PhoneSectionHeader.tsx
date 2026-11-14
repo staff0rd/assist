@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import { statusColors } from "../App/statusColors";
-import { statusGlyph } from "../statusGlyph";
+import { DisplayStatusGlyph } from "../DisplayStatusGlyph";
 
 const headerSx = {
 	display: "flex",
@@ -48,7 +48,7 @@ export function PhoneSectionHeader({
 						sx={{ color: statusColors.check, mr: 1 }}
 						data-testid="section-check-count"
 					>
-						{statusGlyph.check} {checks}
+						<DisplayStatusGlyph status="check" /> {checks}
 					</Box>
 				)}
 				{count - checks}

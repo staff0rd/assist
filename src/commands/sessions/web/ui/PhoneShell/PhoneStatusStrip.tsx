@@ -3,7 +3,7 @@ import { statusColors } from "../App/statusColors";
 import { useNowSeconds } from "../App/useNowSeconds";
 import { statusPillSx } from "../designSystem/statusPillSx";
 import { displayStatus } from "../displayStatus";
-import { statusGlyph } from "../statusGlyph";
+import { DisplayStatusGlyph } from "../DisplayStatusGlyph";
 import { SdkBadge } from "../SdkBadge";
 import type { SessionInfo } from "../types";
 import { PhoneBadges } from "./PhoneBadges";
@@ -52,7 +52,8 @@ export function PhoneStatusStrip({
 				component="span"
 				sx={[statusPillSx(statusColors[status]), { fontSize: 12 }]}
 			>
-				{statusGlyph[status]} {status[0].toUpperCase() + status.slice(1)}
+				<DisplayStatusGlyph status={status} />{" "}
+				{status[0].toUpperCase() + status.slice(1)}
 			</Box>
 			{session.sdk && <SdkBadge label="SDK" />}
 			<PhoneStripOrigin session={session} localNode={localNode} />
