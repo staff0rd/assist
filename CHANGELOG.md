@@ -1,3 +1,10 @@
+# [0.1170.0](https://github.com/staff0rd/assist/compare/v0.1169.1...v0.1170.0) (2026-11-14)
+
+
+### Features
+
+* phase-done closes run previews ([65e3549](https://github.com/staff0rd/assist/commit/65e35490ca2a931df44a79a68a10f7088f822002))
+
 ## [0.1169.1](https://github.com/staff0rd/assist/compare/v0.1169.0...v0.1169.1) (2026-11-14)
 
 
