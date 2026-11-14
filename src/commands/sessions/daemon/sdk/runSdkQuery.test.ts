@@ -61,7 +61,7 @@ describe("runSdkQuery", () => {
 		);
 		expect(events).toEqual([
 			{ kind: "status", status: "running" },
-			{ kind: "activity", text: "Working · Bash npm test" },
+			{ kind: "activity", text: "Working · Bash" },
 			{ kind: "activity", text: "Working" },
 			{ kind: "activity", text: null },
 			{ kind: "status", status: "waiting" },
@@ -86,7 +86,7 @@ describe("runSdkQuery", () => {
 		);
 		expect(events).toEqual([
 			{ kind: "status", status: "running" },
-			{ kind: "activity", text: "Working · Bash npm i" },
+			{ kind: "activity", text: "Working · Bash" },
 			{ kind: "elapsed", seconds: 1 },
 			{ kind: "elapsed", seconds: 11 },
 			{ kind: "activity", text: "Working" },

@@ -17,7 +17,7 @@ describe("SdkTail", () => {
 					sdk: true,
 					status: "running",
 					sdkResuming: true,
-					sdkActivity: "Working · Bash ls",
+					sdkActivity: "Working · Bash",
 				})}
 			/>,
 		);
@@ -35,14 +35,12 @@ describe("SdkTail", () => {
 				session={makeSessionInfo({
 					sdk: true,
 					status: "running",
-					sdkActivity: "Working · Bash ls",
+					sdkActivity: "Working · Bash",
 				})}
 			/>,
 		);
 		expect(screen.queryByRole("separator")).toBeNull();
-		expect(screen.getByRole("status").textContent).toContain(
-			"Working · Bash ls",
-		);
+		expect(screen.getByRole("status").textContent).toContain("Working · Bash");
 	});
 
 	it("ticks the tool call's elapsed time after the activity", () => {
@@ -52,17 +50,17 @@ describe("SdkTail", () => {
 				session={makeSessionInfo({
 					sdk: true,
 					status: "running",
-					sdkActivity: "Working · Bash npm i",
+					sdkActivity: "Working · Bash",
 					sdkActivityElapsed: 58,
 				})}
 			/>,
 		);
 		expect(screen.getByRole("status").textContent).toContain(
-			"Working · Bash npm i · 58s",
+			"Working · Bash · 58s",
 		);
 		act(() => vi.advanceTimersByTime(3000));
 		expect(screen.getByRole("status").textContent).toContain(
-			"Working · Bash npm i · 1m 1s",
+			"Working · Bash · 1m 1s",
 		);
 	});
 
@@ -72,14 +70,14 @@ describe("SdkTail", () => {
 				session={makeSessionInfo({
 					sdk: true,
 					status: "running",
-					sdkActivity: "Working · Bash npm i",
+					sdkActivity: "Working · Bash",
 					sdkActivityElapsed: 58,
 					sdkProcess: { command: "curl -O big.iso", ioBytesPerSec: 20480 },
 				})}
 			/>,
 		);
 		expect(screen.getByRole("status").textContent).toContain(
-			"Working · Bash npm i · 58s · curl -O big.iso · IO 20 KB/s",
+			"Working · Bash · 58s · curl -O big.iso · IO 20 KB/s",
 		);
 	});
 
@@ -103,12 +101,12 @@ describe("SdkTail", () => {
 				session={makeSessionInfo({
 					sdk: true,
 					status: "waiting",
-					sdkBackgroundTasks: ["vite dev"],
+					sdkBackgroundTasks: ["Bash"],
 				})}
 			/>,
 		);
 		expect(screen.getByRole("status").textContent).toContain(
-			"Background · vite dev",
+			"Background · Bash",
 		);
 	});
 
