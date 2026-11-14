@@ -3,6 +3,7 @@ import { bracketedPaste } from "../../../../../../shared/pasteAndSubmit/brackete
 import { useSlashSuggestions } from "../../../../slashSuggestions/useSlashSuggestions";
 import { useSuggestedSlashCommands } from "../../../../slashSuggestions/useSuggestedSlashCommands";
 import type { SessionInfo } from "../../../../types";
+import { backslashLineBreak } from "./backslashLineBreak";
 import { sdkComposerState } from "./sdkComposerState";
 
 export function useSdkComposer(
@@ -30,7 +31,10 @@ export function useSdkComposer(
 		if (slash.onKeyDown(e)) return;
 		if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
 			e.preventDefault();
-			send();
+			const field = slash.inputRef.current;
+			const lineBreak = field && backslashLineBreak(field);
+			if (lineBreak) slash.replace(lineBreak);
+			else send();
 		} else if (e.key === "Escape" && state.running) {
 			e.preventDefault();
 			stop();

@@ -25,12 +25,14 @@ export function useSlashSuggestions(
 		if (!isPlacing()) setCursor(field.selectionEnd ?? field.value.length);
 	};
 
-	const pick = (name: string) => {
-		if (!found) return;
-		const next = replaceSlashWord(value, found.word, name);
+	const replace = (next: { text: string; cursor: number }) => {
 		placeCursor(next.cursor);
 		setCursor(next.cursor);
 		onChange(next.text);
+	};
+
+	const pick = (name: string) => {
+		if (found) replace(replaceSlashWord(value, found.word, name));
 	};
 
 	const onKeyDown = (e: KeyboardEvent) =>
@@ -47,6 +49,7 @@ export function useSlashSuggestions(
 			trackCursor(field);
 		},
 		trackCursor,
+		replace,
 		pick,
 		onKeyDown,
 	};

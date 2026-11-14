@@ -73,6 +73,54 @@ describe("SdkComposer", () => {
 		);
 	});
 
+	describe("backslash Enter", () => {
+		const place = (field: HTMLElement, start: number, end = start) =>
+			(field as HTMLTextAreaElement).setSelectionRange(start, end);
+		const caret = (field: HTMLElement) =>
+			(field as HTMLTextAreaElement).selectionStart;
+
+		it("turns a trailing backslash into a line break without sending", () => {
+			const { field, sendInput } = setup({ status: "waiting" }, "foo\\");
+			place(field, 4);
+			fireEvent.keyDown(field, { key: "Enter" });
+			expect(value(field)).toBe("foo\n");
+			expect(caret(field)).toBe(4);
+			expect(sendInput).not.toHaveBeenCalled();
+		});
+
+		it("splits mid-text at the cursor after a backslash", () => {
+			const { field, sendInput } = setup(
+				{ status: "waiting" },
+				String.raw`foo\bar`,
+			);
+			place(field, 4);
+			fireEvent.keyDown(field, { key: "Enter" });
+			expect(value(field)).toBe("foo\nbar");
+			expect(caret(field)).toBe(4);
+			expect(sendInput).not.toHaveBeenCalled();
+		});
+
+		it("sends when the cursor is not after a backslash", () => {
+			const { field, sendInput } = setup(
+				{ status: "waiting" },
+				String.raw`foo\bar`,
+			);
+			place(field, 7);
+			fireEvent.keyDown(field, { key: "Enter" });
+			expect(sendInput).toHaveBeenCalledWith(
+				"1",
+				bracketedPaste(String.raw`foo\bar`),
+			);
+		});
+
+		it("sends as before with a range selected", () => {
+			const { field, sendInput } = setup({ status: "waiting" }, "foo\\");
+			place(field, 0, 4);
+			fireEvent.keyDown(field, { key: "Enter" });
+			expect(sendInput).toHaveBeenCalledWith("1", bracketedPaste("foo\\"));
+		});
+	});
+
 	it("stays locked while the conversation resumes", () => {
 		const { field, sendInput } = setup({
 			status: "waiting",
