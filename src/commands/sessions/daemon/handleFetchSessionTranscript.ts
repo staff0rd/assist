@@ -8,17 +8,19 @@ import {
 import { type SessionClient, sendTo } from "./broadcast";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
+import { readTranscriptEchoes } from "./readTranscriptEchoes";
 import { resolveTranscriptPath } from "./resolveTranscriptPath";
 import type { SessionManager } from "./SessionManager";
 
 async function readMessages(session: Session): Promise<TranscriptMessage[]> {
-	const reader = conversationOf(session)?.reader;
-	const filePath = reader ? await resolveTranscriptPath(session) : null;
-	if (!reader || !filePath) return [];
+	const conversation = conversationOf(session);
+	const filePath = conversation ? await resolveTranscriptPath(session) : null;
+	if (!conversation || !filePath) return [];
 	try {
 		return transcriptMessages(
-			reader,
+			conversation.reader,
 			(await readFile(filePath, "utf8")).split("\n"),
+			await readTranscriptEchoes(conversation.id),
 		);
 	} catch {
 		return [];

@@ -81,6 +81,7 @@ export type Session = {
 	transcriptFingerprint?: string;
 	lastUserMessage?: string;
 	lastAssistantMessage?: string;
+	lastEchoAt?: string;
 	permissionActive?: boolean;
 	pendingSubmit?: { fingerprint?: string; cancel: () => void };
 	pendingPrompts?: string[];

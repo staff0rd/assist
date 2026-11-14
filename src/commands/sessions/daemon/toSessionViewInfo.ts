@@ -3,6 +3,7 @@ import type { Session } from "./createSession";
 export function toSessionViewInfo({
 	lastUserMessage,
 	lastAssistantMessage,
+	lastEchoAt,
 	cols,
 	rows,
 	activeViewer,
@@ -25,6 +26,7 @@ export function toSessionViewInfo({
 		transfer,
 		lastUserMessage,
 		lastAssistantMessage,
+		lastEchoAt,
 		cols,
 		rows,
 		activeViewer,

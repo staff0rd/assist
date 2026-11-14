@@ -3,6 +3,7 @@ import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { logPrDecision } from "./logPrDecision";
 import { prDecisionMessage } from "./prDecisionMessage";
+import { recordCheckNoteEcho } from "./recordCheckNoteEcho";
 
 type Msg = Record<string, unknown>;
 
@@ -30,6 +31,7 @@ export function decidePrPreview(
 		return;
 	}
 	logPrDecision(id, requestId, d);
+	recordCheckNoteEcho(session, d);
 	const waiter = waiters.get(id);
 	if (waiter) sendTo(waiter, prDecisionMessage(requestId, d));
 	waiters.delete(id);

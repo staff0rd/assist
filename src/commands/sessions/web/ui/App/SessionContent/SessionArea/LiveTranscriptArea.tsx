@@ -17,8 +17,14 @@ export function LiveTranscriptArea({
 	fetchSessionTranscript: FetchSessionTranscript;
 	commentLayer?: (content: ReactNode) => ReactNode;
 }) {
-	const { id, status, sdkActivity, lastUserMessage, lastAssistantMessage } =
-		session;
+	const {
+		id,
+		status,
+		sdkActivity,
+		lastUserMessage,
+		lastAssistantMessage,
+		lastEchoAt,
+	} = session;
 	// why: the daemon broadcasts these as the transcript grows, so each change means new rows to fetch
 	useEffect(() => {
 		fetchSessionTranscript(id);
@@ -29,6 +35,7 @@ export function LiveTranscriptArea({
 		sdkActivity,
 		lastUserMessage,
 		lastAssistantMessage,
+		lastEchoAt,
 	]);
 	return (
 		<TranscriptArea
