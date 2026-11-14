@@ -1,9 +1,9 @@
 import type { Activity } from "../../../shared/emitActivity";
-import type { SdkProcessInfo } from "../../../shared/harnessAdapters/types";
 import type { HarnessKind } from "../../../shared/harnesses";
 import type { SessionType } from "./deriveHistoryFields";
 import type { PreviewAttachment } from "./PreviewAttachment";
 import type { RepoGroup } from "./RepoGroup";
+import type { SdkViewState } from "./SdkViewState";
 
 export type CommandType = "claude" | "run" | "assist";
 
@@ -52,7 +52,7 @@ export type PrPreview = {
 	screenshots?: PreviewAttachment[];
 };
 
-export type SessionInfoBase = {
+export type SessionInfoBase = SdkViewState & {
 	id: string;
 	name: string;
 	title?: string;
@@ -93,15 +93,6 @@ export type SessionInfoBase = {
 	lastAssistantMessage?: string;
 	lastEchoAt?: string;
 	sdk?: boolean;
-	sdkActivity?: string;
-	sdkActivityElapsed?: number;
-	sdkProcess?: SdkProcessInfo;
-	sdkQueued?: string[];
-	sdkPending?: string[];
-	sdkBackgroundTasks?: string[];
-	sdkPromptSuggestion?: string;
-	sdkInterrupting?: boolean;
-	sdkResuming?: boolean;
 	cols?: number;
 	rows?: number;
 	activeViewer?: string;

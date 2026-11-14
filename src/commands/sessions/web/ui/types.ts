@@ -5,6 +5,7 @@ import type { HistorySnippet } from "../../shared/HistorySnippet";
 import type { SessionOrigin } from "../../shared/parseSessionFile";
 import type { RepoGroup } from "../../shared/RepoGroup";
 import type { SessionInfoBase } from "../../shared/SessionInfoBase";
+import type { TranscriptMessage } from "../../shared/transcriptMessages";
 import type { PendingLaunch } from "./PendingLaunch";
 
 export type SessionStatus =
@@ -105,11 +106,7 @@ export type HistoryCardHandlers = {
 
 export type SidebarTab = "active" | "history";
 
-export type TranscriptMessage =
-	| { role: "user"; text: string }
-	| { role: "assistant"; text: string }
-	| { role: "tool"; tool: string; target: string }
-	| { role: "interrupt" };
+export type { TranscriptMessage };
 
 export type Transcript = {
 	sessionId: string;

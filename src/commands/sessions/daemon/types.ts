@@ -1,9 +1,6 @@
 import type { FSWatcher } from "node:fs";
 import type { Activity } from "../../../shared/emitActivity";
-import type {
-	SdkProcessInfo,
-	SessionProcess,
-} from "../../../shared/harnessAdapters/types";
+import type { SessionProcess } from "../../../shared/harnessAdapters/types";
 import type { HarnessKind } from "../../../shared/harnesses";
 import type {
 	CommandType,
@@ -11,6 +8,7 @@ import type {
 	SessionInfoBase,
 	SessionTransfer,
 } from "../shared/SessionInfoBase";
+import type { SdkViewState } from "../shared/SdkViewState";
 import type { ScreenMirror } from "./createScreenMirror";
 import type { SessionInterruption } from "./SessionInterruption";
 import type { StateWatcher } from "./worktree/watchGitState";
@@ -35,7 +33,7 @@ export type SpawnSession = (
 	context?: SpawnContext,
 ) => string;
 
-export type Session = {
+export type Session = SdkViewState & {
 	id: string;
 	name: string;
 	title?: string;
@@ -111,15 +109,6 @@ export type Session = {
 	rows?: number;
 	activeViewer?: string;
 	activeViewerNode?: string;
-	sdkActivity?: string;
-	sdkActivityElapsed?: number;
-	sdkProcess?: SdkProcessInfo;
-	sdkQueued?: string[];
-	sdkPending?: string[];
-	sdkBackgroundTasks?: string[];
-	sdkPromptSuggestion?: string;
-	sdkInterrupting?: boolean;
-	sdkResuming?: boolean;
 	usedPct?: number;
 	activeMsFlushedForStretch?: { since: number; ms: number };
 	activeMsFlushChain?: Promise<void>;

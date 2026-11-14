@@ -133,6 +133,7 @@ export type ConversationEvent =
 			kind: "tool";
 			tool: string;
 			target: string;
+			description?: string;
 			operations: ToolOperation[];
 			at?: string;
 	  }

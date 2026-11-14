@@ -42,9 +42,14 @@ export function ToolRunRow({ calls }: { calls: KeyedToolMessage[] }) {
 				<ToolRunSummaryText summary={summariseToolRun(calls)} />
 			</ButtonBase>
 			{expanded && (
-				<Box sx={{ pl: 2.5 }}>
+				<Box sx={{ ml: 1.75, pl: 0.5, borderLeft: 1, borderColor: "divider" }}>
 					{calls.map((c) => (
-						<ToolRow key={c.key} tool={c.tool} target={c.target} />
+						<ToolRow
+							key={c.key}
+							tool={c.tool}
+							target={c.target}
+							description={c.description}
+						/>
 					))}
 				</Box>
 			)}

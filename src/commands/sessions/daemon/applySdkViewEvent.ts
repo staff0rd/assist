@@ -1,5 +1,6 @@
 import type { SdkSessionEvent } from "../../../shared/harnessAdapters/types";
 import type { Session } from "./createSession";
+import { applySdkTaskList } from "./applySdkTaskList";
 import { daemonLog } from "./daemonLog";
 
 export function applySdkViewEvent(
@@ -16,18 +17,8 @@ export function applySdkViewEvent(
 	} else if (event.kind === "queued") {
 		session.sdkQueued = event.texts.length ? event.texts : undefined;
 		daemonLog(`session ${session.id} sdk queued: ${event.texts.length}`);
-	} else if (event.kind === "pending") {
-		session.sdkPending = event.texts.length
-			? [...(session.sdkPending ?? []), ...event.texts]
-			: undefined;
-		daemonLog(
-			`session ${session.id} sdk pending: ${session.sdkPending?.length ?? 0}`,
-		);
-	} else if (event.kind === "background") {
-		session.sdkBackgroundTasks = event.tasks.length ? event.tasks : undefined;
-		daemonLog(
-			`session ${session.id} sdk background tasks: ${event.tasks.length}`,
-		);
+	} else if (event.kind === "pending" || event.kind === "background") {
+		applySdkTaskList(session, event);
 	} else if (event.kind === "suggestion") {
 		session.sdkPromptSuggestion = event.text ?? undefined;
 	} else if (event.kind === "resumed") {

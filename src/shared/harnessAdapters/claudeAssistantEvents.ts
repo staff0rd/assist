@@ -20,10 +20,13 @@ function toolEvent(block: Block, at?: string): ConversationEvent {
 		block.input && typeof block.input === "object"
 			? (block.input as Record<string, unknown>)
 			: {};
+	const description =
+		typeof input.description === "string" ? input.description.trim() : "";
 	return {
 		kind: "tool",
 		tool,
 		target: toolTarget(block.input),
+		...(description && { description }),
 		operations: claudeToolOperations({ toolName: tool, toolInput: input }),
 		at,
 	};
