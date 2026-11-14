@@ -39,7 +39,8 @@ export async function createDocsRefreshItem(
 		[
 			`Walk each covered story (${storyList}) one at a time: run \`assist backlog view <id>\` for that story alone and read its full output (if the output is persisted to a file, read the file, not just the preview), then run \`git show --stat <sha>\` on every one of its commits and \`git show <sha>\` on any that touch UI, commands, config or other user-visible code; note everything it changed for users across all of its phases, not just its last summary`,
 			"Skip a story only after inspecting all of its commits and finding no user-facing change (UI screens, notices, counts, commands, flags, config keys, apps); record a one-line reason for each skip, and leave pages untouched for skipped stories",
-			"For the rest, update the affected pages under `docs/src/content/docs/` (wording, new behaviour on existing pages, removed features) following the rules in `docs/CLAUDE.md`",
+			"For the rest, update the affected pages under `docs/src/content/docs/` (wording, new behaviour on existing pages, removed features, and adding or recapturing screenshots for UI stories) following the rules in `docs/CLAUDE.md`",
+			`Run \`assist backlog docs-screenshots ${formatItemId(id)}\` to list the covered UI stories and the UI files each changed; for every story it lists, add or recapture a screenshot on the docs page that documents that UI`,
 			...(coverageCheck
 				? [
 						"Run `assist run docs:coverage`; while it fails, list the gaps with `assist run docs:coverage --report` and add `covers` entries to the pages that document them (or new pages) until it passes",

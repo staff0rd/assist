@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { lazyAction } from "../../shared/lazyAction";
+import { registerDocsScreenshotsCommand } from "./registerDocsScreenshotsCommand";
 
 export function registerRefreshDocsCommand(cmd: Command): void {
 	cmd
@@ -8,4 +9,5 @@ export function registerRefreshDocsCommand(cmd: Command): void {
 			"Create a Refresh docs item now for every done story not yet swept, without waiting for docs.refreshAfter (refused when docs.refreshAfter is unset: Refresh docs is off)",
 		)
 		.action(lazyAction(() => import("./refreshDocs"), "refreshDocs"));
+	registerDocsScreenshotsCommand(cmd);
 }

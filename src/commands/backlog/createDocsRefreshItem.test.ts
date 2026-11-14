@@ -64,7 +64,7 @@ describe("createDocsRefreshItem", () => {
 		const id = await createDocsRefreshItem(orm, ORIGIN, [a], false);
 		const tasks = (await loadItem(orm, id))?.plan?.[0].tasks.map((t) => t.task);
 
-		expect(tasks).toHaveLength(4);
+		expect(tasks).toHaveLength(5);
 		expect(tasks?.[0]).toContain(formatItemId(a));
 		expect(tasks?.[0]).toContain("every one of its commits");
 		expect(tasks?.[1]).toContain("no user-facing change");
@@ -72,6 +72,10 @@ describe("createDocsRefreshItem", () => {
 		expect(tasks?.[1]).toContain("reason for each skip");
 		expect(tasks?.[2]).toContain("docs/src/content/docs/");
 		expect(tasks?.[2]).toContain("docs/CLAUDE.md");
+		expect(tasks?.[2]).toContain("recapturing screenshots for UI stories");
+		expect(tasks?.[3]).toContain(
+			`assist backlog docs-screenshots ${formatItemId(id)}`,
+		);
 	});
 
 	it("ends with the user approving the docs diff before it is committed", async () => {
@@ -112,10 +116,10 @@ describe("createDocsRefreshItem", () => {
 		const id = await createDocsRefreshItem(orm, ORIGIN, [a], true);
 		const tasks = (await loadItem(orm, id))?.plan?.[0].tasks.map((t) => t.task);
 
-		expect(tasks).toHaveLength(5);
-		expect(tasks?.[3]).toContain("assist run docs:coverage");
-		expect(tasks?.[3]).toContain("--report");
-		expect(tasks?.[3]).toContain("`covers`");
+		expect(tasks).toHaveLength(6);
+		expect(tasks?.[4]).toContain("assist run docs:coverage");
+		expect(tasks?.[4]).toContain("--report");
+		expect(tasks?.[4]).toContain("`covers`");
 	});
 
 	it("holds the phase open for the user to approve the docs changes", async () => {

@@ -1645,6 +1645,9 @@ Commands:
                                                   story not yet swept, without waiting for
                                                   docs.refreshAfter (refused when docs.refreshAfter
                                                   is unset: Refresh docs is off)
+  docs-screenshots <refresh-id>                   List a Refresh docs item's covered stories whose
+                                                  commits changed UI files (.tsx, .jsx, .css, .html,
+                                                  .swift, .vue, .svelte), each with those files
   run [options] <id>                              Run a backlog item's plan phase-by-phase
   search <query>                                  Search backlog items by keyword
   update-field [options] <id>                     Update fields on a backlog item
@@ -1917,6 +1920,15 @@ Usage: assist backlog refresh-docs [options]
 
 Create a Refresh docs item now for every done story not yet swept, without waiting for
 docs.refreshAfter (refused when docs.refreshAfter is unset: Refresh docs is off)
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog docs-screenshots --help
+Usage: assist backlog docs-screenshots [options] <refresh-id>
+
+List a Refresh docs item's covered stories whose commits changed UI files (.tsx, .jsx, .css, .html,
+.swift, .vue, .svelte), each with those files
 
 Options:
   -h, --help  display help for command
