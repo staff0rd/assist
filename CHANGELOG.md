@@ -1,3 +1,11 @@
+## [0.1174.1](https://github.com/staff0rd/assist/compare/v0.1174.0...v0.1174.1) (2026-11-14)
+
+
+### Bug Fixes
+
+* assist update installs with pnpm ([71151a7](https://github.com/staff0rd/assist/commit/71151a777ff58401f0723e0025e3d4e18e240933))
+* auto-build runs build with pnpm ([2addb21](https://github.com/staff0rd/assist/commit/2addb219bde64137891e7b3c9a6ee191f7395a1f))
+
 # [0.1174.0](https://github.com/staff0rd/assist/compare/v0.1173.1...v0.1174.0) (2026-11-14)
 
 
