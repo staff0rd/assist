@@ -1,3 +1,16 @@
+# [0.1161.0](https://github.com/staff0rd/assist/compare/v0.1160.0...v0.1161.0) (2026-11-14)
+
+
+### Bug Fixes
+
+* phase checks defer to ask-check advice ([f4d1d13](https://github.com/staff0rd/assist/commit/f4d1d13d57fc574d336fbd6aa0ce096db60bfd5f))
+
+
+### Features
+
+* all preview decisions as SDK turns ([06237b6](https://github.com/staff0rd/assist/commit/06237b6d5062d8451485380ac546321e6dd00184))
+* re-run previews lost to restart ([7b0440d](https://github.com/staff0rd/assist/commit/7b0440deabbcabcc6f0f9a8438945440e0bf1d9a))
+
 # [0.1160.0](https://github.com/staff0rd/assist/compare/v0.1159.0...v0.1160.0) (2026-11-14)
 
 
