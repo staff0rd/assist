@@ -1,3 +1,16 @@
+# [0.1146.0](https://github.com/staff0rd/assist/compare/v0.1145.2...v0.1146.0) (2026-11-14)
+
+
+### Bug Fixes
+
+* drop the SDK harness sub-line ([d6bca8b](https://github.com/staff0rd/assist/commit/d6bca8b33a553406123a1fd695778308ba340e3f))
+* route phone history transcripts to node ([d125a9d](https://github.com/staff0rd/assist/commit/d125a9dac14f8b6c02e4ac582c838d62bbeabae4))
+
+
+### Features
+
+* mark docs changes done in change nav ([a8c5551](https://github.com/staff0rd/assist/commit/a8c555157a9f994c45f4cbfe98dc801ed8a09422))
+
 ## [0.1145.2](https://github.com/staff0rd/assist/compare/v0.1145.1...v0.1145.2) (2026-11-13)
 
 
