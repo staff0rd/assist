@@ -103,16 +103,14 @@ function isInstalled(tool: Tool): boolean {
 	return !spawnSync(tool.name, ["--version"], { stdio: "ignore" }).error;
 }
 
-function checkoutHead(): string {
+function checkoutHead(dir: string): void {
 	const repoRoot = execFileSync("git", ["rev-parse", "--show-toplevel"], {
 		encoding: "utf8",
 	}).trim();
-	const dir = mkdtempSync(join(tmpdir(), "assist-bench-install-"));
-	execFileSync("sh", [
+	execFileSync("bash", [
 		"-c",
-		`git -C "${repoRoot}" archive HEAD | tar -x -C "${dir}"`,
+		`set -o pipefail; git -C "${repoRoot}" archive HEAD | tar -x -C "${dir}"`,
 	]);
-	return dir;
 }
 
 function clearNodeModules(treeDir: string): void {
@@ -200,9 +198,10 @@ function printResults(results: Result[]): void {
 }
 
 function benchmarkInFreshTree(tool: Tool, runs: number): Result[] {
-	const treeDir = checkoutHead();
-	console.log(`${tool.name}: fresh checkout of HEAD in ${treeDir}`);
+	const treeDir = mkdtempSync(join(tmpdir(), "assist-bench-install-"));
 	try {
+		checkoutHead(treeDir);
+		console.log(`${tool.name}: fresh checkout of HEAD in ${treeDir}`);
 		return benchmarkTool(tool, treeDir, runs);
 	} finally {
 		rmSync(treeDir, { recursive: true, force: true });
