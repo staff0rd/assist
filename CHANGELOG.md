@@ -1,3 +1,10 @@
+# [0.1155.0](https://github.com/staff0rd/assist/compare/v0.1154.0...v0.1155.0) (2026-11-14)
+
+
+### Features
+
+* show tool call descriptions in tool runs ([e7816a1](https://github.com/staff0rd/assist/commit/e7816a1dc35eac9a02c2503d539b54f03203c32b))
+
 # [0.1154.0](https://github.com/staff0rd/assist/compare/v0.1153.0...v0.1154.0) (2026-11-14)
 
 
