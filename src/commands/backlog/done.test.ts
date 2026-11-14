@@ -1,4 +1,5 @@
 import {
+	afterEach,
 	beforeEach,
 	describe,
 	expect,
@@ -19,7 +20,17 @@ vi.mock("./appendComment", () => ({
 	appendComment: vi.fn(),
 }));
 
+vi.mock("../sessions/daemon/sendToDaemonAwaitAck", () => ({
+	sendToDaemonAwaitAck: vi.fn(),
+}));
+
+vi.mock("../sessions/daemon/appendDaemonLog", () => ({
+	appendDaemonLog: vi.fn(),
+}));
+
+import { sendToDaemonAwaitAck } from "../sessions/daemon/sendToDaemonAwaitAck";
 import { appendComment } from "./appendComment";
+import { clearSignalOwner, recordSignalOwner } from "./recordSignalOwner";
 import { findOneItem } from "./shared";
 import { updateStatus } from "./updateStatus";
 import { done } from "./done";
@@ -27,6 +38,7 @@ import { done } from "./done";
 const mockFindOneItem = findOneItem as unknown as MockInstance;
 const mockUpdateStatus = updateStatus as unknown as MockInstance;
 const mockAppendComment = appendComment as unknown as MockInstance;
+const mockSend = sendToDaemonAwaitAck as unknown as MockInstance;
 
 const orm = {} as never;
 
@@ -141,6 +153,52 @@ describe("done", () => {
 			phase: 3,
 			type: "summary",
 		});
+	});
+
+	describe("with a run owning the item", () => {
+		beforeEach(() => {
+			process.env.ASSIST_SESSION_ID = "run-session";
+			recordSignalOwner(1);
+			process.env.ASSIST_SESSION_ID = "other-session";
+			mockFindOneItem.mockResolvedValue(
+				found({ id: 1, name: "Task", status: "in-progress" }),
+			);
+		});
+
+		afterEach(() => {
+			clearSignalOwner(1);
+			delete process.env.ASSIST_SESSION_ID;
+		});
+
+		it("should close the previews of the run's session", async () => {
+			await done("1");
+
+			expect(mockSend).toHaveBeenCalledWith({
+				type: "close-previews",
+				sessionId: "run-session",
+				reason: "item done",
+			});
+		});
+
+		it("should still complete when the daemon is unreachable", async () => {
+			mockSend.mockRejectedValue(new Error("connect ENOENT"));
+
+			await expect(done("1")).resolves.toBeUndefined();
+
+			expect(mockUpdateStatus).toHaveBeenCalledWith(orm, 1, "done");
+			expect(process.exitCode).toBeUndefined();
+		});
+	});
+
+	it("should not close previews when no run owns the item", async () => {
+		clearSignalOwner(1);
+		mockFindOneItem.mockResolvedValue(
+			found({ id: 1, name: "Task", status: "in-progress" }),
+		);
+
+		await done("1");
+
+		expect(mockSend).not.toHaveBeenCalled();
 	});
 
 	it("should allow completion with an empty plan", async () => {

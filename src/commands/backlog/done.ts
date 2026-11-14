@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { appendComment } from "./appendComment";
 import { authoredPhases } from "./authoredPhases";
+import { closeRunPreviews } from "./closeRunPreviews";
 import { formatItemId } from "./formatItemId";
 import { findOneItem } from "./shared";
 import { updateStatus } from "./updateStatus";
@@ -33,6 +34,7 @@ export async function done(id: string, summary?: string): Promise<void> {
 	}
 
 	await updateStatus(orm, item.id, "done");
+	await closeRunPreviews(item.id, "item done");
 
 	console.log(
 		chalk.green(`Completed item ${formatItemId(item.id)}: ${item.name}`),

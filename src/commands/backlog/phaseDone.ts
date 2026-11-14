@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import { closeSessionPreviewsRemote } from "../sessions/closeSessionPreviewsRemote";
 import { appendComment } from "./appendComment";
+import { closeRunPreviews } from "./closeRunPreviews";
 import { formatItemId, parseItemId } from "./formatItemId";
 import { loadItem } from "./loadItem";
 import { parsePhaseNumber } from "./parsePhaseNumber";
@@ -28,12 +28,12 @@ export async function phaseDone(
 	}
 
 	async function signal(): Promise<void> {
-		const target = writeSignal("phase-done", {
+		writeSignal("phase-done", {
 			itemId,
 			phaseIndex,
 			completedAt: new Date().toISOString(),
 		});
-		await closeSessionPreviewsRemote(target, "phase done");
+		await closeRunPreviews(itemId, "phase done");
 	}
 
 	if (item.status === "done") {
