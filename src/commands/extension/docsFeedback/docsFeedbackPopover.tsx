@@ -4,12 +4,18 @@ import type { AssistSendResult } from "../sendToAssist/isAssistSendMessage";
 
 type Send = (prompt: string) => Promise<AssistSendResult>;
 type Dismiss = (restoreFocus: boolean) => void;
-type Options = { selectedText?: string };
+type Options = {
+	selectedText?: string;
+	prompt?: string;
+	onPromptChange?: (prompt: string) => void;
+};
 
 function DocsFeedbackPopover({
 	send,
 	dismiss,
 	selectedText,
+	prompt,
+	onPromptChange,
 }: Options & { send: Send; dismiss: Dismiss }) {
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string>();
@@ -32,6 +38,8 @@ function DocsFeedbackPopover({
 			busy={busy}
 			keepDraftOnBlur
 			copyWhenEmpty={selectedText}
+			initialInstructions={prompt}
+			onInstructionsChange={onPromptChange}
 		/>
 	);
 }

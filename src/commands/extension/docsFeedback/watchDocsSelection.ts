@@ -1,5 +1,6 @@
 import { openDocsFeedback } from "./openDocsFeedback";
 import { readDocsSelection } from "./readDocsSelection";
+import { restoreDocsFeedbackDraft } from "./restoreDocsFeedbackDraft";
 
 const OWN_UI = "[data-assist-docs-feedback], [data-assist-popover]";
 
@@ -12,7 +13,7 @@ function popoverOpen(): boolean {
 }
 
 export function watchDocsSelection(): void {
-	let release: (() => void) | undefined;
+	let release = restoreDocsFeedbackDraft(document);
 	document.addEventListener("mouseup", (event) => {
 		if (isOwnUi(event.target) || popoverOpen()) return;
 		release?.();

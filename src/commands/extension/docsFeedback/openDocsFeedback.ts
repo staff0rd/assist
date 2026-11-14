@@ -1,4 +1,5 @@
 import { toggleAssistPopover } from "../sendToAssist/toggleAssistPopover";
+import { docsFeedbackDraft } from "./docsFeedbackDraft";
 import { docsFeedbackPopover } from "./docsFeedbackPopover";
 import { docsFeedbackSender } from "./docsFeedbackSender";
 import { highlightRange } from "./highlightRange";
@@ -22,13 +23,26 @@ function selectionEndAnchor(range: Range): HTMLElement {
 	return anchor;
 }
 
-export function openDocsFeedback(selection: DocsSelection): () => void {
+type Restore = { prompt?: string; highlight?: boolean };
+
+function saveDraft({ range: _range, ...selection }: DocsSelection) {
+	return (prompt: string) => {
+		if (prompt.trim()) docsFeedbackDraft.save({ ...selection, prompt });
+		else docsFeedbackDraft.clear();
+	};
+}
+
+export function openDocsFeedback(
+	selection: DocsSelection,
+	{ prompt, highlight = true }: Restore = {},
+): () => void {
 	const anchor = selectionEndAnchor(selection.range);
 	document.body.append(anchor);
-	const unhighlight = highlightRange(selection.range);
+	const unhighlight = highlight ? highlightRange(selection.range) : () => {};
 	const release = () => {
 		anchor.remove();
 		unhighlight();
+		docsFeedbackDraft.clear();
 	};
 	const send = docsFeedbackSender(selection, release);
 	toggleAssistPopover(anchor, (dismiss) =>
@@ -38,7 +52,11 @@ export function openDocsFeedback(selection: DocsSelection): () => void {
 				dismiss(restoreFocus);
 				release();
 			},
-			{ selectedText: selection.range.toString() },
+			{
+				selectedText: selection.selection,
+				prompt,
+				onPromptChange: saveDraft(selection),
+			},
 		),
 	);
 	return release;

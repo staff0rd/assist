@@ -1,9 +1,10 @@
 import { Paper } from "@mui/material";
-import { type ReactNode, useState } from "react";
+import type { ReactNode } from "react";
 import { AssistInstructionsField } from "./AssistInstructionsField";
 import { AssistPopoverButtons } from "./AssistPopoverButtons";
 import { AssistPopoverFooter } from "./AssistPopoverFooter";
 import { popoverPaperSx } from "./popoverPaperSx";
+import { useInstructions } from "./useInstructions";
 import { usePopoverHandlers } from "./usePopoverHandlers";
 
 export function AssistPopover({
@@ -14,6 +15,8 @@ export function AssistPopover({
 	busy = false,
 	keepDraftOnBlur = false,
 	copyWhenEmpty,
+	initialInstructions = "",
+	onInstructionsChange,
 	buttons,
 	children,
 }: {
@@ -24,10 +27,15 @@ export function AssistPopover({
 	busy?: boolean;
 	keepDraftOnBlur?: boolean;
 	copyWhenEmpty?: string;
+	initialInstructions?: string;
+	onInstructionsChange?: (instructions: string) => void;
 	buttons?: string[];
 	children?: ReactNode;
 }) {
-	const [instructions, setInstructions] = useState("");
+	const [instructions, changeInstructions] = useInstructions(
+		initialInstructions,
+		onInstructionsChange,
+	);
 	const { send, onKeyDown, onBlur } = usePopoverHandlers({
 		instructions,
 		onSend,
@@ -45,7 +53,7 @@ export function AssistPopover({
 		>
 			<AssistInstructionsField
 				value={instructions}
-				onChange={setInstructions}
+				onChange={changeInstructions}
 				onKeyDown={onKeyDown}
 				placeholder={placeholder}
 				error={Boolean(error)}
