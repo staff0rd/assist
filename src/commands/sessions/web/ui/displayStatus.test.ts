@@ -87,7 +87,7 @@ describe("displayStatus", () => {
 			).toBe("check");
 	});
 
-	it("reads question while a design review is pending", () => {
+	it("reads design while a design review is pending", () => {
 		for (const status of ["running", "waiting"] satisfies SessionStatus[])
 			expect(
 				displayStatus(
@@ -96,7 +96,7 @@ describe("displayStatus", () => {
 						pendingPrPreview: { ...preview, kind: "design" },
 					}),
 				),
-			).toBe("question");
+			).toBe("design");
 	});
 
 	it("keeps a waiting session with a sign-off preview as waiting", () => {

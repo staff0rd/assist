@@ -20,6 +20,7 @@ const rowWash: Partial<
 > = {
 	waiting: "warning",
 	question: "warning",
+	design: "warning",
 	check: "warning",
 	error: "error",
 };

@@ -1,6 +1,9 @@
 import type { DisplayStatus } from "./displayStatus";
 
-export const statusGlyph: Record<Exclude<DisplayStatus, "check">, string> = {
+export const statusGlyph: Record<
+	Exclude<DisplayStatus, "check" | "design">,
+	string
+> = {
 	running: "●",
 	idle: "●",
 	waiting: "◆",

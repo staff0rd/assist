@@ -15,6 +15,14 @@ describe("SessionStatusGlyph", () => {
 		expect(getComputedStyle(glyph).animation).toContain("1.4s");
 	});
 
+	it("draws a pulsing eye for a design review", () => {
+		render(<SessionStatusGlyph status="design" />);
+
+		const glyph = screen.getByTitle("design");
+		expect(glyph.querySelector("[data-testid='eye']")).not.toBeNull();
+		expect(getComputedStyle(glyph).animation).toContain("1.4s");
+	});
+
 	it("keeps the text glyph for a question", () => {
 		render(<SessionStatusGlyph status="question" />);
 

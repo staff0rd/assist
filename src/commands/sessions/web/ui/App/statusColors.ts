@@ -7,6 +7,7 @@ export const statusColors: Record<DisplayStatus, string> = {
 	idle: "text.disabled",
 	waiting: "warning.main",
 	question: "warning.main",
+	design: "warning.main",
 	check: "warning.main",
 	done: "info.main",
 	error: "error.main",

@@ -7,6 +7,7 @@ const attentionWash: Partial<
 > = {
 	waiting: "warning",
 	question: "warning",
+	design: "warning",
 	check: "warning",
 	error: "error",
 };
