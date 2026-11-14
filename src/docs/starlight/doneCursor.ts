@@ -21,6 +21,14 @@ export function doneCursor(
 		firstPending: (from: number) =>
 			keys.findIndex((key, index) => index >= from && !store.isDone(key)),
 		left: () => keys.filter((key) => !store.isDone(key)).length,
+		reopen(index: number) {
+			store.setDone(keys[index], false);
+			if (index === cursor.current)
+				position.textContent = (position.textContent ?? "").replace(
+					" · done",
+					"",
+				);
+		},
 		setCurrentDone(isDone: boolean) {
 			if (cursor.current >= 0) store.setDone(keys[cursor.current], isDone);
 		},

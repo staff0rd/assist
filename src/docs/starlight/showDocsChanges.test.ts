@@ -177,4 +177,24 @@ describe("showDocsChanges", () => {
 		render("config", body, pages, "#assist-change-first");
 		expect(go).toHaveBeenLastCalledWith("/backlog/#assist-change-first");
 	});
+
+	it("puts a commented done change back in the loop", () => {
+		const bar = render("config", body, [pages[1]]);
+		click("Next change");
+		click("Mark done and go to next change");
+		click("Mark done and go to next change");
+		expect(bar?.textContent).toContain("All changes done");
+		document
+			.querySelector(".assist-diff-added")
+			?.dispatchEvent(new Event("assist-docs-commented", { bubbles: true }));
+		expect(bar?.textContent).toContain("1 left on 1 page");
+		expect(
+			document
+				.querySelector('a[href="/config/"]')
+				?.hasAttribute("data-assist-done"),
+		).toBe(false);
+		click("Next change");
+		expect(focused()).toEqual(["old", "new"]);
+		expect(bar?.textContent).not.toContain("· done");
+	});
 });

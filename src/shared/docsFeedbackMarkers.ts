@@ -7,5 +7,6 @@ export const docsFeedbackMarkers = {
 	doneAttribute: "data-assist-done",
 	headingAttribute: "data-docs-heading",
 	sourceAttribute: "data-docs-source",
+	commentedEvent: "assist-docs-commented",
 	popover: "[data-assist-popover]",
 };

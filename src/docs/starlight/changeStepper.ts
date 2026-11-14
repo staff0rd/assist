@@ -1,8 +1,10 @@
 import type { ChangeLoop } from "./changeLoop";
-import { changeHash, changeSteps } from "./changeSteps";
+import { changeSteps } from "./changeSteps";
 import { doneCursor } from "./doneCursor";
 import type { DoneStore } from "./doneStore";
+import { reopenOnComment } from "./reopenOnComment";
 import { remainingStatus } from "./remainingStatus";
+import { startAtHash } from "./startAtHash";
 import { stepperButton } from "./stepperButton";
 
 type StepperContext = {
@@ -42,10 +44,11 @@ export function changeStepper(
 	previous.addEventListener("click", steps.previous);
 	next.addEventListener("click", () => leave(false));
 	done.addEventListener("click", () => leave(true));
+	reopenOnComment(doc, changes, (index) => {
+		cursor.reopen(index);
+		refresh();
+	});
 	refresh();
-	const start = doc.location.hash;
-	if (start === changeHash.first) steps.next();
-	if (changes.length && start === changeHash.last)
-		cursor.show(changes.length - 1);
+	startAtHash(doc.location.hash, changes.length, steps, cursor);
 	return [previous, position, next, done, remaining];
 }
