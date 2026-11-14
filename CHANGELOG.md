@@ -1,3 +1,10 @@
+## [0.1173.1](https://github.com/staff0rd/assist/compare/v0.1173.0...v0.1173.1) (2026-11-14)
+
+
+### Bug Fixes
+
+* remove temp dir if checkout fails ([9af42a3](https://github.com/staff0rd/assist/commit/9af42a35aff9d887844f65118a5db48c419d9def))
+
 # [0.1173.0](https://github.com/staff0rd/assist/compare/v0.1172.0...v0.1173.0) (2026-11-14)
 
 
