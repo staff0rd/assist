@@ -1,3 +1,13 @@
+## [0.1146.1](https://github.com/staff0rd/assist/compare/v0.1146.0...v0.1146.1) (2026-11-14)
+
+
+### Bug Fixes
+
+* describe SDK tool activity ([0874b24](https://github.com/staff0rd/assist/commit/0874b24ba712c2118bcf58be4bec978606ddd445))
+* design reviews read as questions ([34e93c5](https://github.com/staff0rd/assist/commit/34e93c5db027d457412adc4e8edc8d74ad3bf373))
+* show restarting nodes as Restarting ([c1c1ac7](https://github.com/staff0rd/assist/commit/c1c1ac700442ab9e4db9ff050185e8b0f824dbfe))
+* trim SDK background task rows ([63a9c83](https://github.com/staff0rd/assist/commit/63a9c83fa70b0b18b531b86a13fbd74209927eba))
+
 # [0.1146.0](https://github.com/staff0rd/assist/compare/v0.1145.2...v0.1146.0) (2026-11-14)
 
 
