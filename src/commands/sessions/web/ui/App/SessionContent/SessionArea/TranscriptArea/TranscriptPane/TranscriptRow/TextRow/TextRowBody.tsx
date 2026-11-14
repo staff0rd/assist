@@ -2,7 +2,7 @@ import Typography from "@mui/material/Typography";
 import { useKnownSlashCommands } from "../../../../../../../slashSuggestions/useKnownSlashCommands";
 import { SlashCommandText } from "../../../../../../../slashSuggestions/SlashCommandText";
 import { slashHighlightSx } from "../../../../../../../slashSuggestions/slashHighlightSx";
-import { AssistantMarkdown } from "./AssistantMarkdown";
+import { TranscriptMarkdown } from "./TranscriptMarkdown";
 import { HighlightedText } from "./HighlightedText";
 
 const plainSx = {
@@ -22,7 +22,13 @@ export function TextRowBody({
 	term: string;
 }) {
 	const commands = useKnownSlashCommands();
-	if (!isUser && !term) return <AssistantMarkdown text={text} />;
+	if (!term)
+		return (
+			<TranscriptMarkdown
+				text={text}
+				commands={isUser ? commands : undefined}
+			/>
+		);
 	return (
 		<Typography variant="body2" sx={plainSx}>
 			<SlashCommandText
