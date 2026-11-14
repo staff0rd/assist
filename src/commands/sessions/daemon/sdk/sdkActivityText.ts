@@ -1,3 +1,5 @@
+import { activityLine } from "./activityLine";
+
 type ContentBlock = {
 	type: string;
 	name?: string;
@@ -15,15 +17,12 @@ const TARGET_KEYS = [
 	"description",
 	"skill",
 ];
-const MAX_TARGET = 80;
-
 function toolTarget(input: unknown): string {
 	if (!input || typeof input !== "object") return "";
 	const record = input as Record<string, unknown>;
 	const key = TARGET_KEYS.find((k) => typeof record[k] === "string");
 	if (!key) return "";
-	const line = (record[key] as string).split("\n")[0].trim();
-	return line.length > MAX_TARGET ? `${line.slice(0, MAX_TARGET - 1)}…` : line;
+	return activityLine(record[key] as string);
 }
 
 export function sdkActivityText(content: readonly ContentBlock[]): string {

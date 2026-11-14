@@ -28,6 +28,25 @@ describe("sdkBackgroundTasks", () => {
 		).toEqual(["vite dev"]);
 	});
 
+	it("shows only the first line of a multi-line command, capped", () => {
+		const command = `cd /repo; cat > /tmp/q.json <<'JSON'\n{"questions":[]}\nJSON\nassist ask-question`;
+		expect(
+			sdkBackgroundTasks(
+				changed([
+					{ task_id: "a", task_type: "local_bash", description: command },
+					{
+						task_id: "b",
+						task_type: "local_bash",
+						description: `vite ${"x".repeat(100)}`,
+					},
+				]),
+			),
+		).toEqual([
+			"cd /repo; cat > /tmp/q.json <<'JSON'",
+			`vite ${"x".repeat(74)}…`,
+		]);
+	});
+
 	it("returns an empty set when every task ended", () => {
 		expect(sdkBackgroundTasks(changed([]))).toEqual([]);
 	});

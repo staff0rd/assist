@@ -1,4 +1,5 @@
 import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
+import { activityLine } from "./activityLine";
 
 export function sdkBackgroundTasks(message: SDKMessage): string[] | undefined {
 	if (
@@ -8,5 +9,5 @@ export function sdkBackgroundTasks(message: SDKMessage): string[] | undefined {
 		return undefined;
 	return message.tasks
 		.filter((task) => !task.ambient)
-		.map((task) => task.description);
+		.map((task) => activityLine(task.description));
 }
