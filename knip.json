@@ -1,7 +1,6 @@
 {
 	"entry": [
 		"src/index.ts",
-		"scripts/benchmarkInstall.ts",
 		"oxlint-rules/filenameConvention.ts",
 		"oxlint-rules/noRawStyleValues.ts",
 		"oxlint-rules/requireShiftSkipConfirm.ts",

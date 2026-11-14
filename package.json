@@ -33,8 +33,7 @@
 		"ios:install": "npm ci --prefix ios-app",
 		"ios:build": "npm run build && tsx src/commands/sessions/web/ios/buildIosWeb.ts && npm run --prefix ios-app sync",
 		"ios:open": "npm run --prefix ios-app open",
-		"ios:run": "npm run --prefix ios-app run",
-		"bench:install": "tsx scripts/benchmarkInstall.ts"
+		"ios:run": "npm run --prefix ios-app run"
 	},
 	"keywords": [],
 	"author": "",
