@@ -9,7 +9,7 @@ export function buildReviewCheckLines(
 			"Manual checks moved to this Review phase:",
 			...list,
 			"",
-			"Raise each of these with `assist ask-check --json - < <file>` as a background task, one check at a time, doing no other work until it returns (see the 'Asking for a manual check' advice for the payload). If it exits non-zero before opening, ask for that check in chat instead. Wait for every one to come back works; if one doesn't work, fix it and raise it again.",
+			"Raise each of these with `assist ask-check --json - < <file>`, one check at a time, waiting for each result before doing anything else; run it and wait exactly as the 'Asking for a manual check' advice says, which also gives the payload. If it exits non-zero before opening, ask for that check in chat instead. Wait for every one to come back works; if one doesn't work, fix it and raise it again.",
 			"",
 		];
 	}

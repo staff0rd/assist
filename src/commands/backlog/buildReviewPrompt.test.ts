@@ -56,6 +56,7 @@ describe("buildReviewPrompt", () => {
 
 			expect(prompt).toContain("1. Bumped check");
 			expect(prompt).toContain("assist ask-check --json -");
+			expect(prompt).not.toContain("background task");
 		});
 
 		it("lists them for chat confirmation when askCheck is off", () => {

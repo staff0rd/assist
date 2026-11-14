@@ -165,7 +165,8 @@ describe("buildAuthoredPhasePrompt", () => {
 			);
 
 			expect(prompt).toContain("assist ask-check --check <n> --json -");
-			expect(prompt).toContain("as a background task");
+			expect(prompt).not.toContain("background task");
+			expect(prompt).toContain("'Asking for a manual check' advice says");
 			expect(prompt).toContain("Keep your chat summary to a few lines");
 			expect(prompt).toContain("1. click the button");
 			expect(prompt).toContain(

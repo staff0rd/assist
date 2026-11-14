@@ -7,7 +7,7 @@ export function buildManualCheckLines(
 		return [
 			"",
 			"Once verify passes, run /commit to commit the work before asking the user to perform the manual checks below.",
-			"Then raise each manual check with `assist ask-check --check <n> --json - < <file>` as a background task, where <n> is the check's number in the list below, one check at a time, doing no other work until it returns (see the 'Asking for a manual check' advice for the payload). If it exits non-zero before opening, ask for that check in chat instead.",
+			"Then raise each manual check with `assist ask-check --check <n> --json - < <file>`, where <n> is the check's number in the list below, one check at a time, waiting for each result before doing anything else; run it and wait exactly as the 'Asking for a manual check' advice says, which also gives the payload. If it exits non-zero before opening, ask for that check in chat instead.",
 			"Keep your chat summary to a few lines; the check itself carries the steps.",
 			"Manual checks:",
 			...manualChecks.map((c, i) => `${i + 1}. ${c}`),
