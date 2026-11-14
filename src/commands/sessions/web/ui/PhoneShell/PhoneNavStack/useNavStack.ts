@@ -23,5 +23,9 @@ export function useNavStack() {
 			),
 		[],
 	);
-	return { state: current, settle };
+	const setGesture = useCallback(
+		(gesture: NavStackState["gesture"]) => setState((s) => ({ ...s, gesture })),
+		[],
+	);
+	return { state: current, settle, setGesture };
 }

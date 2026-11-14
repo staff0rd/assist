@@ -1,39 +1,34 @@
-const EDGE_ZONE_PX = 24;
-const TRIGGER_PX = 80;
+import { edgeSwipeGesture } from "./PhoneNavStack/edgeSwipeGesture";
 
-function isModalOpen(): boolean {
-	return (
-		document.querySelector(".MuiModal-root:not(.MuiModal-hidden)") !== null
-	);
-}
+type SwipeZone = { edgeZone: number; activation: number };
 
-export function createEdgeSwipeHandlers(onBack: () => void) {
-	let start: { x: number; y: number } | null = null;
-	let dx = 0;
+export type SwipeCallbacks = {
+	canStart: () => boolean;
+	onStart: () => void;
+	onMove: (dx: number) => void;
+	onEnd: (dx: number, velocity: number) => void;
+};
 
-	const reset = () => {
-		start = null;
-		dx = 0;
-	};
+export function createEdgeSwipeHandlers(
+	{ edgeZone, activation }: SwipeZone,
+	callbacks: SwipeCallbacks,
+) {
+	const gesture = edgeSwipeGesture(activation, callbacks);
 	return {
 		touchstart: (e: TouchEvent) => {
-			reset();
-			if (e.touches.length !== 1 || isModalOpen()) return;
+			gesture.cancel();
+			if (e.touches.length !== 1) return;
 			const { clientX: x, clientY: y } = e.touches[0];
-			if (x <= EDGE_ZONE_PX) start = { x, y };
+			if (x <= edgeZone && callbacks.canStart())
+				gesture.begin(x, y, e.timeStamp);
 		},
 		touchmove: (e: TouchEvent) => {
-			if (start === null) return;
-			if (e.touches.length !== 1) return reset();
+			if (e.touches.length !== 1) return gesture.cancel();
 			const { clientX, clientY } = e.touches[0];
-			const nextDx = clientX - start.x;
-			if (Math.abs(clientY - start.y) > Math.abs(nextDx)) return reset();
-			dx = nextDx;
+			if (gesture.move(clientX, clientY, e.timeStamp) && e.cancelable)
+				e.preventDefault();
 		},
-		touchend: () => {
-			if (start !== null && dx >= TRIGGER_PX) onBack();
-			reset();
-		},
-		touchcancel: reset,
+		touchend: (e: TouchEvent) => gesture.end(e.timeStamp),
+		touchcancel: () => gesture.cancel(),
 	};
 }

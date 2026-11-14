@@ -44,5 +44,5 @@ export function usePushPopAnimation(
 		if (el) pages.current.set(key, el);
 		else pages.current.delete(key);
 	};
-	return { register, dim };
+	return { register, dim, pages };
 }

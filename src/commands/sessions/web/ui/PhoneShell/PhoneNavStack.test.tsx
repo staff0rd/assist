@@ -1,6 +1,14 @@
 // @vitest-environment jsdom
 import { ThemeProvider } from "@mui/material/styles";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import Drawer from "@mui/material/Drawer";
+import {
+	cleanup,
+	createEvent,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
 import {
 	type Location,
 	MemoryRouter,
@@ -8,7 +16,7 @@ import {
 	Routes,
 	useNavigate,
 } from "react-router";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { createDesignTheme } from "../designSystem/createDesignTheme";
 import type { SessionSocket } from "../useSessionSocket";
 import { PhoneBackButton } from "./PhoneBackButton";
@@ -22,6 +30,10 @@ function Open({ to }: { to: string }) {
 		</button>
 	);
 }
+
+vi.mock("../isNativeApp", () => ({ isNativePlatform: true }));
+
+const sheet = vi.hoisted(() => ({ open: false }));
 
 vi.mock("./PhoneRoutes", () => ({
 	PhoneRoutes: ({ location }: { location: Location }) => (
@@ -37,12 +49,55 @@ vi.mock("./PhoneRoutes", () => ({
 					</>
 				}
 			/>
-			<Route path="/session/:id" element={<PhoneBackButton />} />
+			<Route
+				path="/session/:id"
+				element={
+					<>
+						<PhoneBackButton />
+						<Drawer anchor="bottom" open={sheet.open}>
+							sheet
+						</Drawer>
+					</>
+				}
+			/>
 		</Routes>
 	),
 }));
 
-afterEach(cleanup);
+afterEach(() => {
+	cleanup();
+	sheet.open = false;
+});
+
+beforeAll(() => {
+	Object.defineProperty(HTMLElement.prototype, "offsetWidth", {
+		configurable: true,
+		get: () => 400,
+	});
+});
+
+function touch(
+	type: "touchStart" | "touchMove" | "touchEnd",
+	x: number,
+	timeStamp: number,
+) {
+	const event = createEvent[type](document, {
+		touches: type === "touchEnd" ? [] : [{ clientX: x, clientY: 300 }],
+		cancelable: true,
+	});
+	Object.defineProperty(event, "timeStamp", { value: timeStamp });
+	fireEvent(document, event);
+}
+
+function swipe(toX: number) {
+	touch("touchStart", 5, 0);
+	touch("touchMove", 20, 100);
+	touch("touchMove", toX, 1000);
+	touch("touchEnd", toX, 2000);
+}
+
+const onSession = () =>
+	screen.queryByRole("button", { name: "Back to a1", hidden: true }) !== null;
 
 const socket = { sessions: [], history: [] } as unknown as SessionSocket;
 
@@ -90,5 +145,50 @@ describe("PhoneNavStack", () => {
 		renderAt("/backlog/a1");
 		tap("Back to Backlog");
 		expect(screen.getByText("backlog list")).toBeTruthy();
+	});
+
+	it("swipes back to the page beneath past halfway", async () => {
+		renderAt("/");
+		tap("open /backlog/a1");
+		tap("open /session/s1");
+		swipe(300);
+		await waitFor(() => expect(onSession()).toBe(false));
+		expect(
+			screen.getByText("open /session/s1", { selector: "button" }),
+		).toBeTruthy();
+	});
+
+	it("cancels a swipe released before halfway", async () => {
+		renderAt("/");
+		tap("open /backlog/a1");
+		tap("open /session/s1");
+		swipe(150);
+		await new Promise((r) => setTimeout(r, 0));
+		expect(onSession()).toBe(true);
+	});
+
+	it("swipes to the owning tab root when nothing is beneath", async () => {
+		renderAt("/backlog/a1");
+		swipe(300);
+		await waitFor(() => expect(screen.getByText("backlog list")).toBeTruthy());
+	});
+
+	it("ignores a swipe while a sheet is open", async () => {
+		sheet.open = true;
+		renderAt("/");
+		tap("open /backlog/a1");
+		tap("open /session/s1");
+		swipe(300);
+		await new Promise((r) => setTimeout(r, 0));
+		expect(onSession()).toBe(true);
+	});
+
+	it("ignores a swipe on a tab root", async () => {
+		renderAt("/");
+		swipe(300);
+		await new Promise((r) => setTimeout(r, 0));
+		expect(
+			screen.getByRole("button", { name: "open /backlog/a1" }),
+		).toBeTruthy();
 	});
 });

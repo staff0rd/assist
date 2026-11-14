@@ -1,23 +1,22 @@
-import { useEffect, useRef } from "react";
-import { isNativePlatform } from "../isNativeApp";
-import { createEdgeSwipeHandlers } from "./createEdgeSwipeHandlers";
+import { createContext, useContext, useEffect, useRef } from "react";
+
+export type SwipeBackTarget = { current: (() => void) | null };
+
+export const SwipeBackTargetContext = createContext<SwipeBackTarget>({
+	current: null,
+});
 
 export function useEdgeSwipeBack(onBack: () => void, enabled = true): void {
+	const target = useContext(SwipeBackTargetContext);
 	const onBackRef = useRef(onBack);
 	onBackRef.current = onBack;
 
 	useEffect(() => {
-		if (!isNativePlatform || !enabled) return;
-		const handlers = Object.entries(
-			createEdgeSwipeHandlers(() => onBackRef.current()),
-		) as [keyof DocumentEventMap, (e: TouchEvent) => void][];
-		for (const [type, handler] of handlers)
-			document.addEventListener(type, handler as EventListener, {
-				passive: true,
-			});
+		if (!enabled) return;
+		const handler = () => onBackRef.current();
+		target.current = handler;
 		return () => {
-			for (const [type, handler] of handlers)
-				document.removeEventListener(type, handler as EventListener);
+			if (target.current === handler) target.current = null;
 		};
-	}, [enabled]);
+	}, [target, enabled]);
 }

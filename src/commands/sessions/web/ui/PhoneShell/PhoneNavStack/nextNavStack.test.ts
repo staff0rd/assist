@@ -70,4 +70,13 @@ describe("nextNavStack", () => {
 		expect(keys(next)).toEqual(["a", "c"]);
 		expect(next.transition).toBeUndefined();
 	});
+
+	it("does not replay a pop the swipe already animated", () => {
+		const prev = { ...start("a", "b"), gesture: "done" as const };
+		const next = nextNavStack(prev, prev.stack[0], NavigationType.Pop);
+		expect(keys(next)).toEqual(["a"]);
+		expect(next.transition).toBeUndefined();
+		expect(next.leaving).toBeUndefined();
+		expect(next.gesture).toBeUndefined();
+	});
 });

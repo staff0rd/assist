@@ -4,6 +4,7 @@ export type NavStackState = {
 	stack: Location[];
 	leaving?: Location;
 	transition?: { id: number; kind: "push" | "pop" };
+	gesture?: "tracking" | "done";
 	seq: number;
 };
 
@@ -21,10 +22,11 @@ function settle(
 	leaving?: Location,
 ): NavStackState {
 	const seq = prev.seq + 1;
+	const animate = kind && prev.gesture !== "done";
 	return {
 		stack: stack.slice(-MAX_DEPTH),
-		leaving,
-		transition: kind ? { id: seq, kind } : undefined,
+		leaving: animate ? leaving : undefined,
+		transition: animate ? { id: seq, kind } : undefined,
 		seq,
 	};
 }

@@ -10,6 +10,7 @@ class AssistBridgeViewController: CAPBridgeViewController, WKScriptMessageHandle
 
     override func capacitorDidLoad() {
         super.capacitorDidLoad()
+        webView?.allowsBackForwardNavigationGestures = false
         webView?.configuration.userContentController.add(self, name: Self.selectionHandler)
     }
 
