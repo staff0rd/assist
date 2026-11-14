@@ -12,7 +12,7 @@ export type SdkSessionEvent =
 	| { kind: "activity"; text: string | null }
 	| { kind: "elapsed"; seconds: number | null }
 	| { kind: "process"; process: SdkProcessInfo | null }
-	| { kind: "queued"; texts: string[] }
+	| { kind: "queued"; texts: string[]; sent?: string }
 	| { kind: "pending"; texts: string[] }
 	| { kind: "background"; tasks: string[] }
 	| { kind: "suggestion"; text: string | null }

@@ -66,6 +66,17 @@ describe("wireSdkEvents", () => {
 		expect(notify).toHaveBeenCalledTimes(3);
 	});
 
+	it("moves a flushed queue straight to pending in one broadcast", () => {
+		const { control, session, notify } = sdkSession("running");
+		control.emit({ kind: "pending", texts: ["one"] });
+		control.emit({ kind: "queued", texts: ["two", "three"] });
+		notify.mockClear();
+		control.emit({ kind: "queued", texts: [], sent: "two\n\nthree" });
+		expect(session.sdkQueued).toBeUndefined();
+		expect(session.sdkPending).toEqual(["one", "two\n\nthree"]);
+		expect(notify).toHaveBeenCalledTimes(1);
+	});
+
 	it("clears pending messages when the query exits", () => {
 		const { control, session } = sdkSession("running");
 		control.emit({ kind: "pending", texts: ["one"] });

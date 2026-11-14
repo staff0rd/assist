@@ -58,7 +58,11 @@ describe("createSdkTurnTracker", () => {
 		]);
 		turn.setStatus("waiting");
 		expect(push).toHaveBeenLastCalledWith("second\n\nthird");
-		expect(events.at(-1)).toEqual({ kind: "queued", texts: [] });
+		expect(events.at(-1)).toEqual({
+			kind: "queued",
+			texts: [],
+			sent: "second\n\nthird",
+		});
 		expect(events).not.toContainEqual({ kind: "status", status: "waiting" });
 	});
 

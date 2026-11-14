@@ -18,9 +18,9 @@ export function createSdkMessageQueue(
 	push: (text: string) => void,
 ) {
 	let queued: string[] = [];
-	const publish = (next: string[]) => {
+	const publish = (next: string[], sent?: string) => {
 		queued = next;
-		control.emit({ kind: "queued", texts: next });
+		control.emit({ kind: "queued", texts: next, ...(sent && { sent }) });
 	};
 	return {
 		add: (text: string) => {
@@ -33,7 +33,7 @@ export function createSdkMessageQueue(
 			if (!queued.length) return false;
 			daemonLog(`${label} sdk sending ${queued.length} queued message(s)`);
 			const text = queued.join("\n\n");
-			publish([]);
+			publish([], text);
 			push(text);
 			return true;
 		},

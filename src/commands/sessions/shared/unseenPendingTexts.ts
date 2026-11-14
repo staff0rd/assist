@@ -10,13 +10,19 @@ function latestUserTexts(rows: TranscriptRole[]): string[] {
 	return texts;
 }
 
+const normalize = (text: string) => text.replace(/\s+/g, " ").trim();
+
 /* why: a pending message is shown before Claude writes it to the transcript,
- * so it is dropped once the transcript's latest user rows contain its text. */
+ * so it is dropped once the transcript's latest user rows contain its text.
+ * A flushed queue is one pending entry joined with blank lines; whitespace is
+ * collapsed so it still matches the single row Claude records for it. */
 export function unseenPendingTexts(
 	pending: string[] | undefined,
 	rows: TranscriptRole[],
 ): string[] {
 	if (!pending?.length) return [];
-	const seen = latestUserTexts(rows);
-	return pending.filter((text) => !seen.some((t) => t.includes(text.trim())));
+	const seen = latestUserTexts(rows).map(normalize);
+	return pending.filter(
+		(text) => !seen.some((t) => t.includes(normalize(text))),
+	);
 }

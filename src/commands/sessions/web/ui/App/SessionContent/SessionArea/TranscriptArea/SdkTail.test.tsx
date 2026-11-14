@@ -148,4 +148,29 @@ describe("SdkTail", () => {
 		expect(screen.queryByText("hello there")).toBeNull();
 		expect(screen.getByText("and more")).toBeTruthy();
 	});
+
+	it("shows a flushed queue as one user row until the transcript records it", () => {
+		const session = makeSessionInfo({
+			id: "s1",
+			sdk: true,
+			status: "running",
+			sdkPending: ["second\n\nthird "],
+		});
+		const transcript = (messages: { role: "user"; text: string }[]) => ({
+			sessionId: "s1",
+			messages: [{ role: "assistant" as const, text: "reply" }, ...messages],
+		});
+		const { container, rerender } = render(
+			<SdkTail session={session} transcript={transcript([])} />,
+		);
+		expect(container.textContent).toContain("second");
+		expect(container.textContent).toContain("third");
+		rerender(
+			<SdkTail
+				session={session}
+				transcript={transcript([{ role: "user", text: "second\n\nthird" }])}
+			/>,
+		);
+		expect(container.textContent).not.toContain("second");
+	});
 });
