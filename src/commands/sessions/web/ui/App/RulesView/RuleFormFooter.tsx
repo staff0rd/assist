@@ -4,11 +4,19 @@ import Typography from "@mui/material/Typography";
 
 type Props = {
 	error: string | undefined;
-	sending: boolean;
+	submitLabel: string;
+	hint: string;
+	disabled: boolean;
 	onCancel: () => void;
 };
 
-export function RuleEditorFooter({ error, sending, onCancel }: Props) {
+export function RuleFormFooter({
+	error,
+	submitLabel,
+	hint,
+	disabled,
+	onCancel,
+}: Props) {
 	return (
 		<>
 			{error && (
@@ -23,15 +31,15 @@ export function RuleEditorFooter({ error, sending, onCancel }: Props) {
 					type="submit"
 					variant="contained"
 					size="small"
-					disabled={sending}
+					disabled={disabled}
 				>
-					Send for approval
+					{submitLabel}
 				</Button>
 				<Button variant="outlined" size="small" onClick={onCancel}>
 					Cancel
 				</Button>
 				<Typography variant="caption" color="text.secondary">
-					Opens in the review pane; nothing changes until you approve it.
+					{hint}
 				</Typography>
 			</Box>
 		</>

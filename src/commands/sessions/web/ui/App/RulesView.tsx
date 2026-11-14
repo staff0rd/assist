@@ -1,19 +1,28 @@
-import Alert from "@mui/material/Alert";
 import { useState } from "react";
+import type { SessionInfo } from "../types";
 import { PageShell } from "./PageShell";
 import { RulesGrid } from "./RulesView/RulesGrid";
+import { RulesNotices } from "./RulesView/RulesNotices";
 import { useRuleChangeFailure } from "./RulesView/useRuleChangeFailure";
 import { useRuleChanges } from "./RulesView/useRuleChanges";
+import { useRuleComments } from "./RulesView/useRuleComments";
 import { useRuleScopes } from "./RulesView/useRuleScopes";
 import { useRepoSelectionContext } from "../useRepoSelectionContext";
 import { RulesHeader } from "./RulesView/RulesHeader";
 import { scopeInEffect } from "./RulesView/scopeInEffect";
 
-export function RulesView() {
+type Props = {
+	sessions: SessionInfo[];
+	cardId: string | null;
+	sendInput: (sessionId: string, data: string) => void;
+};
+
+export function RulesView({ sessions, cardId, sendInput }: Props) {
 	const { selectedCwd } = useRepoSelectionContext();
 	const { scopes, loading, error, reload } = useRuleScopes(selectedCwd);
 	const { changes, propose, decide } = useRuleChanges(selectedCwd, reload);
 	const { failure, clearFailure, onDecide } = useRuleChangeFailure(decide);
+	const comments = useRuleComments(sessions, cardId, sendInput);
 	const [selectedId, setSelectedId] = useState<string>();
 	const [path, setPath] = useState("");
 	const reviewing = changes.length > 0;
@@ -29,18 +38,17 @@ export function RulesView() {
 			maxWidth={reviewing ? "xl" : "lg"}
 			sx={{ maxWidth: { lg: reviewing ? 1480 : 1120 } }}
 		>
-			{failure && (
-				<Alert severity="error" onClose={clearFailure} sx={{ mb: 2 }}>
-					{failure}
-				</Alert>
-			)}
+			<RulesNotices
+				failure={failure}
+				onClearFailure={clearFailure}
+				sentTo={comments.sentTo}
+				onClearSent={comments.clearSent}
+			/>
 			<RulesGrid
-				scopes={scopes}
 				selected={scopes.find((scope) => scope.id === selectedId) ?? scopes[0]}
 				onSelect={setSelectedId}
 				isInEffect={(scope) => scopeInEffect(scope, path, selectedCwd)}
-				changes={changes}
-				onPropose={propose}
+				actions={{ scopes, changes, onPropose: propose, comments }}
 				onDecide={onDecide}
 			/>
 		</PageShell>

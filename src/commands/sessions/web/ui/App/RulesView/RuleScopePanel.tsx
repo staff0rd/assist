@@ -1,24 +1,19 @@
 import Box from "@mui/material/Box";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import type {
-	PendingRuleChange,
-	RuleChange,
-	RuleScope,
-} from "../../../../../rules/types";
+import type { RuleScope } from "../../../../../rules/types";
 import { emptyMessage } from "./emptyMessage";
-import { pendingChangeFor } from "./pendingChangeFor";
+import type { RuleActions } from "./RuleActions";
 import { RuleRow } from "./RuleRow";
 import { RuleScopeHeader } from "./RuleScopeHeader";
 
-type Props = {
+export function RuleScopePanel({
+	scope,
+	actions,
+}: {
 	scope: RuleScope;
-	scopes: RuleScope[];
-	changes: PendingRuleChange[];
-	onPropose: (change: RuleChange) => Promise<string | undefined>;
-};
-
-export function RuleScopePanel({ scope, scopes, changes, onPropose }: Props) {
+	actions: RuleActions;
+}) {
 	return (
 		<Paper
 			variant="outlined"
@@ -42,9 +37,7 @@ export function RuleScopePanel({ scope, scopes, changes, onPropose }: Props) {
 							key={`${scope.id}:${rule.code ?? ""}:${index}`}
 							rule={rule}
 							scope={scope}
-							scopes={scopes}
-							pending={pendingChangeFor(changes, scope.id, rule)}
-							onPropose={onPropose}
+							actions={actions}
 						/>
 					))}
 				</Box>

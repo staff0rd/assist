@@ -3,15 +3,19 @@ import type {
 	RuleEntry,
 	RuleScope,
 } from "../../../../../rules/types";
+import type { RuleActions } from "./RuleActions";
+import { RuleCommentForm } from "./RuleCommentForm";
 import { RuleDeleteConfirm } from "./RuleDeleteConfirm";
-import { RuleEditor } from "./RuleEditor";
+import { RuleMoveForm } from "./RuleMoveForm";
+
+export type RuleRowMode = "comment" | "move" | "delete";
 
 type Props = {
-	mode: "edit" | "delete" | undefined;
+	mode: RuleRowMode | undefined;
 	label: string;
 	rule: RuleEntry;
 	scope: RuleScope;
-	scopes: RuleScope[];
+	actions: RuleActions;
 	onPropose: (change: RuleChange) => Promise<string | undefined>;
 	onClose: () => void;
 };
@@ -21,16 +25,25 @@ export function RuleRowForm({
 	label,
 	rule,
 	scope,
-	scopes,
+	actions,
 	onPropose,
 	onClose,
 }: Props) {
-	if (mode === "edit")
+	if (mode === "comment")
 		return (
-			<RuleEditor
+			<RuleCommentForm
 				scope={scope}
 				rule={rule}
-				scopes={scopes}
+				comments={actions.comments}
+				onDone={onClose}
+			/>
+		);
+	if (mode === "move")
+		return (
+			<RuleMoveForm
+				scope={scope}
+				rule={rule}
+				scopes={actions.scopes}
 				onSubmit={onPropose}
 				onCancel={onClose}
 			/>

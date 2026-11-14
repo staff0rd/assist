@@ -1,21 +1,15 @@
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import type { RuleRowMode } from "./RuleRowForm";
 
 type Props = {
 	className: string;
 	label: string;
-	disabled: boolean;
-	onEdit: () => void;
-	onDelete: () => void;
+	pending: boolean;
+	onOpen: (mode: RuleRowMode) => void;
 };
 
-export function RuleRowActions({
-	className,
-	label,
-	disabled,
-	onEdit,
-	onDelete,
-}: Props) {
+export function RuleRowActions({ className, label, pending, onOpen }: Props) {
 	return (
 		<Box
 			className={className}
@@ -24,18 +18,26 @@ export function RuleRowActions({
 			<Button
 				size="small"
 				color="inherit"
-				disabled={disabled}
-				aria-label={`Edit ${label}`}
-				onClick={onEdit}
+				aria-label={`Comment on ${label}`}
+				onClick={() => onOpen("comment")}
 			>
-				Edit
+				Comment
+			</Button>
+			<Button
+				size="small"
+				color="inherit"
+				disabled={pending}
+				aria-label={`Move ${label}`}
+				onClick={() => onOpen("move")}
+			>
+				Move
 			</Button>
 			<Button
 				size="small"
 				color="error"
-				disabled={disabled}
+				disabled={pending}
 				aria-label={`Delete ${label}`}
-				onClick={onDelete}
+				onClick={() => onOpen("delete")}
 			>
 				Delete
 			</Button>

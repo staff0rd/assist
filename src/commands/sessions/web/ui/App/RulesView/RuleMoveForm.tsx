@@ -5,9 +5,8 @@ import type {
 	RuleEntry,
 	RuleScope,
 } from "../../../../../rules/types";
-import { RuleEditorFooter } from "./RuleEditorFooter";
+import { RuleFormFooter } from "./RuleFormFooter";
 import { RuleScopeSelect } from "./RuleScopeSelect";
-import { RuleTextFields } from "./RuleTextFields";
 import { useProposal } from "./useProposal";
 
 type Props = {
@@ -18,17 +17,21 @@ type Props = {
 	onCancel: () => void;
 };
 
-export function RuleEditor({ scope, rule, scopes, onSubmit, onCancel }: Props) {
-	const [title, setTitle] = useState(rule.title ?? "");
-	const [text, setText] = useState(rule.text);
+export function RuleMoveForm({
+	scope,
+	rule,
+	scopes,
+	onSubmit,
+	onCancel,
+}: Props) {
 	const [to, setTo] = useState(scope.id);
 	const { error, sending, run } = useProposal();
 
 	const submit = (event: FormEvent) => {
 		event.preventDefault();
-		const edit = { title: title.trim() || undefined, text };
+		const { title, text } = rule;
 		void run(() =>
-			onSubmit({ kind: "edit", scopeId: scope.id, rule, to, ...edit }),
+			onSubmit({ kind: "edit", scopeId: scope.id, rule, to, title, text }),
 		);
 	};
 
@@ -36,17 +39,17 @@ export function RuleEditor({ scope, rule, scopes, onSubmit, onCancel }: Props) {
 		<Box
 			component="form"
 			onSubmit={submit}
-			aria-label={`Edit ${rule.code ?? rule.title ?? "rule"}`}
+			aria-label={`Move ${rule.code ?? rule.title ?? "rule"}`}
 			sx={{ gridColumn: "2 / 4", display: "grid", gap: 1.5, pt: 1 }}
 		>
-			<RuleTextFields
-				title={title}
-				text={text}
-				onTitleChange={setTitle}
-				onTextChange={setText}
-			/>
 			<RuleScopeSelect value={to} scopes={scopes} onChange={setTo} />
-			<RuleEditorFooter error={error} sending={sending} onCancel={onCancel} />
+			<RuleFormFooter
+				error={error}
+				submitLabel="Send for approval"
+				hint="Opens in the review pane; nothing changes until you approve it."
+				disabled={sending || to === scope.id}
+				onCancel={onCancel}
+			/>
 		</Box>
 	);
 }

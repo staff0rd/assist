@@ -1,9 +1,6 @@
 import Box from "@mui/material/Box";
-import type {
-	PendingRuleChange,
-	RuleChange,
-	RuleScope,
-} from "../../../../../rules/types";
+import type { RuleScope } from "../../../../../rules/types";
+import type { RuleActions } from "./RuleActions";
 import { RuleChangeReviewPane } from "./RuleChangeReviewPane";
 import { RuleScopeNav } from "./RuleScopeNav";
 import { RuleScopePanel } from "./RuleScopePanel";
@@ -11,24 +8,21 @@ import { rulesGridSx } from "./rulesGridSx";
 import type { RuleChangeDecision } from "./useRuleChanges";
 
 type Props = {
-	scopes: RuleScope[];
 	selected: RuleScope | undefined;
 	onSelect: (id: string) => void;
 	isInEffect: (scope: RuleScope) => boolean;
-	changes: PendingRuleChange[];
-	onPropose: (change: RuleChange) => Promise<string | undefined>;
+	actions: RuleActions;
 	onDecide: (id: string, decision: RuleChangeDecision) => Promise<unknown>;
 };
 
 export function RulesGrid({
-	scopes,
 	selected,
 	onSelect,
 	isInEffect,
-	changes,
-	onPropose,
+	actions,
 	onDecide,
 }: Props) {
+	const { scopes, changes } = actions;
 	const reviewing = changes.length > 0;
 	return (
 		<Box sx={rulesGridSx(reviewing)}>
@@ -38,14 +32,7 @@ export function RulesGrid({
 				onSelect={onSelect}
 				isInEffect={isInEffect}
 			/>
-			{selected && (
-				<RuleScopePanel
-					scope={selected}
-					scopes={scopes}
-					changes={changes}
-					onPropose={onPropose}
-				/>
-			)}
+			{selected && <RuleScopePanel scope={selected} actions={actions} />}
 			{reviewing && (
 				<RuleChangeReviewPane
 					changes={changes}

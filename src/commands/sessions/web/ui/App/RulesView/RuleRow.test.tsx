@@ -7,7 +7,8 @@ import {
 	waitFor,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import type { RuleScope } from "../../../../../rules/types";
+import type { PendingRuleChange, RuleScope } from "../../../../../rules/types";
+import type { RuleActions } from "./RuleActions";
 import { RuleRow } from "./RuleRow";
 
 afterEach(cleanup);
@@ -29,54 +30,84 @@ const userDb: RuleScope = {
 	rules: [],
 };
 
-function renderRow(
-	onPropose = vi.fn().mockResolvedValue(undefined),
-	pending?: Parameters<typeof RuleRow>[0]["pending"],
-) {
+function renderRow(overrides: Partial<RuleActions> = {}) {
+	const actions: RuleActions = {
+		scopes: [userDb, scope],
+		changes: [],
+		onPropose: vi.fn().mockResolvedValue(undefined),
+		comments: { onComment: vi.fn(), sentTo: null, clearSent: () => {} },
+		...overrides,
+	};
 	render(
 		<ul>
-			<RuleRow
-				rule={rule}
-				scope={scope}
-				scopes={[userDb, scope]}
-				pending={pending}
-				onPropose={onPropose}
-			/>
+			<RuleRow rule={rule} scope={scope} actions={actions} />
 		</ul>,
 	);
-	return onPropose;
+	return actions;
 }
 
-describe("RuleRow", () => {
-	it("sends an edit for approval with the rule it replaces", async () => {
-		const onPropose = renderRow();
+const click = (name: string) =>
+	fireEvent.click(screen.getByRole("button", { name }));
 
-		fireEvent.click(screen.getByRole("button", { name: "Edit Design system" }));
-		fireEvent.change(screen.getByLabelText("Rule"), {
-			target: { value: "Use theme tokens." },
+describe("RuleRow", () => {
+	it("sends a comment with the rule and its scope", () => {
+		const { comments } = renderRow();
+
+		click("Comment on Design system");
+		fireEvent.change(screen.getByLabelText("Comment"), {
+			target: { value: "Mention density tokens" },
 		});
-		fireEvent.click(screen.getByRole("button", { name: "Send for approval" }));
+		click("Send comment");
+
+		expect(comments.onComment).toHaveBeenCalledWith({
+			rule,
+			scope,
+			note: "Mention density tokens",
+		});
+		expect(screen.queryByLabelText("Comment")).toBeNull();
+	});
+
+	it("explains why a comment cannot be sent without a session", () => {
+		renderRow({
+			comments: {
+				unavailable: "Select a session card to comment on a rule.",
+				sentTo: null,
+				clearSent: () => {},
+			},
+		});
+
+		click("Comment on Design system");
+
+		expect(
+			screen.getByText("Select a session card to comment on a rule."),
+		).toBeTruthy();
+	});
+
+	it("sends a move for approval keeping the rule's wording", async () => {
+		const { onPropose } = renderRow();
+
+		click("Move Design system");
+		fireEvent.mouseDown(screen.getByRole("combobox"));
+		fireEvent.click(screen.getByRole("option", { name: "User (db)" }));
+		click("Send for approval");
 
 		await waitFor(() =>
 			expect(onPropose).toHaveBeenCalledWith({
 				kind: "edit",
 				scopeId: "claude-md:ui/",
 				rule,
-				to: "claude-md:ui/",
+				to: "user-db",
 				title: "Design system",
-				text: "Use theme tokens.",
+				text: "Use tokens.",
 			}),
 		);
-		await waitFor(() => expect(screen.queryByLabelText("Rule")).toBeNull());
 	});
 
 	it("sends a delete for approval after confirming", async () => {
-		const onPropose = renderRow();
+		const { onPropose } = renderRow();
 
-		fireEvent.click(
-			screen.getByRole("button", { name: "Delete Design system" }),
-		);
-		fireEvent.click(screen.getByRole("button", { name: "Send for approval" }));
+		click("Delete Design system");
+		click("Send for approval");
 
 		await waitFor(() =>
 			expect(onPropose).toHaveBeenCalledWith({
@@ -87,36 +118,18 @@ describe("RuleRow", () => {
 		);
 	});
 
-	it("keeps the editor open with the error when sending fails", async () => {
-		renderRow(vi.fn().mockResolvedValue("Rules in User (db) need a title"));
-
-		fireEvent.click(screen.getByRole("button", { name: "Edit Design system" }));
-		fireEvent.click(screen.getByRole("button", { name: "Send for approval" }));
-
-		expect(
-			await screen.findByText("Rules in User (db) need a title"),
-		).toBeTruthy();
-	});
-
-	it("shows the awaiting approval pill and locks the rule while pending", () => {
-		renderRow(undefined, {
+	it("shows the awaiting approval pill and locks move and delete while pending", () => {
+		const pending: PendingRuleChange = {
 			id: "1",
-			change: {
-				kind: "edit",
-				scopeId: scope.id,
-				rule,
-				to: "user-db",
-				text: "x",
-			},
-		});
+			change: { kind: "delete", scopeId: scope.id, rule },
+		};
+		renderRow({ changes: [pending] });
 
-		expect(screen.getByText("Move awaiting approval")).toBeTruthy();
-		expect(
-			(
-				screen.getByRole("button", {
-					name: "Edit Design system",
-				}) as HTMLButtonElement
-			).disabled,
-		).toBe(true);
+		expect(screen.getByText("Delete awaiting approval")).toBeTruthy();
+		const disabled = (name: string) =>
+			(screen.getByRole("button", { name }) as HTMLButtonElement).disabled;
+		expect(disabled("Move Design system")).toBe(true);
+		expect(disabled("Delete Design system")).toBe(true);
+		expect(disabled("Comment on Design system")).toBe(false);
 	});
 });
