@@ -1,18 +1,21 @@
 import { supersededPreviewMessage } from "../shared/supersededPreviewMessage";
 import { daemonLog } from "./daemonLog";
+import { deferredCommandLabel } from "./deferredCommandLabel";
 import { formatDeferredResult } from "./formatDeferredResult";
+import type { PendingDeferredCommand } from "./pendingDeferredCommandSchema";
 import type { DeferredResult } from "./runDeferredCommand";
-import type { SessionManager } from "./SessionManager";
+import type { Session } from "./types";
 import { killedByDaemonRestart } from "./SessionInterruption";
 import { untrackDeferredCommand } from "./trackDeferredCommand";
 
 export function deliverDeferredResult(
-	m: SessionManager,
+	m: { session: (id: string) => Session | undefined },
 	id: string,
-	command: string,
+	command: PendingDeferredCommand,
 	result: DeferredResult,
 ): void {
-	const label = `defer-command ${command}: session ${id} exit ${result.exitCode}`;
+	const name = deferredCommandLabel(command.argv);
+	const label = `defer-command ${name}: session ${id} exit ${result.exitCode}`;
 	const session = m.session(id);
 	if (session && killedByDaemonRestart(session.interrupted)) {
 		daemonLog(`${label} killed by the daemon restart; left pending`);
@@ -31,6 +34,6 @@ export function deliverDeferredResult(
 		daemonLog(`${label} dropped: session is gone`);
 		return;
 	}
-	sdk.send(formatDeferredResult(command, result));
+	sdk.send(formatDeferredResult(name, result));
 	daemonLog(`${label} delivered as the next message`);
 }

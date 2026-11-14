@@ -1,5 +1,6 @@
 import type { PersistedSession } from "./loadPersistedSessions";
 import { restoredAutoAdvance } from "./restoredAutoAdvance";
+import { restoredDeferredCommands } from "./restoredDeferredCommands";
 
 export function restoreBase(id: string, persisted: PersistedSession) {
 	return {
@@ -25,5 +26,6 @@ export function restoreBase(id: string, persisted: PersistedSession) {
 		reviewStarted: persisted.reviewStarted,
 		launchedFrom: persisted.launchedFrom,
 		pendingPrompts: persisted.pendingPrompts,
+		deferredCommands: restoredDeferredCommands(id, persisted),
 	};
 }

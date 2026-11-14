@@ -13,9 +13,6 @@ export function restoreResumePlan(
 	status: RestoreStatus,
 ): ResumePlan {
 	const tasks = interruptedBackgroundTasks(persisted);
-	const deferred = persisted.deferredCommands ?? [];
-	if (deferred.length > 0)
-		return { prompt: daemonRestartPrompt(tasks, deferred), idle: false };
 	if (status === "asking")
 		return { prompt: pendingQuestionPrompt(tasks), idle: false };
 	if (tasks.length > 0)

@@ -1,6 +1,7 @@
 import { harnessKinds } from "../../../shared/harnessKinds";
 import { z } from "zod";
 import { activitySchema } from "../../../shared/emitActivity";
+import { pendingDeferredCommandSchema } from "./pendingDeferredCommandSchema";
 
 export const persistedSessionSchema = z.object({
 	id: z.string().optional(),
@@ -33,7 +34,10 @@ export const persistedSessionSchema = z.object({
 	reviewStarted: z.boolean().optional(),
 	launchedFrom: z.string().optional(),
 	pendingPrompts: z.array(z.string()).optional(),
-	deferredCommands: z.array(z.string()).optional(),
+	// why: a bare string is the legacy label-only entry, accepted so the session still loads and then dropped on restore
+	deferredCommands: z
+		.array(z.union([z.string(), pendingDeferredCommandSchema]))
+		.optional(),
 	interrupted: z.object({ reason: z.string(), at: z.number() }).optional(),
 	awaitingSeed: z.boolean().optional(),
 	undurable: z

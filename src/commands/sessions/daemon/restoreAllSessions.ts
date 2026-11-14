@@ -1,5 +1,6 @@
 import { awaitServerPort, type PortWaitDeps } from "./awaitServerPort";
 import type { SessionSpawner } from "./makeSessionSpawner";
+import { reopenDeferredCommands } from "./reopenDeferredCommands";
 import { restoreAll } from "./restoreAll";
 import { rearmStoppedSessions } from "./worktree/rearmStoppedSessions";
 import { reconcileWorktreesOnRestore } from "./worktree/reconcileWorktreesOnRestore";
@@ -11,6 +12,9 @@ export function restoreAllSessions(
 ): string[] {
 	const { sessions, notify } = deps;
 	const names = restoreAll(spawner, sessions);
+	reopenDeferredCommands(sessions.values(), {
+		session: (id) => sessions.get(id),
+	});
 	reseedRestoredWorktrees(deps);
 	reconcileWorktreesOnRestore(sessions, spawner.recoveryCard, notify);
 	rearmStoppedSessions(sessions, notify);

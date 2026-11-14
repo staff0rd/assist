@@ -13,7 +13,7 @@ const tasksMock = interruptedBackgroundTasks as unknown as ReturnType<
 
 function persisted(
 	interrupted?: { reason: string; at: number },
-	deferredCommands?: string[],
+	deferredCommands?: PersistedSession["deferredCommands"],
 ): PersistedSession {
 	return {
 		name: "Session 1",
@@ -120,25 +120,26 @@ describe("restoreResumePlan", () => {
 		expect(resumePrompt({ idle: true })).toBeUndefined();
 	});
 
-	it("wakes an idle session whose pending preview the restart closed and asks it to re-run the command", () => {
+	it("leaves an idle session waiting only on a pending preview idle", () => {
 		const plan = restoreResumePlan(
-			persisted(restarted, ["ask", "backlog propose"]),
+			persisted(restarted, [{ argv: ["ask"], cwd: "/repo" }]),
 			"waiting",
 		);
 
-		expect(plan.idle).toBe(false);
-		expect(plan.prompt).toContain("`assist ask`, `assist backlog propose`");
-		expect(plan.prompt).toContain("Run each of those commands again");
-		expect(plan.prompt).not.toContain("background task");
-		expect(plan.prompt).not.toContain("Continue from where you left off");
+		expect(plan).toEqual({ idle: true });
+		expect(resumePrompt(plan)).toBeUndefined();
 	});
 
-	it("names the lost preview alongside killed background tasks", () => {
+	it("nudges a session with killed background tasks without mentioning its pending preview", () => {
 		tasksMock.mockReturnValue(["b1"]);
 
-		const plan = restoreResumePlan(persisted(restarted, ["ask"]), "running");
+		const plan = restoreResumePlan(
+			persisted(restarted, [{ argv: ["ask"], cwd: "/repo" }]),
+			"running",
+		);
 
 		expect(plan.prompt).toContain("(b1)");
-		expect(plan.prompt).toContain("`assist ask`");
+		expect(plan.prompt).not.toContain("preview");
+		expect(plan.prompt).not.toContain("`assist ask`");
 	});
 });

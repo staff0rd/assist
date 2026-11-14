@@ -24,6 +24,8 @@ const request = {
 	env: { ASSIST_SESSION_ID: "7" },
 };
 
+const pending = { argv: request.argv, stdin: "# Plan", cwd: "/repo" };
+
 function managerWith(sdk: { send: (text: string) => void } | undefined) {
 	const sessions = new Map<string, Session>(
 		sdk ? [["7", { id: "7", pty: { sdk } } as unknown as Session]] : [],
@@ -141,7 +143,7 @@ describe("defer-command handler", () => {
 		const { sessions, manager } = managerWith(sdk);
 		handleDeferCommand({ send: vi.fn() }, manager, request);
 
-		expect(sessions.get("7")?.deferredCommands).toEqual(["ask"]);
+		expect(sessions.get("7")?.deferredCommands).toEqual([pending]);
 
 		finishWith({ output: "Approved.\n", exitCode: 0 });
 
@@ -167,7 +169,7 @@ describe("defer-command handler", () => {
 		finishWith({ output: "", exitCode: 1 });
 
 		expect(sdk.send).not.toHaveBeenCalled();
-		expect(session.deferredCommands).toEqual(["ask"]);
+		expect(session.deferredCommands).toEqual([pending]);
 	});
 
 	it("keeps a preview pending while the user chats and queues its decision behind the running turn", () => {
@@ -180,7 +182,7 @@ describe("defer-command handler", () => {
 		turn.send("while you wait, what about X?");
 
 		expect(push).toHaveBeenCalledTimes(1);
-		expect(sessions.get("7")?.deferredCommands).toEqual(["ask"]);
+		expect(sessions.get("7")?.deferredCommands).toEqual([pending]);
 
 		finishWith({ output: "Approved.\n", exitCode: 0 });
 
