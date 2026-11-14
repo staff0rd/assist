@@ -1,11 +1,13 @@
 import type { HighLevelPreviewPayload } from "../../../../../../../../review/highLevel/types";
 import { isCheck } from "./parseHighLevelPreview/isCheck";
 import { asArray } from "./parseHighLevelPreview/asArray";
+import { parsePreviewHead } from "./parseHighLevelPreview/parsePreviewHead";
 
 const EMPTY: HighLevelPreviewPayload = {
 	repo: "",
 	prNumber: 0,
 	headSha: "",
+	body: "",
 	checks: [],
 	structure: {
 		tree: [],
@@ -31,11 +33,7 @@ export function parseHighLevelPreview(body: string): HighLevelPreviewPayload {
 	}
 	if (typeof parsed !== "object" || parsed === null) return EMPTY;
 	return {
-		repo: typeof parsed.repo === "string" ? parsed.repo : EMPTY.repo,
-		prNumber:
-			typeof parsed.prNumber === "number" ? parsed.prNumber : EMPTY.prNumber,
-		headSha:
-			typeof parsed.headSha === "string" ? parsed.headSha : EMPTY.headSha,
+		...parsePreviewHead(parsed),
 		checks: asArray(parsed.checks, isCheck),
 		structure: { ...EMPTY.structure, ...parsed.structure },
 		criticalDiffs: asArray(parsed.criticalDiffs),

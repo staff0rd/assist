@@ -60,6 +60,7 @@ const subject: HighLevelOverlaySubject = {
 	title: "A change",
 	headRef: "feat/thing",
 	headSha: "abc123",
+	body: "",
 	checks: [
 		{
 			id: "structure-sensible",

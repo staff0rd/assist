@@ -34,6 +34,7 @@ export function gatherHighLevelSubject(
 		...head,
 		prNumber,
 		title: pr.title,
+		body: pr.body,
 		checks: evaluateHighLevelChecks({
 			...pr,
 			changedFiles: files.map((file) => file.path),

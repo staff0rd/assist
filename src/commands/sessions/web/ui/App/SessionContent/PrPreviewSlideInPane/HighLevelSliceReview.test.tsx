@@ -67,6 +67,7 @@ const payload: HighLevelPreviewPayload = {
 	repo: "org/repo",
 	prNumber: 7,
 	headSha: "abc1234",
+	body: "",
 	checks,
 	structure: buildHighLevelStructure([
 		file("src/a.ts"),
@@ -125,8 +126,75 @@ describe("HighLevelSliceReview", () => {
 			within(screen.getByRole("tablist", { name: "Areas" }))
 				.getAllByRole("tab")
 				.map((tab) => tab.textContent),
-		).toEqual(["Checks1", "not tickedManual testing0", "All files2"]);
-		expect(screen.getByText("No merge conflicts")).toBeTruthy();
+		).toEqual([
+			"Description",
+			"Checks1",
+			"not tickedManual testing0",
+			"All files2",
+		]);
+		expect(area(/Description/).getAttribute("aria-selected")).toBe("true");
+	});
+
+	it("renders the PR body as markdown on the Description tab", () => {
+		render(
+			<HighLevelReviewPane
+				preview={preview({ body: "## What\n\nAdds **a thing**." })}
+				onDecision={vi.fn()}
+			/>,
+		);
+
+		expect(screen.getByRole("heading", { name: "What" })).toBeTruthy();
+		expect(screen.getByText("a thing").tagName).toBe("STRONG");
+		expect(
+			screen.getByRole("link", { name: /View on GitHub/ }).getAttribute("href"),
+		).toBe("https://github.com/org/repo/pull/7");
+	});
+
+	it("shows No description for an empty body", () => {
+		render(<HighLevelReviewPane preview={preview()} onDecision={vi.fn()} />);
+
+		expect(screen.getByText("No description")).toBeTruthy();
+	});
+
+	it("shows the description beneath the Backend PR tick", () => {
+		render(
+			<HighLevelReviewPane
+				preview={preview({
+					body: "Pairs with backend change.",
+					checks: [
+						...checks,
+						manual("backend-pr-linked", "The backend PR is linked"),
+					],
+				})}
+				onDecision={vi.fn()}
+			/>,
+		);
+
+		fireEvent.click(area(/Backend PR/));
+
+		expect(screen.getByLabelText("The backend PR is linked")).toBeTruthy();
+		expect(screen.getByText("Pairs with backend change.")).toBeTruthy();
+	});
+
+	it("still shows the description when reopening a saved draft", () => {
+		render(
+			<HighLevelReviewPane
+				preview={preview({
+					body: "Drafted body.",
+					draft: {
+						repo: "org/repo",
+						prNumber: 7,
+						headRef: "feat",
+						headSha: "abc1234",
+						savedAt: "now",
+						items: [],
+					},
+				})}
+				onDecision={vi.fn()}
+			/>,
+		);
+
+		expect(screen.getByText("Drafted body.")).toBeTruthy();
 	});
 
 	it("shows the PR's total +/- on the Overview entry and header", () => {

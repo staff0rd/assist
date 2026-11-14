@@ -2,6 +2,7 @@ import type { HighLevelPreviewPayload } from "../../../../../../../review/highLe
 import type { HighLevelDiffComments } from "../HighLevelDiffComments";
 import { HighLevelManualTesting } from "../HighLevelManualTesting";
 import { HighLevelAllFiles } from "./HighLevelAllFiles";
+import { HighLevelDescription } from "./HighLevelDescription";
 import type { HighLevelArea } from "./highLevelAreaCheck";
 import { HighLevelSliceAreaContent } from "./HighLevelSliceAreaContent";
 import type { HighLevelSliceView } from "./highLevelSliceViews";
@@ -26,6 +27,14 @@ export function HighLevelAreaContent({
 				payload={payload}
 				subject={`${subject}:slice:${view.number}`}
 				comments={comments}
+			/>
+		);
+	if (area === "description" || area === "backend")
+		return (
+			<HighLevelDescription
+				body={payload.body}
+				repo={payload.repo}
+				prNumber={payload.prNumber}
 			/>
 		);
 	if (area === "all")

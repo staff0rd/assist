@@ -17,6 +17,7 @@ function overview(payload: HighLevelPreviewPayload): HighLevelReviewEntry {
 	const has = (area: HighLevelArea) =>
 		payload.checks.some((check) => check.id === highLevelAreaCheck(area));
 	const areas: HighLevelArea[] = [
+		"description",
 		"checks",
 		...(has("manual") ? (["manual"] as const) : []),
 		"all",

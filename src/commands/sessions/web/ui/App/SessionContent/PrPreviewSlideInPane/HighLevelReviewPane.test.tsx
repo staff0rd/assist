@@ -41,6 +41,7 @@ const payload: HighLevelPreviewPayload = {
 	repo: "org/repo",
 	prNumber: 42,
 	headSha: "abc1234",
+	body: "",
 	checks,
 	structure: {
 		tree: [

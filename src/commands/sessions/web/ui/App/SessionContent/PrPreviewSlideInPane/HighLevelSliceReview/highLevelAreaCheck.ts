@@ -1,6 +1,7 @@
 import type { HighLevelCheckId } from "../../../../../../../review/highLevel/highLevelChecklist";
 
 export type HighLevelArea =
+	| "description"
 	| "checks"
 	| "manual"
 	| "all"
@@ -10,6 +11,7 @@ export type HighLevelArea =
 	| "critical";
 
 export const highLevelAreaLabels: Record<HighLevelArea, string> = {
+	description: "Description",
 	checks: "Checks",
 	manual: "Manual testing",
 	all: "All files",

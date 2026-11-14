@@ -23,6 +23,7 @@ export function buildHighLevelCapturePreview(
 		repo: REPO,
 		prNumber: step.prNumber,
 		title: step.title,
+		body: step.body,
 		headRef: step.headRef,
 		headSha: createHash("sha1").update(JSON.stringify(step)).digest("hex"),
 		checks: captureHighLevelChecks(step, files, config),

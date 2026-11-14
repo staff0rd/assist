@@ -175,6 +175,7 @@ export type HighLevelPreviewPayload = {
 	repo: string;
 	prNumber: number;
 	headSha: string;
+	body: string;
 	checks: HighLevelCheckResult[];
 	structure: HighLevelStructure;
 	criticalDiffs: HighLevelCriticalDiff[];

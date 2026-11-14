@@ -48,6 +48,7 @@ const payload: HighLevelPreviewPayload = {
 	repo: "org/repo",
 	prNumber: 42,
 	headSha: "abc1234",
+	body: "",
 	checks: [
 		{
 			id: "tests-worth-having",
