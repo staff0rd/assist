@@ -1,3 +1,11 @@
+# [0.1149.0](https://github.com/staff0rd/assist/compare/v0.1148.2...v0.1149.0) (2026-11-14)
+
+
+### Features
+
+* eye glyph for design reviews ([8f8bec0](https://github.com/staff0rd/assist/commit/8f8bec0adb096ade76f829963c55c110fe3390e5))
+* show PR description in review pane ([03519e1](https://github.com/staff0rd/assist/commit/03519e1f6af53307702d87e200b41db0d723e4ab))
+
 ## [0.1148.2](https://github.com/staff0rd/assist/compare/v0.1148.1...v0.1148.2) (2026-11-14)
 
 
