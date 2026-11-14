@@ -65,6 +65,7 @@ describe("ToolRunRow", () => {
 		expect(link.getAttribute("href")).toBe(url);
 		expect(link.getAttribute("target")).toBe("_blank");
 		expect(skipsSelection(link)).toBe(true);
+		expect(screen.getByTestId("artifact-icon")).toBeTruthy();
 	});
 
 	it("keeps its buttons out of transcript comment selection", () => {
