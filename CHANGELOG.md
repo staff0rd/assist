@@ -1,3 +1,10 @@
+# [0.1157.0](https://github.com/staff0rd/assist/compare/v0.1156.0...v0.1157.0) (2026-11-14)
+
+
+### Features
+
+* phone prompt suggestion chip ([e87c4e7](https://github.com/staff0rd/assist/commit/e87c4e75a7af9b1488fef18421418730c8bb7f07))
+
 # [0.1156.0](https://github.com/staff0rd/assist/compare/v0.1155.0...v0.1156.0) (2026-11-14)
 
 
