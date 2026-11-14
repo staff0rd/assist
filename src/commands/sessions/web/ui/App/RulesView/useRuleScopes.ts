@@ -1,16 +1,18 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { RuleScope } from "../../../../../rules/types";
 import { apiFetch } from "../../apiFetch";
 import { useApiNode } from "../../useApiNode";
 import { withNode } from "../../withNode";
 
-type RuleScopesView = {
+type RuleScopesState = {
 	scopes: RuleScope[];
 	loading: boolean;
 	error: string | null;
 };
 
-const LOADING: RuleScopesView = { scopes: [], loading: true, error: null };
+type RuleScopesView = RuleScopesState & { reload: () => void };
+
+const LOADING: RuleScopesState = { scopes: [], loading: true, error: null };
 
 async function fetchScopes(cwd: string, node?: string): Promise<RuleScope[]> {
 	const res = await apiFetch(
@@ -22,8 +24,10 @@ async function fetchScopes(cwd: string, node?: string): Promise<RuleScope[]> {
 }
 
 export function useRuleScopes(cwd: string): RuleScopesView {
-	const [state, setState] = useState<RuleScopesView>(LOADING);
+	const [state, setState] = useState<RuleScopesState>(LOADING);
+	const [version, setVersion] = useState(0);
 	const node = useApiNode();
+	const reload = useCallback(() => setVersion((v) => v + 1), []);
 
 	useEffect(() => {
 		if (!cwd) {
@@ -31,7 +35,7 @@ export function useRuleScopes(cwd: string): RuleScopesView {
 			return;
 		}
 		let cancelled = false;
-		setState(LOADING);
+		if (version === 0) setState(LOADING);
 		fetchScopes(cwd, node)
 			.then((scopes) => {
 				if (!cancelled) setState({ scopes, loading: false, error: null });
@@ -48,7 +52,7 @@ export function useRuleScopes(cwd: string): RuleScopesView {
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd, node]);
+	}, [cwd, node, version]);
 
-	return state;
+	return { ...state, reload };
 }

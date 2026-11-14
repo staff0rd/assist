@@ -17,3 +17,22 @@ export type RuleScope = {
 	rules: { code?: string; title?: string; text: string }[];
 	error?: string;
 };
+
+export type RuleEntry = RuleScope["rules"][number];
+
+export type RuleChange =
+	| {
+			kind: "edit";
+			scopeId: string;
+			rule: RuleEntry;
+			to: string;
+			title?: string;
+			text: string;
+	  }
+	| { kind: "delete"; scopeId: string; rule: RuleEntry };
+
+export type PendingRuleChange = {
+	id: string;
+	change: RuleChange;
+	code?: string;
+};

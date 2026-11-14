@@ -4,18 +4,13 @@ import {
 	RULE_BULLET,
 	rulesSectionRange,
 } from "./rulesSectionRange";
+import { ruleBullet } from "./ruleBullet";
 
 type NewRule = {
 	code: string;
 	title?: string | undefined;
 	text: string;
 };
-
-function ruleBullet({ code, title, text }: NewRule): string {
-	return title
-		? `- **${code}** — **${title}** — ${text}`
-		: `- **${code}** — ${text}`;
-}
 
 export function insertRuleBullet(content: string, rule: NewRule): string {
 	const bullet = ruleBullet(rule);

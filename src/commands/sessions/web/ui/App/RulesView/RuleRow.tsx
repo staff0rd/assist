@@ -1,50 +1,57 @@
 import Box from "@mui/material/Box";
-import Typography from "@mui/material/Typography";
-import { raisedBgcolor } from "../../designSystem/raisedBgcolor";
-import type { RuleScope } from "../../../../../rules/types";
+import { useState } from "react";
+import type {
+	PendingRuleChange,
+	RuleChange,
+	RuleEntry,
+	RuleScope,
+} from "../../../../../rules/types";
+import { RuleCode } from "./RuleCode";
+import { RuleRowActions } from "./RuleRowActions";
+import { RuleRowForm } from "./RuleRowForm";
+import { RuleRowText } from "./RuleRowText";
+import { ruleRowSx } from "./ruleRowSx";
 
-type Rule = RuleScope["rules"][number];
+type Props = {
+	rule: RuleEntry;
+	scope: RuleScope;
+	scopes: RuleScope[];
+	pending: PendingRuleChange | undefined;
+	onPropose: (change: RuleChange) => Promise<string | undefined>;
+};
 
-export function RuleRow({ rule }: { rule: Rule }) {
+const ACTIONS = "rule-actions";
+
+export function RuleRow({ rule, scope, scopes, pending, onPropose }: Props) {
+	const [mode, setMode] = useState<"edit" | "delete">();
+	const label = rule.title ?? rule.code ?? rule.text;
+	const close = () => setMode(undefined);
+	const propose = async (change: RuleChange) => {
+		const failure = await onPropose(change);
+		if (!failure) close();
+		return failure;
+	};
+
 	return (
-		<Box
-			component="li"
-			sx={{
-				display: "grid",
-				gridTemplateColumns: (t) => `${t.spacing(5.5)} minmax(0, 1fr)`,
-				gap: 1.5,
-				px: 2,
-				py: 1.5,
-				borderBottom: 1,
-				borderColor: "divider",
-				"&:last-child": { borderBottom: 0 },
-				"&:hover": { bgcolor: raisedBgcolor },
-			}}
-		>
-			<Typography
-				variant="caption"
-				sx={{
-					fontFamily: "fontFamilyMono",
-					color: rule.code ? "primary.main" : "text.disabled",
-					pt: 0.25,
-				}}
-			>
-				{rule.code ?? "—"}
-			</Typography>
-			<Box sx={{ minWidth: 0 }}>
-				{rule.title && (
-					<Typography variant="body2" sx={{ fontWeight: 500 }}>
-						{rule.title}
-					</Typography>
-				)}
-				<Typography
-					variant="body2"
-					color={rule.title ? "text.secondary" : "text.primary"}
-					sx={{ mt: 0.25, maxWidth: "72ch", textWrap: "pretty" }}
-				>
-					{rule.text}
-				</Typography>
-			</Box>
+		<Box component="li" sx={ruleRowSx(ACTIONS, !!mode)}>
+			<RuleCode code={rule.code} />
+			<RuleRowText rule={rule} pending={pending} />
+			<RuleRowActions
+				className={ACTIONS}
+				label={label}
+				disabled={!!pending}
+				onEdit={() => setMode("edit")}
+				onDelete={() => setMode("delete")}
+			/>
+			<RuleRowForm
+				mode={mode}
+				label={label}
+				rule={rule}
+				scope={scope}
+				scopes={scopes}
+				onPropose={propose}
+				onClose={close}
+			/>
 		</Box>
 	);
 }
