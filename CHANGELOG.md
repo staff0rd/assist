@@ -1,3 +1,10 @@
+# [0.1151.0](https://github.com/staff0rd/assist/compare/v0.1150.0...v0.1151.0) (2026-11-14)
+
+
+### Features
+
+* show tool elapsed on SDK activity ([aaae442](https://github.com/staff0rd/assist/commit/aaae4427f36b7d60b77626cbcbc228ba6af092dd))
+
 # [0.1150.0](https://github.com/staff0rd/assist/compare/v0.1149.0...v0.1150.0) (2026-11-14)
 
 
