@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import { HelpButton } from "./MenuTriggerButton/HelpButton";
 import { ConfigButton } from "./MenuTriggerButton/ConfigButton";
 import { MenuButton } from "./MenuTriggerButton/MenuButton";
+import { RulesButton } from "./MenuTriggerButton/RulesButton";
 
 export function MenuTriggerButton({
 	open,
@@ -25,6 +26,7 @@ export function MenuTriggerButton({
 			}}
 		>
 			<HelpButton />
+			<RulesButton />
 			<ConfigButton />
 			<MenuButton open={open} onOpen={onOpen} />
 		</Box>
