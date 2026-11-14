@@ -97,7 +97,7 @@ describe("askCheck", () => {
 		await expect(askCheck({ json: "-" })).rejects.toThrow("process.exit(1)");
 		expect(errored.join("\n")).toBe(
 			[
-				"Error: the check is over its limits:",
+				"Error: the check is over its limits (backticked code is not counted):",
 				"- title: 61 characters (max 60)",
 				"- steps: 5 items (max 4)",
 				"- steps[4]: 91 characters (max 90)",
@@ -124,6 +124,54 @@ describe("askCheck", () => {
 		await askCheck({ json: "-" });
 
 		expect(mockRequestPreviewDecision).toHaveBeenCalled();
+	});
+
+	it("does not count backticked code toward the step limit", async () => {
+		stdin({
+			title: "Download is throttled",
+			steps: [
+				"Run `curl --limit-rate 20k -o /dev/null https://proof.ovh.net/files/100Mb.dat`",
+				`Run \`${"x".repeat(200)}\` then ${"s".repeat(80)}`,
+			],
+		});
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			answers: { result: "works" },
+		});
+
+		await askCheck({ json: "-" });
+
+		expect(mockRequestPreviewDecision).toHaveBeenCalled();
+	});
+
+	it("still counts prose around backticked code", async () => {
+		stdin({ title: "t", steps: [`Run \`ls\` ${"s".repeat(86)}`] });
+
+		await expect(askCheck({ json: "-" })).rejects.toThrow("process.exit(1)");
+		expect(errored.join("\n")).toContain("- steps[1]: 91 characters (max 90)");
+	});
+
+	it("rejects commands, URLs and flags outside backticks", async () => {
+		vi.stubEnv("ASSIST_SESSION", "");
+		stdin({
+			title: "Download is throttled",
+			steps: [
+				"Run curl --limit-rate 20k -o /dev/null https://proof.ovh.net/files/100Mb.dat",
+				"Open www.example.com and re-run the check",
+				"Run `assist docs unlock` and open [the board](http://localhost:3000)",
+			],
+		});
+
+		await expect(askCheck({ json: "-" })).rejects.toThrow("process.exit(1)");
+		expect(errored.join("\n")).toBe(
+			[
+				"Error: these steps hold a command, URL or flag outside backticks:",
+				"- steps[1]: --limit-rate, -o, https://proof.ovh.net/files/100Mb.dat",
+				"- steps[2]: www.example.com",
+				"Wrap each whole command in backticks (`like this`) so the user can copy it, and re-run assist ask-check.",
+			].join("\n"),
+		);
+		expect(mockIsLive).not.toHaveBeenCalled();
 	});
 
 	it.each([

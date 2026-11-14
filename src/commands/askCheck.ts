@@ -2,7 +2,7 @@ import { randomUUID } from "node:crypto";
 import { applyCheckBump } from "./askCheck/applyCheckBump";
 import { formatAskCheckAnswer } from "./askCheck/formatAskCheckAnswer";
 import { formatCheckDismissal } from "./askCheck/formatCheckDismissal";
-import { rejectLongCheck } from "./askCheck/rejectLongCheck";
+import { rejectInvalidCheck } from "./askCheck/rejectInvalidCheck";
 import { requireCheckSession } from "./askCheck/requireCheckSession";
 import { resolveCheckBump } from "./askCheck/resolveCheckBump";
 import { readJsonPayload } from "./backlog/readJsonPayload";
@@ -21,7 +21,7 @@ export async function askCheck(options: {
 		askCheckInputSchema,
 		"manual check",
 	);
-	rejectLongCheck(check);
+	rejectInvalidCheck(check);
 	const sessionId = await requireCheckSession();
 	const bump = await resolveCheckBump(options.check);
 

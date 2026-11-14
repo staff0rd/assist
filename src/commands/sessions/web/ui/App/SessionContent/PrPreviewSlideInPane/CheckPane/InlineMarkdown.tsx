@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { MarkdownHtml } from "../../../../../../../backlog/web/ui/components/MarkdownHtml";
 import { renderMarkdownInline } from "../../../../../../../backlog/web/ui/components/renderMarkdown";
 
-const inlineMarkdownSx = {
+export const inlineMarkdownSx = {
 	"& code": {
 		fontFamily: "fontFamilyMono",
 		fontSize: "0.88em",

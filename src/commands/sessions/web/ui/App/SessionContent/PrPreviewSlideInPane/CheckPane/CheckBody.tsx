@@ -1,7 +1,7 @@
 import { Box, Stack, Typography } from "@mui/material";
 import type { AskCheckInput } from "../../../../../../shared/askCheckInputSchema";
 import { BeforeChips } from "./BeforeChips";
-import { InlineMarkdown } from "./InlineMarkdown";
+import { CheckStep } from "./CheckStep";
 import { WhatChanged } from "./WhatChanged";
 import { Label } from "./Label";
 
@@ -19,7 +19,7 @@ export function CheckBody({ check }: { check: AskCheckInput }) {
 				<Box component="ol" sx={{ m: 0, pl: 2.5, display: "grid", gap: 0.75 }}>
 					{check.steps.map((step) => (
 						<Typography component="li" variant="body1" key={step}>
-							<InlineMarkdown text={step} />
+							<CheckStep text={step} />
 						</Typography>
 					))}
 				</Box>

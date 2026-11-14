@@ -1,7 +1,7 @@
 import Box from "@mui/material/Box";
 import type { AskCheckInput } from "../../../../shared/askCheckInputSchema";
 import { BeforeChips } from "../../App/SessionContent/PrPreviewSlideInPane/CheckPane/BeforeChips";
-import { InlineMarkdown } from "../../App/SessionContent/PrPreviewSlideInPane/CheckPane/InlineMarkdown";
+import { CheckStep } from "../../App/SessionContent/PrPreviewSlideInPane/CheckPane/CheckStep";
 import { Label } from "../../App/SessionContent/PrPreviewSlideInPane/CheckPane/Label";
 import { WhatChanged } from "../../App/SessionContent/PrPreviewSlideInPane/CheckPane/WhatChanged";
 import { PhoneCheckEyebrow } from "./PhoneCheckEyebrow";
@@ -33,7 +33,7 @@ export function PhoneCheckBody({
 				>
 					{check.steps.map((step) => (
 						<li key={step}>
-							<InlineMarkdown text={step} />
+							<CheckStep text={step} />
 						</li>
 					))}
 				</Box>

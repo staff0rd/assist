@@ -67,6 +67,37 @@ describe("CheckPane", () => {
 		expect(screen.getByText("assist docs unlock").tagName).toBe("CODE");
 	});
 
+	it("copies a step's inline code exactly with its copy button", async () => {
+		const writeText = vi.fn().mockResolvedValue(undefined);
+		Object.defineProperty(navigator, "clipboard", {
+			value: { writeText },
+			configurable: true,
+		});
+		render(
+			<CheckPane
+				preview={{
+					...preview,
+					body: JSON.stringify({
+						title: "Download is throttled",
+						steps: [
+							"Run `curl --limit-rate 20k -o /dev/null https://proof.ovh.net/files/100Mb.dat`",
+							"It downloads slowly",
+						],
+					}),
+				}}
+				onDecision={vi.fn()}
+			/>,
+		);
+
+		const copy = screen.getByRole("button", { name: "Copy" });
+		fireEvent.click(copy);
+
+		expect(writeText).toHaveBeenCalledWith(
+			"curl --limit-rate 20k -o /dev/null https://proof.ovh.net/files/100Mb.dat",
+		);
+		await waitFor(() => expect(copy.classList).toContain("copied"));
+	});
+
 	it("renders links and inline markdown in steps, changed and before chips", () => {
 		render(
 			<CheckPane
