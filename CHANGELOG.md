@@ -1,3 +1,10 @@
+## [0.1158.3](https://github.com/staff0rd/assist/compare/v0.1158.2...v0.1158.3) (2026-11-14)
+
+
+### Bug Fixes
+
+* show tool name only in live tail ([34f04f3](https://github.com/staff0rd/assist/commit/34f04f3049ebde1595dd3f96d9ce5f09c99fa78a))
+
 ## [0.1158.2](https://github.com/staff0rd/assist/compare/v0.1158.1...v0.1158.2) (2026-11-14)
 
 
