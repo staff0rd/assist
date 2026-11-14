@@ -1,3 +1,12 @@
+## [0.1148.1](https://github.com/staff0rd/assist/compare/v0.1148.0...v0.1148.1) (2026-11-14)
+
+
+### Bug Fixes
+
+* cap restarting status at 30s ([4f47817](https://github.com/staff0rd/assist/commit/4f478175a65b5cc67d0d35e9bd846b09a6bfb7e2))
+* enable Artifact tool on SDK sessions ([2e3e9b9](https://github.com/staff0rd/assist/commit/2e3e9b9c73889013982792383fe6573c7b678b39))
+* never leave dist without an entry ([3df1e09](https://github.com/staff0rd/assist/commit/3df1e09c126b82afe468325b89f56e2e1de9b6a8))
+
 # [0.1148.0](https://github.com/staff0rd/assist/compare/v0.1147.1...v0.1148.0) (2026-11-14)
 
 
