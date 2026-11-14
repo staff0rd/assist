@@ -88,6 +88,14 @@ describe("reopenDeferredCommands", () => {
 		});
 	});
 
+	it("drops the daemon's own backlog item id when none was persisted", () => {
+		vi.stubEnv("ASSIST_BACKLOG_ITEM_ID", "999");
+		setup({ send: vi.fn() });
+		vi.unstubAllEnvs();
+
+		expect(mockRun.mock.calls[0][0].env.ASSIST_BACKLOG_ITEM_ID).toBeUndefined();
+	});
+
 	it("delivers nothing when the reopened preview is superseded", () => {
 		const sdk = { send: vi.fn() };
 		const session = setup(sdk);

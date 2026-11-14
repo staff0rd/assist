@@ -1,4 +1,4 @@
-const PERSISTED_ENV_KEYS = ["ASSIST_BACKLOG_ITEM_ID"] as const;
+export const PERSISTED_ENV_KEYS = ["ASSIST_BACKLOG_ITEM_ID"] as const;
 
 export function deferredCommandEnv(
 	env: Record<string, string>,

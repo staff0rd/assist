@@ -1,6 +1,7 @@
 import { daemonLog } from "./daemonLog";
 import { deferredCommandLabel } from "./deferredCommandLabel";
 import { deliverDeferredResult } from "./deliverDeferredResult";
+import { reopenedCommandEnv } from "./reopenedCommandEnv";
 import { runDeferredCommand } from "./runDeferredCommand";
 import { workflowQueryEnv } from "./sdk/workflowQueryEnv";
 import type { Session } from "./types";
@@ -33,7 +34,10 @@ function reopen(
 	const pid = runDeferredCommand(
 		{
 			...command,
-			env: { ...workflowQueryEnv(process.env, id, undefined), ...command.env },
+			env: reopenedCommandEnv(
+				workflowQueryEnv(process.env, id, undefined),
+				command.env,
+			),
 		},
 		(result) => deliverDeferredResult(m, id, command, result),
 	);
