@@ -1,4 +1,4 @@
-import RuleIcon from "@mui/icons-material/Rule";
+import AccountBalanceOutlinedIcon from "@mui/icons-material/AccountBalanceOutlined";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import { useNavigate } from "react-router";
@@ -13,7 +13,7 @@ export function RulesButton() {
 				aria-label="Rules"
 				onClick={() => navigate("/rules")}
 			>
-				<RuleIcon fontSize="small" />
+				<AccountBalanceOutlinedIcon fontSize="small" />
 			</IconButton>
 		</Tooltip>
 	);
