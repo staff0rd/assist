@@ -1,3 +1,11 @@
+# [0.1166.0](https://github.com/staff0rd/assist/compare/v0.1165.0...v0.1166.0) (2026-11-14)
+
+
+### Features
+
+* in effect for path filter on rules ([6324215](https://github.com/staff0rd/assist/commit/6324215978d606e617d6c2334d5475acf50ffe90))
+* show tool call URLs whole as links ([5cffced](https://github.com/staff0rd/assist/commit/5cffceda89926627f34fde89b9594a6ca75fb521))
+
 # [0.1165.0](https://github.com/staff0rd/assist/compare/v0.1164.0...v0.1165.0) (2026-11-14)
 
 
