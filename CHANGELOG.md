@@ -1,3 +1,10 @@
+# [0.1162.0](https://github.com/staff0rd/assist/compare/v0.1161.0...v0.1162.0) (2026-11-14)
+
+
+### Features
+
+* interactive phone swipe-back ([22959a8](https://github.com/staff0rd/assist/commit/22959a8364a4cc7f0f16ff05ed1a1b0fd32c8590))
+
 # [0.1161.0](https://github.com/staff0rd/assist/compare/v0.1160.0...v0.1161.0) (2026-11-14)
 
 
