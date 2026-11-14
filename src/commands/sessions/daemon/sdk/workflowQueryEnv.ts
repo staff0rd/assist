@@ -1,3 +1,4 @@
+import { sdkAgentEnv } from "../../../../shared/sdkAgentEnv";
 import { sessionChildEnv } from "../sessionChildEnv";
 
 export function workflowQueryEnv(
@@ -9,6 +10,7 @@ export function workflowQueryEnv(
 		...sessionChildEnv(base, sessionId),
 		// why: claude turns the Artifact tool off for SDK-driven runs unless this opts back in
 		CLAUDE_CODE_ARTIFACT: base.CLAUDE_CODE_ARTIFACT ?? "1",
+		[sdkAgentEnv]: "1",
 	};
 	if (!launcherEnv) return env;
 	const { ASSIST_ACTIVITY_ID: _activityId, ...rest } = env;

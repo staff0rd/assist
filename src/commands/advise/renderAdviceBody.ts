@@ -1,8 +1,10 @@
 import type { AdviceContext } from "./AdviceContext";
 import type { AdviceFragment } from "./parseAdviceFragment";
+import { previewWaitAdvice } from "./previewWaitAdvice";
 import { verifyRunCommandNames } from "./verifyRunCommandNames";
 
 const adviceVariables: Record<string, (context: AdviceContext) => string> = {
+	...previewWaitAdvice,
 	verifyCommands: (context) =>
 		verifyRunCommandNames(context)
 			.map((name) => `\`${name}\``)

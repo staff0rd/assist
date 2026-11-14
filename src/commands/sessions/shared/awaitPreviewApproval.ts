@@ -1,6 +1,7 @@
 import type { PreviewDecision } from "./PreviewDecision";
 import { exitNoPreview } from "./exitNoPreview";
 import { reportPreviewRejection } from "./reportPreviewRejection";
+import { supersededPreviewMessage } from "./supersededPreviewMessage";
 import {
 	type PreviewOutcome,
 	type PreviewRequest,
@@ -28,9 +29,7 @@ export async function awaitPreviewApproval(
 	}
 
 	if (outcome === "superseded") {
-		console.log(
-			"Superseded by a newer preview — no decision; ignore this result.",
-		);
+		console.log(supersededPreviewMessage);
 		process.exit(0);
 	}
 

@@ -8,6 +8,7 @@ describe("workflowQueryEnv", () => {
 			ASSIST_SESSION_ID: "3",
 			ASSIST_ACTIVITY_ID: "3",
 			CLAUDE_CODE_ARTIFACT: "1",
+			ASSIST_SDK_AGENT: "1",
 		});
 	});
 
@@ -25,6 +26,7 @@ describe("workflowQueryEnv", () => {
 			ASSIST_SESSION: "1",
 			ASSIST_SESSION_ID: "3",
 			CLAUDE_CODE_ARTIFACT: "1",
+			ASSIST_SDK_AGENT: "1",
 			ASSIST_BACKLOG_ITEM_ID: "42",
 		});
 	});

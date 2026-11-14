@@ -4,6 +4,7 @@ import { handleAutoUpdate } from "./autoUpdate/handleAutoUpdate";
 import { handleAutoUpdateControl } from "./autoUpdate/handleAutoUpdateControl";
 import { sendTo } from "./broadcast";
 import { handleHelloRequest } from "./handleHelloRequest";
+import { handleDeferCommand } from "./handleDeferCommand";
 import { handleDequeue } from "./handleDequeue";
 import { handleInterrupt } from "./handleInterrupt";
 import { handleSdkLaunch } from "./sdk/handleSdkLaunch";
@@ -98,6 +99,7 @@ export const messageHandlers: Record<string, Handler> = {
 		sendTo(client, { type: "session-live", live });
 	},
 	"pr-preview": (client, m, d) => m.prPreview.set(client, d),
+	"defer-command": handleDeferCommand,
 	"pr-decision": routed((_client, m, d) => m.prPreview.decide(d)),
 	"user-activity": handleUserActivity,
 	"ui-status": (_client, _m, d) =>

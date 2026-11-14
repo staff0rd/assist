@@ -8,6 +8,7 @@ const context = {
 	rootDir: "/repo",
 	assistSession: false,
 	previewAnswerWait: true,
+	sdkSession: false,
 };
 
 function fragment(name: string, when: string): AdviceFragment {

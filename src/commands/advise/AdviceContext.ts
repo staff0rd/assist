@@ -5,4 +5,5 @@ export type AdviceContext = {
 	rootDir: string;
 	assistSession: boolean;
 	previewAnswerWait: boolean;
+	sdkSession: boolean;
 };

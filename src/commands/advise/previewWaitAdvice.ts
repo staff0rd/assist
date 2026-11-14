@@ -1,0 +1,15 @@
+import type { AdviceContext } from "./AdviceContext";
+
+export const previewWaitAdvice: Record<
+	string,
+	(context: AdviceContext) => string
+> = {
+	previewWait: ({ sdkSession }) =>
+		sdkSession
+			? "in the foreground. It returns at once; then end your turn and do nothing else — when the user decides, the command's output and exit code arrive as your next message"
+			: "as a background task, doing no other work until it returns. It blocks until the user decides",
+	previewRevise: ({ sdkSession }) =>
+		sdkSession
+			? "To revise a still-pending preview, re-run it; the earlier one is superseded and delivers nothing."
+			: "To revise a still-pending preview, re-run it directly without stopping the earlier task; that task then exits 0 as superseded — ignore its result.",
+};

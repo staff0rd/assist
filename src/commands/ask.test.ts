@@ -7,6 +7,12 @@ vi.mock("./sessions/shared/requestPreviewDecision", () => ({
 		mockRequestPreviewDecision(request),
 }));
 
+const mockDeferToDaemon = vi.fn();
+
+vi.mock("./sessions/shared/deferToDaemon", () => ({
+	deferToDaemon: (stdin?: string) => mockDeferToDaemon(stdin),
+}));
+
 import { ask } from "./ask";
 
 const comments = [
@@ -20,6 +26,7 @@ describe("ask", () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockDeferToDaemon.mockResolvedValue(false);
 		logged = [];
 		errored = [];
 		vi.spyOn(console, "log").mockImplementation((message: string) => {
@@ -53,6 +60,15 @@ describe("ask", () => {
 			"process.exit(1)",
 		);
 		expect(errored.join("\n")).toContain("--body is empty");
+	});
+
+	it("returns without blocking once the daemon takes the preview", async () => {
+		mockDeferToDaemon.mockResolvedValue(true);
+
+		await ask({ title: "Plan", body: "# Plan" });
+
+		expect(mockDeferToDaemon).toHaveBeenCalledWith(undefined);
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
 	});
 
 	it("requests an ask preview and prints comments on approve", async () => {

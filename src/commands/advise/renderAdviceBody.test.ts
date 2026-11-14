@@ -10,6 +10,7 @@ function contextWith(raw: Record<string, unknown>): AdviceContext {
 		rootDir: "/repo",
 		assistSession: false,
 		previewAnswerWait: true,
+		sdkSession: false,
 	};
 }
 
@@ -31,6 +32,20 @@ describe("renderAdviceBody", () => {
 		);
 
 		expect(body).toBe("Runs `verify:lint`, `verify:test` in parallel.");
+	});
+
+	it("tells a Claude (SDK) session to end its turn instead of using a background task", () => {
+		const ask = fragment("ask", "Run it {{previewWait}}. {{previewRevise}}");
+		const sdk = renderAdviceBody(ask, {
+			...contextWith({}),
+			sdkSession: true,
+		});
+		const pty = renderAdviceBody(ask, contextWith({}));
+
+		expect(sdk).toContain("end your turn");
+		expect(sdk).not.toContain("background task");
+		expect(pty).toContain("as a background task");
+		expect(pty).not.toContain("end your turn");
 	});
 
 	it("leaves a body with no placeholders untouched", () => {

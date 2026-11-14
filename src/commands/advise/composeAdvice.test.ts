@@ -22,6 +22,7 @@ function contextWith(
 		rootDir: "/repo",
 		assistSession,
 		previewAnswerWait,
+		sdkSession: false,
 	};
 }
 
@@ -168,6 +169,7 @@ describe("composeAdvice", () => {
 			rootDir: dir,
 			assistSession: false,
 			previewAnswerWait: true,
+			sdkSession: false,
 		});
 
 		expect(bare).not.toContain("refactor");
