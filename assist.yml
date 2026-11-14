@@ -203,7 +203,7 @@ run:
     command: bash
     args:
       - -c
-      - pnpm install --frozen-lockfile && npm run build
+      - pnpm install --frozen-lockfile && pnpm run build
   - name: ios:build
     command: npm
     args:
