@@ -1,3 +1,4 @@
+import { parseRestartNudge } from "./parseRestartNudge";
 import { renderPrompt } from "./renderPrompt";
 
 const MAX_LENGTH = 2048;
@@ -12,7 +13,7 @@ export function renderUserPrompt(
 	if (entry.isSidechain || entry.isMeta) return undefined;
 	if (entry.type !== "user" || isTaskNotification(entry)) return undefined;
 	const raw = promptTextOrNull(entry);
-	if (raw === null) return undefined;
+	if (raw === null || parseRestartNudge(raw) !== null) return undefined;
 	const message = renderPrompt(raw);
 	return message ? cap(message, maxLength) : undefined;
 }

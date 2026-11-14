@@ -1,3 +1,4 @@
+import { parseRestartNudge } from "./parseRestartNudge";
 import type { TranscriptEvent } from "./TranscriptEvent";
 
 type RawEntry = Record<string, unknown>;
@@ -39,6 +40,8 @@ function asRecord(value: unknown): Record<string, unknown> | null {
 
 function normalizeUserText(text: unknown): TranscriptEvent {
 	if (isInterruptText(text)) return { kind: "interrupt" };
+	const killed = parseRestartNudge(text);
+	if (killed !== null) return { kind: "restart", killed };
 	if (
 		typeof text === "string" &&
 		text.trimStart().startsWith(TASK_NOTIFICATION)

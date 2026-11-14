@@ -25,6 +25,10 @@ describe("renderUserPrompt", () => {
 		["sidechain", user("x", { isSidechain: true })],
 		["meta", user("x", { isMeta: true })],
 		["interrupt", user("[Request interrupted by user]")],
+		[
+			"restart nudge",
+			user('<assist-restart killed="0">Continue.</assist-restart>'),
+		],
 		["task notification", user("x", { origin: { kind: "task-notification" } })],
 		["tool result", user([{ type: "tool_result", content: "ok" }])],
 		["assistant", { type: "assistant", message: { content: "x" } }],

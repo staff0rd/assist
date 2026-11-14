@@ -5,4 +5,5 @@ export type TranscriptEvent =
 	| { kind: "user" }
 	| { kind: "taskNotification" }
 	| { kind: "interrupt" }
+	| { kind: "restart"; killed: number }
 	| { kind: "toolResult"; ids: string[] };

@@ -14,7 +14,7 @@ export function deriveTranscriptStatus(
 
 	const ev = events[lastIdx];
 	if (ev.kind === "interrupt") return "waiting";
-	if (ev.kind === "user") return "running";
+	if (ev.kind === "user" || ev.kind === "restart") return "running";
 	if (ev.kind === "toolResult" || ev.kind === "taskNotification") return null;
 
 	if (ev.stopReason != null && TURN_END_STOP_REASONS.has(ev.stopReason))

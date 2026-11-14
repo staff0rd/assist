@@ -1,6 +1,7 @@
 import type { TranscriptMessage } from "../../../../../types";
 import { TextRow } from "./TranscriptRow/TextRow";
 import { ToolRow } from "./TranscriptRow/ToolRow";
+import { restartLabel } from "./TranscriptRow/restartLabel";
 import { TranscriptDivider } from "./TranscriptRow/TranscriptDivider";
 
 export function TranscriptRow({
@@ -12,6 +13,8 @@ export function TranscriptRow({
 }) {
 	if (message.role === "interrupt")
 		return <TranscriptDivider label="Interrupted by you" />;
+	if (message.role === "restart")
+		return <TranscriptDivider label={restartLabel(message.killed)} />;
 	if (message.role === "tool")
 		return <ToolRow tool={message.tool} target={message.target} />;
 	return <TextRow role={message.role} text={message.text} term={term} />;

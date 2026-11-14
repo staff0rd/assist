@@ -22,8 +22,12 @@ function userEvents(entry: Entry, at?: string): ConversationEvent[] {
 	const events: ConversationEvent[] = [];
 	const text = renderUserPrompt(entry, Number.POSITIVE_INFINITY);
 	if (text) events.push({ kind: "message", role: "user", text, at });
-	else if (normalizeUser(entry).kind === "interrupt")
-		events.push({ kind: "interrupt", at });
+	else {
+		const normalized = normalizeUser(entry);
+		if (normalized.kind === "interrupt") events.push({ kind: "interrupt", at });
+		if (normalized.kind === "restart")
+			events.push({ kind: "restart", killed: normalized.killed, at });
+	}
 	for (const block of claudeContentBlocksOf(contentOf(entry))) {
 		if (block.type !== "tool_result" || block.is_error) continue;
 		const body = resultText(block.content).trim();

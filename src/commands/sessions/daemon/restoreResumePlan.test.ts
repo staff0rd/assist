@@ -41,7 +41,7 @@ describe("restoreResumePlan", () => {
 
 		expect(plan).toEqual({ idle: false });
 		expect(resumePrompt(plan)).toBe(
-			"A restart interrupted this conversation. Continue from where you left off.",
+			'<assist-restart killed="0">A restart interrupted this conversation. Continue from where you left off.</assist-restart>',
 		);
 	});
 

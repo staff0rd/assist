@@ -139,7 +139,8 @@ export type ConversationEvent =
 			at?: string;
 	  }
 	| { kind: "toolResult"; text: string; at?: string }
-	| { kind: "interrupt"; at?: string };
+	| { kind: "interrupt"; at?: string }
+	| { kind: "restart"; killed: number; at?: string };
 
 type ConversationLifecycle = {
 	status: "running" | "waiting" | null;

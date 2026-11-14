@@ -14,7 +14,7 @@ describe("resumeNudge", () => {
 
 	it("returns the restart nudge for a session that was mid-work", () => {
 		expect(resumeNudge()).toBe(
-			"A restart interrupted this conversation. Continue from where you left off.",
+			'<assist-restart killed="0">A restart interrupted this conversation. Continue from where you left off.</assist-restart>',
 		);
 	});
 

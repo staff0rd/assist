@@ -49,4 +49,14 @@ describe("groupToolRuns", () => {
 			"tool:Bash:ls#1",
 		]);
 	});
+
+	it("splits a tool run at a restart marker", () => {
+		const items = groupToolRuns([
+			tool("ls"),
+			{ role: "restart", killed: 0 },
+			tool("pwd"),
+		]);
+		expect(items.map((i) => i.kind)).toEqual(["tools", "message", "tools"]);
+		expect(items[1]).toMatchObject({ message: { key: "restart#0" } });
+	});
 });

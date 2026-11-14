@@ -150,7 +150,7 @@ describe("launchMode", () => {
 			});
 
 			expect(mockSpawnClaude).toHaveBeenCalledWith(
-				"A restart interrupted this conversation. Continue from where you left off.",
+				'<assist-restart killed="0">A restart interrupted this conversation. Continue from where you left off.</assist-restart>',
 				{
 					allowEdits: true,
 					resumeSessionId: "draft-456",

@@ -214,4 +214,31 @@ describe("transcriptMessages from a Claude transcript", () => {
 
 		expect(messages).toEqual([{ role: "interrupt" }]);
 	});
+
+	it("collapses a tagged restart nudge into a restart marker", () => {
+		const nudge =
+			'<assist-restart killed="2">The daemon restarted.</assist-restart>';
+		const messages = parseClaudeTranscriptLines([
+			line({ type: "user", message: { role: "user", content: nudge } }),
+			line({
+				type: "user",
+				message: { role: "user", content: [{ type: "text", text: nudge }] },
+			}),
+		]);
+
+		expect(messages).toEqual([
+			{ role: "restart", killed: 2 },
+			{ role: "restart", killed: 2 },
+		]);
+	});
+
+	it("keeps an untagged restart nudge as a user message", () => {
+		const text =
+			"A restart interrupted this conversation. Continue from where you left off.";
+		const messages = parseClaudeTranscriptLines([
+			line({ type: "user", message: { role: "user", content: text } }),
+		]);
+
+		expect(messages).toEqual([{ role: "user", text }]);
+	});
 });

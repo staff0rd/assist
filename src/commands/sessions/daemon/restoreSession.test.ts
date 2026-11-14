@@ -103,7 +103,7 @@ describe("restoreSession", () => {
 		expect(spawnClaudeMock).toHaveBeenCalledWith({
 			resumeSessionId: "abc-123",
 			prompt:
-				"A restart interrupted this conversation. Continue from where you left off.",
+				'<assist-restart killed="0">A restart interrupted this conversation. Continue from where you left off.</assist-restart>',
 			cwd: "/home/user/repo",
 			sessionId: "1",
 		});
@@ -650,7 +650,7 @@ describe("restoreSession", () => {
 		expect(spawnClaudeMock).toHaveBeenCalledWith({
 			resumeSessionId: "draft-456",
 			prompt:
-				"A restart interrupted this conversation. Continue from where you left off.",
+				'<assist-restart killed="0">A restart interrupted this conversation. Continue from where you left off.</assist-restart>',
 			cwd: "/home/user/repo",
 			sessionId: "1",
 		});

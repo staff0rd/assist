@@ -346,4 +346,13 @@ describe("deriveTranscriptStatus — prior regression family", () => {
 			]),
 		).toBe("running");
 	});
+
+	it("a trailing restart nudge derives running", () => {
+		expect(
+			deriveTranscriptStatus([
+				assistantText("done"),
+				userPrompt('<assist-restart killed="1">Continue.</assist-restart>'),
+			]),
+		).toBe("running");
+	});
 });
