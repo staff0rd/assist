@@ -25,7 +25,7 @@ describe("statusPlugin", () => {
 	it("renders check as a wrench head", () => {
 		const html = render("check");
 		expect(html).toContain("<svg");
-		expect(html).toContain("rotate(45 8 8)");
+		expect(html).toContain("rotate(45)");
 		expect(html).not.toContain("▲");
 	});
 
