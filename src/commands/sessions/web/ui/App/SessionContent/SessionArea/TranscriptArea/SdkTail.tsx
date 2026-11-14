@@ -14,6 +14,11 @@ function activityText(session: SessionInfo): string | undefined {
 	return session.sdkActivity ?? "Working";
 }
 
+function endsWithRestart(session: SessionInfo, transcript?: Transcript | null) {
+	if (transcript?.sessionId !== session.id) return false;
+	return transcript.messages.at(-1)?.role === "restart";
+}
+
 export function SdkTail({
 	session,
 	transcript,
@@ -30,7 +35,9 @@ export function SdkTail({
 	if (sdkComposerState(session).resuming)
 		return (
 			<>
-				<TranscriptDivider label="Daemon restarted" />
+				{!endsWithRestart(session, transcript) && (
+					<TranscriptDivider label="Daemon restarted" />
+				)}
 				<SdkTailRow text="Resuming conversation…" />
 			</>
 		);

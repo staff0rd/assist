@@ -91,6 +91,30 @@ describe("SdkTail", () => {
 		);
 	});
 
+	it("leaves the restart divider to the transcript once it records the nudge", () => {
+		render(
+			<SdkTail
+				session={makeSessionInfo({
+					id: "s1",
+					sdk: true,
+					status: "running",
+					sdkResuming: true,
+				})}
+				transcript={{
+					sessionId: "s1",
+					messages: [
+						{ role: "assistant", text: "earlier reply" },
+						{ role: "restart", killed: 1 },
+					],
+				}}
+			/>,
+		);
+		expect(screen.queryByRole("separator")).toBeNull();
+		expect(screen.getByRole("status").textContent).toContain(
+			"Resuming conversation…",
+		);
+	});
+
 	it("shows the current activity once resumed", () => {
 		render(
 			<SdkTail
