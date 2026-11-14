@@ -1,3 +1,13 @@
+# [0.1154.0](https://github.com/staff0rd/assist/compare/v0.1153.0...v0.1154.0) (2026-11-14)
+
+
+### Features
+
+* description checks on PR description ([cef8b18](https://github.com/staff0rd/assist/commit/cef8b180427ca9089c3b894815318ed2f8731371))
+* echo sign-off and question text ([67d5e6b](https://github.com/staff0rd/assist/commit/67d5e6b607bfb734993a18ac54211b10ea938785))
+* name edited and read files in tool run rows ([035634c](https://github.com/staff0rd/assist/commit/035634c6929d91cb1225bf9f0d290326c12e74d7))
+* show sent SDK messages immediately ([68d3d00](https://github.com/staff0rd/assist/commit/68d3d00e3c071b68848b7af6854817cae522157e))
+
 # [0.1153.0](https://github.com/staff0rd/assist/compare/v0.1152.0...v0.1153.0) (2026-11-14)
 
 
