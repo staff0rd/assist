@@ -1,6 +1,7 @@
 import { spawn } from "node:child_process";
 import { daemonLog } from "../daemonLog";
 import { installInvocation } from "./installInvocation";
+import { missingToolMessage } from "./missingToolMessage";
 import { trackInstall, untrackInstall } from "./stopInstall";
 
 const STDERR_TAIL = 2000;
@@ -37,7 +38,7 @@ export function spawnInstall(
 			code === 0,
 			code === 0
 				? "complete"
-				: `failed (${signal ? `signal ${signal}` : `exit ${code}`}): ${stderr.trim() || "no output"}`,
+				: `failed (${signal ? `signal ${signal}` : `exit ${code}`}): ${missingToolMessage(command, code) ?? (stderr.trim() || "no output")}`,
 		),
 	);
 }
