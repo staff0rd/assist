@@ -7,6 +7,7 @@ const QUESTION_KINDS = new Set<string | undefined>([
 	"github-issue-edit",
 	"github-issue-comment",
 	"pr-comment",
+	"design",
 ]);
 
 export type DisplayStatus = SessionStatus | "idle" | "question" | "check";
@@ -19,7 +20,7 @@ export function displayStatus(session: SessionInfo): DisplayStatus {
 		(session.status === "running" || session.status === "waiting")
 	) {
 		if (QUESTION_KINDS.has(preview.kind)) return "question";
-		if (preview.kind === "check" || preview.kind === "design") return "check";
+		if (preview.kind === "check") return "check";
 		return "waiting";
 	}
 	return session.status;
