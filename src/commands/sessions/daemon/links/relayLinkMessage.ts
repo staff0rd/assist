@@ -48,6 +48,7 @@ const relays: Record<string, Relay> = {
 	"user-messages": relayWithNodeSessionId,
 	"session-transcript": relayWithNodeSessionId,
 	transcript: relayReply,
+	dequeued: relayReply,
 	limits: (state, msg) =>
 		state.onLimits(
 			msg.harness as HarnessKind | undefined,

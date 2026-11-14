@@ -6,6 +6,7 @@ import type { SessionInfo } from "../../../../types";
 import { usePersistedPrompt } from "../../../../usePersistedPrompt";
 import { sdkComposerKeyDown } from "./sdkComposerKeyDown";
 import { sdkComposerState } from "./sdkComposerState";
+import { useAppendQueuedToDraft } from "./useAppendQueuedToDraft";
 
 export function useSdkComposer(
 	session: SessionInfo,
@@ -19,6 +20,7 @@ export function useSdkComposer(
 		session.node,
 	);
 	const slash = useSlashSuggestions(commands, text, setText);
+	useAppendQueuedToDraft(session.id, setText, slash.inputRef);
 	const state = sdkComposerState(session);
 	const suggestion = text ? undefined : state.suggestion;
 	const send = () => {

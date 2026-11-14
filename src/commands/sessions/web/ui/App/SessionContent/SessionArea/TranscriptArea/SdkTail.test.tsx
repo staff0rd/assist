@@ -10,6 +10,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { makeSessionInfo } from "../../../../../../../../test/mothers/makeSessionInfo";
 import { SdkTail } from "./SdkTail";
 import { DequeueMessageContext } from "./useDequeueMessage";
+import { ComposerDraftContext } from "../SdkComposer/useComposerDraft";
 
 afterEach(() => {
 	cleanup();
@@ -38,6 +39,38 @@ describe("SdkTail", () => {
 		fireEvent.click(buttons[1]);
 		expect(dequeue).toHaveBeenCalledWith("s1", 1, "second");
 	});
+
+	it.each([
+		[true, ["s1", "second"]],
+		[false, undefined],
+	])(
+		"puts an edited message into the composer only when removed (%s)",
+		async (removed, appended) => {
+			const dequeue = vi.fn().mockResolvedValue(removed);
+			const drafts = { register: vi.fn(), append: vi.fn() };
+			render(
+				<DequeueMessageContext.Provider value={dequeue}>
+					<ComposerDraftContext.Provider value={drafts}>
+						<SdkTail
+							session={makeSessionInfo({
+								id: "s1",
+								sdk: true,
+								status: "running",
+								sdkQueued: ["first", "second"],
+							})}
+						/>
+					</ComposerDraftContext.Provider>
+				</DequeueMessageContext.Provider>,
+			);
+			fireEvent.click(
+				screen.getAllByRole("button", { name: "Edit queued message" })[1],
+			);
+			await act(async () => {});
+			expect(dequeue).toHaveBeenCalledWith("s1", 1, "second");
+			if (appended) expect(drafts.append).toHaveBeenCalledWith(...appended);
+			else expect(drafts.append).not.toHaveBeenCalled();
+		},
+	);
 
 	it("shows the restart divider and resuming row while the conversation resumes", () => {
 		render(

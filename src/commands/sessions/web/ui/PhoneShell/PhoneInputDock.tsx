@@ -16,6 +16,7 @@ type Props = {
 	stop?: ReplyStop;
 	locked?: string;
 	suggestion?: string;
+	draftSessionId?: string;
 };
 
 export function PhoneInputDock({
@@ -29,6 +30,7 @@ export function PhoneInputDock({
 	stop,
 	locked,
 	suggestion,
+	draftSessionId,
 }: Props) {
 	const commands = useSuggestedSlashCommands(harness, cwd, node);
 	return (
@@ -53,6 +55,7 @@ export function PhoneInputDock({
 				stop={stop}
 				locked={locked}
 				suggestion={suggestion}
+				draftSessionId={draftSessionId}
 			/>
 		</Box>
 	);

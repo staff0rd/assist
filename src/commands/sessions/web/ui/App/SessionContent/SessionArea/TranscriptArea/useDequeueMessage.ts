@@ -1,6 +1,10 @@
 import { createContext, useContext } from "react";
 
-type DequeueMessage = (sessionId: string, index: number, text: string) => void;
+export type DequeueMessage = (
+	sessionId: string,
+	index: number,
+	text: string,
+) => Promise<boolean>;
 
 export const DequeueMessageContext = createContext<DequeueMessage | undefined>(
 	undefined,

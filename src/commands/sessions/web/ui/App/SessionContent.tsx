@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import { SessionArea } from "./SessionContent/SessionArea";
 import { LastMessageHistoryContext } from "./SessionContent/useLastMessageHistory";
 import type { SessionSocket } from "../useSessionSocket";
-import { DequeueMessageContext } from "./SessionContent/SessionArea/TranscriptArea/useDequeueMessage";
+import { QueuedMessageProviders } from "./SessionContent/SessionArea/TranscriptArea/QueuedMessageProviders";
 
 export function SessionContent({ socket }: { socket: SessionSocket }) {
 	const lifecycle = useMemo(
@@ -32,7 +32,7 @@ export function SessionContent({ socket }: { socket: SessionSocket }) {
 	);
 	return (
 		<LastMessageHistoryContext.Provider value={lastMessageHistory}>
-			<DequeueMessageContext.Provider value={socket.dequeueMessage}>
+			<QueuedMessageProviders dequeue={socket.dequeueMessage}>
 				<SessionArea
 					lifecycle={lifecycle}
 					sessions={socket.sessions}
@@ -47,7 +47,7 @@ export function SessionContent({ socket }: { socket: SessionSocket }) {
 					interruptSession={socket.interruptSession}
 					sendPrDecision={socket.sendPrDecision}
 				/>
-			</DequeueMessageContext.Provider>
+			</QueuedMessageProviders>
 		</LastMessageHistoryContext.Provider>
 	);
 }

@@ -2,7 +2,7 @@ import Box from "@mui/material/Box";
 import type { SessionInfo } from "../types";
 import type { SessionSocket } from "../useSessionSocket";
 import { LiveTranscriptArea } from "../App/SessionContent/SessionArea/LiveTranscriptArea";
-import { DequeueMessageContext } from "../App/SessionContent/SessionArea/TranscriptArea/useDequeueMessage";
+import { QueuedMessageProviders } from "../App/SessionContent/SessionArea/TranscriptArea/QueuedMessageProviders";
 import { PhoneTerminal } from "./PhoneTerminal";
 import { pendingCheck } from "./pendingCheck";
 import { pendingPreview } from "./pendingPreview";
@@ -34,17 +34,15 @@ export function PhoneSessionBody(props: {
 		pendingCheck(session),
 	);
 	return (
-		<>
+		<QueuedMessageProviders dequeue={socket.dequeueMessage}>
 			<Box sx={asking ? askTerminalSx : terminalSx}>
 				{session.sdk ? (
 					<Box sx={sdkBodySx}>
-						<DequeueMessageContext.Provider value={socket.dequeueMessage}>
-							<LiveTranscriptArea
-								session={session}
-								transcript={socket.transcript}
-								fetchSessionTranscript={socket.fetchSessionTranscript}
-							/>
-						</DequeueMessageContext.Provider>
+						<LiveTranscriptArea
+							session={session}
+							transcript={socket.transcript}
+							fetchSessionTranscript={socket.fetchSessionTranscript}
+						/>
 					</Box>
 				) : (
 					<PhoneTerminal
@@ -59,6 +57,6 @@ export function PhoneSessionBody(props: {
 				)}
 			</Box>
 			<PhoneSessionAsk {...props} />
-		</>
+		</QueuedMessageProviders>
 	);
 }

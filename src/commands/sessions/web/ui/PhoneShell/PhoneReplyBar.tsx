@@ -4,8 +4,7 @@ import type { SlashCommand } from "../../slashCommands/readSlashCommands";
 import { PhoneReplyField } from "./PhoneReplyField";
 import { PhoneReplySend } from "./PhoneReplySend";
 import { PhoneReplyStop } from "./PhoneReplyStop";
-import { PhoneSuggestionChip } from "./PhoneSuggestionChip";
-import { PhoneSlashSuggestions } from "./PhoneSlashSuggestions/PhoneSlashSuggestions";
+import { PhoneReplySuggestions } from "./PhoneReplySuggestions";
 import { useSlashReply } from "./PhoneSlashSuggestions/useSlashReply";
 import { phoneReplyBarSx } from "./phoneReplyBarSx";
 
@@ -18,6 +17,7 @@ export function PhoneReplyBar({
 	stop,
 	locked,
 	suggestion,
+	draftSessionId,
 }: {
 	harness?: HarnessKind;
 	commands?: SlashCommand[];
@@ -25,9 +25,10 @@ export function PhoneReplyBar({
 	stop?: ReplyStop;
 	locked?: string;
 	suggestion?: string;
+	draftSessionId?: string;
 }) {
-	const reply = useSlashReply(commands);
-	const { text, suggestions } = reply;
+	const reply = useSlashReply(commands, draftSessionId);
+	const { text } = reply;
 	const send = () => {
 		if (!text.trim() || locked) return;
 		onSend(text);
@@ -36,19 +37,11 @@ export function PhoneReplyBar({
 
 	return (
 		<>
-			{suggestion && !text && !locked && (
-				<PhoneSuggestionChip
-					suggestion={suggestion}
-					onPick={() => reply.fill(suggestion)}
-				/>
-			)}
-			{suggestions && (
-				<PhoneSlashSuggestions
-					matches={suggestions.matches}
-					query={suggestions.query}
-					onPick={reply.pick}
-				/>
-			)}
+			<PhoneReplySuggestions
+				reply={reply}
+				suggestion={suggestion}
+				locked={locked}
+			/>
 			<Box sx={phoneReplyBarSx.bar}>
 				<PhoneReplyField reply={reply} harness={harness} locked={locked} />
 				{stop && <PhoneReplyStop {...stop} />}

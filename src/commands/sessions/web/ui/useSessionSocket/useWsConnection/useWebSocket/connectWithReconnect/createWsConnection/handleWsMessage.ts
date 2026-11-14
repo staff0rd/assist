@@ -8,6 +8,7 @@ import { handleOutput } from "./handleWsMessage/handleOutput";
 import { handleRunConflict } from "./handleWsMessage/handleRunConflict";
 import { handleSessions } from "./handleWsMessage/handleSessions";
 import { handleSnapshot } from "./handleWsMessage/handleSnapshot";
+import { dequeueReplies } from "../../../../dequeueReplies";
 import { inboxStore } from "../../../../../App/AppShell/AppRoutes/InboxView/inboxStore";
 import type {
 	HistoricalSession,
@@ -49,6 +50,7 @@ const wsHandlers: Record<string, (msg: Msg, d: WsDispatch) => void> = {
 	clear: handleClear,
 	output: handleOutput,
 	snapshot: handleSnapshot,
+	dequeued: (msg) => dequeueReplies.settle(msg.requestId, msg.removed === true),
 };
 
 export function handleWsMessage(msg: Msg, d: WsDispatch): void {

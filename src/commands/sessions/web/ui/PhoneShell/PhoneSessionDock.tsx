@@ -28,6 +28,7 @@ export function PhoneSessionDock({
 			onSend={io.onSend}
 			locked={sdk?.resuming ? sdk.placeholder : undefined}
 			suggestion={sdk?.suggestion}
+			draftSessionId={sdk && session.id}
 			stop={
 				sdk?.running
 					? { disabled: sdk.stopping, onStop: io.onInterrupt }

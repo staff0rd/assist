@@ -2,7 +2,6 @@ import { type RefObject, useMemo } from "react";
 import {
 	cancelTransferAction,
 	createRunAction,
-	dequeueMessageAction,
 	inputAction,
 	interruptSessionAction,
 	resizeAction,
@@ -16,6 +15,7 @@ import { prDecisionAction } from "./useSessionActions/prDecisionAction";
 import { useLaunchActions } from "./useSessionActions/useLaunchActions";
 import { useLifecycleActions } from "./useSessionActions/useLifecycleActions";
 import { outputAction } from "./useSessionActions/outputAction";
+import { dequeueMessageAction } from "../dequeueMessageAction";
 
 type SendFn = (msg: object) => void;
 type OutputHandler = (data: string) => void;
