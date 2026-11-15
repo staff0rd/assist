@@ -1,3 +1,10 @@
+# [0.1179.0](https://github.com/staff0rd/assist/compare/v0.1178.0...v0.1179.0) (2026-11-15)
+
+
+### Features
+
+* discard held shell results ([875f072](https://github.com/staff0rd/assist/commit/875f0725875bb28bd433d191ef55c5d0550c6b89))
+
 # [0.1178.0](https://github.com/staff0rd/assist/compare/v0.1177.1...v0.1178.0) (2026-11-15)
 
 
