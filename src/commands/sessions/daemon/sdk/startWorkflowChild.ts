@@ -1,4 +1,5 @@
 import { type ChildProcess, spawn } from "node:child_process";
+import { withHarnessPath } from "../../../../shared/nodeRuntime/withHarnessPath";
 import { daemonLog } from "../daemonLog";
 import { resolvePtyCommand } from "../resolvePtyCommand";
 import { sessionChildEnv } from "../sessionChildEnv";
@@ -12,10 +13,12 @@ export function startWorkflowChild(
 	const command = resolvePtyCommand(args);
 	const child = spawn(command.file, command.args, {
 		cwd: cwd ?? process.cwd(),
-		env: sessionChildEnv(process.env, sessionId, {
-			...extraEnv,
-			ASSIST_SDK_SESSION: "1",
-		}),
+		env: withHarnessPath(
+			sessionChildEnv(process.env, sessionId, {
+				...extraEnv,
+				ASSIST_SDK_SESSION: "1",
+			}),
+		),
 		stdio: ["ignore", "pipe", "pipe"],
 		detached: process.platform !== "win32",
 		windowsHide: true,
