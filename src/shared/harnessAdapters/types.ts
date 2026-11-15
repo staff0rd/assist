@@ -28,7 +28,7 @@ type SdkSessionHandle = {
 	send: (text: string) => void;
 	interrupt: () => void;
 	dequeue: (index: number, text: string) => boolean;
-	stopTask: (taskId: string) => Promise<void>;
+	stopTask?: (taskId: string) => Promise<void>;
 	setPrefix?: (provider: () => string) => void;
 	attach?: (query: SessionProcess, idle: boolean) => void;
 };
@@ -118,6 +118,17 @@ type InteractiveLaunch = {
 	appendSystemPromptFile?: string;
 	auto?: boolean;
 	model?: string;
+};
+
+export type DrivenSessionOpts = {
+	prompt?: string;
+	cwd?: string;
+	sessionId?: string;
+	conversationId?: string;
+	resumeId?: string;
+	appendSystemPromptFile?: string;
+	model?: string;
+	launcherEnv?: Record<string, string>;
 };
 
 export type ConversationRef = {
@@ -264,6 +275,7 @@ export type HarnessAdapter = HarnessCapabilitySource & {
 		options: ResumeOptions,
 	) => SpawnResult;
 	interactive: (launch: InteractiveLaunch) => SessionProcess;
+	drivenSession?: (opts: DrivenSessionOpts) => SessionProcess;
 	oneShot: (prompt: string, options: OneShotOptions) => Promise<string>;
 	structured: (run: StructuredRun) => Promise<ReviewerResult>;
 	connectorRun: (run: ConnectorRun) => Promise<ConnectorRunResult>;

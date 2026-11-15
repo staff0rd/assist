@@ -3,15 +3,15 @@ import type {
 	SpawnedProcess,
 	SpawnOptions,
 } from "@anthropic-ai/claude-agent-sdk";
-import { daemonLog } from "../daemonLog";
-import type { SdkSpawnOpts } from "./SdkSpawnOpts";
-import { workflowQueryEnv } from "./workflowQueryEnv";
+import { daemonLog } from "../../daemonLog";
+import type { DrivenSessionOpts } from "../../../../../shared/harnessAdapters/types";
+import { workflowQueryEnv } from "../workflowQueryEnv";
 
 const MAX_STDERR_LINE = 300;
 
 export function spawnSdkChild(
 	options: SpawnOptions,
-	{ sessionId, launcherEnv }: SdkSpawnOpts,
+	{ sessionId, launcherEnv }: DrivenSessionOpts,
 	attach: (child: ChildProcess) => void,
 ): SpawnedProcess {
 	const label = `session ${sessionId ?? "?"}`;

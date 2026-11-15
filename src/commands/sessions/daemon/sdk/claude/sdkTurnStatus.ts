@@ -1,8 +1,9 @@
 import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
+import type { DrivenTurnStatus } from "../DrivenTurnEvent";
 
-export type SdkTurnStatus = "running" | "waiting";
-
-export function sdkTurnStatus(message: SDKMessage): SdkTurnStatus | undefined {
+export function sdkTurnStatus(
+	message: SDKMessage,
+): DrivenTurnStatus | undefined {
 	if (message.type === "assistant" && message.parent_tool_use_id === null)
 		return "running";
 	if (message.type === "result") return "waiting";

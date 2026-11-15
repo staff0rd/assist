@@ -1,7 +1,7 @@
 import type { SDKRateLimitEvent } from "@anthropic-ai/claude-agent-sdk";
-import { daemonLog } from "../daemonLog";
+import { daemonLog } from "../../daemonLog";
 import { sdkRateLimits } from "./sdkRateLimits";
-import { sdkUsageSink } from "./sdkUsageSink";
+import { sdkUsageSink } from "../sdkUsageSink";
 
 export function recordSdkRateLimits(
 	label: string,

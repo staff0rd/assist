@@ -1,8 +1,10 @@
 import type { Socket } from "node:net";
 import { createInterface } from "node:readline";
+import type { HarnessKind } from "../harnesses";
 import { launcherEnv } from "./launcherEnv";
 
 export type SdkLaunch = {
+	harness: HarnessKind;
 	prompt: string;
 	cwd: string;
 	conversationId?: string;

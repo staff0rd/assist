@@ -22,9 +22,10 @@ export type SdkSessionControl = {
 export function createSdkSessionProcess(
 	sessionId: string | undefined,
 	abort: AbortController,
+	{ backgroundTasks = false }: { backgroundTasks?: boolean } = {},
 ): SdkSessionControl {
 	const label = `session ${sessionId ?? "?"}`;
-	const sdk = sdkSessionHandle(label);
+	const sdk = sdkSessionHandle(label, backgroundTasks);
 	let child: ChildProcess | undefined;
 	const exit = createSdkExit(sdk.emit, () => child);
 

@@ -24,9 +24,17 @@ export const fakeHarnessCapabilities: CapabilityDeclarations = {
 	"oneShot.structured": supported,
 	"oneShot.text": supported,
 	"preview.nextTurn": supported,
+	"session.driven": unsupported(
+		"the fake harness runs in a terminal",
+		"none needed; it is a test double",
+	),
 	"skills.native": supported,
 	"slashCommands.suggest": supported,
 	"systemPrompt.append": supported,
+	"tasks.background": unsupported(
+		"the fake harness reports no background tasks",
+		"none needed; it is a test double",
+	),
 	"tasks.notifyOnExit": supported,
 	"tools.restrict": supported,
 	"transcript.read": supported,

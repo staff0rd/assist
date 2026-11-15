@@ -9,7 +9,7 @@ export function relaySdkActions(
 ): Pick<SdkHandle, "send" | "interrupt" | "dequeue" | "stopTask"> {
 	const dropped = (action: string) =>
 		daemonLog(
-			`${label} sdk ${action} dropped: no Claude (SDK) query is attached to this workflow`,
+			`${label} sdk ${action} dropped: no driven query is attached to this workflow`,
 		);
 	return {
 		send: (text) => {
@@ -27,10 +27,12 @@ export function relaySdkActions(
 			return false;
 		},
 		stopTask: (taskId) => {
-			const sdk = current()?.sdk;
-			return sdk
-				? sdk.stopTask(taskId)
-				: Promise.reject(new Error("no Claude (SDK) query attached"));
+			const stopTask = current()?.sdk?.stopTask;
+			return stopTask
+				? stopTask(taskId)
+				: Promise.reject(
+						new Error("no driven query with background tasks attached"),
+					);
 		},
 	};
 }

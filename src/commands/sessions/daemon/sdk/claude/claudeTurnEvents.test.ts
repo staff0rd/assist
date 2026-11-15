@@ -1,11 +1,25 @@
 import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { SdkSessionEvent } from "../../../../shared/harnessAdapters/types";
-import { createSdkSessionProcess } from "./createSdkSessionProcess";
-import { createSdkTurnTracker } from "./createSdkTurnTracker";
-import { runSdkQuery } from "./runSdkQuery";
+import type { SdkSessionEvent } from "../../../../../shared/harnessAdapters/types";
+import { createSdkSessionProcess } from "../createSdkSessionProcess";
+import { createSdkTurnTracker } from "../createSdkTurnTracker";
+import { runDrivenQuery } from "../runDrivenQuery";
+import { claudeTurnEvents } from "./claudeTurnEvents";
 
-vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
+vi.mock("../../daemonLog", () => ({ daemonLog: vi.fn() }));
+
+function runSdkQuery(
+	messages: AsyncIterable<SDKMessage>,
+	control: ReturnType<typeof createSdkSessionProcess>,
+) {
+	return runDrivenQuery(
+		claudeTurnEvents(messages, "session 7"),
+		"session 7",
+		control,
+		createSdkTurnTracker("session 7", control, vi.fn()),
+		true,
+	);
+}
 
 function assistant(content: unknown[], parent: string | null = null) {
 	return {
@@ -37,16 +51,11 @@ async function run(messages: AsyncIterable<SDKMessage>) {
 	const exits: number[] = [];
 	control.process.sdk?.onEvent((event) => events.push(event));
 	control.process.onExit(({ exitCode }) => exits.push(exitCode));
-	await runSdkQuery(
-		messages,
-		"7",
-		control,
-		createSdkTurnTracker("session 7", control, vi.fn()),
-	);
+	await runSdkQuery(messages, control);
 	return { events, exits };
 }
 
-describe("runSdkQuery", () => {
+describe("claudeTurnEvents through runDrivenQuery", () => {
 	beforeEach(() => vi.clearAllMocks());
 
 	it("moves to running with the current activity, then waiting with it cleared", async () => {
@@ -127,12 +136,7 @@ describe("runSdkQuery", () => {
 			abort.abort();
 			throw new Error("Operation aborted");
 		}
-		await runSdkQuery(
-			aborted(),
-			"7",
-			control,
-			createSdkTurnTracker("session 7", control, vi.fn()),
-		);
+		await runSdkQuery(aborted(), control);
 		expect(exits).toEqual([0]);
 	});
 

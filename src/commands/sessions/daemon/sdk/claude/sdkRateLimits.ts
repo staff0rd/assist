@@ -1,5 +1,5 @@
 import type { SDKRateLimitInfo } from "@anthropic-ai/claude-agent-sdk";
-import type { RateLimits } from "../../../../shared/RateLimits";
+import type { RateLimits } from "../../../../../shared/RateLimits";
 
 type Window = keyof RateLimits;
 type WindowInfo = { utilization?: number; resetsAt?: number };

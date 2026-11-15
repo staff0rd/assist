@@ -9,7 +9,7 @@ import {
 
 vi.mock("./spawnClaude", () => ({ spawnClaude: vi.fn(() => "claude-pty") }));
 vi.mock("./spawnCodex", () => ({ spawnCodex: vi.fn(() => "codex-pty") }));
-vi.mock("./spawnClaudeSdk", () => ({
+vi.mock("./sdk/claude/spawnClaudeSdk", () => ({
 	spawnClaudeSdk: vi.fn(() => ({ sdk: {} })),
 }));
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
@@ -28,7 +28,7 @@ import type { PersistedSession } from "./loadPersistedSessions";
 import { restoreBase } from "./restoreBase";
 import { restoreInteractiveSession } from "./restoreInteractiveSession";
 import { spawnClaude } from "./spawnClaude";
-import { spawnClaudeSdk } from "./spawnClaudeSdk";
+import { spawnClaudeSdk } from "./sdk/claude/spawnClaudeSdk";
 import { spawnCodex } from "./spawnCodex";
 
 const mockSpawnClaude = spawnClaude as unknown as MockInstance;

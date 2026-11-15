@@ -9,9 +9,13 @@ vi.mock("../../commands/sessions/daemon/connectToDaemon", () => ({
 describe("launchSdkViaDaemon", () => {
 	afterEach(() => vi.unstubAllEnvs());
 
-	it("refuses outside a Claude (SDK) daemon session without connecting", async () => {
+	it("refuses outside a driven daemon session without connecting", async () => {
 		vi.stubEnv("ASSIST_SDK_SESSION", "");
-		const { done } = launchSdkViaDaemon({ prompt: "/refine a1", cwd: "/r" });
+		const { done } = launchSdkViaDaemon({
+			harness: "claude-sdk",
+			prompt: "/refine a1",
+			cwd: "/r",
+		});
 		await expect(done).rejects.toThrow(/sessions the assist daemon starts/);
 		expect(connectToDaemon).not.toHaveBeenCalled();
 	});

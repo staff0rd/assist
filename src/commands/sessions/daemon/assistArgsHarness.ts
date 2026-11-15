@@ -1,5 +1,5 @@
 import type { HarnessDefaultsType } from "../../backlog/resolveHarness";
-import { harnessKinds } from "../../../shared/harnessKinds";
+import { isHarnessKind } from "../../../shared/isHarnessKind";
 import type { HarnessKind } from "../../../shared/harnesses";
 import { loadConfigFrom } from "../../../shared/loadConfigFrom";
 import { daemonLog } from "./daemonLog";
@@ -15,10 +15,6 @@ function defaultsType(args: string[]): HarnessDefaultsType | undefined {
 	if (args[0] === "next" || (args[0] === "backlog" && args[1] === "run"))
 		return "run";
 	return undefined;
-}
-
-function isHarnessKind(value: string): value is HarnessKind {
-	return (harnessKinds as readonly string[]).includes(value);
 }
 
 export function assistArgsHarness(

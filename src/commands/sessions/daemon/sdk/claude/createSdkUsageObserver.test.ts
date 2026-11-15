@@ -1,10 +1,10 @@
 import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createSdkUsageObserver } from "./createSdkUsageObserver";
-import { setSdkUsageSink } from "./sdkUsageSink";
+import { setSdkUsageSink } from "../sdkUsageSink";
 
-vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
-vi.mock("../../shared/findSessionJsonlPath", () => ({
+vi.mock("../../daemonLog", () => ({ daemonLog: vi.fn() }));
+vi.mock("../../../shared/findSessionJsonlPath", () => ({
 	findSessionJsonlPath: vi.fn(async () => "/t/abc.jsonl"),
 }));
 

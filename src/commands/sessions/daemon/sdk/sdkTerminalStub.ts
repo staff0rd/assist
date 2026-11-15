@@ -7,7 +7,7 @@ export function sdkTerminalStub(
 	label: string,
 ): Pick<SessionProcess, "cols" | "rows" | "write" | "resize" | "onData"> {
 	const skip = (path: string) => () =>
-		daemonLog(`${label} ${path} skipped: Claude (SDK) session has no terminal`);
+		daemonLog(`${label} ${path} skipped: driven session has no terminal`);
 	return {
 		cols: 0,
 		rows: 0,

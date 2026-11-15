@@ -1,6 +1,6 @@
 import type { Query } from "@anthropic-ai/claude-agent-sdk";
-import { daemonLog } from "../daemonLog";
-import type { SdkSessionControl } from "./createSdkSessionProcess";
+import { daemonLog } from "../../daemonLog";
+import type { SdkSessionControl } from "../createSdkSessionProcess";
 
 export function awaitResume(
 	label: string,

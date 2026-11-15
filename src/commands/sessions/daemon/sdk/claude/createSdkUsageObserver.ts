@@ -1,11 +1,11 @@
 import type { SDKMessage } from "@anthropic-ai/claude-agent-sdk";
-import { findSessionJsonlPath } from "../../shared/findSessionJsonlPath";
-import { daemonLog } from "../daemonLog";
+import { findSessionJsonlPath } from "../../../shared/findSessionJsonlPath";
+import { daemonLog } from "../../daemonLog";
 import { createSdkContextRefresh } from "./createSdkContextRefresh";
 import type { SdkContextReader } from "./sdkContextReader";
 import { sdkContextTokens, sdkContextUsedPct } from "./sdkContextUsedPct";
 import { recordSdkRateLimits } from "./recordSdkRateLimits";
-import { sdkUsageSink } from "./sdkUsageSink";
+import { sdkUsageSink } from "../sdkUsageSink";
 
 export function createSdkUsageObserver(
 	label: string,

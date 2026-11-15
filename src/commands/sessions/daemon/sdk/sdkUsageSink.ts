@@ -3,7 +3,7 @@ import type { RateLimits } from "../../../../shared/RateLimits";
 type SdkUsageSink = {
 	limits: (rateLimits: RateLimits) => void;
 	usage: (
-		claudeSessionId: string,
+		conversationId: string,
 		transcriptPath: string | undefined,
 		usedPct: number | undefined,
 	) => void;

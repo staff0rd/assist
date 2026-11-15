@@ -1,6 +1,6 @@
-import { daemonLog } from "../daemonLog";
+import { daemonLog } from "../../daemonLog";
 import type { SdkContextReader } from "./sdkContextReader";
-import { sdkUsageSink } from "./sdkUsageSink";
+import { sdkUsageSink } from "../sdkUsageSink";
 
 /* why: a result only lands at the end of a turn, so the card's context % is
  * refreshed after every main-loop response, as the terminal status line does. */

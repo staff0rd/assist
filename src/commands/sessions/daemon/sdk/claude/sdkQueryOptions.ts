@@ -1,14 +1,12 @@
 import { readFileSync } from "node:fs";
 import type { Options } from "@anthropic-ai/claude-agent-sdk";
-import { ensureHooksSettings } from "../ensureHooksSettings";
-import type { SdkSessionControl } from "./createSdkSessionProcess";
-import type { SdkSpawnOpts } from "./SdkSpawnOpts";
+import { ensureHooksSettings } from "../../ensureHooksSettings";
+import type { SdkSessionControl } from "../createSdkSessionProcess";
+import type { DrivenSessionOpts } from "../../../../../shared/harnessAdapters/types";
 import { spawnSdkChild } from "./spawnSdkChild";
 
-export type { SdkSpawnOpts };
-
 export function sdkQueryOptions(
-	opts: SdkSpawnOpts,
+	opts: DrivenSessionOpts,
 	executable: string,
 	abort: AbortController,
 	control: SdkSessionControl,
@@ -20,7 +18,7 @@ export function sdkQueryOptions(
 		cwd: opts.cwd,
 		...(opts.resumeId
 			? { resume: opts.resumeId }
-			: { sessionId: opts.claudeSessionId }),
+			: { sessionId: opts.conversationId }),
 		permissionMode: "auto",
 		settings: ensureHooksSettings(),
 		pathToClaudeCodeExecutable: executable,

@@ -4,6 +4,7 @@ import { daemonLog } from "../daemonLog";
 export function refuseSdkLaunch(
 	client: SessionClient,
 	sessionId: string,
+	label: string,
 	reason: string,
 ): void {
 	daemonLog(`sdk-launch refused: session ${sessionId} ${reason}`);
@@ -11,6 +12,6 @@ export function refuseSdkLaunch(
 		type: "sdk-exit",
 		sessionId,
 		exitCode: 1,
-		error: `Claude (SDK) launch refused: session ${sessionId} ${reason}`,
+		error: `${label} launch refused: session ${sessionId} ${reason}`,
 	});
 }

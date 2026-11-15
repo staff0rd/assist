@@ -26,6 +26,20 @@ const claude: CapabilityDeclarations = {
 	"intercept.editDiff": supported,
 	"intercept.question": supported,
 	"slashCommands.suggest": supported,
+	"session.driven": unsupported(
+		"Claude runs in a terminal the daemon mirrors rather than a session the daemon drives",
+		"pick Claude (SDK) for a session driven through the Agent SDK",
+	),
+	"tasks.background": unsupported(
+		"assist cannot list or stop the background tasks of a Claude session running in a terminal",
+		"pick Claude (SDK) to see background tasks on the session card",
+	),
+};
+
+const claudeSdk: CapabilityDeclarations = {
+	...claude,
+	"session.driven": supported,
+	"tasks.background": supported,
 };
 
 export const harnessCapabilityDeclarations: Record<
@@ -33,7 +47,7 @@ export const harnessCapabilityDeclarations: Record<
 	CapabilityDeclarations
 > = {
 	claude,
-	"claude-sdk": claude,
+	"claude-sdk": claudeSdk,
 	codex: {
 		"skills.native": supported,
 		"launch.terminal": supported,
@@ -92,6 +106,15 @@ export const harnessCapabilityDeclarations: Record<
 		"slashCommands.suggest": unsupported(
 			"assist reads skills and commands only from Claude's home and project dirs",
 			"type the Codex skill name in full in the phone reply bar",
+		),
+		"session.driven": unsupported(
+			"Codex runs in a terminal the daemon mirrors rather than a session the daemon drives",
+			"Codex sessions use the terminal; pick Claude (SDK) for a driven session",
+			"a1684",
+		),
+		"tasks.background": unsupported(
+			"Codex reports no background tasks to assist",
+			"Codex sessions show no background-task rows",
 		),
 	},
 	pi: {
@@ -183,6 +206,14 @@ export const harnessCapabilityDeclarations: Record<
 		"slashCommands.suggest": unsupported(
 			"assist reads skills and commands only from Claude's home and project dirs",
 			"type the pi prompt name in full in the phone reply bar",
+		),
+		"session.driven": unsupported(
+			"pi runs in a terminal the daemon mirrors rather than a session the daemon drives",
+			"pi sessions use the terminal; pick Claude (SDK) for a driven session",
+		),
+		"tasks.background": unsupported(
+			"pi reports no background tasks to assist",
+			"pi sessions show no background-task rows",
 		),
 	},
 };

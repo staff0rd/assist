@@ -18,12 +18,12 @@ export function supersedePendingPreview(
 		});
 	const label = `pr-preview superseded: id=${session.id} old=${pending.requestId} new=${newRequestId}`;
 	const taskId = session.pendingPreviewTaskId;
-	const sdk = session.pty?.sdk;
+	const stopTask = session.pty?.sdk?.stopTask;
 	/* why: any exit of the superseded background task wakes the SDK agent with
 	 * its completion, which it answers as if that preview were still open;
 	 * stopping the task ends it without a notification. */
-	if (taskId && sdk) {
-		sdk.stopTask(taskId).then(
+	if (taskId && stopTask) {
+		stopTask(taskId).then(
 			() => daemonLog(`${label} task=${taskId} stopped`),
 			(error: unknown) => {
 				daemonLog(

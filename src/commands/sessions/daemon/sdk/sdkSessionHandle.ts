@@ -8,10 +8,10 @@ export type SdkTurnControls = {
 	send: (text: string) => void;
 	interrupt: () => void;
 	dequeue: (index: number, text: string) => boolean;
-	stopTask: (taskId: string) => Promise<void>;
+	stopTask?: (taskId: string) => Promise<void>;
 };
 
-export function sdkSessionHandle(label: string) {
+export function sdkSessionHandle(label: string, backgroundTasks: boolean) {
 	const listeners: ((event: SdkSessionEvent) => void)[] = [];
 	let turn: SdkTurnControls | undefined;
 	let prefixer: (() => string) | undefined;
@@ -26,10 +26,12 @@ export function sdkSessionHandle(label: string) {
 			unbound("dequeue");
 			return false;
 		},
-		stopTask: (taskId) =>
-			turn
-				? turn.stopTask(taskId)
-				: Promise.reject(new Error("query not started")),
+		...(backgroundTasks && {
+			stopTask: (taskId: string) =>
+				turn?.stopTask
+					? turn.stopTask(taskId)
+					: Promise.reject(new Error("query not started")),
+		}),
 		setPrefix: (provider) => {
 			prefixer = provider;
 		},

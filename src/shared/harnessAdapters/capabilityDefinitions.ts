@@ -19,6 +19,10 @@ export const capabilityDefinitions = {
 		"Runs a shell command in the background after the agent ends its turn and wakes the agent with the command's output when it exits, so a skill such as review-high-level can hand the turn back while an assist command waits on the user.",
 	"preview.nextTurn":
 		"Hands an assist command that waits on the user's preview-pane decision back to the agent as its next turn — through a background task that wakes the agent on exit, or by the daemon pushing the decision into the session it hosts — so the agent can end its turn while the preview is open.",
+	"session.driven":
+		"Runs the session without a terminal, with the daemon driving the agent turn by turn through the harness's SDK, so the web UI's composer, message queue, stop, resume and next-turn ask decisions work, and assist workflows hand each launch to the session's driven query.",
+	"tasks.background":
+		"Reports the driven agent's running background tasks to the daemon and stops one by id, so the session card lists them and a superseded preview's waiting command ends without waking the agent.",
 	"transcript.read":
 		"Exposes the conversation's on-disk transcript as normalized events (user and assistant messages, tool calls with their operations, tool results, timestamps and turn lifecycle), so message previews, status reconciliation, restore status and transcript titles work without assist parsing the harness's format.",
 	"oneShot.text":

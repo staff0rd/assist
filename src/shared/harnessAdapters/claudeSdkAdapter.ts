@@ -1,4 +1,4 @@
-import { spawnClaudeSdk } from "../../commands/sessions/daemon/spawnClaudeSdk";
+import { spawnClaudeSdk } from "../../commands/sessions/daemon/sdk/claude/spawnClaudeSdk";
 import { claudeAdapter } from "./claudeAdapter";
 import { claudeConnectorProbe } from "./claudeConnectorProbe";
 import { detectHarness } from "./detectHarness";
@@ -20,15 +20,27 @@ export const claudeSdkAdapter: HarnessAdapter = {
 	detect: () => detectHarness("claude-sdk"),
 	launchSkill: (skill, args, { conversationId, cwd, model }) =>
 		launchSdkViaDaemon({
+			harness: "claude-sdk",
 			prompt: buildSlashCommand(skill, args),
 			cwd,
 			conversationId,
 			model,
 		}),
 	launchPrompt: (prompt, { conversationId, cwd, model }) =>
-		launchSdkViaDaemon({ prompt, cwd, conversationId, model }),
+		launchSdkViaDaemon({
+			harness: "claude-sdk",
+			prompt,
+			cwd,
+			conversationId,
+			model,
+		}),
 	resume: (conversationId, nudge, { cwd }) =>
-		launchSdkViaDaemon({ prompt: nudge, cwd, resumeId: conversationId }),
+		launchSdkViaDaemon({
+			harness: "claude-sdk",
+			prompt: nudge,
+			cwd,
+			resumeId: conversationId,
+		}),
 	interactive: ({
 		sessionId,
 		conversationId,
@@ -42,11 +54,12 @@ export const claudeSdkAdapter: HarnessAdapter = {
 			prompt,
 			cwd,
 			sessionId,
-			claudeSessionId: conversationId,
+			conversationId,
 			resumeId,
 			appendSystemPromptFile,
 			model,
 		}),
+	drivenSession: spawnClaudeSdk,
 	activityIdentity: (conversationId) => ({
 		harness: "claude-sdk",
 		claudeSessionId: conversationId,

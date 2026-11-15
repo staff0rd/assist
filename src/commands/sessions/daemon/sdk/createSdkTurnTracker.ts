@@ -3,7 +3,7 @@ import { createSdkInterrupt } from "./createSdkInterrupt";
 import { createSdkMessageQueue, quoteForLog } from "./createSdkMessageQueue";
 import type { SdkSessionControl } from "./createSdkSessionProcess";
 import { createSdkTurnEmitter } from "./createSdkTurnEmitter";
-import type { SdkTurnStatus } from "./sdkTurnStatus";
+import type { DrivenTurnStatus } from "./DrivenTurnEvent";
 
 export type SdkTurnTracker = ReturnType<typeof createSdkTurnTracker>;
 
@@ -19,7 +19,7 @@ export function createSdkTurnTracker(
 		control.emit({ kind: "interrupting", pending });
 		if (pending) control.emit({ kind: "pending", texts: [] });
 	});
-	const setStatus = (next: SdkTurnStatus) => {
+	const setStatus = (next: DrivenTurnStatus) => {
 		busy = next === "running";
 		if (next === "waiting") {
 			emit.activity(null);

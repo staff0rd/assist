@@ -36,7 +36,7 @@ function sdkSessions() {
 
 const skipped = (path: string) =>
 	expect(daemonLogMock).toHaveBeenCalledWith(
-		`session 1 ${path} skipped: Claude (SDK) session has no terminal`,
+		`session 1 ${path} skipped: driven session has no terminal`,
 	);
 
 describe("PTY-only paths on a Claude (SDK) session", () => {
