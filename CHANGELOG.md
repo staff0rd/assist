@@ -1,3 +1,10 @@
+# [0.1185.0](https://github.com/staff0rd/assist/compare/v0.1184.0...v0.1185.0) (2026-11-15)
+
+
+### Features
+
+* park backlog runs on parallel phases ([acec869](https://github.com/staff0rd/assist/commit/acec8693b84a8b5a3fde24615b738de7ca3fbaa8))
+
 # [0.1184.0](https://github.com/staff0rd/assist/compare/v0.1183.0...v0.1184.0) (2026-11-15)
 
 
