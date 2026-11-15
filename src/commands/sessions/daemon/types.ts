@@ -71,6 +71,7 @@ export type Session = SdkViewState & {
 	restored?: boolean;
 	interrupted?: SessionInterruption;
 	error?: string;
+	discoverOnRestore?: boolean;
 	activity?: Activity;
 	activityWatcher?: FSWatcher;
 	transcriptWatcher?: FSWatcher;

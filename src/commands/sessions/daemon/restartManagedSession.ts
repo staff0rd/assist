@@ -12,6 +12,7 @@ export function restartManagedSession(
 	clients: Set<SessionClient>,
 	onStatusChange: OnStatusChange,
 	fresh = false,
+	notify?: () => void,
 ): RestartResult {
 	const s = sessions.get(id);
 	if (!s) {
@@ -24,7 +25,7 @@ export function restartManagedSession(
 		};
 	}
 	daemonLog(`restart requested: id=${id} status=${s.status} (${s.name})`);
-	if (!restartSession(s, clients, onStatusChange, fresh)) {
+	if (!restartSession(s, clients, onStatusChange, fresh, notify)) {
 		daemonLog(`restart for session ${id} did nothing: no respawn plan`);
 		return {
 			ok: false,

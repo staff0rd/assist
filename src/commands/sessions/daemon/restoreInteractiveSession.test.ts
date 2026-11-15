@@ -182,6 +182,12 @@ describe("restoreInteractiveSession", () => {
 				"no Codex conversation id was recorded before the daemon stopped, so the conversation cannot be resumed",
 			);
 		});
+
+		it("marks a session with no recorded conversation for discovery", () => {
+			const session = restore(persistedSession({ harness: "codex" }));
+
+			expect(session.discoverOnRestore).toBe(true);
+		});
 	});
 
 	describe("for a claude session with no recorded conversation", () => {
@@ -191,6 +197,7 @@ describe("restoreInteractiveSession", () => {
 			expect(session.error).toBe(
 				"no claude session id was recorded before the daemon stopped, so the conversation cannot be resumed",
 			);
+			expect(session.discoverOnRestore).toBeUndefined();
 		});
 	});
 });

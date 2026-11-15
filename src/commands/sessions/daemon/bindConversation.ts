@@ -6,7 +6,7 @@ import { daemonLog } from "./daemonLog";
 
 const POLL_MS = 1000;
 const MAX_ATTEMPTS = 120;
-const START_SLACK_MS = 5000;
+export const START_SLACK_MS = 5000;
 
 const latestBind = new WeakMap<Session, number>();
 

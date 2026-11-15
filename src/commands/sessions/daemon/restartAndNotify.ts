@@ -19,6 +19,7 @@ export function restartAndNotify(
 		clients,
 		onStatusChange,
 		fresh,
+		notify,
 	);
 	if (result.ok) notify();
 	return result;

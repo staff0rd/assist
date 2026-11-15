@@ -3,6 +3,7 @@ import type { DeferredDeliveryHost } from "./DeferredDeliveryHost";
 import type { SessionSpawner } from "./makeSessionSpawner";
 import { reopenDeferredCommands } from "./reopenDeferredCommands";
 import { restoreAll } from "./restoreAll";
+import { resumeDiscoveredConversations } from "./resumeDiscoveredConversations";
 import { rearmStoppedSessions } from "./worktree/rearmStoppedSessions";
 import { reconcileWorktreesOnRestore } from "./worktree/reconcileWorktreesOnRestore";
 import { reseedRestoredWorktrees } from "./worktree/reseedRestoredWorktrees";
@@ -13,6 +14,7 @@ export function restoreAllSessions(
 ): string[] {
 	const { sessions, notify } = deps;
 	const names = restoreAll(spawner, sessions);
+	resumeDiscoveredConversations(deps);
 	reopenDeferredCommands(sessions.values(), {
 		session: (id) => sessions.get(id),
 		io: deps.io,

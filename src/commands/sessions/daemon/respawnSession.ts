@@ -26,6 +26,7 @@ export function respawnSession(
 	session.runningSince = null;
 	setStatus(session, status);
 	session.restored = undefined;
+	session.error = undefined;
 	try {
 		session.pty = respawn();
 	} catch (error) {

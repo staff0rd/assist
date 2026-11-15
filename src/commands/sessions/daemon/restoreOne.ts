@@ -48,7 +48,7 @@ function logUnresumable(
 	id: string,
 	session: Session | undefined,
 ): void {
-	if (session?.status === "error")
+	if (session?.status === "error" && !session.discoverOnRestore)
 		daemonLog(
 			`could not resume restored session "${name}" (id ${id}): ${session.error}`,
 		);

@@ -47,7 +47,14 @@ export function restoreInteractiveSession(
 }
 
 function unrecoverableClaude(id: string, persisted: PersistedSession): Session {
-	return errorSession(id, persisted, unresumableReason(persisted.harness));
+	const session = errorSession(
+		id,
+		persisted,
+		unresumableReason(persisted.harness),
+	);
+	if (harnessAdapter(persisted.harness).conversation.discover && persisted.cwd)
+		session.discoverOnRestore = true;
+	return session;
 }
 
 function notRestoredStub(

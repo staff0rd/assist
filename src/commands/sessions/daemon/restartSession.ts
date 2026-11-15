@@ -6,12 +6,14 @@ import { respawnSession } from "./respawnSession";
 import { respawnPlan } from "./respawnPlan";
 import type { OnStatusChange } from "./types";
 import { killPtyTree } from "./killPtyTree";
+import { rebindAfterRespawn } from "./rebindAfterRespawn";
 
 export function restartSession(
 	session: Session,
 	clients: Set<SessionClient>,
 	onStatusChange: OnStatusChange,
 	fresh = false,
+	notify?: () => void,
 ): boolean {
 	if (fresh)
 		daemonLog(`session ${session.id} start-over requested: ${session.name}`);
@@ -19,6 +21,7 @@ export function restartSession(
 	if (!plan) return false;
 	const respawn = () => {
 		respawnSession(session, plan.spawn, plan.status, clients, onStatusChange);
+		if (notify) rebindAfterRespawn(session, notify, onStatusChange);
 		const resume: { id?: string; reason?: string } = plan.resumeOutcome?.() ?? {
 			id: session.claudeSessionId,
 		};
