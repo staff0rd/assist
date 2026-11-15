@@ -50,3 +50,13 @@ describe("unseenPendingTexts", () => {
 		).toEqual([]);
 	});
 });
+
+describe("unseenPendingTexts with a pane reply row", () => {
+	it("drops the delivered result once its reply row is recorded", () => {
+		const sent =
+			'`assist ask-question` finished with exit code 0:\n\nUser has answered "Which?"="Red".';
+		expect(
+			unseenPendingTexts([sent], [{ role: "user", text: "Red", sent }]),
+		).toEqual([]);
+	});
+});

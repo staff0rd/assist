@@ -1,7 +1,7 @@
 import type { ToolInputField } from "../../../shared/harnessAdapters/types";
 
 export type TranscriptMessage =
-	| { role: "user"; text: string }
+	| { role: "user"; text: string; sent?: string }
 	| { role: "assistant"; text: string }
 	| {
 			role: "tool";

@@ -1,14 +1,15 @@
 import { parseRestartNudge } from "./parseRestartNudge";
 import { splitShellBlocks } from "./splitShellBlocks";
 
-type TranscriptRole = { role: string; text?: string };
+type TranscriptRole = { role: string; text?: string; sent?: string };
 
 function latestUserRows(rows: TranscriptRole[]) {
 	const texts: string[] = [];
 	let restart = false;
 	for (let i = rows.length - 1; i >= 0; i--) {
 		const row = rows[i];
-		if (row.role === "user" && row.text !== undefined) texts.push(row.text);
+		if (row.role === "user" && row.text !== undefined)
+			texts.push(row.sent ?? row.text);
 		else if (row.role === "restart") restart = true;
 		else if (row.role === "assistant" && (texts.length || restart)) break;
 	}
@@ -26,7 +27,8 @@ const ownText = (text: string) => splitShellBlocks(text)?.text ?? text;
  * shell results sent in front of a message are recorded as their own shell
  * rows, so only the message's own text is matched. A
  * tagged restart nudge is recorded as a restart row with no text, so it
- * matches that row instead. */
+ * matches that row instead. A row showing a pane reply in place of the
+ * delivered deferred result is matched by the text that was sent. */
 export function unseenPendingTexts(
 	pending: string[] | undefined,
 	rows: TranscriptRole[],

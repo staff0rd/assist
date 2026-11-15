@@ -14,6 +14,8 @@ import { locateConversation } from "./locateConversation";
 import { parseTranscript } from "./parseTranscript";
 
 const ID = "conv-1";
+const sent =
+	'`assist ask-question` finished with exit code 0:\n\n"Which?"="Red"';
 
 function entry(type: "user" | "assistant", text: string, timestamp: string) {
 	return {
@@ -28,13 +30,14 @@ function entry(type: "user" | "assistant", text: string, timestamp: string) {
 }
 
 describe("parseTranscript", () => {
-	it("merges recorded pane echoes into the history transcript by time", async () => {
+	it("shows a recorded pane reply in place of its delivered result", async () => {
 		const filePath = join(mkdtempSync(join(tmpdir(), "parse-")), `${ID}.jsonl`);
 		writeFileSync(
 			filePath,
 			[
 				entry("user", "start", "2026-11-14T01:00:00.000Z"),
 				entry("assistant", "asking", "2026-11-14T01:01:00.000Z"),
+				entry("user", sent, "2026-11-14T01:02:30.000Z"),
 				entry("assistant", "thanks", "2026-11-14T01:03:00.000Z"),
 			]
 				.map((e) => JSON.stringify(e))
@@ -45,12 +48,12 @@ describe("parseTranscript", () => {
 			filePath,
 		});
 		vi.mocked(readTranscriptEchoes).mockResolvedValue([
-			{ at: "2026-11-14T01:02:00.000Z", text: "my note" },
+			{ at: "2026-11-14T01:02:00.000Z", command: "ask-question", text: "Red" },
 		]);
 		expect(await parseTranscript(ID)).toEqual([
 			{ role: "user", text: "start" },
 			{ role: "assistant", text: "asking" },
-			{ role: "user", text: "my note" },
+			{ role: "user", text: "Red", sent },
 			{ role: "assistant", text: "thanks" },
 		]);
 		expect(readTranscriptEchoes).toHaveBeenCalledWith(ID);

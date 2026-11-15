@@ -77,28 +77,20 @@ describe("paneEchoText", () => {
 		).toBe("");
 	});
 
-	it("returns the Other text of a question answer", () => {
+	it("returns the picked labels and Other text of a question answer", () => {
 		expect(
 			paneEchoText(preview("question", questionBody), {
 				answers: { "Which colour?": "Red, Blue, dark, Green please" },
 			}),
-		).toBe("Green please");
+		).toBe("Red, Blue, dark, Green please");
 	});
 
-	it("labels Other answers by header when several questions have one", () => {
+	it("joins several answers in question order without headers", () => {
 		expect(
 			paneEchoText(preview("question", questionBody), {
-				answers: { "Which colour?": "Teal", "Which size?": "Medium" },
+				answers: { "Which size?": "Large", "Which colour?": "Teal" },
 			}),
-		).toBe("Colour: Teal\n\nSize: Medium");
-	});
-
-	it("returns nothing when only option labels were picked", () => {
-		expect(
-			paneEchoText(preview("question", questionBody), {
-				answers: { "Which colour?": "Red, Blue, dark", "Which size?": "Large" },
-			}),
-		).toBe("");
+		).toBe("Teal\n\nLarge");
 	});
 
 	it("ignores other preview kinds", () => {

@@ -1,6 +1,6 @@
 import { CHECK_NOTE_KEY } from "../../shared/askCheckInputSchema";
 import type { PrPreview } from "../../shared/SessionInfoBase";
-import { questionOtherText } from "./questionOtherText";
+import { questionAnswerText } from "./questionAnswerText";
 import { signOffText } from "./signOffText";
 
 function answersOf(d: Record<string, unknown>): Record<string, string> {
@@ -22,7 +22,7 @@ export function paneEchoText(
 		case "check":
 			return (answersOf(d)[CHECK_NOTE_KEY] ?? "").trim();
 		case "question":
-			return questionOtherText(preview.body, answersOf(d));
+			return questionAnswerText(preview.body, answersOf(d));
 		case "ask":
 		case "backlog-item":
 		case "rule":
