@@ -1,3 +1,10 @@
+## [0.1177.1](https://github.com/staff0rd/assist/compare/v0.1177.0...v0.1177.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* resume Codex sessions after Start over ([6ab1c7d](https://github.com/staff0rd/assist/commit/6ab1c7dc8bf6160ef96f6831a1d5848407272c9d))
+
 # [0.1177.0](https://github.com/staff0rd/assist/compare/v0.1176.1...v0.1177.0) (2026-11-15)
 
 
