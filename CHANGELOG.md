@@ -1,3 +1,10 @@
+# [0.1177.0](https://github.com/staff0rd/assist/compare/v0.1176.1...v0.1177.0) (2026-11-15)
+
+
+### Features
+
+* deliver preview answers into Codex ([6d5f464](https://github.com/staff0rd/assist/commit/6d5f4647a16a6a709b09b871db89711f66f01ffc))
+
 ## [0.1176.1](https://github.com/staff0rd/assist/compare/v0.1176.0...v0.1176.1) (2026-11-15)
 
 
