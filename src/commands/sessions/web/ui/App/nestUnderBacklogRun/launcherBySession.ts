@@ -36,7 +36,15 @@ function launchingCard(
 		? byId.get(nodeKey(session, session.launchedFrom))
 		: undefined;
 	if (!launcher || launcher === session) return undefined;
-	return sharesPath(session, launcher) ? launcher : undefined;
+	return sharesPath(session, launcher) || isParallelPhase(session)
+		? launcher
+		: undefined;
+}
+
+// why: a parallel phase runs in its own worktree, yet it is still a child of the run that launched it.
+function isParallelPhase(session: SessionInfo): boolean {
+	const [command, subcommand] = session.assistArgs ?? [];
+	return command === "backlog" && subcommand === "run-phase";
 }
 
 function sharesPath(session: SessionInfo, launcher: SessionInfo): boolean {

@@ -1,8 +1,8 @@
-import chalk from "chalk";
 import { appendDaemonLog } from "../../sessions/daemon/appendDaemonLog";
 import { reloadPlan } from "../reloadPlan";
 import { getReady } from "../shared";
 import type { BacklogItem, BacklogRunOptions, PlanPhase } from "../types";
+import { announceWaiting } from "./announceWaiting";
 import { launchReady } from "./launchReady";
 import { loadPhaseProgress } from "./loadPhaseProgress";
 import type { PhaseSchedule } from "./schedulePhases";
@@ -33,11 +33,7 @@ export async function waitOnParallelPhases(
 	const { orm } = await getReady();
 	const launched = await loadPhaseProgress(orm, item.id);
 	if (launched.running.length === 0) return;
-	console.log(
-		chalk.dim(
-			`Waiting on phase ${launched.running.map((idx) => idx + 1).join(", ")}, each running in its own session...`,
-		),
-	);
+	announceWaiting(item, launched.running, plan.length + 1);
 	await waitForPhaseProgress(
 		item.id,
 		launched,

@@ -38,6 +38,37 @@ describe("nestUnderBacklogRun", () => {
 		]);
 	});
 
+	it("nests parallel phase sessions under the run that launched them from other worktrees", () => {
+		const sessions = [
+			makeSessionInfo({
+				id: "run",
+				cwd: "/git/assist-2",
+				repoGroup: group,
+				activity: backlog,
+			}),
+			makeSessionInfo({
+				id: "phase-2",
+				cwd: "/git/assist-3",
+				repoGroup: group,
+				activity: backlog,
+				launchedFrom: "run",
+				assistArgs: ["backlog", "run-phase", "a1", "2"],
+			}),
+			makeSessionInfo({
+				id: "phase-3",
+				cwd: "/git/assist-5",
+				repoGroup: group,
+				activity: backlog,
+				launchedFrom: "run",
+				assistArgs: ["backlog", "run-phase", "a1", "3"],
+			}),
+		];
+
+		expect(nestUnderBacklogRun(sessions)).toEqual([
+			{ session: sessions[0], children: [sessions[1], sessions[2]] },
+		]);
+	});
+
 	it("keeps sessions in the main clone un-nested", () => {
 		const sessions = [
 			makeSessionInfo({

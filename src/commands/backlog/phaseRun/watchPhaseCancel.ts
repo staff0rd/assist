@@ -4,9 +4,22 @@ import { appendDaemonLog } from "../../sessions/daemon/appendDaemonLog";
 import { getReady } from "../shared";
 import { getSignalPath } from "../writeSignal";
 import { loadPhaseRunRows } from "./loadPhaseProgress";
+import { phaseAlreadyDone } from "./phaseAlreadyDone";
 
 const POLL_MS = 5_000;
 const EXIT_GRACE_MS = 10_000;
+
+// why: phase-done marks the phase done before its harness exits, which is a finish, not a cancel.
+async function stillPhaseWork(
+	itemId: number,
+	idx: number,
+	token: string,
+): Promise<boolean> {
+	return (
+		(await ownsPhase(itemId, idx, token)) ||
+		(await phaseAlreadyDone(itemId, idx))
+	);
+}
 
 export async function ownsPhase(
 	itemId: number,
@@ -37,9 +50,9 @@ export function watchPhaseCancel(
 ): { cancelled: () => boolean; stop: () => void } {
 	let cancelled = false;
 	const timer = setInterval(() => {
-		void ownsPhase(itemId, idx, token).then(
-			(owns) => {
-				if (owns || cancelled) return;
+		void stillPhaseWork(itemId, idx, token).then(
+			(keep) => {
+				if (keep || cancelled) return;
 				cancelled = true;
 				appendDaemonLog(
 					`backlog run-phase ${itemId} phase ${idx + 1}: cancelled (rewound or superseded)`,
