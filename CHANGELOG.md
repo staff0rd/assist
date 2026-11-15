@@ -1,3 +1,11 @@
+# [0.1184.0](https://github.com/staff0rd/assist/compare/v0.1183.0...v0.1184.0) (2026-11-15)
+
+
+### Features
+
+* pop back when phone session ends ([b4d5592](https://github.com/staff0rd/assist/commit/b4d55927ec9bacce9ba55005773d2bb9bf4f7bc7))
+* show question replies in transcript ([133c8f9](https://github.com/staff0rd/assist/commit/133c8f9857851ee4e26bea285317f466da6a581d))
+
 # [0.1183.0](https://github.com/staff0rd/assist/compare/v0.1182.5...v0.1183.0) (2026-11-15)
 
 
