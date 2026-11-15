@@ -674,6 +674,8 @@ Commands:
                   phase, or this Claude session when there is no item
   confirm <pin>   Confirm a pin from 'schema unlock' to approve schema changes for that item phase
                   or Claude session
+  lock            Revoke the schema approval of this session's backlog item phase, or this Claude
+                  session when there is no item
   help [command]  display help for command
 
 === assist schema unlock --help
@@ -692,6 +694,15 @@ Confirm a pin from 'schema unlock' to approve schema changes for that item phase
 
 Arguments:
   pin         Pin issued by 'schema unlock'
+
+Options:
+  -h, --help  display help for command
+
+=== assist schema lock --help
+Usage: assist schema lock [options]
+
+Revoke the schema approval of this session's backlog item phase, or this Claude session when there
+is no item
 
 Options:
   -h, --help  display help for command

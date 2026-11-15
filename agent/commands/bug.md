@@ -21,6 +21,10 @@ Before asking the user about existing functionality — how a feature currently 
 
 Skip questions the user has already answered. Stop asking as soon as you have enough to write a clear bug report — don't over-interrogate.
 
+### Restore service first
+
+If the investigation finds an active outage — the bug is breaking released builds, shared data or other users' sessions right now — stop gathering details and restore service before composing or filing anything. Tell the user what is down, propose the smallest action that restores it (e.g. a fix-forward release or a config revert, never a destructive rollback of shared data), and get their sign-off with `assist ask` before taking it. Once service is restored, return here and file the bug, recording the outage and the restoring action in the description. Run nothing through a build known to be broken, `propose` included.
+
 ## Step 3: Design the UI change
 
 Read the **Designing a new backlog item's UI change** section of `/design` (`{{skill:design}}`) and follow its Decide and Design and review steps for the fix. If it decides the fix has no UI change, skip this step. Otherwise its link step applies in Step 4 and its attach step in Step 5.

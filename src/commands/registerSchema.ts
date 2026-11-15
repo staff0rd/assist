@@ -34,4 +34,11 @@ export function registerSchema(parent: Command): void {
 			),
 		calledBy,
 	);
+
+	schema
+		.command("lock")
+		.description(
+			"Revoke the schema approval of this session's backlog item phase, or this Claude session when there is no item",
+		)
+		.action(lazyAction(() => import("./schema/schemaLock"), "schemaLock"));
 }

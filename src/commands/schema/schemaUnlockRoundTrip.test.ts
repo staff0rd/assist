@@ -40,6 +40,7 @@ vi.mock("../backlog/shared", () => ({
 
 import { isSchemaLocked } from "./isSchemaLocked";
 import { schemaConfirm } from "./schemaConfirm";
+import { schemaLock } from "./schemaLock";
 import { schemaUnlock } from "./schemaUnlock";
 
 async function addStory(): Promise<number> {
@@ -153,6 +154,37 @@ describe("schema unlock -> confirm round-trip", () => {
 		expect(await isSchemaLocked()).toBe(false);
 		vi.stubEnv("CLAUDE_CODE_SESSION_ID", "claude-b");
 		expect(await isSchemaLocked()).toBe(true);
+	});
+
+	it("schema lock closes the item's phase unlock", async () => {
+		const id = await addStory();
+		vi.stubEnv("ASSIST_BACKLOG_ITEM_ID", String(id));
+		await unlockAndConfirm();
+
+		await schemaLock();
+
+		expect(process.exitCode).toBeUndefined();
+		expect(await unlockRefs()).toEqual([]);
+		expect(await isSchemaLocked()).toBe(true);
+	});
+
+	it("schema lock revokes the Claude session approval", async () => {
+		await unlockAndConfirm();
+
+		await schemaLock();
+
+		expect(process.exitCode).toBeUndefined();
+		expect(await isSchemaLocked()).toBe(true);
+	});
+
+	it("schema lock leaves another session's approval in place", async () => {
+		await unlockAndConfirm();
+		vi.stubEnv("CLAUDE_CODE_SESSION_ID", "claude-b");
+
+		await schemaLock();
+
+		vi.stubEnv("CLAUDE_CODE_SESSION_ID", "claude-a");
+		expect(await isSchemaLocked()).toBe(false);
 	});
 
 	describe("in Codex", () => {

@@ -39,7 +39,7 @@ To change schema/data, append the next numbered module and register it in `index
 
 1. Add `migration000NName.ts` exporting `{ id: N, name, sql }` where `N` is one past the current highest id and the filename's zero-padded number matches `id`.
 2. Register it in `migrations/index.ts`, appended after the existing entries so the array stays in ascending id order.
-3. Run `assist db migrate` to apply it locally, then `assist db status` to confirm the DB is in sync. Data backfills are ordinary migrations too — express them as SQL in a new module rather than an ad-hoc `metadata`-flag pass.
+3. Verify it with a test against `createTestDb()` (`src/shared/db/createTestDb.ts`), which applies every bundled migration to an in-process PGlite database, and exercise the new columns or tables there. Do not run `assist db migrate`: the database is shared by every node and released build, so an unreleased migration is applied there only after it ships on the default branch. Data backfills are ordinary migrations too — express them as SQL in a new module rather than an ad-hoc `metadata`-flag pass.
 
 `verify:migrations` gates all of this: it fails on a numbering gap, a file/registration mismatch, an edit or removal of a migration that already ships on the default branch (append-only), or unacknowledged destructive DDL.
 
