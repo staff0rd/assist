@@ -1,3 +1,10 @@
+## [0.1182.2](https://github.com/staff0rd/assist/compare/v0.1182.1...v0.1182.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* restarted done phase exits cleanly ([ba9a065](https://github.com/staff0rd/assist/commit/ba9a0657b85f26b36a5c5ac695ee75869b8503ff))
+
 ## [0.1182.1](https://github.com/staff0rd/assist/compare/v0.1182.0...v0.1182.1) (2026-11-15)
 
 
