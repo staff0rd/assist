@@ -1,3 +1,10 @@
+# [0.1182.0](https://github.com/staff0rd/assist/compare/v0.1181.2...v0.1182.0) (2026-11-15)
+
+
+### Features
+
+* add assist schema lock ([de018fd](https://github.com/staff0rd/assist/commit/de018fd68d7be747710829bdd91225941e1beeda))
+
 ## [0.1181.2](https://github.com/staff0rd/assist/compare/v0.1181.1...v0.1181.2) (2026-11-15)
 
 
