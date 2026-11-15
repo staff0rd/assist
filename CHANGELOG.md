@@ -1,3 +1,10 @@
+## [0.1182.4](https://github.com/staff0rd/assist/compare/v0.1182.3...v0.1182.4) (2026-11-15)
+
+
+### Bug Fixes
+
+* nest phases, keep landed ones alive ([e4afdfc](https://github.com/staff0rd/assist/commit/e4afdfc0337ef84ff95fc6d6ea300db4addac26d))
+
 ## [0.1182.3](https://github.com/staff0rd/assist/compare/v0.1182.2...v0.1182.3) (2026-11-15)
 
 
