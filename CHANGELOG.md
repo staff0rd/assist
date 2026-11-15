@@ -1,3 +1,10 @@
+## [0.1180.2](https://github.com/staff0rd/assist/compare/v0.1180.1...v0.1180.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* record @pnpm/exe in pnpm-lock ([15a01d1](https://github.com/staff0rd/assist/commit/15a01d1847e8aa344d64ece05e3c57629dab4e4b))
+
 ## [0.1180.1](https://github.com/staff0rd/assist/compare/v0.1180.0...v0.1180.1) (2026-11-15)
 
 
