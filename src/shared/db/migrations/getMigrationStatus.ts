@@ -16,11 +16,11 @@ export function compareMigrations(appliedIds: number[]): MigrationStatus {
 	const bundledSet = new Set(bundledIds);
 	const applied = maxId(appliedIds);
 	const expected = maxId(bundledIds);
-	const ahead = appliedIds.filter((id) => !bundledSet.has(id));
-	if (ahead.length > 0) return { state: "ahead", applied, expected };
 	const pending = bundledIds.filter((id) => !appliedSet.has(id));
 	if (pending.length > 0)
 		return { state: "behind", applied, expected, pending };
+	const ahead = appliedIds.filter((id) => !bundledSet.has(id));
+	if (ahead.length > 0) return { state: "ahead", applied, expected };
 	return { state: "in-sync", version: expected };
 }
 

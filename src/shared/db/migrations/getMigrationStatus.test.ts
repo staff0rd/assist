@@ -31,6 +31,14 @@ describe("compareMigrations", () => {
 			expected: latestMigrationId,
 		});
 	});
+
+	it("reports behind when the database is missing a bundled id, even with an unknown one", () => {
+		const status = compareMigrations([
+			...bundledIds.slice(0, -1),
+			latestMigrationId + 1,
+		]);
+		expect(status.state).toBe("behind");
+	});
 });
 
 describe("getMigrationStatus", () => {
