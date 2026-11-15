@@ -125,15 +125,16 @@ describe("createDocsRefreshItem", () => {
 		expect(tasks?.[4]).toContain("`covers`");
 	});
 
-	it("holds the phase open for the user to approve the docs changes", async () => {
+	it("gets docs approval through the assist ask review alone", async () => {
 		const a = await addStory("Add widgets");
 
 		const id = await createDocsRefreshItem(orm, ORIGIN, [a], false);
 		const phase = (await loadItem(orm, id))?.plan?.[0];
 
-		expect(phase?.manualChecks).toEqual([
-			"Review every changed docs page in the docs preview and approve it",
-		]);
+		expect(phase?.manualChecks).toBeUndefined();
+		expect(phase?.tasks.at(-1)?.task).toContain(
+			"review the docs changes with `assist ask`",
+		);
 	});
 
 	it("makes the item own covers entries as well as prose", async () => {

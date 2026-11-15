@@ -6,7 +6,6 @@ import { hasDocsCoverageRun } from "./hasDocsCoverageRun";
 import { insertItem } from "./insertItem";
 import { insertPhaseAt } from "./insertPhaseAt";
 import { loadDocsRefreshStories } from "./loadDocsRefreshStories";
-import { serializeManualChecks } from "./serializeManualChecks";
 
 export async function createDocsRefreshItem(
 	orm: Db,
@@ -48,9 +47,7 @@ export async function createDocsRefreshItem(
 				: []),
 			"Ask the user to review the docs changes with `assist ask` and wait for their approval before committing. Keep the body a concise summary with no raw diff (the user reviews the changes in the docs viewer): list each changed page (`git status --porcelain -- docs/src/content/docs/`) as a link to it in the docs preview (`http://localhost:4173/<page>/` for `docs/src/content/docs/<page>.md(x)`, and `http://localhost:4173/` for `index.md(x)`) with a few words on what changed, then each UI story with its screenshot (the `--story` mappings that passed `assist backlog docs-screenshots`), then the stories included, then each skipped story with its one-line reason",
 		],
-		serializeManualChecks([
-			"Review every changed docs page in the docs preview and approve it",
-		]),
+		null,
 		undefined,
 	);
 	await orm.insert(links).values(
