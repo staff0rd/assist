@@ -97,15 +97,18 @@ describe("buildPhasePrompt", () => {
 		);
 	});
 
-	it("raises manual checks with ask-check on Claude but in chat on Codex", () => {
+	it("raises manual checks with ask-check on Claude and Codex but in chat on pi", () => {
 		loadConfigMock.mockReturnValue(makeAssistConfig());
 		const checked: PlanPhase = { ...phase, manualChecks: ["it works"] };
 
 		expect(buildPhasePrompt(makeBacklogItem(), 1, checked, "claude")).toContain(
 			"assist ask-check",
 		);
-		const codex = buildPhasePrompt(makeBacklogItem(), 1, checked, "codex");
-		expect(codex).not.toContain("ask-check");
-		expect(codex).toContain("- it works");
+		expect(buildPhasePrompt(makeBacklogItem(), 1, checked, "codex")).toContain(
+			"assist ask-check",
+		);
+		const pi = buildPhasePrompt(makeBacklogItem(), 1, checked, "pi");
+		expect(pi).not.toContain("ask-check");
+		expect(pi).toContain("- it works");
 	});
 });

@@ -12,9 +12,9 @@ export const handleDeferCommand: Handler = (client, m, d) => {
 	const argv = Array.isArray(d.argv) ? d.argv.map(String) : [];
 	const label = deferredCommandLabel(argv);
 	const session = m.session(id);
-	if (!session?.pty?.sdk) {
+	if (!session?.pty || session.status === "done") {
 		daemonLog(
-			`defer-command ${label} declined: session ${id} is not a live Claude (SDK) session`,
+			`defer-command ${label} declined: session ${id} is not a live session`,
 		);
 		sendTo(client, { type: "defer-command-result", accepted: false });
 		return;

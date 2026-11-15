@@ -70,8 +70,35 @@ describe("deferToDaemon", () => {
 		expect(await deferToDaemon()).toBe(false);
 	});
 
-	it("does not ask the daemon outside a Claude (SDK) session", async () => {
+	it("does not ask the daemon outside a Claude (SDK) or Codex session", async () => {
 		vi.stubEnv("ASSIST_SDK_AGENT", "");
+		vi.stubEnv("CODEX_THREAD_ID", undefined);
+		vi.stubEnv("CODEX_TOOL_CALL_ID", undefined);
+		vi.stubEnv("CLAUDECODE", "1");
+
+		expect(await deferToDaemon()).toBe(false);
+		expect(mockReply).not.toHaveBeenCalled();
+	});
+
+	it("hands a daemon-hosted Codex session's command to the daemon", async () => {
+		vi.stubEnv("ASSIST_SDK_AGENT", "");
+		vi.stubEnv("ASSIST_SESSION", "1");
+		vi.stubEnv("CODEX_THREAD_ID", "thread-1");
+		vi.stubEnv("CLAUDECODE", undefined);
+		mockReply.mockResolvedValue({ accepted: true });
+
+		expect(await deferToDaemon("{}")).toBe(true);
+		expect(mockReply).toHaveBeenCalledWith(
+			expect.objectContaining({ type: "defer-command", sessionId: "7" }),
+			"defer-command-result",
+		);
+		expect(logged.join("\n")).toContain("End your turn now");
+	});
+
+	it("does not ask the daemon for a Codex run outside an assist session", async () => {
+		vi.stubEnv("ASSIST_SDK_AGENT", "");
+		vi.stubEnv("ASSIST_SESSION", "");
+		vi.stubEnv("CODEX_THREAD_ID", "thread-1");
 
 		expect(await deferToDaemon()).toBe(false);
 		expect(mockReply).not.toHaveBeenCalled();

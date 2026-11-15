@@ -10,7 +10,7 @@ function contextWith(raw: Record<string, unknown>): AdviceContext {
 		rootDir: "/repo",
 		assistSession: false,
 		previewAnswerWait: true,
-		sdkSession: false,
+		deferredPreview: false,
 	};
 }
 
@@ -38,7 +38,7 @@ describe("renderAdviceBody", () => {
 		const ask = fragment("ask", "Run it {{previewWait}}. {{previewRevise}}");
 		const sdk = renderAdviceBody(ask, {
 			...contextWith({}),
-			sdkSession: true,
+			deferredPreview: true,
 		});
 		const pty = renderAdviceBody(ask, contextWith({}));
 

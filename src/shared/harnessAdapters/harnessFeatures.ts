@@ -62,7 +62,7 @@ const previewQuestionsFeature: HarnessFeature = {
 export const previewAnswerWaitFeature: HarnessFeature = {
 	id: "previewAnswerWait",
 	label: "Waiting on a preview-pane answer",
-	requires: ["tasks.notifyOnExit"],
+	requires: ["preview.nextTurn"],
 };
 
 export const branchSlugFeature: HarnessFeature = {

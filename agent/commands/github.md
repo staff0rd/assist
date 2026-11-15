@@ -64,7 +64,7 @@ Display the output so the user can see what happened. If the command exits non-z
 
 Any preview in this skill (`edit`, `create`, `comment`) can be revised while still pending by re-running the command directly — do not stop the earlier task. The earlier task exits 0 printing `Superseded by a newer preview — no decision; ignore this result.` without touching GitHub: ignore it.
 
-In a Claude SDK session (`ASSIST_SDK_AGENT=1`), run any of these previewing commands in the foreground instead: it returns at once, so end your turn and do nothing else — the command's output and exit code arrive as your next message, and a superseded run delivers nothing.
+In a Claude SDK session (`ASSIST_SDK_AGENT=1`) or a Codex session hosted by the assist daemon (`ASSIST_SESSION=1`), run any of these previewing commands in the foreground instead: it returns at once, so end your turn and do nothing else — the command's output and exit code arrive as your next message, and a superseded run delivers nothing.
 
 ## Action: create
 

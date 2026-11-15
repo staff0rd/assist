@@ -1,6 +1,6 @@
-import { sdkAgentEnv } from "../../shared/sdkAgentEnv";
 import { findConfigUp, loadConfigFrom } from "../../shared/loadConfigFrom";
 import { previewAnswerWaitBlocker } from "../askQuestion/previewAnswerWaitBlocker";
+import { defersPreviewWait } from "../sessions/shared/defersPreviewWait";
 import type { AdviceContext } from "./AdviceContext";
 
 export function adviceContextFor(
@@ -12,6 +12,6 @@ export function adviceContextFor(
 		rootDir: findConfigUp(cwd)?.rootDir ?? cwd,
 		assistSession: env.ASSIST_SESSION === "1",
 		previewAnswerWait: previewAnswerWaitBlocker() === undefined,
-		sdkSession: env[sdkAgentEnv] === "1",
+		deferredPreview: defersPreviewWait(env),
 	};
 }

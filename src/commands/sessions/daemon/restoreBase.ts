@@ -26,6 +26,7 @@ export function restoreBase(id: string, persisted: PersistedSession) {
 		reviewStarted: persisted.reviewStarted,
 		launchedFrom: persisted.launchedFrom,
 		pendingPrompts: persisted.pendingPrompts,
+		pendingDeferredResults: persisted.pendingDeferredResults,
 		deferredCommands: restoredDeferredCommands(id, persisted),
 	};
 }

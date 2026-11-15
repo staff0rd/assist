@@ -11,6 +11,7 @@ const claude: CapabilityDeclarations = {
 	"conversation.preassignId": supported,
 	"systemPrompt.append": supported,
 	"tasks.notifyOnExit": supported,
+	"preview.nextTurn": supported,
 	"artifacts.publish": supported,
 	"transcript.read": supported,
 	"oneShot.text": supported,
@@ -49,10 +50,11 @@ export const harnessCapabilityDeclarations: Record<
 			"a1589",
 		),
 		"tasks.notifyOnExit": unsupported(
-			"Codex runs a background command in an exec session that reports nothing back once the turn ends, so an agent that ends its turn never sees a command that waits on the user, such as review-high-level's verdict or an assist ask-question answer",
-			"run the high-level review on Claude; Codex asks its questions in chat",
+			"Codex runs a background command in an exec session that reports nothing back once the turn ends, so an agent that ends its turn never sees a command that waits on the user, such as review-high-level's verdict",
+			"run the high-level review on Claude; assist ask-question, ask and ask-check hand off to the daemon, which types the decision into Codex as its next turn",
 			"a1573",
 		),
+		"preview.nextTurn": supported,
 		"artifacts.publish": unsupported(
 			"Codex has no tool that publishes a claude.ai artifact, and assist ask-design reviews only artifact links",
 			"design in Codex and deliver the HTML file, then review it in chat; start the design session with Claude for preview-pane review rounds",
@@ -122,6 +124,11 @@ export const harnessCapabilityDeclarations: Record<
 		"tasks.notifyOnExit": unsupported(
 			"assist has not verified a pi tool that wakes the agent when a background command exits, so an agent that ends its turn would never see a command that waits on the user, such as review-high-level's verdict or an assist ask-question answer",
 			"run the high-level review on Claude; pi routes its native question tool to the preview pane instead of assist ask-question",
+			"a1573",
+		),
+		"preview.nextTurn": unsupported(
+			"assist cannot yet deliver a preview-pane decision into a pi session as its next turn, and pi cannot wait on a background task",
+			"pi routes its native question tool to the preview pane instead of assist ask-question",
 			"a1573",
 		),
 		"artifacts.publish": unsupported(

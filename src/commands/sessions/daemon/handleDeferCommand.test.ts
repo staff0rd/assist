@@ -14,6 +14,7 @@ vi.mock("./runDeferredCommand", () => ({
 	runDeferredCommand: (...args: unknown[]) => mockRun(...args),
 }));
 
+import { flushDeferredResults } from "./flushDeferredResults";
 import { handleDeferCommand } from "./handleDeferCommand";
 
 const request = {
@@ -34,8 +35,23 @@ function managerWith(sdk: { send: (text: string) => void } | undefined) {
 		sessions,
 		manager: {
 			session: (id: string) => sessions.get(id),
+			io: { typePrompt: vi.fn() },
 		} as unknown as SessionManager,
 	};
+}
+
+function terminalManager(status: Session["status"]) {
+	const session = {
+		id: "7",
+		status,
+		pty: { write: vi.fn() },
+	} as unknown as Session;
+	const typePrompt = vi.fn();
+	const manager = {
+		session: (id: string) => (id === "7" ? session : undefined),
+		io: { typePrompt },
+	} as unknown as SessionManager;
+	return { session, typePrompt, manager };
 }
 
 function replies(client: { send: ReturnType<typeof vi.fn> }) {
@@ -52,7 +68,7 @@ describe("defer-command handler", () => {
 		mockRun.mockReset().mockReturnValue(123);
 	});
 
-	it("declines a session that is not a Claude (SDK) session", () => {
+	it("declines a session that is not live", () => {
 		const client = { send: vi.fn() };
 
 		handleDeferCommand(client, managerWith(undefined).manager, request);
@@ -207,5 +223,75 @@ describe("defer-command handler", () => {
 		expect(push).toHaveBeenLastCalledWith(
 			"`assist ask` finished with exit code 0:\n\nApproved.",
 		);
+	});
+
+	describe("in a terminal (Codex) session", () => {
+		const approved = "`assist ask` finished with exit code 0:\n\nApproved.";
+
+		it("accepts the command", () => {
+			const client = { send: vi.fn() };
+			handleDeferCommand(client, terminalManager("waiting").manager, request);
+
+			expect(replies(client)).toEqual([
+				{ type: "defer-command-result", accepted: true },
+			]);
+		});
+
+		it("types the decision into an idle session as its next turn", () => {
+			const { typePrompt, manager } = terminalManager("waiting");
+			handleDeferCommand({ send: vi.fn() }, manager, request);
+
+			finishWith({ output: "Approved.\n", exitCode: 0 });
+
+			expect(typePrompt).toHaveBeenCalledWith("7", approved);
+		});
+
+		it("queues the decision while a turn is running and types it once idle", () => {
+			const { session, typePrompt, manager } = terminalManager("running");
+			handleDeferCommand({ send: vi.fn() }, manager, request);
+
+			finishWith({ output: "Approved.\n", exitCode: 0 });
+
+			expect(typePrompt).not.toHaveBeenCalled();
+			expect(session.pendingDeferredResults).toEqual([approved]);
+
+			session.status = "waiting";
+			flushDeferredResults(session, manager);
+
+			expect(typePrompt).toHaveBeenCalledWith("7", approved);
+			expect(session.pendingDeferredResults).toBeUndefined();
+		});
+
+		it("types nothing when the preview was superseded", () => {
+			const { typePrompt, manager } = terminalManager("waiting");
+			handleDeferCommand({ send: vi.fn() }, manager, request);
+
+			finishWith({ output: `${supersededPreviewMessage}\n`, exitCode: 0 });
+
+			expect(typePrompt).not.toHaveBeenCalled();
+		});
+
+		it("drops the decision when the session has ended", () => {
+			const { session, typePrompt, manager } = terminalManager("waiting");
+			handleDeferCommand({ send: vi.fn() }, manager, request);
+			session.status = "done";
+
+			finishWith({ output: "Approved.\n", exitCode: 0 });
+
+			expect(typePrompt).not.toHaveBeenCalled();
+			expect(session.pendingDeferredResults).toBeUndefined();
+		});
+
+		it("drops a queued decision when the session ends before going idle", () => {
+			const { session, typePrompt, manager } = terminalManager("running");
+			handleDeferCommand({ send: vi.fn() }, manager, request);
+			finishWith({ output: "Approved.\n", exitCode: 0 });
+
+			session.status = "done";
+			flushDeferredResults(session, manager);
+
+			expect(typePrompt).not.toHaveBeenCalled();
+			expect(session.pendingDeferredResults).toBeUndefined();
+		});
 	});
 });

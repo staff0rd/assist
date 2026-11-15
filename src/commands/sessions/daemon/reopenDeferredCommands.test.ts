@@ -32,6 +32,7 @@ function setup(
 	const sessions = new Map([["9", session]]);
 	const manager = {
 		session: (id: string) => sessions.get(id),
+		io: { typePrompt: vi.fn() },
 	} as unknown as SessionManager;
 	reopenDeferredCommands(sessions.values(), manager);
 	return session;
@@ -106,7 +107,29 @@ describe("reopenDeferredCommands", () => {
 		expect(session.deferredCommands).toBeUndefined();
 	});
 
-	it("drops pending commands of a session that is not a Claude (SDK) session", () => {
+	it("types a reopened decision into an idle terminal session", () => {
+		const session = {
+			id: "9",
+			status: "waiting",
+			pty: { write: vi.fn() },
+			deferredCommands: [command],
+		} as unknown as Session;
+		const typePrompt = vi.fn();
+		reopenDeferredCommands([session], {
+			session: () => session,
+			io: { typePrompt },
+		});
+
+		finishWith({ output: "Added item a1\n", exitCode: 0 });
+
+		expect(typePrompt).toHaveBeenCalledWith(
+			"9",
+			"`assist backlog propose` finished with exit code 0:\n\nAdded item a1",
+		);
+		expect(session.deferredCommands).toBeUndefined();
+	});
+
+	it("drops pending commands of a session that is not live", () => {
 		const session = setup();
 
 		expect(mockRun).not.toHaveBeenCalled();

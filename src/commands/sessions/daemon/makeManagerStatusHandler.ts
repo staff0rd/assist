@@ -1,4 +1,6 @@
 import type { Session } from "./createSession";
+import type { DeferredDeliveryHost } from "./DeferredDeliveryHost";
+import { flushDeferredResults } from "./flushDeferredResults";
 import { makeStatusChangeHandler } from "./makeStatusChangeHandler";
 import {
 	queuedTransferTrigger,
@@ -7,11 +9,15 @@ import {
 
 export function makeManagerStatusHandler(
 	sessions: Map<string, Session>,
-	host: TriggerHost,
+	host: TriggerHost & DeferredDeliveryHost,
 ) {
+	const transfer = queuedTransferTrigger(host);
 	return makeStatusChangeHandler(sessions, {
 		dismiss: (id, closeServerRuns) => host.dismissSession(id, closeServerRuns),
 		notify: () => host.update(() => true),
-		idle: queuedTransferTrigger(host),
+		idle: (session) => {
+			flushDeferredResults(session, host);
+			transfer(session);
+		},
 	});
 }

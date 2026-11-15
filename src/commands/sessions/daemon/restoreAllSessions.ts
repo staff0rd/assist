@@ -1,4 +1,5 @@
 import { awaitServerPort, type PortWaitDeps } from "./awaitServerPort";
+import type { DeferredDeliveryHost } from "./DeferredDeliveryHost";
 import type { SessionSpawner } from "./makeSessionSpawner";
 import { reopenDeferredCommands } from "./reopenDeferredCommands";
 import { restoreAll } from "./restoreAll";
@@ -8,12 +9,13 @@ import { reseedRestoredWorktrees } from "./worktree/reseedRestoredWorktrees";
 
 export function restoreAllSessions(
 	spawner: SessionSpawner,
-	deps: PortWaitDeps,
+	deps: PortWaitDeps & Pick<DeferredDeliveryHost, "io">,
 ): string[] {
 	const { sessions, notify } = deps;
 	const names = restoreAll(spawner, sessions);
 	reopenDeferredCommands(sessions.values(), {
 		session: (id) => sessions.get(id),
+		io: deps.io,
 	});
 	reseedRestoredWorktrees(deps);
 	reconcileWorktreesOnRestore(sessions, spawner.recoveryCard, notify);

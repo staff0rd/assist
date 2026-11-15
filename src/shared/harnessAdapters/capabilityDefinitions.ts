@@ -17,6 +17,8 @@ export const capabilityDefinitions = {
 		"Publishes an HTML page as a shareable claude.ai artifact link, which `assist ask-design` opens in the preview pane for design review rounds.",
 	"tasks.notifyOnExit":
 		"Runs a shell command in the background after the agent ends its turn and wakes the agent with the command's output when it exits, so a skill such as review-high-level can hand the turn back while an assist command waits on the user.",
+	"preview.nextTurn":
+		"Hands an assist command that waits on the user's preview-pane decision back to the agent as its next turn — through a background task that wakes the agent on exit, or by the daemon pushing the decision into the session it hosts — so the agent can end its turn while the preview is open.",
 	"transcript.read":
 		"Exposes the conversation's on-disk transcript as normalized events (user and assistant messages, tool calls with their operations, tool results, timestamps and turn lifecycle), so message previews, status reconciliation, restore status and transcript titles work without assist parsing the harness's format.",
 	"oneShot.text":

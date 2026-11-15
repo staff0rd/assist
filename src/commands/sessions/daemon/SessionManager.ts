@@ -95,6 +95,7 @@ export class SessionManager {
 			clients: this.clients,
 			onStatusChange: this.onStatusChange,
 			notify: this.notify,
+			io: this.io,
 		});
 	}
 

@@ -4,12 +4,13 @@ import { deferredCommandLabel } from "./deferredCommandLabel";
 import { formatDeferredResult } from "./formatDeferredResult";
 import type { PendingDeferredCommand } from "./pendingDeferredCommandSchema";
 import type { DeferredResult } from "./runDeferredCommand";
-import type { Session } from "./types";
+import type { DeferredDeliveryHost } from "./DeferredDeliveryHost";
 import { killedByDaemonRestart } from "./SessionInterruption";
 import { untrackDeferredCommand } from "./trackDeferredCommand";
+import { typeDeferredResult } from "./typeDeferredResult";
 
 export function deliverDeferredResult(
-	m: { session: (id: string) => Session | undefined },
+	m: DeferredDeliveryHost,
 	id: string,
 	command: PendingDeferredCommand,
 	result: DeferredResult,
@@ -29,11 +30,20 @@ export function deliverDeferredResult(
 		daemonLog(`${label} superseded; nothing delivered`);
 		return;
 	}
-	const sdk = session?.pty?.sdk;
-	if (!sdk) {
+	if (!session?.pty || session.status === "done") {
 		daemonLog(`${label} dropped: session is gone`);
 		return;
 	}
-	sdk.send(formatDeferredResult(name, result));
-	daemonLog(`${label} delivered as the next message`);
+	const text = formatDeferredResult(name, result);
+	if (session.pty.sdk) {
+		session.pty.sdk.send(text);
+		daemonLog(`${label} delivered as the next message`);
+		return;
+	}
+	const typed = typeDeferredResult(session, text, m);
+	daemonLog(
+		typed === "typed"
+			? `${label} typed into the terminal as the next turn`
+			: `${label} queued until the session is idle`,
+	);
 }

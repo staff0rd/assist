@@ -164,7 +164,7 @@ const EXPECTED_MATRIX: Record<string, Record<string, boolean>> = {
 	previewAnswerWait: {
 		claude: true,
 		"claude-sdk": true,
-		codex: false,
+		codex: true,
 		pi: false,
 		fake: true,
 	},

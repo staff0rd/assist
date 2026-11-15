@@ -11,7 +11,7 @@ const lines = explainAdvice(
 		rootDir: "/repo",
 		assistSession: false,
 		previewAnswerWait: true,
-		sdkSession: false,
+		deferredPreview: false,
 	},
 	fragments,
 ).split("\n");

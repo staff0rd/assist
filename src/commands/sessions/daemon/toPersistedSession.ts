@@ -32,6 +32,7 @@ export function toPersistedSession(session: Session): PersistedSession {
 		reviewStarted: session.reviewStarted,
 		launchedFrom: session.launchedFrom,
 		pendingPrompts: session.pendingPrompts,
+		pendingDeferredResults: session.pendingDeferredResults,
 		deferredCommands: session.deferredCommands,
 		interrupted: session.interrupted,
 		undurable: session.undurable,

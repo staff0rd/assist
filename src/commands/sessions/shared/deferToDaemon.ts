@@ -1,22 +1,18 @@
 import { requestDaemonReply } from "../daemon/requestDaemonReply";
-import { sdkAgentEnv } from "../../../shared/sdkAgentEnv";
 import { capturedStdin } from "./capturedStdin";
 import { deferredRunEnv } from "./deferredRunEnv";
+import { defersPreviewWait } from "./defersPreviewWait";
 
 type DeferReply = { accepted?: boolean };
 
-/* why: a Claude (SDK) session takes the decision as its next user message, so
- * the daemon blocks on the preview in place of this process and the agent ends
- * its turn instead of waiting on a background task. */
+/* why: a Claude (SDK) or daemon-hosted Codex session takes the decision as its
+ * next user turn, so the daemon blocks on the preview in place of this process
+ * and the agent ends its turn instead of waiting on a background task. */
 export async function deferToDaemon(
 	stdin: string | undefined = capturedStdin.text,
 ): Promise<boolean> {
 	const sessionId = process.env.ASSIST_SESSION_ID;
-	if (
-		!sessionId ||
-		process.env[sdkAgentEnv] !== "1" ||
-		process.env[deferredRunEnv] === "1"
-	)
+	if (!sessionId || !defersPreviewWait() || process.env[deferredRunEnv] === "1")
 		return false;
 	const reply = await requestDaemonReply<DeferReply>(
 		{

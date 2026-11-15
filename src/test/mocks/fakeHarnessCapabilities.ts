@@ -23,6 +23,7 @@ export const fakeHarnessCapabilities: CapabilityDeclarations = {
 	"launch.terminal": supported,
 	"oneShot.structured": supported,
 	"oneShot.text": supported,
+	"preview.nextTurn": supported,
 	"skills.native": supported,
 	"slashCommands.suggest": supported,
 	"systemPrompt.append": supported,

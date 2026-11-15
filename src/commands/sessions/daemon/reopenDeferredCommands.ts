@@ -4,21 +4,20 @@ import { deliverDeferredResult } from "./deliverDeferredResult";
 import { reopenedCommandEnv } from "./reopenedCommandEnv";
 import { runDeferredCommand } from "./runDeferredCommand";
 import { workflowQueryEnv } from "./sdk/workflowQueryEnv";
+import type { DeferredDeliveryHost } from "./DeferredDeliveryHost";
 import type { Session } from "./types";
-
-type SessionLookup = { session: (id: string) => Session | undefined };
 
 export function reopenDeferredCommands(
 	sessions: Iterable<Session>,
-	m: SessionLookup,
+	m: DeferredDeliveryHost,
 ): void {
 	for (const session of sessions) {
 		const pending = session.deferredCommands ?? [];
 		if (pending.length === 0) continue;
-		if (!session.pty?.sdk) {
+		if (!session.pty) {
 			session.deferredCommands = undefined;
 			daemonLog(
-				`defer-command ${pending.map((c) => deferredCommandLabel(c.argv)).join(", ")} dropped on restore: session ${session.id} is not a Claude (SDK) session`,
+				`defer-command ${pending.map((c) => deferredCommandLabel(c.argv)).join(", ")} dropped on restore: session ${session.id} is not live`,
 			);
 			continue;
 		}
@@ -29,7 +28,7 @@ export function reopenDeferredCommands(
 function reopen(
 	id: string,
 	command: NonNullable<Session["deferredCommands"]>[number],
-	m: SessionLookup,
+	m: DeferredDeliveryHost,
 ): void {
 	const pid = runDeferredCommand(
 		{
