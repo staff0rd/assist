@@ -1,3 +1,10 @@
+## [0.1182.1](https://github.com/staff0rd/assist/compare/v0.1182.0...v0.1182.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* catch cd into db dir in schema guard ([54e9342](https://github.com/staff0rd/assist/commit/54e9342f0715a33f530def2cd7d75acb1c70f58a))
+
 # [0.1182.0](https://github.com/staff0rd/assist/compare/v0.1181.2...v0.1182.0) (2026-11-15)
 
 
