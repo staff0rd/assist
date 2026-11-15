@@ -1,3 +1,10 @@
+## [0.1174.3](https://github.com/staff0rd/assist/compare/v0.1174.2...v0.1174.3) (2026-11-15)
+
+
+### Bug Fixes
+
+* run assist on declared node version ([9d5be98](https://github.com/staff0rd/assist/commit/9d5be987c1b6d521dcfd9c5ca0873c89972fe5b4))
+
 ## [0.1174.2](https://github.com/staff0rd/assist/compare/v0.1174.1...v0.1174.2) (2026-11-15)
 
 
