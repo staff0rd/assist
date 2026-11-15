@@ -4,6 +4,7 @@ import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createDesignTheme } from "../../../../designSystem/createDesignTheme";
 import type { TranscriptMessage } from "../../../../types";
+import { skipsSelection } from "../../../textWalker";
 import { TranscriptPane } from "./TranscriptPane";
 
 afterEach(cleanup);
@@ -46,6 +47,11 @@ describe("TranscriptPane too-verbose button", () => {
 	])("is absent when the last row is a %s row", (_, last) => {
 		renderPane([{ role: "assistant", text: "reply" }, last]);
 		expect(buttons()).toHaveLength(0);
+	});
+
+	it("keeps the button out of comment selection", () => {
+		renderPane([{ role: "assistant", text: "reply" }]);
+		expect(skipsSelection(buttons()[0])).toBe(true);
 	});
 
 	it("calls onTooVerbose and hides until a new reply is last", () => {

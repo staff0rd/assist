@@ -9,6 +9,7 @@ export function TooVerboseButton({ onClick }: { onClick: () => void }) {
 		<Tooltip title={LABEL}>
 			<IconButton
 				size="small"
+				data-preview-skip
 				aria-label={LABEL}
 				onClick={onClick}
 				sx={{ ml: "auto" }}
