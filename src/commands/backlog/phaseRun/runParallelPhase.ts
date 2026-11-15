@@ -1,10 +1,11 @@
 import chalk from "chalk";
-import { formatItemId, parseItemId } from "../formatItemId";
+import { parseItemId } from "../formatItemId";
 import { clearSignalOwner, recordSignalOwner } from "../recordSignalOwner";
 import { resolvePlan } from "../resolvePlan";
 import { findOneItem } from "../shared";
 import type { BacklogRunOptions } from "../types";
-import { ownsPhase, watchPhaseCancel } from "./watchPhaseCancel";
+import { phaseStartRefusal } from "./phaseStartRefusal";
+import { watchPhaseCancel } from "./watchPhaseCancel";
 import { runUntilSettled } from "./runUntilSettled";
 
 type ParallelPhaseOptions = BacklogRunOptions & {
@@ -27,14 +28,8 @@ export async function runParallelPhase(
 		console.log(chalk.red(`Phase ${phaseNumber} does not exist.`));
 		return false;
 	}
-	if (!(await ownsPhase(itemId, idx, options.token))) {
-		console.log(
-			chalk.yellow(
-				`Phase ${phaseNumber} of ${formatItemId(itemId)} is no longer assigned to this session (rewound or superseded).`,
-			),
-		);
-		return false;
-	}
+	const refusal = await phaseStartRefusal(itemId, phaseNumber, options.token);
+	if (refusal !== undefined) return refusal;
 
 	process.env.ASSIST_SESSION_ID ??= String(process.pid);
 	process.env.ASSIST_BACKLOG_PHASE = String(phaseNumber);
