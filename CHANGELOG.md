@@ -1,3 +1,10 @@
+## [0.1179.1](https://github.com/staff0rd/assist/compare/v0.1179.0...v0.1179.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* refresh docs for recent stories ([78db99c](https://github.com/staff0rd/assist/commit/78db99cc8093f1c2eb50a646d80d9ec1f1c12c9a))
+
 # [0.1179.0](https://github.com/staff0rd/assist/compare/v0.1178.0...v0.1179.0) (2026-11-15)
 
 
