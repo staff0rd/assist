@@ -40,11 +40,14 @@ function userEvents(entry: Entry, at?: string): ConversationEvent[] {
 	return events;
 }
 
-export function claudeEntryEvents(entry: Entry): ConversationEvent[] {
+export function claudeEntryEvents(
+	entry: Entry,
+	resultUrls?: ReadonlyMap<string, string>,
+): ConversationEvent[] {
 	if (entry.isSidechain || entry.isMeta) return [];
 	const at = typeof entry.timestamp === "string" ? entry.timestamp : undefined;
 	if (entry.type === "user") return userEvents(entry, at);
 	if (entry.type === "assistant")
-		return claudeAssistantEvents(contentOf(entry), at);
+		return claudeAssistantEvents(contentOf(entry), at, resultUrls);
 	return [];
 }

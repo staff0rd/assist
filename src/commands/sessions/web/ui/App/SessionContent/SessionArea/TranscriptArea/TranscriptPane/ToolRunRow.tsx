@@ -13,6 +13,7 @@ export function ToolRunRow({ calls }: { calls: KeyedToolMessage[] }) {
 					description={c.description}
 					label={c.label}
 					fields={c.fields}
+					resultUrl={c.resultUrl}
 				/>
 			))}
 		</Box>

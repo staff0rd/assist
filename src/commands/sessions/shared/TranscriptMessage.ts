@@ -10,6 +10,7 @@ export type TranscriptMessage =
 			description?: string;
 			label?: string;
 			fields?: ToolInputField[];
+			resultUrl?: string;
 	  }
 	| { role: "shell"; command: string; stdout: string; stderr: string }
 	| { role: "interrupt" }

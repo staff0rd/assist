@@ -6,6 +6,7 @@ import { CallHead } from "./CallHead";
 import { callRowSx } from "./callRowSx";
 import { RevealedFields } from "./RevealedFields";
 import { RevealedTarget } from "./RevealedTarget";
+import { RowLink } from "./RowLink";
 
 export function RevealRow({
 	tool,
@@ -13,17 +14,20 @@ export function RevealRow({
 	description,
 	label,
 	fields,
+	link,
 }: {
 	tool: string;
 	target: string;
 	description?: string;
 	label: ReactNode;
 	fields?: ToolInputField[];
+	link?: string;
 }) {
 	const [revealed, setRevealed] = useState(false);
 	return (
 		<Box>
 			<ButtonBase
+				component={link ? "div" : "button"}
 				data-preview-skip
 				aria-expanded={revealed}
 				disabled={!target && !fields?.length}
@@ -43,6 +47,7 @@ export function RevealRow({
 				>
 					{label}
 				</Box>
+				{link && <RowLink url={link} />}
 			</ButtonBase>
 			{revealed &&
 				(fields?.length ? (

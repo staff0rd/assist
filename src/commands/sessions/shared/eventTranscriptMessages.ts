@@ -14,6 +14,7 @@ export function eventTranscriptMessages(
 				...(event.description && { description: event.description }),
 				...(event.label && { label: event.label }),
 				...(event.fields && { fields: event.fields }),
+				...(event.resultUrl && { resultUrl: event.resultUrl }),
 			},
 		];
 	if (event.kind === "shell") {

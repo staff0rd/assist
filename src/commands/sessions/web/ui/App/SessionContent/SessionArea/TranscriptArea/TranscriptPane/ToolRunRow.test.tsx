@@ -99,4 +99,71 @@ describe("ToolRunRow", () => {
 		const link = screen.getByRole("link", { name: typeUrl });
 		expect(link.getAttribute("href")).toBe(typeUrl);
 	});
+
+	const artifactUrl = "https://claude.ai/artifact/NmhzhRL5j8sY927Fc1j7es";
+
+	it("links an Artifact row's result URL without toggling, listing it in the dropdown", () => {
+		render(
+			<ToolRunRow
+				calls={[
+					{
+						...call("Artifact", "", "a"),
+						label: "Release plan",
+						fields: [{ name: "title", value: "Release plan" }],
+						resultUrl: artifactUrl,
+					},
+				]}
+			/>,
+		);
+		const line = screen.getByRole("button", { name: /Release plan/ });
+		const link = screen.getByRole("link", {
+			name: "claude.ai/artifact/NmhzhRL5j8sY927Fc1j7es",
+		});
+		expect(link.getAttribute("href")).toBe(artifactUrl);
+		expect(link.getAttribute("target")).toBe("_blank");
+		fireEvent.click(link);
+		expect(line.getAttribute("aria-expanded")).toBe("false");
+		fireEvent.click(line);
+		expect(line.getAttribute("aria-expanded")).toBe("true");
+		expect(screen.getByText("result")).toBeTruthy();
+		expect(
+			screen.getByRole("link", { name: artifactUrl }).getAttribute("href"),
+		).toBe(artifactUrl);
+	});
+
+	it("falls back to the Artifact call's input url for its row link", () => {
+		render(
+			<ToolRunRow
+				calls={[
+					{
+						...call("Artifact", artifactUrl, "a"),
+						label: `read · ${artifactUrl}`,
+						fields: [
+							{ name: "action", value: "read" },
+							{ name: "url", value: artifactUrl },
+						],
+					},
+				]}
+			/>,
+		);
+		const link = screen.getByRole("link", {
+			name: "claude.ai/artifact/NmhzhRL5j8sY927Fc1j7es",
+		});
+		expect(link.getAttribute("href")).toBe(artifactUrl);
+	});
+
+	it("gives an Artifact row without a result or url no link", () => {
+		render(
+			<ToolRunRow
+				calls={[
+					{
+						...call("Artifact", "", "a"),
+						label: "quickstart · design",
+						fields: [{ name: "action", value: "quickstart" }],
+					},
+				]}
+			/>,
+		);
+		expect(screen.queryByRole("link")).toBeNull();
+	});
 });

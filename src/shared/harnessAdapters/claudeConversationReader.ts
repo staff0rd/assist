@@ -5,6 +5,7 @@ import {
 	projectDirForCwd,
 } from "../../commands/sessions/shared/findTranscriptPathSync";
 import { transcriptTailFingerprint } from "../../commands/sessions/shared/transcriptTailFingerprint";
+import { claudeArtifactResultUrls } from "./claudeArtifactResultUrls";
 import { claudeEntryEvents } from "./claudeEntryEvents";
 import { claudeUnrecognisedShapes } from "./claudeUnrecognisedShapes";
 import type { ConversationReader } from "./types";
@@ -19,7 +20,10 @@ export const claudeConversationReader: ConversationReader = {
 		cwd && claudeSessionId
 			? { dir: projectDirForCwd(cwd), file: `${claudeSessionId}.jsonl` }
 			: null,
-	events: (entries) => entries.flatMap(claudeEntryEvents),
+	events: (entries) => {
+		const resultUrls = claudeArtifactResultUrls(entries);
+		return entries.flatMap((entry) => claudeEntryEvents(entry, resultUrls));
+	},
 	lifecycle: (entries, options) => ({
 		status: deriveTranscriptStatus(entries, options),
 		asking: awaitsQuestionAnswer(entries),

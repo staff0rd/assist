@@ -142,6 +142,7 @@ export type ConversationEvent =
 			description?: string;
 			label?: string;
 			fields?: ToolInputField[];
+			resultUrl?: string;
 			operations: ToolOperation[];
 			at?: string;
 	  }
