@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { type BufferLineInfo, findTerminalLinks } from "./findTerminalLinks";
+import { findTerminalLinks } from "./findTerminalLinks";
+import type { BufferLineInfo } from "./rowSegments";
 
 function reader(lines: BufferLineInfo[]) {
 	return (index: number): BufferLineInfo | undefined => lines[index];

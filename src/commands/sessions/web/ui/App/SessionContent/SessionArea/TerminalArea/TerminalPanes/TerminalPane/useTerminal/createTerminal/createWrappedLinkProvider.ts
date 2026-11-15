@@ -1,6 +1,6 @@
 import type { ILink, ILinkProvider, Terminal } from "@xterm/xterm";
+import { createLineReader } from "./createWrappedLinkProvider/createLineReader";
 import {
-	type BufferLineInfo,
 	findTerminalLinks,
 	strictUrlRegex,
 } from "./createWrappedLinkProvider/findTerminalLinks";
@@ -9,17 +9,7 @@ export function createWrappedLinkProvider(
 	term: Terminal,
 	handler: (event: MouseEvent, uri: string) => void,
 ): ILinkProvider {
-	const readLine = (index: number): BufferLineInfo | undefined => {
-		const line = term.buffer.active.getLine(index);
-		if (!line) return undefined;
-		const cols = term.cols;
-		const last = line.getCell(cols - 1);
-		return {
-			text: line.translateToString(true, 0, cols),
-			isWrapped: line.isWrapped,
-			isFull: !!last && last.getChars() !== "" && last.getChars() !== " ",
-		};
-	};
+	const readLine = createLineReader(term);
 
 	return {
 		provideLinks(bufferLineNumber, callback): void {

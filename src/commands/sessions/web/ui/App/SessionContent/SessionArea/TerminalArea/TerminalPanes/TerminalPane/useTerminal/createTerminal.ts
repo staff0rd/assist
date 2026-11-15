@@ -3,6 +3,7 @@ import { WebglAddon } from "@xterm/addon-webgl";
 import { Terminal } from "@xterm/xterm";
 import { createWrappedLinkProvider } from "./createTerminal/createWrappedLinkProvider";
 import { ignoreMouseTracking } from "./createTerminal/ignoreMouseTracking";
+import { preferLinkProvider } from "./createTerminal/preferLinkProvider";
 import type { TerminalLook } from "./terminalTheme";
 
 export type TerminalHandle = {
@@ -29,11 +30,11 @@ export function createTerminal(
 	const mouseTracking = ignoreMouseTracking(term);
 	const fitAddon = new FitAddon();
 	term.loadAddon(fitAddon);
-	const linkProvider = term.registerLinkProvider(
-		createWrappedLinkProvider(term, (_event, uri) => {
-			window.open(uri, "_blank");
-		}),
-	);
+	const wrappedLinks = createWrappedLinkProvider(term, (_event, uri) => {
+		window.open(uri, "_blank");
+	});
+	const linkProvider = term.registerLinkProvider(wrappedLinks);
+	preferLinkProvider(term, wrappedLinks);
 	term.open(el);
 
 	/* why: the DOM fallback renderer paints each selected run as one span carrying

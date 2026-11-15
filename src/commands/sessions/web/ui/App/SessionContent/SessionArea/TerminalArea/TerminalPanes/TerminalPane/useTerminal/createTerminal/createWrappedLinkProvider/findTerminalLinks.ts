@@ -4,19 +4,9 @@
 export const strictUrlRegex =
 	/(https?|HTTPS?):[/]{2}[^\s"'!*(){}|\\^<>`]*[^\s"':,.!?{}|\\^~[\]`()<>]/;
 
-// cap the join span; a url wrapping across more rows than this is implausible.
-const MAX_LINES = 64;
+import { logicalRows } from "./logicalRows";
+import type { GetLine } from "./rowSegments";
 
-export type BufferLineInfo = {
-	/** the line's visible text, trailing blanks trimmed (translateToString(true)). */
-	text: string;
-	/** xterm marked this line a soft-wrap continuation of the line above. */
-	isWrapped: boolean;
-	/** the line's content reached the right margin, so the next line continues it. */
-	isFull: boolean;
-};
-
-type GetLine = (index: number) => BufferLineInfo | undefined;
 type CellPosition = { x: number; y: number };
 type DetectedLink = {
 	text: string;
@@ -29,29 +19,6 @@ function isUrl(text: string): boolean {
 	} catch {
 		return false;
 	}
-}
-
-/* why: xterm only flags soft-wrapped continuations with isWrapped, but the pty is
-   pinned to 120 cols while the browser terminal fits its own width, so programs
-   that wrap their own output to 120 produce continuation lines that fill the
-   margin without an isWrapped flag (#434). Treat a line that reaches the margin
-   as continued too, so the whole url joins into one link. */
-function continuesInto(getLine: GetLine, index: number): boolean {
-	const line = getLine(index);
-	const next = getLine(index + 1);
-	return !!line && !!next && (next.isWrapped || line.isFull);
-}
-
-/** Collect the visible text of each line of the logical line beginning at `start`. */
-function collectTexts(getLine: GetLine, start: number): string[] {
-	const texts: string[] = [];
-	for (let i = start; i - start < MAX_LINES; i++) {
-		const line = getLine(i);
-		if (!line) break;
-		texts.push(line.text);
-		if (!continuesInto(getLine, i)) break;
-	}
-	return texts;
 }
 
 /** Map a joined-string index to its 1-based cell position within the logical line. */
@@ -102,7 +69,6 @@ export function findTerminalLinks(
 	regex: RegExp = strictUrlRegex,
 ): DetectedLink[] {
 	if (!getLine(y - 1)) return [];
-	let start = y - 1;
-	while (start > 0 && continuesInto(getLine, start - 1)) start--;
-	return matchLinks(collectTexts(getLine, start), start, regex);
+	const { start, texts } = logicalRows(getLine, y - 1);
+	return matchLinks(texts, start, regex);
 }
