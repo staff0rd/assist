@@ -1,3 +1,10 @@
+# [0.1180.0](https://github.com/staff0rd/assist/compare/v0.1179.2...v0.1180.0) (2026-11-15)
+
+
+### Features
+
+* too verbose button on last reply ([64cfb39](https://github.com/staff0rd/assist/commit/64cfb39e83426fa217f65134229a4f1741ebe5cb))
+
 ## [0.1179.2](https://github.com/staff0rd/assist/compare/v0.1179.1...v0.1179.2) (2026-11-15)
 
 
