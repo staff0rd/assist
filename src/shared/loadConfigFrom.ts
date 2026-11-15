@@ -1,6 +1,6 @@
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
-import { dirname, join } from "node:path";
+import { dirname, join, relative } from "node:path";
 import { dropUnknownConfigKeys } from "./dropUnknownConfigKeys";
 import { linkedWorktree } from "./linkedWorktree";
 import { loadRawYaml } from "./loadRawYaml";
@@ -40,6 +40,14 @@ export function projectConfigPathFrom(cwd: string): string {
 	if (findConfigUp(cwd)) return getConfigPathFrom(cwd);
 	const clone = linkedWorktree(cwd)?.clone;
 	return getConfigPathFrom(clone ?? cwd);
+}
+
+export function projectConfigWritePathFrom(cwd: string): string {
+	if (findConfigUp(cwd)) return getConfigPathFrom(cwd);
+	const worktree = linkedWorktree(cwd);
+	if (!worktree) return getConfigPathFrom(cwd);
+	const clonePath = getConfigPathFrom(worktree.clone);
+	return join(worktree.root, relative(worktree.clone, clonePath));
 }
 
 export function loadConfigFrom(

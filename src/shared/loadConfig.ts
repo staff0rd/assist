@@ -1,4 +1,5 @@
-import { writeFileSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
+import { dirname } from "node:path";
 import chalk from "chalk";
 import { stringify as stringifyYaml } from "yaml";
 import {
@@ -6,6 +7,7 @@ import {
 	getGlobalConfigPath,
 	loadConfigFrom,
 	projectConfigPathFrom,
+	projectConfigWritePathFrom,
 } from "./loadConfigFrom";
 import { loadRawYaml } from "./loadRawYaml";
 import type { AssistConfig, TranscriptConfig } from "./types";
@@ -42,7 +44,8 @@ export function saveConfig(
 	config: Record<string, unknown>,
 	cwd: string = process.cwd(),
 ): void {
-	const configPath = projectConfigPathFrom(cwd);
+	const configPath = projectConfigWritePathFrom(cwd);
+	mkdirSync(dirname(configPath), { recursive: true });
 	writeFileSync(configPath, stringifyYaml(config, { lineWidth: 0 }));
 }
 

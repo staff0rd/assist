@@ -9,7 +9,14 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { loadProjectConfig, saveConfig } from "./loadConfig";
-import { loadConfigFrom, projectConfigPathFrom } from "./loadConfigFrom";
+import { applyConfigSet } from "../commands/config/applyConfigSet";
+import { applyConfigUnset } from "../commands/config/applyConfigUnset";
+import {
+	loadConfigFrom,
+	projectConfigPathFrom,
+	projectConfigWritePathFrom,
+} from "./loadConfigFrom";
+import { loadRawYaml } from "./loadRawYaml";
 import { writeRepoConfigCache } from "./writeRepoConfigCache";
 
 let base: string;
@@ -129,17 +136,55 @@ describe("project config reads and writes from a worktree", () => {
 		expect(loadProjectConfig(worktree)).toEqual({ prs: { required: true } });
 	});
 
-	it("edits the inherited config in place rather than shadowing it", () => {
+	it("writes the worktree's own config, starting from the clone's", () => {
 		writeConfig(clone, "prs:\n  required: true\n");
 
 		const config = loadProjectConfig(worktree);
 		saveConfig({ ...config, commit: { push: true } }, worktree);
 
-		expect(existsSync(join(worktree, "assist.yml"))).toBe(false);
-		expect(loadProjectConfig(clone)).toEqual({
+		expect(loadRawYaml(join(worktree, "assist.yml"))).toEqual({
 			prs: { required: true },
 			commit: { push: true },
 		});
+		expect(loadProjectConfig(clone)).toEqual({ prs: { required: true } });
+	});
+
+	it("mirrors the clone's .claude/assist.yml location", () => {
+		mkdirSync(join(clone, ".claude"), { recursive: true });
+		writeFileSync(
+			join(clone, ".claude", "assist.yml"),
+			"prs:\n  required: true\n",
+		);
+
+		expect(projectConfigWritePathFrom(join(worktree, "src"))).toBe(
+			join(worktree, ".claude", "assist.yml"),
+		);
+		saveConfig(loadProjectConfig(worktree), worktree);
+
+		expect(projectConfigPathFrom(worktree)).toBe(
+			join(worktree, ".claude", "assist.yml"),
+		);
+	});
+
+	it("config set and unset from a worktree write the worktree's file", () => {
+		writeConfig(clone, "prs:\n  required: true\n");
+
+		applyConfigSet("commit.push", true, false, worktree);
+		applyConfigUnset("prs.required", false, worktree);
+
+		expect(loadRawYaml(join(worktree, "assist.yml"))).toEqual({
+			commit: { push: true },
+		});
+		expect(loadProjectConfig(clone)).toEqual({ prs: { required: true } });
+	});
+
+	it("still reads the clone's config while the worktree has none", () => {
+		writeConfig(clone, "prs:\n  required: true\n");
+
+		expect(existsSync(join(worktree, "assist.yml"))).toBe(false);
+		expect(
+			loadConfigFrom(worktree, join(base, "no-global.yml")).prs?.required,
+		).toBe(true);
 	});
 });
 
