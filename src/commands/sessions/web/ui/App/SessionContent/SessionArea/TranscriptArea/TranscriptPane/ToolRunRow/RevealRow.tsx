@@ -1,8 +1,10 @@
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import { type ReactNode, useState } from "react";
+import type { ToolInputField } from "../../../../../../../../../../shared/harnessAdapters/types";
 import { CallHead } from "./CallHead";
 import { callRowSx } from "./callRowSx";
+import { RevealedFields } from "./RevealedFields";
 import { RevealedTarget } from "./RevealedTarget";
 
 export function RevealRow({
@@ -10,11 +12,13 @@ export function RevealRow({
 	target,
 	description,
 	label,
+	fields,
 }: {
 	tool: string;
 	target: string;
 	description?: string;
 	label: ReactNode;
+	fields?: ToolInputField[];
 }) {
 	const [revealed, setRevealed] = useState(false);
 	return (
@@ -22,7 +26,7 @@ export function RevealRow({
 			<ButtonBase
 				data-preview-skip
 				aria-expanded={revealed}
-				disabled={!target}
+				disabled={!target && !fields?.length}
 				onClick={() => setRevealed((r) => !r)}
 				sx={callRowSx}
 			>
@@ -40,7 +44,12 @@ export function RevealRow({
 					{label}
 				</Box>
 			</ButtonBase>
-			{revealed && <RevealedTarget target={target} />}
+			{revealed &&
+				(fields?.length ? (
+					<RevealedFields fields={fields} />
+				) : (
+					<RevealedTarget target={target} />
+				))}
 		</Box>
 	);
 }

@@ -140,6 +140,8 @@ export type ConversationEvent =
 			tool: string;
 			target: string;
 			description?: string;
+			label?: string;
+			fields?: ToolInputField[];
 			operations: ToolOperation[];
 			at?: string;
 	  }
@@ -212,6 +214,8 @@ export type ConnectorRun = {
 };
 
 export type ConnectorRunResult = { output: unknown; usage: RunUsage };
+
+export type ToolInputField = { name: string; value: string };
 
 export type ToolOperation =
 	| { kind: "command"; tool: string; command: string }

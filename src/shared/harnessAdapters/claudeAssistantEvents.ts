@@ -1,6 +1,8 @@
 import { toolTarget } from "../../commands/sessions/shared/toolTarget";
+import { artifactCallLabel } from "./artifactCallLabel";
 import { claudeContentBlocksOf } from "./claudeContentBlocksOf";
 import { claudeToolOperations } from "./claudeToolOperations";
+import { toolInputFields } from "./toolInputFields";
 import type { ConversationEvent } from "./types";
 
 type Block = Record<string, unknown>;
@@ -27,6 +29,10 @@ function toolEvent(block: Block, at?: string): ConversationEvent {
 		tool,
 		target: toolTarget(block.input),
 		...(description && { description }),
+		...(tool === "Artifact" && {
+			label: artifactCallLabel(input),
+			fields: toolInputFields(input),
+		}),
 		operations: claudeToolOperations({ toolName: tool, toolInput: input }),
 		at,
 	};

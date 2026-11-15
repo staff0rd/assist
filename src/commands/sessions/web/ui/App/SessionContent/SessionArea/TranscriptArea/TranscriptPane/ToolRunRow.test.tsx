@@ -73,4 +73,30 @@ describe("ToolRunRow", () => {
 		for (const button of screen.getAllByRole("button"))
 			expect(skipsSelection(button)).toBe(true);
 	});
+
+	it("labels an Artifact call and lists its input fields on click", () => {
+		const typeUrl = "https://claude.ai/artifact/type/abc";
+		render(
+			<ToolRunRow
+				calls={[
+					{
+						...call("Artifact", "", "a"),
+						label: "quickstart · design",
+						fields: [
+							{ name: "action", value: "quickstart" },
+							{ name: "type_url", value: typeUrl },
+						],
+					},
+				]}
+			/>,
+		);
+		const line = screen.getByRole("button", { name: /quickstart · design/ });
+		expect(line.hasAttribute("disabled")).toBe(false);
+		fireEvent.click(line);
+		expect(line.getAttribute("aria-expanded")).toBe("true");
+		expect(screen.getByText("action")).toBeTruthy();
+		expect(screen.getByText("quickstart")).toBeTruthy();
+		const link = screen.getByRole("link", { name: typeUrl });
+		expect(link.getAttribute("href")).toBe(typeUrl);
+	});
 });

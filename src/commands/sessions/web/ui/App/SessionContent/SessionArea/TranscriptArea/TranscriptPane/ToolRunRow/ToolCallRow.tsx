@@ -1,3 +1,4 @@
+import type { ToolInputField } from "../../../../../../../../../../shared/harnessAdapters/types";
 import { callLabel } from "./callLabel";
 import { isUrlTarget } from "./isUrlTarget";
 import { RevealRow } from "./RevealRow";
@@ -7,19 +8,24 @@ export function ToolCallRow({
 	tool,
 	target,
 	description,
+	label,
+	fields,
 }: {
 	tool: string;
 	target: string;
 	description?: string;
+	label?: string;
+	fields?: ToolInputField[];
 }) {
-	if (!description && isUrlTarget(target))
+	if (!description && !fields && isUrlTarget(target))
 		return <UrlCallRow tool={tool} url={target.trim()} />;
 	return (
 		<RevealRow
 			tool={tool}
 			target={target}
 			description={description}
-			label={callLabel({ tool, target, description })}
+			label={label ?? callLabel({ tool, target, description })}
+			fields={fields}
 		/>
 	);
 }

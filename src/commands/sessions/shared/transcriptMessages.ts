@@ -1,39 +1,11 @@
-import type {
-	ConversationEvent,
-	ConversationReader,
-} from "../../../shared/harnessAdapters/types";
+import type { ConversationReader } from "../../../shared/harnessAdapters/types";
 import { parseRolloutEntry } from "./codex/parseRolloutEntry";
+import { eventTranscriptMessages } from "./eventTranscriptMessages";
+import type { TranscriptMessage } from "./TranscriptMessage";
 
-export type TranscriptMessage =
-	| { role: "user"; text: string }
-	| { role: "assistant"; text: string }
-	| { role: "tool"; tool: string; target: string; description?: string }
-	| { role: "shell"; command: string; stdout: string; stderr: string }
-	| { role: "interrupt" }
-	| { role: "restart"; killed: number };
+export type { TranscriptMessage };
 
 export type TranscriptEcho = { at: string; text: string };
-
-function toMessages(event: ConversationEvent): TranscriptMessage[] {
-	if (event.kind === "message") return [{ role: event.role, text: event.text }];
-	if (event.kind === "tool")
-		return [
-			{
-				role: "tool",
-				tool: event.tool,
-				target: event.target,
-				...(event.description && { description: event.description }),
-			},
-		];
-	if (event.kind === "shell") {
-		const { command, stdout, stderr } = event;
-		return [{ role: "shell", command, stdout, stderr }];
-	}
-	if (event.kind === "interrupt") return [{ role: "interrupt" }];
-	if (event.kind === "restart")
-		return [{ role: "restart", killed: event.killed }];
-	return [];
-}
 
 function echoMessages(
 	pending: TranscriptEcho[],
@@ -59,7 +31,7 @@ export function transcriptMessages(
 		.events(entries)
 		.flatMap((event) => [
 			...(event.at ? echoMessages(pending, event.at) : []),
-			...toMessages(event),
+			...eventTranscriptMessages(event),
 		]);
 	return [...messages, ...echoMessages(pending)];
 }

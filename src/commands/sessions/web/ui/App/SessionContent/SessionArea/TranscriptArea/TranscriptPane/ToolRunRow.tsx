@@ -11,6 +11,8 @@ export function ToolRunRow({ calls }: { calls: KeyedToolMessage[] }) {
 					tool={c.tool}
 					target={c.target}
 					description={c.description}
+					label={c.label}
+					fields={c.fields}
 				/>
 			))}
 		</Box>
