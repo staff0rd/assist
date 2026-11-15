@@ -33,7 +33,7 @@ export function spawnCodex(opts: SpawnOpts = {}) {
 	return spawnPty(
 		[
 			"codex",
-			...codexIsolatedHookArgs,
+			...codexIsolatedHookArgs(),
 			...override.args,
 			...sessionEnv,
 			...codexSandboxArgs(),

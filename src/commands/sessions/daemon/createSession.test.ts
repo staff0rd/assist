@@ -18,6 +18,12 @@ vi.mock("./designSystemPromptPath", () => ({
 	designSystemPromptPath: vi.fn(() => "/design-system-prompt.md"),
 }));
 
+const noDaemon = vi.hoisted(() => ({ args: ["--no-daemon"] }));
+
+vi.mock("../../../shared/codexIsolatedHookArgs", () => ({
+	codexIsolatedHookArgs: () => noDaemon.args,
+}));
+
 const spawnPtyMock = vi.mocked(spawnPty);
 
 function spawnedArgs(): string[] {
@@ -25,7 +31,10 @@ function spawnedArgs(): string[] {
 }
 
 describe("createSession", () => {
-	beforeEach(() => spawnPtyMock.mockClear());
+	beforeEach(() => {
+		spawnPtyMock.mockClear();
+		noDaemon.args = ["--no-daemon"];
+	});
 
 	it("launches claude in auto mode when the launcher asked for it", () => {
 		createSession("3", { prompt: "go", cwd: "/repo", auto: true });
@@ -58,6 +67,14 @@ describe("createSession", () => {
 			join(homedir(), ".assist"),
 			"go",
 		]);
+	});
+
+	it("launches codex without --no-daemon when codex does not accept it", () => {
+		noDaemon.args = [];
+		createSession("3", { prompt: "go", cwd: "/repo", harness: "codex" });
+
+		expect(spawnedArgs()[0]).toBe("codex");
+		expect(spawnedArgs()).not.toContain("--no-daemon");
 	});
 
 	it("adds no approvals flag to a pi launch", () => {

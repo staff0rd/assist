@@ -19,6 +19,12 @@ const state = vi.hoisted(() => ({
 	missing: new Set<string>(),
 	fake: undefined as HarnessAdapter | undefined,
 }));
+const noDaemon = vi.hoisted(() => ({ args: ["--no-daemon"] }));
+
+vi.mock("./codexIsolatedHookArgs", () => ({
+	codexIsolatedHookArgs: () => noDaemon.args,
+}));
+
 vi.mock("./loadConfig", () => ({
 	loadConfig: () => ({ harness: { engine: state.engine } }),
 }));
@@ -61,6 +67,7 @@ const mockExecFile = vi.mocked(execFile);
 
 beforeEach(() => {
 	vi.clearAllMocks();
+	noDaemon.args = ["--no-daemon"];
 	state.engine = "claude";
 	state.missing.clear();
 	vi.stubEnv("CODEX_TOOL_CALL_ID", undefined);
@@ -131,6 +138,14 @@ describe("runOneShotPrompt", () => {
 		expect(opts.timeout).toBe(30_000);
 		expect(opts.env.ASSIST_SESSION_ID).toBeUndefined();
 		expect(opts.env.ASSIST_SESSION).toBeUndefined();
+	});
+
+	it("runs codex exec without --no-daemon when codex does not accept it", async () => {
+		noDaemon.args = [];
+		await runOneShotPrompt("hi", sessionTitleFeature, { harness: "codex" });
+		const args = mockExecFile.mock.calls[0][1] as string[];
+		expect(args[0]).toBe("exec");
+		expect(args).not.toContain("--no-daemon");
 	});
 
 	it("passes a caller's timeout through", async () => {

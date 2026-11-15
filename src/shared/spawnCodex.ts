@@ -35,7 +35,7 @@ export function spawnCodex(
 	return spawnInherit(
 		harnesses.codex.command,
 		[
-			...codexIsolatedHookArgs,
+			...codexIsolatedHookArgs(),
 			...override.args,
 			...codexSessionEnvArgs(process.env),
 			...codexSandboxArgs(),

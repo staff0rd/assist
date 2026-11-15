@@ -45,6 +45,12 @@ vi.mock("../../../shared/prepareCodexHookTrust", () => ({
 	prepareCodexHookTrust: prepareTrust,
 }));
 
+const noDaemon = vi.hoisted(() => ({ args: ["--no-daemon"] }));
+
+vi.mock("../../../shared/codexIsolatedHookArgs", () => ({
+	codexIsolatedHookArgs: () => noDaemon.args,
+}));
+
 const ENV = "<session-env>";
 
 vi.mock("../../../shared/codexSandboxArgs", () => ({
@@ -80,7 +86,20 @@ describe("spawnCodex", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		prepareTrust.mockReturnValue(undefined);
+		noDaemon.args = ["--no-daemon"];
 		withConfig({});
+	});
+
+	it("omits --no-daemon when the installed codex does not accept it", () => {
+		noDaemon.args = [];
+		spawnCodex({ prompt: "Do the thing", cwd: "/repo", sessionId: "7" });
+
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["codex", ENV, ...SANDBOX, "Do the thing"],
+			"/repo",
+			"7",
+			{},
+		);
 	});
 
 	it("starts a fresh interactive session with a prompt", () => {

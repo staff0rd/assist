@@ -17,7 +17,7 @@ export async function codexOneShot(
 	const run = execFileAsync(
 		harnesses.codex.command,
 		[
-			...codexIsolatedHookArgs,
+			...codexIsolatedHookArgs(),
 			"exec",
 			...override.args,
 			"--ephemeral",

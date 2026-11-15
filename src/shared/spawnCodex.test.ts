@@ -37,6 +37,12 @@ vi.mock("./prepareCodexHookTrust", () => ({
 	prepareCodexHookTrust: prepareTrust,
 }));
 
+const noDaemon = vi.hoisted(() => ({ args: ["--no-daemon"] }));
+
+vi.mock("./codexIsolatedHookArgs", () => ({
+	codexIsolatedHookArgs: () => noDaemon.args,
+}));
+
 const ENV = "<session-env>";
 
 vi.mock("./codexSandboxArgs", () => ({
@@ -72,7 +78,23 @@ describe("spawnCodex", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		prepareTrust.mockReturnValue(undefined);
+		noDaemon.args = ["--no-daemon"];
 		withConfig({});
+	});
+
+	it("omits --no-daemon when the installed codex does not accept it", () => {
+		noDaemon.args = [];
+		spawnCodex("Do the thing", { cwd: "/repo" });
+
+		expect(spawnInheritMock.mock.calls[0][1]).toEqual([
+			ENV,
+			...SANDBOX,
+			"-C",
+			"/repo",
+			"--sandbox",
+			"workspace-write",
+			"Do the thing",
+		]);
 	});
 
 	it("runs plain codex in the given cwd and sandbox", () => {
