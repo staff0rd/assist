@@ -1,3 +1,10 @@
+## [0.1182.3](https://github.com/staff0rd/assist/compare/v0.1182.2...v0.1182.3) (2026-11-15)
+
+
+### Bug Fixes
+
+* parallel phases push when landing ([ab8e2a7](https://github.com/staff0rd/assist/commit/ab8e2a7c381a67f062affc3829b337235a3185e4))
+
 ## [0.1182.2](https://github.com/staff0rd/assist/compare/v0.1182.1...v0.1182.2) (2026-11-15)
 
 
