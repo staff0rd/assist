@@ -1,3 +1,16 @@
+# [0.1175.0](https://github.com/staff0rd/assist/compare/v0.1174.3...v0.1175.0) (2026-11-15)
+
+
+### Bug Fixes
+
+* declared node PATH for workflows ([99a796e](https://github.com/staff0rd/assist/commit/99a796e5fa5a50e4ef75aa28a755e5535a017b86))
+
+
+### Features
+
+* label Artifact rows, list input fields ([e2d884f](https://github.com/staff0rd/assist/commit/e2d884f8970afb14a6a63a75343afd512be3a297))
+* link URLs in shell output ([8cd1a16](https://github.com/staff0rd/assist/commit/8cd1a16831e7a5567037b2ee165d9136805086a5))
+
 ## [0.1174.3](https://github.com/staff0rd/assist/compare/v0.1174.2...v0.1174.3) (2026-11-15)
 
 
