@@ -58,6 +58,7 @@ const assistConfigShape = {
 		}),
 	backlog: z
 		.strictObject({
+			parallelPhases: z.boolean().optional(),
 			maxParallelPhases: z.number().int().positive().optional(),
 		})
 		.optional(),

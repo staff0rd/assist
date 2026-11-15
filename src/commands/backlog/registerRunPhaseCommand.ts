@@ -2,7 +2,7 @@ import type { Command } from "commander";
 
 export function registerRunPhaseCommand(cmd: Command): void {
 	cmd
-		.command("run-phase <id> <phase>")
+		.command("run-phase <id> <phase>", { hidden: true })
 		.description(
 			"Run one ready phase in this worktree, alongside the item's other ready phases (started by 'backlog run')",
 		)
@@ -31,6 +31,9 @@ export function registerRunPhaseCommand(cmd: Command): void {
 					resumeSession?: string;
 				},
 			) => {
+				const { refuseParallelPhasesOff } =
+					await import("./phaseRun/refuseParallelPhasesOff");
+				if (refuseParallelPhasesOff("run-phase")) return;
 				const { resolveHarness } = await import("./resolveHarness");
 				const { resolveModel } = await import("./resolveModel");
 				const { runParallelPhase } =

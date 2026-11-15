@@ -1,7 +1,9 @@
 import type { PhaseRow } from "../../shared/db/schema";
+import { parallelPhasesEnabled } from "./phaseRun/parallelPhasesEnabled";
 import type { BacklogItem } from "./types";
 
 export function attachPhaseRuns(item: BacklogItem, phases: PhaseRow[]): void {
+	if (!parallelPhasesEnabled()) return;
 	const withState = (state: string) =>
 		phases.filter((p) => p.runState === state).map((p) => p.idx + 1);
 	const running = withState("running");

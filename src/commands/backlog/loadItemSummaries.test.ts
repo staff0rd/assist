@@ -1,4 +1,4 @@
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { createTestDb } from "../../shared/db/createTestDb";
 import type { Db } from "../../shared/db/Db";
 import {
@@ -10,6 +10,11 @@ import {
 	planTasks,
 } from "../../shared/db/schema";
 import { loadItemSummaries } from "./loadItemSummaries";
+import { parallelPhasesEnabled } from "./phaseRun/parallelPhasesEnabled";
+
+vi.mock("./phaseRun/parallelPhasesEnabled", () => ({
+	parallelPhasesEnabled: vi.fn(() => false),
+}));
 
 let orm: Db;
 let close: () => Promise<void>;
@@ -67,7 +72,7 @@ describe("loadItemSummaries", () => {
 		});
 	});
 
-	it("lists the phases running in parallel and done ahead of currentPhase", async () => {
+	it("lists the phases running in parallel and done ahead of currentPhase only with parallel phases on", async () => {
 		await orm.insert(items).values({
 			id: 1,
 			origin: "test",
@@ -82,6 +87,9 @@ describe("loadItemSummaries", () => {
 			{ itemId: 1, idx: 3, name: "Four", runState: "running" },
 		]);
 
+		expect((await loadItemSummaries(orm))[0].runningPhases).toBeUndefined();
+
+		vi.mocked(parallelPhasesEnabled).mockReturnValue(true);
 		const [summary] = await loadItemSummaries(orm);
 
 		expect(summary.runningPhases).toEqual([2, 4]);

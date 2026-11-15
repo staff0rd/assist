@@ -1663,12 +1663,6 @@ Commands:
                                                   --story to a screenshot declared on a docs page
                                                   whose PNG is added or changed in the working tree
   run [options] <id>                              Run a backlog item's plan phase-by-phase
-  run-phase [options] <id> <phase>                Run one ready phase in this worktree, alongside
-                                                  the item's other ready phases (started by 'backlog
-                                                  run')
-  land                                            Land this parallel phase's commits on the item
-                                                  branch: rebase onto it, run assist verify if it
-                                                  moved, then fast-forward it
   search <query>                                  Search backlog items by keyword
   update-field [options] <id>                     Update fields on a backlog item
   update-phase|edit-phase [options] <id> <phase>  Modify a plan phase on a backlog item
@@ -1700,7 +1694,8 @@ Commands:
 
 Config:
   assist config set database.url postgresql://... # Postgres connection string for backlog storage (or ASSIST_DATABASE_URL)
-  assist config set backlog.maxParallelPhases 3   # how many independent phases 'backlog run' runs at once, each in its own worktree (default: 3; 1 runs phases one at a time)
+  assist config set backlog.parallelPhases true   # experimental: let 'backlog run' start independent phases at once, each in its own worktree session (default: off; off runs phases one at a time and hides parallel run state)
+  assist config set backlog.maxParallelPhases 3   # with backlog.parallelPhases on, how many independent phases 'backlog run' runs at once, each in its own worktree (default: 3; 1 runs phases one at a time)
   assist config set clone.baseDir ~/git           # base directory 'backlog clone' clones repos into (default: ~/git)
   assist config set docs.refreshAfter 5           # queue a 'Refresh docs' item once this many done stories are unswept (unset: Refresh docs is off — no button, no refresh-docs, no docs locking)
 
@@ -2018,8 +2013,8 @@ Options:
 === assist backlog land --help
 Usage: assist backlog land [options]
 
-Land this parallel phase's commits on the item branch: rebase onto it, run assist verify if it
-moved, then fast-forward it
+Land this parallel phase's commits: rebase onto the remote branch it tracks, run assist verify if
+that moved, then push to it
 
 Options:
   -h, --help  display help for command

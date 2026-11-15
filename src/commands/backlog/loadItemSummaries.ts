@@ -4,6 +4,7 @@ import { items } from "../../shared/db/schema";
 import { planPhaseCounts } from "../../shared/db/planPhaseCounts";
 import { planPhaseRuns } from "../../shared/db/planPhaseRuns";
 import { phaseUsageTotals } from "../../shared/db/phaseUsageTotals";
+import { parallelPhasesEnabled } from "./phaseRun/parallelPhasesEnabled";
 import { rowToItemSummary } from "./rowToItemSummary";
 import type { BacklogItemSummary } from "./types";
 
@@ -46,5 +47,8 @@ export async function loadItemSummaries(
 		.leftJoin(phaseRuns, eq(phaseRuns.itemId, items.id))
 		.where(origin === undefined ? undefined : eq(items.origin, origin))
 		.orderBy(asc(items.id));
-	return rows.map(rowToItemSummary);
+	if (parallelPhasesEnabled()) return rows.map(rowToItemSummary);
+	return rows.map((row) =>
+		rowToItemSummary({ ...row, runningPhases: null, donePhases: null }),
+	);
 }
