@@ -10,12 +10,14 @@ export function TranscriptArea({
 	tail,
 	follow,
 	commentLayer,
+	onTooVerbose,
 }: {
 	sessionId: string;
 	transcript: Transcript | null;
 	tail?: ReactNode;
 	follow?: boolean;
 	commentLayer?: (content: ReactNode) => ReactNode;
+	onTooVerbose?: () => void;
 }) {
 	const term = useTranscriptHighlightTerm();
 	const ready = transcript?.sessionId === sessionId;
@@ -28,6 +30,7 @@ export function TranscriptArea({
 				tail={tail}
 				follow={follow}
 				commentLayer={commentLayer}
+				onTooVerbose={onTooVerbose}
 			/>
 		</Box>
 	);

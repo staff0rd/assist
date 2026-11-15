@@ -11,11 +11,13 @@ export function LiveTranscriptArea({
 	transcript,
 	fetchSessionTranscript,
 	commentLayer,
+	onTooVerbose,
 }: {
 	session: SessionInfo;
 	transcript: Transcript | null;
 	fetchSessionTranscript: FetchSessionTranscript;
 	commentLayer?: (content: ReactNode) => ReactNode;
+	onTooVerbose?: () => void;
 }) {
 	const {
 		id,
@@ -44,6 +46,7 @@ export function LiveTranscriptArea({
 			tail={<SdkTail session={session} transcript={transcript} />}
 			follow
 			commentLayer={commentLayer}
+			onTooVerbose={onTooVerbose}
 		/>
 	);
 }

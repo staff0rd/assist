@@ -6,6 +6,7 @@ import { useScrollToFirstMark } from "./TranscriptPane/useScrollToFirstMark";
 import type { TranscriptMessage } from "../../../../types";
 import { groupToolRuns } from "./TranscriptPane/groupToolRuns";
 import { ToolRunRow } from "./TranscriptPane/ToolRunRow";
+import { useLastReplyAction } from "./TranscriptPane/useLastReplyAction";
 
 export function TranscriptPane({
 	messages,
@@ -14,6 +15,7 @@ export function TranscriptPane({
 	tail,
 	follow,
 	commentLayer = (content) => content,
+	onTooVerbose,
 }: {
 	messages: TranscriptMessage[];
 	loading: boolean;
@@ -21,8 +23,11 @@ export function TranscriptPane({
 	tail?: ReactNode;
 	follow?: boolean;
 	commentLayer?: (content: ReactNode) => ReactNode;
+	onTooVerbose?: () => void;
 }) {
 	const scrollRef = useScrollToFirstMark(messages, term, follow);
+	const items = groupToolRuns(messages);
+	const lastReplyAction = useLastReplyAction(items, onTooVerbose);
 
 	if (loading || (messages.length === 0 && !tail))
 		return <TranscriptPlaceholder loading={loading} />;
@@ -35,7 +40,7 @@ export function TranscriptPane({
 			<Box sx={{ maxWidth: 820, mx: "auto" }}>
 				{commentLayer(
 					<>
-						{groupToolRuns(messages).map((item) =>
+						{items.map((item) =>
 							item.kind === "tools" ? (
 								<ToolRunRow key={item.key} calls={item.calls} />
 							) : (
@@ -43,6 +48,7 @@ export function TranscriptPane({
 									key={item.message.key}
 									message={item.message}
 									term={term}
+									actions={lastReplyAction(item.message.key)}
 								/>
 							),
 						)}
