@@ -1,3 +1,16 @@
+# [0.1181.0](https://github.com/staff0rd/assist/compare/v0.1180.4...v0.1181.0) (2026-11-15)
+
+
+### Bug Fixes
+
+* substring schema guard for Bash ([de5bf18](https://github.com/staff0rd/assist/commit/de5bf18c3e3c5e166c068bc3306f950739cd558f))
+
+
+### Features
+
+* blockquote prose comment quotes ([87791ed](https://github.com/staff0rd/assist/commit/87791ed76fb9ec6f7a441770c71f4fc91903f170))
+* run ready phases in parallel ([1ac8035](https://github.com/staff0rd/assist/commit/1ac8035c639f4cbbeee51cb579e8f7ff08f179bd))
+
 ## [0.1180.4](https://github.com/staff0rd/assist/compare/v0.1180.3...v0.1180.4) (2026-11-15)
 
 
