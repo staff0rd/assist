@@ -49,7 +49,8 @@
 }
 
 .assist-status-question,
-.assist-status-check {
+.assist-status-check,
+.assist-status-design {
 	color: var(--assist-warning);
 	animation: assist-status-pulse 1.4s ease-in-out infinite;
 }
@@ -143,6 +144,7 @@
 	.assist-status-waiting,
 	.assist-status-question,
 	.assist-status-check,
+	.assist-status-design,
 	.assist-status-ring {
 		animation: none;
 	}

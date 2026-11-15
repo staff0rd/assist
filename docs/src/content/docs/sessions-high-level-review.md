@@ -16,7 +16,7 @@ screenshots:
     alt: The high-level review checklist for a pull request
     route: /sessions
     scene: high-level-review
-    waitFor: text=Description has a What and a Why
+    waitFor: text=Users working at night asked for a dark theme
     viewport:
       width: 1440
       height: 900
@@ -27,7 +27,7 @@ screenshots:
     alt: The changed files of a pull request under the Structure item
     route: /sessions
     scene: high-level-review
-    waitFor: text=Description has a What and a Why
+    waitFor: text=Users working at night asked for a dark theme
     viewport:
       width: 1440
       height: 900
@@ -36,11 +36,23 @@ screenshots:
       - click: "[aria-label='Fill the window with preview']"
       - click: text=Dark mode toggle on the settings page
       - click: "[role='tab']:has-text('Structure')"
+  - file: sessions-high-level-description.png
+    alt: The Description tab of a high-level review, with the description checks above the pull request's description
+    route: /sessions
+    scene: high-level-review
+    waitFor: text=Users working at night asked for a dark theme
+    viewport:
+      width: 1440
+      height: 900
+    actions:
+      - click: text=High-level review #14
+      - click: "[aria-label='Fill the window with preview']"
+      - click: "[role='tab']:has-text('Description')"
   - file: sessions-high-level-checks.png
     alt: The Overview checks of a pull request, passing and failing
     route: /sessions
     scene: high-level-review
-    waitFor: text=Description has a What and a Why
+    waitFor: text=Users working at night asked for a dark theme
     viewport:
       width: 1440
       height: 900
@@ -52,7 +64,7 @@ screenshots:
     alt: The manual testing steps of a pull request under Overview
     route: /sessions
     scene: high-level-review
-    waitFor: text=Description has a What and a Why
+    waitFor: text=Users working at night asked for a dark theme
     viewport:
       width: 1440
       height: 900
@@ -64,7 +76,7 @@ screenshots:
     alt: The Start fresh button in the high-level review's footer
     route: /sessions
     scene: high-level-review
-    waitFor: text=Description has a What and a Why
+    waitFor: text=Users working at night asked for a dark theme
     viewport:
       width: 1440
       height: 900
@@ -77,7 +89,7 @@ screenshots:
     alt: The full diff of a critical file under a slice's Critical diffs
     route: /sessions
     scene: high-level-review
-    waitFor: text=Description has a What and a Why
+    waitFor: text=Users working at night asked for a dark theme
     viewport:
       width: 1440
       height: 900
@@ -90,7 +102,7 @@ screenshots:
     alt: A slice's changed tests under Tests, with one test's source shown
     route: /sessions
     scene: high-level-review
-    waitFor: text=Description has a What and a Why
+    waitFor: text=Users working at night asked for a dark theme
     viewport:
       width: 1440
       height: 900
@@ -104,7 +116,7 @@ screenshots:
     alt: The slice rail with Overview, two slices with their line counts and tick dots, and Everything else
     route: /sessions
     scene: high-level-review
-    waitFor: text=Description has a What and a Why
+    waitFor: text=Users working at night asked for a dark theme
     viewport:
       width: 1440
       height: 900
@@ -145,6 +157,10 @@ The rail on the left lists **Overview**, then each slice with its line counts an
 
 **Overview** covers the whole pull request:
 
+- **Description**, the tab a review opens on, shows the pull request's description, whether each description check passes and why, and the **What** and **Why** sections and linked issue the checks found.
+
+::screenshot{file="sessions-high-level-description.png"}
+
 - **Checks** are worked out from the pull request itself and show whether they pass:
   - The description has a **What** and a **Why** section.
   - The description is under the word cap.
@@ -159,7 +175,7 @@ The rail on the left lists **Overview**, then each slice with its line counts an
 ::screenshot{file="sessions-high-level-manual-testing.png"}
 
 - **All files** shows every changed file as a tree with its line counts, each tagged with the slices it's in. Click a tag to go to that slice.
-- **Backend PR** asks whether a change that needs backend work links the backend pull request.
+- **Backend PR** asks whether a change that needs backend work links the backend pull request, with the description beneath to check.
 
 Each slice has its own items, ticked and commented separately:
 

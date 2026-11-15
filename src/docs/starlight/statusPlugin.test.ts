@@ -29,6 +29,12 @@ describe("statusPlugin", () => {
 		expect(html).not.toContain("▲");
 	});
 
+	it("renders design as an eye", () => {
+		const html = render("design");
+		expect(html).toContain("<svg");
+		expect(html).toContain('fill-rule="evenodd"');
+	});
+
 	it("names a dot status in hidden text", () => {
 		expect(render("running")).toContain('<span class="sr-only">running</span>');
 	});

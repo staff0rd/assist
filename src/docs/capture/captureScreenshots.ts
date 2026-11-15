@@ -8,6 +8,7 @@ import { closePreviews } from "./closePreviews";
 import { renderSocialCard, socialCardSource } from "./renderSocialCard";
 import type { CaptureHome } from "./createCaptureHome";
 import { sessionStateTracker } from "./sessionStateTracker";
+import { captureDocsPage } from "./captureDocsPage";
 
 function setupSteps(
 	screenshot: DocsScreenshot,
@@ -27,6 +28,14 @@ export async function captureScreenshots(
 	const enterState = sessionStateTracker(capture);
 	try {
 		for (const screenshot of screenshots) {
+			if (screenshot.docsPage !== undefined) {
+				const files = await captureDocsPage(browser, {
+					...screenshot,
+					docsPage: screenshot.docsPage,
+				});
+				console.log(`Captured ${files.join(", ")}`);
+				continue;
+			}
 			await enterState(setupSteps(screenshot, scenes));
 			const files = await captureScreenshot(
 				browser,

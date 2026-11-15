@@ -61,6 +61,18 @@ screenshots:
       height: 560
     actions:
       - click: text=Dark mode toggle
+  - file: docs-preview-changes.png
+    alt: A changed page in the docs preview, with its changes highlighted, a dot beside it in the sidebar and the change nav in the corner
+    docsPage: sessions-daemon
+    docsEdits:
+      - find: "Closing the tab or restarting the web server leaves every session running with its scrollback, and any number of browser tabs can watch the same sessions."
+        replace: "Closing the tab or restarting the web server leaves every session running, and any number of browser tabs can watch the same sessions."
+      - find: "## Session limit"
+        replace: "Restarting the daemon from the CLI does the same.\n\n## Session limit"
+    waitFor: .assist-diff-nav
+    viewport:
+      width: 1280
+      height: 720
 ---
 
 A repo's user docs can be kept up to date from its backlog. Stories are built without touching the docs, and every few stories a **Refresh docs** story updates the docs pages from what they shipped, for you to review before it's committed. Docs are written once per batch of shipped behaviour, rather than reworked phase by phase while a story is still changing.
@@ -95,4 +107,14 @@ To queue one now, click **Refresh docs** at the top of the Backlog tab. It count
 
 ::screenshot{file="backlog-docs-review.png"}
 
-In assist's docs preview, uncommitted changes are highlighted: added and changed text in green, removed text struck through in red, and changed pages marked with a dot in the sidebar. Step through the changes with the bar at the bottom of each changed page, which carries on to the next changed page.
+In assist's docs preview, uncommitted changes are highlighted: added and changed text in green, removed text struck through in red, and changed pages marked with a dot in the sidebar.
+
+::screenshot{file="docs-preview-changes.png"}
+
+Step through the changes with the bar at the bottom of each changed page, which carries on to the next changed page:
+
+- **✓ ›** marks the change done and goes to the next one not done. Once every change on a page is done, its sidebar dot becomes a hollow ring.
+- **›** goes to the next change not done, leaving this one in the loop.
+- **‹** steps back through every change, done or not.
+
+Commenting on a done change puts it back in the loop. Done marks are kept in your browser, and a change the agent edits again comes back.

@@ -1,10 +1,12 @@
 import { statusGlyph } from "../../commands/sessions/web/ui/statusGlyph";
+import { eyePath } from "../../commands/sessions/web/ui/designSystem/eyePath";
 import { wrenchHeadPath } from "../../commands/sessions/web/ui/designSystem/wrenchHeadPath";
 
 const glyphStatuses = [
 	"waiting",
 	"question",
 	"check",
+	"design",
 	"done",
 	"error",
 	"stopped",
@@ -30,8 +32,13 @@ function renderWrenchHead(): string {
 	return `<svg class="assist-status-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="${wrenchHeadPath.d}" transform="${wrenchHeadPath.transform}" fill="currentColor"/></svg>`;
 }
 
+function renderEye(): string {
+	return `<svg class="assist-status-icon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path d="${eyePath.d}" transform="${eyePath.transform}" fill-rule="${eyePath.fillRule}" fill="currentColor"/></svg>`;
+}
+
 function renderGlyph(status: Exclude<DocsStatus, "running" | "verifying">) {
 	if (status === "check") return renderWrenchHead();
+	if (status === "design") return renderEye();
 	return `<span class="assist-status-icon" aria-hidden="true">${statusGlyph[status]}</span>`;
 }
 

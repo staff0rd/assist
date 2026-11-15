@@ -172,11 +172,11 @@ When the home node can't be reached, the app shows the error. Press **Retry now*
 
 ## Getting around
 
-The tab bar along the bottom switches between **Sessions**, **Backlog** and **History**. Each tab keeps its place, so switching back returns to the screen you left; tap the active tab to return to its list. On a screen with a back button, swiping right from the left edge of the screen also goes back.
+The tab bar along the bottom switches between **Sessions**, **Backlog** and **History**.
 
 ::screenshot{file="ios-app-backlog.png"}
 
-Tap a backlog item to open it. Pick the node and harness to run on, then tap **Start** to run it, or **Refine** to start refining it in a new session.
+On a backlog item, pick the node and harness to run on, then tap **Start** to run it, or **Refine** to start refining it in a new session.
 
 ## Acting on a session
 
@@ -195,6 +195,8 @@ Sessions asking you a question or proposing a backlog item are listed under **An
 ## Replying to a session
 
 In a Claude session, typing a word starting with `/` in the reply bar lists your skills and commands that match it, followed by the repo's own. Tap one to put it in your reply.
+
+In a [Claude (SDK)](../sessions-session-area/#claude-sdk-sessions) session, tap Claude's suggested next prompt above the reply bar to put it in your reply.
 
 ## Reviewing previews
 

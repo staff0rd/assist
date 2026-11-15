@@ -17,6 +17,11 @@
 	const args = process.argv.slice(2);
 	const prompt = args.at(-1)?.startsWith("-") ? undefined : args.at(-1);
 
+	if (args.includes("--input-format")) {
+		await runSdk(args, scripts);
+		return;
+	}
+
 	if (args.includes("-p")) {
 		const task = prompt?.split("Task: ").at(-1)?.trim() ?? "";
 		const script = scripts[task];
@@ -55,3 +60,162 @@
 	process.stdout.write(`${out.join("\r\n")}\r\n`);
 	setInterval(() => {}, 60_000);
 })();
+
+// Agent SDK mode: speaks the stream-json protocol the SDK drives a headless
+// claude with, answering each user message from the scripted reply and writing
+// the conversation's JSONL transcript as the real CLI does.
+async function runSdk(args, scripts) {
+	const { appendFileSync, mkdirSync } = await import("node:fs");
+	const { randomUUID } = await import("node:crypto");
+	const { join } = await import("node:path");
+	const { createInterface } = await import("node:readline");
+	const argValue = (args, name) => {
+		const joined = args.find((arg) => arg.startsWith(`${name}=`));
+		if (joined) return joined.slice(name.length + 1);
+		const index = args.indexOf(name);
+		return index === -1 ? undefined : args[index + 1];
+	};
+
+	const textOf = (content) =>
+		typeof content === "string"
+			? content
+			: (content ?? [])
+					.filter((block) => block.type === "text")
+					.map((block) => block.text)
+					.join("\n");
+
+	const sessionId =
+		argValue(args, "--session-id") ?? argValue(args, "--resume") ?? randomUUID();
+	const cwd = process.cwd();
+	const dir = join(
+		process.env.HOME ?? "",
+		".claude",
+		"projects",
+		cwd.replace(/[^a-zA-Z0-9]/g, "-"),
+	);
+	mkdirSync(dir, { recursive: true });
+	const file = join(dir, `${sessionId}.jsonl`);
+	const model = "claude-sonnet-4-5";
+	let parentUuid = null;
+
+	const emit = (message) => process.stdout.write(`${JSON.stringify(message)}\n`);
+	const record = (type, message) => {
+		const uuid = randomUUID();
+		appendFileSync(
+			file,
+			`${JSON.stringify({
+				parentUuid,
+				isSidechain: false,
+				userType: "external",
+				cwd,
+				sessionId,
+				version: "2.0.0",
+				gitBranch: "main",
+				type,
+				message,
+				uuid,
+				timestamp: new Date().toISOString(),
+			})}\n`,
+		);
+		parentUuid = uuid;
+		return uuid;
+	};
+	const respond = (request, response) =>
+		emit({
+			type: "control_response",
+			response: {
+				subtype: "success",
+				request_id: request.request_id,
+				response,
+			},
+		});
+	const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+	let turns = Promise.resolve();
+	const answer = async (prompt) => {
+		const script = scripts[prompt] ?? {};
+		record("user", { role: "user", content: prompt });
+		const reply = script.reply ?? [];
+		for (const [index, text] of reply.entries()) {
+			await sleep(200);
+			const last = index === reply.length - 1;
+			const message = {
+				id: `msg_${randomUUID()}`,
+				type: "message",
+				role: "assistant",
+				model,
+				content: [{ type: "text", text }],
+				stop_reason: last && !script.hold ? "end_turn" : null,
+				usage: { input_tokens: 2000, output_tokens: 100 },
+			};
+			const uuid = record("assistant", message);
+			emit({
+				type: "assistant",
+				message,
+				parent_tool_use_id: null,
+				session_id: sessionId,
+				uuid,
+			});
+		}
+		if (script.hold) return;
+		emit({
+			type: "result",
+			subtype: "success",
+			is_error: false,
+			duration_ms: 1000,
+			duration_api_ms: 1000,
+			num_turns: 1,
+			result: (script.reply ?? []).at(-1) ?? "",
+			session_id: sessionId,
+			total_cost_usd: 0,
+			usage: { input_tokens: 2000, output_tokens: 100 },
+			modelUsage: {},
+			permission_denials: [],
+			uuid: randomUUID(),
+		});
+		if (script.suggestion)
+			emit({
+				type: "prompt_suggestion",
+				suggestion: script.suggestion,
+				session_id: sessionId,
+				uuid: randomUUID(),
+			});
+	};
+
+	createInterface({ input: process.stdin }).on("line", (line) => {
+		if (!line.trim()) return;
+		const message = JSON.parse(line);
+		if (message.type === "control_request") {
+			if (message.request.subtype === "initialize") {
+				respond(message, {
+					commands: [],
+					agents: [],
+					output_style: "default",
+					available_output_styles: ["default"],
+					models: [],
+					account: {},
+				});
+				emit({
+					type: "system",
+					subtype: "init",
+					cwd,
+					session_id: sessionId,
+					tools: [],
+					mcp_servers: [],
+					model,
+					permissionMode: "auto",
+					slash_commands: [],
+					apiKeySource: "none",
+					output_style: "default",
+					uuid: randomUUID(),
+				});
+			} else respond(message, {});
+			return;
+		}
+		if (message.type === "user") {
+			const prompt = textOf(message.message?.content);
+			turns = turns.then(() => answer(prompt));
+		}
+	});
+	process.stdin.on("end", () => turns.then(() => process.exit(0)));
+}

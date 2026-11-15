@@ -39,7 +39,8 @@ Each card shows a status glyph, the session's title and a line of details.
 | :status[verifying] | Running [`assist verify`](../verify/)                                                                                                                                           |
 | :status[waiting]   | Waiting on you: a reply, a permission prompt or a preview to approve                                                                                                            |
 | :status[question]  | Waiting on you to [answer a question](../sessions-preview-panes/#answering-questions) or [approve a proposed backlog item](../sessions-preview-panes/#proposing-a-backlog-item) |
-| :status[check]     | Waiting on you to [try a change by hand](../sessions-preview-panes/#trying-a-change) or [review a design](../sessions-preview-panes/#reviewing-a-design)                        |
+| :status[check]     | Waiting on you to [try a change by hand](../sessions-preview-panes/#trying-a-change)                                                                                            |
+| :status[design]    | Waiting on you to [review a design](../sessions-preview-panes/#reviewing-a-design)                                                                                              |
 | :status[done]      | Done                                                                                                                                                                            |
 | :status[error]     | Exited with an error                                                                                                                                                            |
 | :status[stopped]   | Stopped, holding unpushed work (see [Parallel work](../sessions-parallel-work/))                                                                                                |

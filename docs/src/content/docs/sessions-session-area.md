@@ -16,9 +16,75 @@ screenshots:
     actions:
       - click: text=Dark mode toggle
     crop: "[data-testid=session-top-bar]"
+  - file: sessions-sdk.png
+    alt: A Claude (SDK) session showing its transcript, with the composer offering a suggested next prompt
+    route: /sessions
+    scene: dashboard
+    setup:
+      - session:
+          repo: website
+          prompt: Why does the footer overlap the cookie banner?
+          title: Cookie banner overlap
+          harness: claude-sdk
+          reply:
+            - "Both are fixed to the bottom of the page, and the banner's `z-index` is lower than the footer's, so the footer is drawn over it."
+            - "Raising the banner to `z-index: 50` keeps it above the footer without affecting the modal, which sits at 100."
+          suggestion: Raise the banner's z-index
+    waitFor: text="Cookie banner overlap"
+    actions:
+      - click: text="Cookie banner overlap"
+    viewport:
+      width: 1280
+      height: 640
+  - file: sessions-sdk-queued.png
+    alt: A message queued in a Claude (SDK) session while Claude works, with its Edit and Remove buttons
+    route: /sessions
+    scene: dashboard
+    setup:
+      - session:
+          repo: website
+          prompt: Fix the footer overlapping the cookie banner
+          title: Raise the cookie banner
+          harness: claude-sdk
+          hold: true
+          reply:
+            - "Both are fixed to the bottom of the page, and the banner's `z-index` is lower than the footer's. I'll raise the banner above it."
+    waitFor: text="Raise the cookie banner"
+    actions:
+      - click: text="Raise the cookie banner"
+      - click: "[aria-label='Message Claude']"
+      - type: Check the modal still sits above the banner
+      - press: Enter
+      - hover: text=Check the modal still sits above the banner
+    viewport:
+      width: 1280
+      height: 640
+  - file: sessions-sdk-shell.png
+    alt: A shell command's output in a Claude (SDK) session, attached to the next message
+    route: /sessions
+    scene: dashboard
+    setup:
+      - session:
+          repo: website
+          prompt: Why does the footer overlap the cookie banner?
+          title: Cookie banner overlap
+          harness: claude-sdk
+          reply:
+            - "Both are fixed to the bottom of the page, and the banner's `z-index` is lower than the footer's, so the footer is drawn over it."
+            - "Raising the banner to `z-index: 50` keeps it above the footer without affecting the modal, which sits at 100."
+          suggestion: Raise the banner's z-index
+    waitFor: text="Cookie banner overlap"
+    actions:
+      - click: text="Cookie banner overlap"
+      - click: "[aria-label='Message Claude']"
+      - type: "!git log --oneline -3"
+      - press: Enter
+    viewport:
+      width: 1280
+      height: 640
 ---
 
-The session area shows the selected session: the top bar, its terminal and your last message to it, along with its [diff](../sessions-diff/) and [preview panes](../sessions-preview-panes/) when open.
+The session area shows the selected session: the top bar, its terminal or [transcript](#claude-sdk-sessions) and your last message to it, along with its [diff](../sessions-diff/) and [preview panes](../sessions-preview-panes/) when open.
 
 ## The top bar
 
@@ -52,10 +118,35 @@ The terminal is the agent itself, such as Claude Code, running live. You give it
 - :kbd[Mod+C] copies the selected text. With nothing selected, it reaches the session as an interrupt.
 - :kbd[Mod+V] pastes.
 
+## Claude (SDK) sessions
+
+A session on the [Claude (SDK)](../harnesses/#claude-sdk) harness has no terminal. Its live transcript takes the terminal's place, with a composer under it for your messages, and its top bar carries an **SDK** badge.
+
+::screenshot{file="sessions-sdk.png"}
+
+In the composer:
+
+- :kbd[Enter] sends. :kbd[Shift+Enter], or :kbd[Enter] straight after a `\`, adds a line break.
+- While the field is empty after a turn, it shows the prompt Claude expects you to send next. :kbd[Tab] fills the field with it. On the phone, tap the suggestion above the reply field.
+- **Stop**, or :kbd[Esc], interrupts Claude's turn.
+- A message sent while Claude is working is queued until the turn ends. Hover a queued message to **Remove** it, or **Edit** it to take it back into the composer.
+
+::screenshot{file="sessions-sdk-queued.png"}
+
+Select text in the transcript to comment on it, as in the [diff](../sessions-diff/#commenting).
+
+### Shell commands
+
+Start a message with `!` to run it as a shell command in the session's working copy, as in Claude Code's bash mode. Its output streams into the transcript without starting a turn, and is attached to your next message to Claude. :kbd[Backspace] in an empty field leaves shell mode.
+
+::screenshot{file="sessions-sdk-shell.png"}
+
+**Stop** on a running command's row, or :kbd[Esc] while it runs, stops it and keeps its output so far.
+
 ## Your last message
 
-Your last prompt to the session shows over the terminal, cut to one line. Hover to read all of it, or click to pin it open until you press :kbd[Esc] or click elsewhere. Scrolling over it steps back through your earlier prompts, with a counter showing which one you're on.
+Your last prompt to the session shows over the terminal, cut to one line. Hover to read all of it, or click to pin it open. Scrolling over it steps back through your earlier prompts, with a counter showing which one you're on.
 
 ## Transcripts
 
-Clicking an entry on the sidebar's [History](../sessions-sidebar/#history) tab shows its transcript here in place of the terminal.
+Clicking an entry on the sidebar's [History](../sessions-sidebar/#history) tab shows its transcript here in place of the terminal. Click a tool call in a transcript to see its full command or path.

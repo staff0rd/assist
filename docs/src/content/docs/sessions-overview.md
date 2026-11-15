@@ -65,9 +65,10 @@ From left to right:
 - **VS Code** opens the selected repo in VS Code, and **GitHub** opens it on GitHub.
 - **+** (:kbd[Mod+N] or :kbd[Alt+N]) opens the new-session dialog (see [Creating sessions](../sessions-creating/)).
 - A **PRs** menu appears when the repo has open [pull requests](../pull-requests/#the-prs-menu), and a run menu when the repo has [`run` entries](../run-commands/).
-- **Help** opens these docs in a new window.
-- The **cog** (:kbd[Alt+W]) opens the [Config](../config/) page.
-- The **menu** (:kbd[Alt+E]) holds the rest.
+- :icon[HelpOutlineOutlined] **Help** opens these docs in a new window.
+- :icon[AccountBalanceOutlined] **Rules** opens the [Rules](../rules/#the-rules-page) page.
+- The :icon[Settings] **cog** (:kbd[Alt+W]) opens the [Config](../config/) page.
+- The :icon[Menu] **menu** (:kbd[Alt+E]) holds the rest.
 
 Every shortcut can be changed, see [Keyboard shortcuts](../sessions-keyboard/).
 

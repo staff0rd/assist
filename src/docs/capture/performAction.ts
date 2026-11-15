@@ -10,6 +10,7 @@ export async function performAction(
 ): Promise<void> {
 	if ("click" in action) await page.locator(action.click).first().click();
 	else if ("press" in action) await page.keyboard.press(action.press);
+	else if ("hover" in action) await page.locator(action.hover).first().hover();
 	else if ("drag" in action)
 		await dragBetween(page, action.drag.from, action.drag.to);
 	else if ("script" in action)

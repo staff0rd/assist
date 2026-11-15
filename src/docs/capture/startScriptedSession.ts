@@ -21,6 +21,8 @@ function scriptFakeClaude(home: string, step: CaptureSessionStep): void {
 		title: step.title,
 		reply: step.reply,
 		edits: step.edits,
+		suggestion: step.suggestion,
+		hold: step.hold,
 	};
 	writeFileSync(file, JSON.stringify(scripts, null, 2));
 }
@@ -34,8 +36,9 @@ function nodeHome(capture: CaptureHome, node: string | undefined) {
 
 function createMessage(cwd: string, step: CaptureSessionStep) {
 	const inPlace = step.worktree ? { inPlace: true } : {};
+	const harness = step.harness ? { harness: step.harness } : {};
 	if (!step.command)
-		return { type: "create", cwd, prompt: step.prompt, ...inPlace };
+		return { type: "create", cwd, prompt: step.prompt, ...inPlace, ...harness };
 	return {
 		type: "create-assist",
 		cwd,

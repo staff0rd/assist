@@ -1,24 +1,32 @@
+import AccountBalanceOutlined from "@mui/icons-material/AccountBalanceOutlined";
 import ArrowDropDown from "@mui/icons-material/ArrowDropDown";
 import CloseFullscreen from "@mui/icons-material/CloseFullscreen";
 import DeleteOutlined from "@mui/icons-material/DeleteOutlined";
+import HelpOutlineOutlined from "@mui/icons-material/HelpOutlineOutlined";
+import Menu from "@mui/icons-material/Menu";
 import MoreVert from "@mui/icons-material/MoreVert";
 import OpenInFull from "@mui/icons-material/OpenInFull";
 import PlayArrow from "@mui/icons-material/PlayArrow";
 import Replay from "@mui/icons-material/Replay";
 import RestartAlt from "@mui/icons-material/RestartAlt";
+import Settings from "@mui/icons-material/Settings";
 import StarBorder from "@mui/icons-material/StarBorder";
 import { createElement, type ElementType } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 
 const icons: Record<string, ElementType> = {
+	AccountBalanceOutlined,
 	ArrowDropDown,
 	CloseFullscreen,
 	DeleteOutlined,
+	HelpOutlineOutlined,
+	Menu,
 	MoreVert,
 	OpenInFull,
 	PlayArrow,
 	Replay,
 	RestartAlt,
+	Settings,
 	StarBorder,
 };
 

@@ -72,7 +72,7 @@ Once a link exists, the toolbar shows a node picker. The node you pick is the on
 
 ::screenshot{file="sessions-machine-picker.png"}
 
-The New session dialog has its own **Node** choice for where the session runs. Cards for sessions on a linked node carry a badge naming that node, such as :badge[node]. To move a backlog run that started on the wrong node, use **Transfer** on its [top bar](../sessions-session-area/#the-top-bar).
+The New session dialog's **Node** choice picks where the session runs. Cards for sessions on a linked node carry a badge naming that node, such as :badge[node]. To move a backlog run that started on the wrong node, use **Transfer** on its [top bar](../sessions-session-area/#the-top-bar).
 
 ::screenshot{file="sessions-transfer.png"}
 

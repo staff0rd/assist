@@ -19,6 +19,9 @@ const sessionStepSchema = z.strictObject({
 	node: z.string().min(1).optional(),
 	edits: z.record(z.string().min(1), z.string()).optional(),
 	worktree: z.boolean().optional(),
+	harness: z.literal("claude-sdk").optional(),
+	suggestion: z.string().min(1).optional(),
+	hold: z.boolean().optional(),
 });
 
 const transcriptStepSchema = z.strictObject({

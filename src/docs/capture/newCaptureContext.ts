@@ -21,6 +21,7 @@ export async function newCaptureContext(
 	});
 	await context.addInitScript((mode) => {
 		localStorage.setItem("theme-mode", mode);
+		localStorage.setItem("starlight-theme", mode);
 	}, theme);
 	if (screenshot.phone)
 		await seedPhoneNodes(

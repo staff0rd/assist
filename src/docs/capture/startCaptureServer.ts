@@ -1,26 +1,14 @@
-import { closeSync, openSync, readFileSync } from "node:fs";
+import { closeSync, openSync } from "node:fs";
 import { join } from "node:path";
 import { runAssist } from "./runAssist";
 import { spawnAssist } from "./spawnAssist";
 import type { CaptureHome } from "./createCaptureHome";
 import { findFreePort } from "./findFreePort";
+import { waitForHttp } from "./waitForHttp";
 
 const READY_TIMEOUT_MS = 30_000;
 
 type CaptureServer = { url: string; stop: () => Promise<void> };
-
-async function waitForHttp(url: string, log: string): Promise<void> {
-	const deadline = Date.now() + READY_TIMEOUT_MS;
-	while (Date.now() < deadline) {
-		try {
-			if ((await fetch(url)).ok) return;
-		} catch {}
-		await new Promise((resolve) => setTimeout(resolve, 250));
-	}
-	throw new Error(
-		`Web server did not answer ${url} within ${READY_TIMEOUT_MS / 1000}s:\n${readFileSync(log, "utf8")}`,
-	);
-}
 
 export async function startCaptureServer(
 	capture: CaptureHome,
@@ -43,7 +31,10 @@ export async function startCaptureServer(
 		await exited;
 	};
 	try {
-		await waitForHttp(url, log);
+		await waitForHttp(url, log, {
+			label: "Web server",
+			timeoutMs: READY_TIMEOUT_MS,
+		});
 	} catch (error) {
 		await stop();
 		throw error;

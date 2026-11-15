@@ -16,6 +16,7 @@ export const docsNavGroups = [
 const actionSchema = z.union([
 	z.strictObject({ click: z.string().min(1) }),
 	z.strictObject({ press: z.string().min(1) }),
+	z.strictObject({ hover: z.string().min(1) }),
 	z.strictObject({ type: z.string().min(1) }),
 	z.strictObject({
 		drag: z.strictObject({ from: z.string().min(1), to: z.string().min(1) }),
@@ -23,12 +24,22 @@ const actionSchema = z.union([
 	z.strictObject({ script: z.string().regex(/^[a-z0-9-]+$/) }),
 ]);
 
+const docsEditSchema = z.strictObject({
+	find: z.string().min(1),
+	replace: z.string(),
+});
+
 const screenshotSchema = z
 	.strictObject({
 		file: z.string().regex(/^[a-z0-9-]+\.png$/),
 		alt: z.string().min(1),
 		route: z.string().startsWith("/").optional(),
 		url: z.string().startsWith("https://github.com/").optional(),
+		docsPage: z
+			.string()
+			.regex(/^[a-z0-9]+(?:-[a-z0-9]+)*$/)
+			.optional(),
+		docsEdits: z.array(docsEditSchema).min(1).optional(),
 		viewport: z
 			.strictObject({
 				width: z.number().int().positive(),
@@ -52,8 +63,14 @@ const screenshotSchema = z
 		actions: z.array(actionSchema).optional(),
 		highlight: z.array(z.string().min(1)).optional(),
 	})
-	.refine((shot) => (shot.route === undefined) !== (shot.url === undefined), {
-		message: "Give a screenshot exactly one of route or url",
+	.refine(
+		(shot) =>
+			[shot.route, shot.url, shot.docsPage].filter((t) => t !== undefined)
+				.length === 1,
+		{ message: "Give a screenshot exactly one of route, url or docsPage" },
+	)
+	.refine((shot) => !shot.docsEdits || shot.docsPage, {
+		message: "docsEdits needs a docsPage",
 	})
 	.refine((shot) => !(shot.phone && shot.url), {
 		message: "A phone screenshot needs a route, not a url",
@@ -90,6 +107,7 @@ export type DocsSidebarPage = z.infer<typeof docsSidebarPageSchema> &
 	DocsPageExtras;
 export type DocsPage = z.infer<typeof docsPageSchema> & DocsPageExtras;
 export type DocsScreenshot = NonNullable<DocsPage["screenshots"]>[number];
+export type DocsEdit = z.infer<typeof docsEditSchema>;
 export type DocsScreenshotAction = NonNullable<
 	DocsScreenshot["actions"]
 >[number];

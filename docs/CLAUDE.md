@@ -17,7 +17,7 @@ Each `##` starts a section. Unknown keys, ids or scenes and missing screenshots 
 ### Directives
 
 - `:kbd[Mod+N]` — key caps; `Mod`/`Ctrl`/`Alt`/`Shift` show as ⌘⌃⌥⇧ on macOS, by name elsewhere
-- `:status[running]` — session status glyph (`running`, `verifying`, `waiting`, `question`, `check`, `done`, `error`, `stopped`)
+- `:status[running]` — session status glyph (`running`, `verifying`, `waiting`, `question`, `check`, `design`, `done`, `error`, `stopped`)
 - `:badge[clone]` — card badge (`clone`, `harness`, `serving`, `node`)
 - `:icon[OpenInFull]` — a dashboard button icon; register new ones in `src/docs/starlight/renderIcon.ts`
 - `::screenshot{file="<file>"}` — places a declared screenshot; an undeclared file, or a declared one never placed, fails the build
@@ -28,16 +28,17 @@ Each `screenshots` entry has `file`, `alt` and one target:
 
 - `route` — a path on the capture web server
 - `url` — a live, logged-out `https://github.com/` page with the extension's `content.js` injected and `browser.*` stubbed
+- `docsPage` — a page id on a docs preview of a staged copy of this site, with `docsEdits` (`{ find, replace }`) applied to that page as uncommitted changes. Astro needs a newer Node than assist, so run the capture on one Astro accepts
 
 Optional fields: `viewport` (default 1280×800), `theme`, `waitFor`, `crop`, `scene` (named setup steps in `capture/scenes.json`), `setup` (steps run after the scene), `actions` and `highlight` (selectors outlined in the capture). Without `theme` it captures `<file>` and `<file>-dark.png` and the site shows the reader's theme.
 
-`actions`, run before capture: `click: <selector>`, `press: <key>`, `type: <text>`, `drag: { from, to }`, `script: <name>` (runs `capture/github/<name>.js` to fill in what a logged-out page lacks).
+`actions`, run before capture: `click: <selector>`, `hover: <selector>`, `press: <key>`, `type: <text>`, `drag: { from, to }`, `script: <name>` (runs `capture/github/<name>.js` to fill in what a logged-out page lacks).
 
 Setup steps:
 
 - `assist: [args]` — run an assist command in the sandbox
 - `run: <name>` — start a run session from `capture/assist.yml`
-- `session: { repo, prompt, title?, reply?, status? }` — start a session in `sandbox`, `api` or `website` with status `running`, `waiting` or `done`. A fake `claude` (`capture/bin/claude`) prints `reply` as the transcript and answers title generation with `title`
+- `session: { repo, prompt, title?, reply?, status? }` — start a session in `sandbox`, `api` or `website` with status `running`, `waiting` or `done`. A fake `claude` (`capture/bin/claude`) prints `reply` as the transcript and answers title generation with `title`. With `harness: claude-sdk` it runs as a Claude (SDK) session: the fake answers over the SDK protocol, offers `suggestion` as the next prompt, and with `hold: true` never ends the turn
 - `openPr: { repo, number, title, author? }` — an open PR, answered by a fake `gh` (`capture/bin/gh`) for `gh pr list`/`gh pr view`; other `gh` calls fail
 - `gh: { match, json }` — fake `gh` prints `json` when its args contain every `match` string; `"{{ago:<n><m|h|d>}}"` becomes that ISO time ago
 - `sql: <statements>` — run against the capture database
@@ -74,3 +75,5 @@ Start the `docs` run entry (`server: docs`, `docs:preview` on 4173) from the das
 - **R15** — **No failure paths** — Do not document how a command fails or falls back, such as exit codes or what the agent does instead
 - **R17** — **No layout narrative** — Do not describe how the screen is laid out or how the layout adapts to the window (beside, below, widths, breakpoints); give a control's position only when the user needs it to find that control
 - **R18** — **No lists of places** — Say where a feature applies by the kind of place it covers, not by listing every screen, field or button it shows up in
+- **R19** — **No internal logic** — Do not narrate internal logic, such as one control keeping another in sync; state only what the user's action achieves
+- **R20** — **No standard navigation** — Do not describe standard navigation, such as clicking or tapping to open, going back, swiping or closing with Esc

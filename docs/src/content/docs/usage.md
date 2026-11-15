@@ -43,8 +43,6 @@ Each row is one 5-hour or 7-day window, newest first, with the highest usage it 
 The **Items** tab lists every backlog item with recorded usage: its phases, active time, tokens and peak context. The figures across the top are medians over the items listed.
 
 - **All**, **Done** and **Running** filter by the item's status, and the repo picker filters by repo.
-- Click a column heading to sort by it, and again to reverse.
-- Click an item to open it in the [backlog](../backlog/).
 
 ## Jobs
 

@@ -18,7 +18,7 @@ screenshots:
       height: 900
 ---
 
-Waiting on agents can be boring, and the **News** page gives you something to read in the meantime, like the latest in AI. It collects posts from the RSS and Atom feeds you've added, newest first. Click a post to open it.
+Waiting on agents can be boring, and the **News** page gives you something to read in the meantime, like the latest in AI. It collects posts from the RSS and Atom feeds you've added, newest first.
 
 ::screenshot{file="news.png"}
 

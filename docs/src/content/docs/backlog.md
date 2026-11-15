@@ -84,8 +84,6 @@ On the right of a card:
 - :icon[PlayArrow] **Build** [runs the item](../backlog-running/). A repo that isn't cloned shows **Clone** instead, and an item already running shows its session.
 - :icon[MoreVert] **More actions** opens **Refine** ([refining an item](../backlog-writing/#refining-an-item)), **Mark done** and **Won't do**.
 
-Click a card to open the item.
-
 ## Item ids
 
 An item's id is `a` followed by a number, such as `a1` or `a555`, shown beside its type. Numbers count up as items are created and are never reused, across every repo. The `a` sets an item apart from a pull request or issue (`#14`) and a Jira key (`PROJ-12`), so you can name an item in a prompt and the agent knows it's a backlog item: `/refine a555`, `/next a555`, or "pick up a555". Commands also accept the bare number.

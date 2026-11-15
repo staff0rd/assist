@@ -69,6 +69,19 @@ describe("docsPageSchema", () => {
 		);
 	});
 
+	it("takes a docs page target, with edits only on it", () => {
+		const parses = (extra: Record<string, unknown>) =>
+			docsPageSchema.safeParse(withScreenshot(extra)).success;
+		const docsEdits = [{ find: "old", replace: "new" }];
+		expect(parses({ route: undefined, docsPage: "news" })).toBe(true);
+		expect(parses({ route: undefined, docsPage: "news", docsEdits })).toBe(
+			true,
+		);
+		expect(parses({ docsPage: "news" })).toBe(false);
+		expect(parses({ docsEdits })).toBe(false);
+		expect(parses({ route: undefined, docsPage: "News" })).toBe(false);
+	});
+
 	it("takes phone as true or saved node names, and only on a route capture", () => {
 		const parses = (extra: Record<string, unknown>) =>
 			docsPageSchema.safeParse(withScreenshot(extra)).success;
@@ -140,7 +153,8 @@ describe("docsPageSchema", () => {
 
 	it.each([
 		[[{ click: "text=Dark mode toggle" }, { press: "Escape" }], true],
-		[[{ hover: "#add" }], false],
+		[[{ hover: "#add" }], true],
+		[[{ scroll: "#add" }], false],
 		[[{ click: "#add", press: "Enter" }], false],
 	])("validates actions %j", (actions, valid) => {
 		expect(
