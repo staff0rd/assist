@@ -48,6 +48,9 @@ describe("findSchemaPathDeny", () => {
 		"cd src && python3 -c \"open('shared/db/schema.ts','w').write('x')\"",
 		"cd src && node -e \"fs.writeFileSync('shared/db/items.ts','x')\"",
 		"cd src/shared/db && python3 -c \"open('migrations/migration0099X.ts','w')\"",
+		"cd src/shared/db && python3 -c \"open('schema.ts','w').write('x')\"",
+		"cd src/shared/db; sed -i 's/a/b/' schema.ts",
+		String.raw`cd src\shared\db && echo x > schema.ts`,
 		"sed -i 's/a/b/' src/shared/db/schema.ts",
 		"cp /tmp/m.ts src/shared/db/migrations/migration0012Feature.ts",
 		String.raw`rm .\src\shared\db\schema.ts`,
@@ -61,6 +64,7 @@ describe("findSchemaPathDeny", () => {
 		"rm -rf dist",
 		"cd src && cat commands/schema/isSchemaPath.ts",
 		"grep -rn migrations src/commands",
+		"cat src/shared/dbHelpers.ts",
 	])("ignores %s, which names no db path", (command) => {
 		expect(findSchemaPathDeny(command)).toBeUndefined();
 	});
