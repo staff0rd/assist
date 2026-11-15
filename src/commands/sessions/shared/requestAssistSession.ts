@@ -3,7 +3,12 @@ import { requestSession } from "./requestSession";
 export function requestAssistSession(
 	assistArgs: string[],
 	cwd?: string,
-	options?: { inPlace?: boolean; launchedFrom?: string; node?: string },
+	options?: {
+		inPlace?: boolean;
+		launchedFrom?: string;
+		node?: string;
+		startPoint?: string;
+	},
 ): Promise<string> {
 	const node = options?.node;
 	return requestSession({
@@ -11,6 +16,7 @@ export function requestAssistSession(
 		assistArgs,
 		cwd,
 		inPlace: options?.inPlace === true,
+		...(options?.startPoint && { startPoint: options.startPoint }),
 		// A bare launchedFrom pins the launch to this daemon, so a node-targeted launch drops it.
 		...(node
 			? { node }

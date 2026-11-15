@@ -7,6 +7,11 @@ export const backlogConfigHelp: ConfigHelpEntry[] = [
 		note: "Postgres connection string for backlog storage (or ASSIST_DATABASE_URL)",
 	},
 	{
+		key: "backlog.maxParallelPhases",
+		setter: "assist config set backlog.maxParallelPhases 3",
+		note: "how many independent phases 'backlog run' runs at once, each in its own worktree (default: 3; 1 runs phases one at a time)",
+	},
+	{
 		key: "clone.baseDir",
 		setter: "assist config set clone.baseDir ~/git",
 		note: "base directory 'backlog clone' clones repos into (default: ~/git)",

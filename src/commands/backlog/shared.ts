@@ -11,7 +11,6 @@ import { loadItem } from "./loadItem";
 import { saveAllItems } from "./saveAllItems";
 import { searchItemIds } from "./searchItemIds";
 import type { BacklogFile, BacklogItem, BacklogStatus } from "./types";
-import { updateCurrentPhase } from "./updateCurrentPhase";
 import { updateStatus } from "./updateStatus";
 
 /** The normalized git origin key for the repository the command is running in. */
@@ -83,14 +82,6 @@ export async function setStatus(
 	if (name === undefined)
 		console.log(chalk.red(`Item ${formatItemId(numId)} not found.`));
 	return name;
-}
-
-export async function setCurrentPhase(
-	id: string,
-	phase: number,
-): Promise<void> {
-	const { orm } = await getReady();
-	await updateCurrentPhase(orm, parseItemId(id), phase);
 }
 
 export async function removeItem(id: string): Promise<string | undefined> {

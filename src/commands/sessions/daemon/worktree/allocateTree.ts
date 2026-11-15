@@ -17,6 +17,7 @@ export type Allocation = {
 export type AllocateOptions = {
 	inPlace?: boolean;
 	replacesTree?: string;
+	startPoint?: string;
 };
 
 export function allocateTree(
@@ -44,7 +45,7 @@ export function allocateTree(
 	const clone = canonicalTreePath(mainWorktree(repoRoot) ?? repoRoot);
 	const { path, ready } = createWorktree(
 		clone,
-		{ root: cfg.root, trunk: cfg.trunk },
+		{ root: cfg.root, trunk: cfg.trunk, startPoint: options.startPoint },
 		boundTreeRoots,
 		options.replacesTree,
 	);

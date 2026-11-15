@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import { and, eq } from "drizzle-orm";
-import { items } from "../../shared/db/schema";
+import { and, eq, inArray } from "drizzle-orm";
+import { items, planPhases } from "../../shared/db/schema";
 import { formatItemId } from "./formatItemId";
 import { getOrigin, getReady } from "./shared";
 
@@ -11,6 +11,17 @@ export async function stop(): Promise<void> {
 		.set({ status: "todo", currentPhase: 1 })
 		.where(and(eq(items.status, "in-progress"), eq(items.origin, getOrigin())))
 		.returning({ id: items.id, name: items.name });
+
+	if (stopped.length > 0)
+		await orm
+			.update(planPhases)
+			.set({ runState: null, runToken: null })
+			.where(
+				inArray(
+					planPhases.itemId,
+					stopped.map((item) => item.id),
+				),
+			);
 
 	if (stopped.length === 0) {
 		console.log(chalk.yellow("No in-progress items to stop."));

@@ -7,6 +7,8 @@ export type AssistSessionMeta = {
 	subtitle?: string;
 	inPlace?: boolean;
 	autoApprove?: boolean;
+	/** Ref a freshly allocated worktree branches from, instead of the mainline. */
+	startPoint?: string;
 };
 
 export function createAssistSession(

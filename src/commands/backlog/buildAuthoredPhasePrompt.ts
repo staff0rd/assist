@@ -7,7 +7,12 @@ export function buildAuthoredPhasePrompt(
 	item: BacklogItem,
 	phaseNumber: number,
 	phase: PlanPhase,
-	options: { commitBeforePhaseEnd: boolean; askCheck?: boolean } = {
+	options: {
+		commitBeforePhaseEnd: boolean;
+		askCheck?: boolean;
+		/** The phase runs in its own worktree alongside other phases and must land on the item branch. */
+		land?: boolean;
+	} = {
 		commitBeforePhaseEnd: false,
 	},
 ): string {
@@ -29,12 +34,21 @@ export function buildAuthoredPhasePrompt(
 		),
 		"",
 		`Post concise comments for any notable findings or changes using \`assist backlog comment ${formatItemId(item.id)} "<text>"\`.`,
+		...(options.land ? buildLandLines(confirmSuffix) : []),
 		"",
-		`Once verify passes${confirmSuffix}, run: assist backlog phase-done ${formatItemId(item.id)} ${phaseNumber} "<summary>"`,
+		`Once ${options.land ? "it has landed" : `verify passes${confirmSuffix}`}, run: assist backlog phase-done ${formatItemId(item.id)} ${phaseNumber} "<summary>"`,
 		"Replace <summary> with a concise summary of what was done in this phase.",
 	]
 		.filter((line) => line !== undefined)
 		.join("\n");
+}
+
+function buildLandLines(confirmSuffix: string): string[] {
+	return [
+		"",
+		"This phase runs in its own worktree, in parallel with other phases of this item. It is only done once its commits have landed on the item branch.",
+		`Once verify passes${confirmSuffix}, commit your work and run \`assist backlog land\`: it rebases onto the item branch, re-runs \`assist verify\` if the branch moved, and fast-forwards the item branch. If it stops on conflicts, resolve them (keeping the other phases' work), \`git rebase --continue\`, and run it again; if verify fails, fix it, commit, and run it again.`,
+	];
 }
 
 function buildStartedLines(item: BacklogItem, phaseNumber: number): string[] {

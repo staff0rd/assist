@@ -11,7 +11,7 @@ export function getSignalPath(
 	return join(homedir(), ".assist", "signals", `signal-${sessionId}.json`);
 }
 
-type SignalEvent = "phase-done" | "next" | "rewind" | "done";
+type SignalEvent = "phase-done" | "next" | "rewind" | "done" | "cancel";
 
 export type Signal = {
 	event: SignalEvent;
@@ -26,7 +26,11 @@ function resolveSignalTarget(
 	const itemId = typeof data?.itemId === "number" ? data.itemId : undefined;
 	if (itemId === undefined) return caller;
 
-	const owner = readSignalOwner(itemId);
+	const phaseIdx =
+		typeof data?.phaseIndex === "number" ? data.phaseIndex : undefined;
+	const owner =
+		(phaseIdx !== undefined && readSignalOwner(itemId, phaseIdx)) ||
+		readSignalOwner(itemId);
 	if (owner) {
 		if (caller && owner !== caller) {
 			console.log(

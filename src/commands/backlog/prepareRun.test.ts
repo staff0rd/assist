@@ -15,10 +15,19 @@ vi.mock("./shared", () => ({
 	setStatus: vi.fn(),
 }));
 
+vi.mock("../../shared/db/findPhaseBySessionId", () => ({
+	findPhaseBySessionId: vi.fn(),
+}));
+
+vi.mock("../sessions/daemon/appendDaemonLog", () => ({
+	appendDaemonLog: vi.fn(),
+}));
+
 vi.mock("./reconcileResumePhase", () => ({
 	reconcileResumePhase: vi.fn(),
 }));
 
+import { findPhaseBySessionId } from "../../shared/db/findPhaseBySessionId";
 import { type PreparedRun, prepareRun } from "./prepareRun";
 import { reconcileResumePhase } from "./reconcileResumePhase";
 import { findOneItem, setStatus } from "./shared";
@@ -161,6 +170,22 @@ describe("prepareRun", () => {
 
 			expect(mockReconcile).toHaveBeenCalledWith({}, item, 1, "f4f18318");
 			expect(startPhase).toBe(2);
+		});
+
+		it("drops a resume whose phase is done while later phases ran in parallel", async () => {
+			const item = makeBacklogItem({
+				plan: [...plan, { name: "Phase 3", tasks: [], dependsOn: [1] }],
+				currentPhase: 2,
+				donePhases: [1],
+				runningPhases: [2, 3],
+			});
+			mockFindOneItem.mockReturnValue({ orm: {}, item });
+			(findPhaseBySessionId as unknown as MockInstance).mockResolvedValue(0);
+
+			const result = (await prepareRun("1", "sess-1")) as PreparedRun;
+
+			expect(result.dropResume).toBe(true);
+			expect(mockReconcile).toHaveBeenCalledWith({}, item, 1, undefined);
 		});
 	});
 });

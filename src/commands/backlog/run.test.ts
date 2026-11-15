@@ -14,8 +14,32 @@ vi.mock("./executePhase", () => ({
 	executePhase: vi.fn(),
 }));
 
+/* why: phase-done and rewind move currentPhase in the database; the fake
+ * progress replays the phase outcomes so the scheduler sees each move. */
+vi.mock("./phaseRun/loadPhaseProgress", () => ({
+	loadPhaseProgress: vi.fn(async () => ({
+		currentPhase: replayCurrentPhase(),
+		running: [],
+		done: [],
+		failed: [],
+	})),
+}));
+
+vi.mock("./phaseRun/markPhaseDone", () => ({
+	markPhaseDone: vi.fn(),
+}));
+
+vi.mock("./phaseRun/clearFailedPhases", () => ({
+	clearFailedPhases: vi.fn(),
+}));
+
+vi.mock("./phaseRun/parallelPhaseCap", () => ({
+	parallelPhaseCap: vi.fn(() => 1),
+}));
+
 vi.mock("./shared", () => ({
 	setStatus: vi.fn(),
+	getReady: vi.fn(async () => ({ orm: {} })),
 }));
 
 vi.mock("./prepareRun", () => ({
@@ -83,6 +107,28 @@ import { run } from "./run";
 import { setStatus } from "./shared";
 
 const mockExecutePhase = executePhase as unknown as MockInstance;
+
+type Outcome = { kind: string; targetPhase?: number };
+
+function replayCurrentPhase(): number {
+	const prepared = mockPrepareRun.mock.settledResults.at(-1);
+	const startPhase =
+		prepared?.type === "fulfilled"
+			? (prepared.value as { startPhase?: number } | undefined)?.startPhase
+			: undefined;
+	let current = (startPhase ?? 0) + 1;
+	mockExecutePhase.mock.calls.forEach((args, i) => {
+		const result = mockExecutePhase.mock.settledResults[i];
+		if (result?.type !== "fulfilled") return;
+		const outcome = result.value as Outcome;
+		const idx = args[1] as number;
+		if (outcome.kind === "advance" || outcome.kind === "skip")
+			current = Math.max(current, idx + 2);
+		else if (outcome.kind === "rewind")
+			current = (outcome.targetPhase ?? 0) + 1;
+	});
+	return current;
+}
 const mockPrepareRun = prepareRun as unknown as MockInstance;
 const mockReloadPlan = reloadPlan as unknown as MockInstance;
 const mockSetStatus = setStatus as unknown as MockInstance;

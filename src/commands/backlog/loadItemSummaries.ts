@@ -2,6 +2,7 @@ import { asc, eq } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
 import { items } from "../../shared/db/schema";
 import { planPhaseCounts } from "../../shared/db/planPhaseCounts";
+import { planPhaseRuns } from "../../shared/db/planPhaseRuns";
 import { phaseUsageTotals } from "../../shared/db/phaseUsageTotals";
 import { rowToItemSummary } from "./rowToItemSummary";
 import type { BacklogItemSummary } from "./types";
@@ -19,6 +20,7 @@ export async function loadItemSummaries(
 ): Promise<BacklogItemSummary[]> {
 	const usageTotals = phaseUsageTotals(orm);
 	const phaseCounts = planPhaseCounts(orm);
+	const phaseRuns = planPhaseRuns(orm);
 	const rows = await orm
 		.select({
 			id: items.id,
@@ -31,6 +33,8 @@ export async function loadItemSummaries(
 			githubIssue: items.githubIssue,
 			currentPhase: items.currentPhase,
 			planPhaseCount: phaseCounts.count,
+			runningPhases: phaseRuns.running,
+			donePhases: phaseRuns.done,
 			tokensUp: usageTotals.tokensUp,
 			tokensDown: usageTotals.tokensDown,
 			activeMs: usageTotals.activeMs,
@@ -39,6 +43,7 @@ export async function loadItemSummaries(
 		.from(items)
 		.leftJoin(usageTotals, eq(usageTotals.itemId, items.id))
 		.leftJoin(phaseCounts, eq(phaseCounts.itemId, items.id))
+		.leftJoin(phaseRuns, eq(phaseRuns.itemId, items.id))
 		.where(origin === undefined ? undefined : eq(items.origin, origin))
 		.orderBy(asc(items.id));
 	return rows.map(rowToItemSummary);

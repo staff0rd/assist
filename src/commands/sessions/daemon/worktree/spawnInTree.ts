@@ -54,7 +54,7 @@ export function spawnAssistInTree(
 		cwd,
 		(sid, resolvedCwd, holdUntilSeeded) =>
 			createAssistSession(sid, assistArgs, resolvedCwd, meta, holdUntilSeeded),
-		{ inPlace: meta?.inPlace },
+		{ inPlace: meta?.inPlace, startPoint: meta?.startPoint },
 		context,
 	);
 	void seedBacklogRunActivity(ctx.sessions, ctx.sessions.get(id), ctx.notify);

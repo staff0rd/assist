@@ -4,6 +4,7 @@ import { items, planPhases, planTasks } from "../../../shared/db/schema";
 import { toStoredDependsOn } from "../dependsOn/toStoredDependsOn";
 import { serializeManualChecks } from "../serializeManualChecks";
 import { clampCurrentPhase } from "./clampCurrentPhase";
+import { loadRunStatesByName } from "./loadRunStatesByName";
 import type { PlanUpdatePhase } from "./planUpdateSchema";
 
 export async function replacePlan(
@@ -13,6 +14,8 @@ export async function replacePlan(
 	currentPhase: number | undefined,
 ): Promise<void> {
 	await orm.transaction(async (tx) => {
+		// why: keep in-flight and finished run state across a mid-run plan rewrite, matched by phase name.
+		const runStates = await loadRunStatesByName(tx, itemId);
 		await tx.delete(planTasks).where(eq(planTasks.itemId, itemId));
 		await tx.delete(planPhases).where(eq(planPhases.itemId, itemId));
 
@@ -24,6 +27,7 @@ export async function replacePlan(
 					name: phase.name,
 					manualChecks: serializeManualChecks(phase.manualChecks),
 					dependsOn: toStoredDependsOn(phase.dependsOn, idx),
+					...runStates.get(phase.name),
 				})),
 			);
 		}

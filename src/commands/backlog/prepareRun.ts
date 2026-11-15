@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { formatItemId } from "./formatItemId";
-import { reconcileResumePhase } from "./reconcileResumePhase";
+import { resolveStartPhase } from "./phaseRun/resolveStartPhase";
 import { resolvePlan } from "./resolvePlan";
 import { refuseForeignOrigin } from "./refuseForeignOrigin";
 import { findOneItem, setStatus } from "./shared";
@@ -10,6 +10,8 @@ export type PreparedRun = {
 	item: BacklogItem;
 	plan: PlanPhase[];
 	startPhase: number;
+	/** The resume session belongs to a phase parallel phases already moved past, so start fresh. */
+	dropResume?: boolean;
 };
 
 export type DoneResume = {
@@ -39,10 +41,9 @@ export async function prepareRun(
 		return undefined;
 	}
 
-	const startPhase = await reconcileResumePhase(
+	const { startPhase, dropResume } = await resolveStartPhase(
 		orm,
 		item,
-		(item.currentPhase ?? 1) - 1,
 		resumeSessionId,
 	);
 
@@ -58,5 +59,5 @@ export async function prepareRun(
 		return undefined;
 	}
 
-	return { item, plan, startPhase };
+	return { item, plan, startPhase, ...(dropResume && { dropResume }) };
 }

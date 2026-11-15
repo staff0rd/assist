@@ -99,6 +99,10 @@ export const backlogItemSchema = z.strictObject({
 	acceptanceCriteria: z.array(z.string()),
 	plan: z.array(planPhaseSchema).optional(),
 	currentPhase: z.number().optional(),
+	/* why: read-only run state of the plan_phases rows (1-based), set while a run
+	 * has phases in flight in parallel or finished out of order. */
+	runningPhases: z.array(z.number()).optional(),
+	donePhases: z.array(z.number()).optional(),
 	starred: z.boolean().default(false),
 	status: backlogStatusSchema,
 	comments: z.array(backlogCommentSchema).optional(),
@@ -133,6 +137,8 @@ export type BacklogItemSummary = Pick<
 	| "githubIssue"
 	| "usageTotal"
 	| "currentPhase"
+	| "runningPhases"
+	| "donePhases"
 > & { totalPhases?: number };
 export type BacklogStatus = z.infer<typeof backlogStatusSchema>;
 export type BacklogType = z.infer<typeof backlogTypeSchema>;

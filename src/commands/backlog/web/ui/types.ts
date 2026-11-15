@@ -52,6 +52,13 @@ export type BacklogComment = {
 
 export type PhaseStatus = "done" | "current" | "upcoming";
 
+/** Where a run is: phases below currentPhase are done, plus 1-based phases running in parallel or done ahead of it. */
+export type PhaseRuns = {
+	currentPhase?: number;
+	runningPhases?: number[];
+	donePhases?: number[];
+};
+
 export type BacklogStatus = "todo" | "in-progress" | "done" | "wontdo";
 
 type GitRefKind =
@@ -82,6 +89,8 @@ export type BacklogItem = {
 	acceptanceCriteria: string[];
 	plan?: PlanPhase[];
 	currentPhase?: number;
+	runningPhases?: number[];
+	donePhases?: number[];
 	status: BacklogStatus;
 	origin?: string;
 	jiraKey?: string;
@@ -119,5 +128,7 @@ export type BacklogItemSummary = {
 	githubIssue?: string;
 	usageTotal?: PhaseUsageTotal;
 	currentPhase?: number;
+	runningPhases?: number[];
+	donePhases?: number[];
 	totalPhases?: number;
 };

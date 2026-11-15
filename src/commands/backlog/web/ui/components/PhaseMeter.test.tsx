@@ -39,6 +39,26 @@ describe("PhaseMeter", () => {
 		expect(screen.getByTitle("Phase 3 of 4")).toBeTruthy();
 	});
 
+	it("shows done/total and the running count while phases run in parallel", () => {
+		const container = renderMeter({
+			status: "in-progress",
+			currentPhase: 2,
+			totalPhases: 6,
+			runningPhases: [2, 3, 4],
+			donePhases: [5],
+		});
+
+		expect(segments(container)).toEqual([
+			"done",
+			"current",
+			"current",
+			"current",
+			"done",
+			"remaining",
+		]);
+		expect(screen.getByText("2/6 · 3 running")).toBeTruthy();
+	});
+
 	it("marks every segment complete for a done item", () => {
 		const container = renderMeter({ status: "done", currentPhase: 2 });
 

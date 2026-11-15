@@ -4,14 +4,17 @@ import { buildFeature } from "../../shared/harnessAdapters/harnessFeatures";
 import { acquireLock, foreignLockHolder, releaseLock } from "./acquireLock";
 import { launchBlocker } from "../../shared/harnessAdapters/launchBlocker";
 import { ensureStoryBranch } from "./ensureStoryBranch";
-import { formatItemId, parseItemId } from "./formatItemId";
-import { type PreparedRun, prepareRun } from "./prepareRun";
+import { parseItemId } from "./formatItemId";
+import { prepareRun } from "./prepareRun";
 import { reportDuplicateRun } from "./reportDuplicateRun";
 import { resumeDoneConversation } from "./resumeDoneConversation";
 import { setStatus } from "./shared";
 import type { BacklogRunOptions } from "./types";
 import { discardStalePause } from "./discardStalePause";
 import { runPrepared } from "./runPrepared";
+import { withoutResumeSession } from "../../shared/spawnClaude";
+import { clearFailedPhases } from "./phaseRun/clearFailedPhases";
+import { logProgress } from "./logProgress";
 
 export async function run(
 	id: string,
@@ -54,22 +57,11 @@ async function runLocked(
 	await ensureStoryBranch(prepared.item);
 	await setStatus(id, "in-progress");
 	discardStalePause(prepared.item.id);
+	if (!spawnOptions?.resumeSessionId) await clearFailedPhases(prepared.item.id);
 	logProgress(prepared);
-	return runPrepared(id, prepared, spawnOptions);
-}
-
-function logProgress({ plan, startPhase, item }: PreparedRun): void {
-	console.log(
-		chalk.bold(`Running plan for ${formatItemId(item.id)}: ${item.name}`),
+	return runPrepared(
+		id,
+		prepared,
+		prepared.dropResume ? withoutResumeSession(spawnOptions) : spawnOptions,
 	);
-	// why: +1 for the review phase appended after the authored phases, so resuming at the review reads e.g. 2/2 rather than 2/1.
-	const totalPhases = plan.length + 1;
-	if (startPhase > 0) {
-		const phaseNumber = startPhase + 1;
-		console.log(
-			chalk.dim(`Resuming from phase ${phaseNumber}/${totalPhases}\n`),
-		);
-	} else {
-		console.log(chalk.dim(`${totalPhases} phase(s)\n`));
-	}
 }

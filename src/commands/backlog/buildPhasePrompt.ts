@@ -4,6 +4,7 @@ import { loadConfig } from "../../shared/loadConfig";
 import { askQuestionEnabled } from "../askQuestion/askQuestionEnabled";
 import { previewAnswerWaitBlocker } from "../askQuestion/previewAnswerWaitBlocker";
 import { buildAuthoredPhasePrompt } from "./buildAuthoredPhasePrompt";
+import { landTree } from "./phaseRun/landTree";
 import { buildReviewPrompt } from "./buildReviewPrompt";
 import type { BacklogItem, PlanPhase } from "./types";
 
@@ -35,5 +36,6 @@ export function buildPhasePrompt(
 	return buildAuthoredPhasePrompt(item, phaseNumber, phase, {
 		commitBeforePhaseEnd,
 		askCheck,
+		land: landTree() !== undefined,
 	});
 }

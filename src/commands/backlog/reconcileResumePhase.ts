@@ -2,6 +2,8 @@ import type { Db } from "../../shared/db/Db";
 import { findPhaseBySessionId } from "../../shared/db/findPhaseBySessionId";
 import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
 import { appendComment } from "./appendComment";
+import { resetPhaseAndDependents } from "./phaseRun/resetPhaseAndDependents";
+import { resolvePlan } from "./resolvePlan";
 import type { BacklogItem } from "./types";
 import { updateCurrentPhase } from "./updateCurrentPhase";
 
@@ -33,6 +35,12 @@ export async function reconcileResumePhase(
 		});
 	} catch {}
 	await updateCurrentPhase(orm, item.id, resumedPhaseIdx + 1);
+	await resetPhaseAndDependents(
+		orm,
+		item.id,
+		resolvePlan(item),
+		resumedPhaseIdx,
+	);
 
 	return resumedPhaseIdx;
 }

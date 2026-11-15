@@ -24,6 +24,7 @@ export function ItemRelations({
 				<PlanSection
 					phases={item.plan}
 					currentPhase={item.currentPhase}
+					runs={item}
 					itemId={item.id}
 					usage={item.phaseUsage}
 					sessions={item.phaseSessions}

@@ -16,6 +16,8 @@ export async function executePhase(
 	// the authored run, so callers pass the review-inclusive total to keep the
 	// count stable (e.g. 1/3, 2/3, then 3/3 for review) rather than jumping.
 	totalPhases: number = phases.length,
+	// why: a parallel phase session must not take over the run's item-wide signal owner.
+	ownsRunSignals = true,
 ): Promise<PhaseOutcome> {
 	const phase = phases[phaseIndex];
 	const phaseNumber = phaseIndex + 1;
@@ -27,7 +29,7 @@ export async function executePhase(
 
 	process.env.ASSIST_SESSION_ID ??= String(process.pid);
 	process.env.ASSIST_BACKLOG_ITEM_ID = String(item.id);
-	recordSignalOwner(item.id);
+	if (ownsRunSignals) recordSignalOwner(item.id);
 
 	const phaseLabel = `phase ${phaseNumber}/${totalPhases}`;
 	const phaseSession = await preparePhaseSession(

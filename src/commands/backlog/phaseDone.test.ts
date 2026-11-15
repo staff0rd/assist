@@ -12,7 +12,10 @@ import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 
 vi.mock("./shared", () => ({
 	getReady: vi.fn(),
-	setCurrentPhase: vi.fn(),
+}));
+
+vi.mock("./phaseRun/markPhaseDone", () => ({
+	markPhaseDone: vi.fn(),
 }));
 
 vi.mock("./loadItem", () => ({
@@ -31,13 +34,14 @@ import { closeSessionPreviewsRemote } from "../sessions/closeSessionPreviewsRemo
 import { appendComment } from "./appendComment";
 import { loadItem } from "./loadItem";
 import { phaseDone } from "./phaseDone";
-import { getReady, setCurrentPhase } from "./shared";
+import { markPhaseDone } from "./phaseRun/markPhaseDone";
+import { getReady } from "./shared";
 import { clearSignalOwner, recordSignalOwner } from "./recordSignalOwner";
 import { getSignalPath } from "./writeSignal";
 
 const mockGetReady = getReady as unknown as MockInstance;
 const mockLoadItem = loadItem as unknown as MockInstance;
-const mockSetCurrentPhase = setCurrentPhase as unknown as MockInstance;
+const mockMarkPhaseDone = markPhaseDone as unknown as MockInstance;
 const mockAppendComment = appendComment as unknown as MockInstance;
 const mockClosePreviews = closeSessionPreviewsRemote as unknown as MockInstance;
 
@@ -108,13 +112,13 @@ describe("phaseDone", () => {
 	it("should advance currentPhase when item is not done", async () => {
 		await phaseDone("a1", "1", "Done");
 
-		expect(mockSetCurrentPhase).toHaveBeenCalledWith("a1", 2);
+		expect(mockMarkPhaseDone).toHaveBeenCalledWith(orm, 1, 0, 1);
 		cleanup();
 	});
 
-	it("should write the phase-done signal only after setCurrentPhase resolves", async () => {
+	it("should write the phase-done signal only after markPhaseDone resolves", async () => {
 		let signalExistedWhenPhaseAdvanced: boolean | undefined;
-		mockSetCurrentPhase.mockImplementation(async () => {
+		mockMarkPhaseDone.mockImplementation(async () => {
 			signalExistedWhenPhaseAdvanced = existsSync(signalPath());
 		});
 
@@ -145,7 +149,7 @@ describe("phaseDone", () => {
 
 				expect(mockGetReady).not.toHaveBeenCalled();
 				expect(mockAppendComment).not.toHaveBeenCalled();
-				expect(mockSetCurrentPhase).not.toHaveBeenCalled();
+				expect(mockMarkPhaseDone).not.toHaveBeenCalled();
 				expect(existsSync(signalPath())).toBe(false);
 				expect(process.exitCode).toBe(1);
 				cleanup();
@@ -173,7 +177,7 @@ describe("phaseDone", () => {
 
 			await phaseDone("a1", "1", "Done");
 
-			expect(mockSetCurrentPhase).not.toHaveBeenCalled();
+			expect(mockMarkPhaseDone).not.toHaveBeenCalled();
 			cleanup();
 		});
 
@@ -195,7 +199,7 @@ describe("phaseDone", () => {
 
 			await phaseDone("a99", "1", "Done");
 
-			expect(mockSetCurrentPhase).not.toHaveBeenCalled();
+			expect(mockMarkPhaseDone).not.toHaveBeenCalled();
 			expect(mockAppendComment).not.toHaveBeenCalled();
 			cleanup();
 		});
@@ -212,7 +216,7 @@ describe("phaseDone", () => {
 
 		await phaseDone("a1", "2", "Review complete");
 
-		expect(mockSetCurrentPhase).toHaveBeenCalledWith("a1", 3);
+		expect(mockMarkPhaseDone).toHaveBeenCalledWith(orm, 1, 1, 1);
 		cleanup();
 	});
 });

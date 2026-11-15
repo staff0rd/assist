@@ -4,7 +4,10 @@ import { closeRunPreviews } from "./closeRunPreviews";
 import { formatItemId, parseItemId } from "./formatItemId";
 import { loadItem } from "./loadItem";
 import { parsePhaseNumber } from "./parsePhaseNumber";
-import { getReady, setCurrentPhase } from "./shared";
+import { markPhaseDone } from "./phaseRun/markPhaseDone";
+import { refuseUnlanded } from "./phaseRun/refuseUnlanded";
+import { resolvePlan } from "./resolvePlan";
+import { getReady } from "./shared";
 import { writeSignal } from "./writeSignal";
 
 export async function phaseDone(
@@ -44,11 +47,13 @@ export async function phaseDone(
 		return;
 	}
 
+	if (refuseUnlanded(phaseNumber)) return;
+
 	await appendComment(orm, itemId, summary, {
 		phase: phaseNumber,
 		type: "summary",
 	});
-	await setCurrentPhase(id, phaseNumber + 1);
+	await markPhaseDone(orm, itemId, phaseIndex, resolvePlan(item).length);
 	await signal();
 	console.log(
 		chalk.green(`Phase ${phaseNumber} of item ${label} marked as complete.`),

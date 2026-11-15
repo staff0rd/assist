@@ -15,6 +15,10 @@ vi.mock("./updateCurrentPhase", () => ({
 	updateCurrentPhase: vi.fn(),
 }));
 
+vi.mock("./phaseRun/resetPhaseAndDependents", () => ({
+	resetPhaseAndDependents: vi.fn(),
+}));
+
 vi.mock("./updateStatus", () => ({
 	updateStatus: vi.fn(),
 }));
@@ -24,6 +28,7 @@ vi.mock("./writeSignal", () => ({
 }));
 
 import { appendComment } from "./appendComment";
+import { resetPhaseAndDependents } from "./phaseRun/resetPhaseAndDependents";
 import { rewindItemToPhase } from "./rewindItemToPhase";
 import { makeBacklogItem } from "../../test/mothers/makeBacklogItem";
 import { updateCurrentPhase } from "./updateCurrentPhase";
@@ -34,6 +39,7 @@ const mockAppendComment = appendComment as unknown as MockInstance;
 const mockUpdateCurrentPhase = updateCurrentPhase as unknown as MockInstance;
 const mockUpdateStatus = updateStatus as unknown as MockInstance;
 const mockWriteSignal = writeSignal as unknown as MockInstance;
+const mockReset = resetPhaseAndDependents as unknown as MockInstance;
 
 const orm = {} as never;
 
@@ -144,6 +150,26 @@ describe("rewindItemToPhase", () => {
 		expect(mockUpdateCurrentPhase).not.toHaveBeenCalled();
 		expect(mockUpdateStatus).not.toHaveBeenCalled();
 		expect(mockWriteSignal).not.toHaveBeenCalled();
+	});
+
+	it("should rewind to a phase done ahead of the current one, cancelling its dependents", async () => {
+		const result = await rewindItemToPhase(
+			orm,
+			makeBacklogItem({
+				id: 1,
+				status: "in-progress",
+				currentPhase: 2,
+				donePhases: [3],
+				runningPhases: [2],
+				plan: threePhasePlan,
+			}),
+			3,
+			"Redo",
+		);
+
+		expect(result.ok).toBe(true);
+		expect(mockUpdateCurrentPhase).toHaveBeenCalledWith(orm, 1, 2);
+		expect(mockReset).toHaveBeenCalledWith(orm, 1, threePhasePlan, 2);
 	});
 
 	it("should reject if phase number is out of range", async () => {

@@ -152,4 +152,28 @@ describe("itemNavSections", () => {
 			"no dependencies",
 		]);
 	});
+
+	it("shows several current phases with Running and Queued captions", () => {
+		const sections = itemNavSections(
+			makeBacklogItem({
+				plan: [
+					{ name: "First", tasks: [] },
+					{ name: "Second", tasks: [], dependsOn: [1] },
+					{ name: "Third", tasks: [], dependsOn: [1] },
+					{ name: "Fourth", tasks: [], dependsOn: [1] },
+					{ name: "Fifth", tasks: [] },
+				],
+				currentPhase: 2,
+				runningPhases: [2, 3],
+			}),
+		).filter((s) => s.nested);
+
+		expect(sections.map((s) => [s.status, s.caption])).toEqual([
+			["done", undefined],
+			["current", "Running"],
+			["current", "Running · after 1"],
+			["upcoming", "Queued · after 1"],
+			["upcoming", undefined],
+		]);
+	});
 });

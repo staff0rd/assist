@@ -1,5 +1,7 @@
 import type { Db } from "../../shared/db/Db";
 import { appendComment } from "./appendComment";
+import { resetPhaseAndDependents } from "./phaseRun/resetPhaseAndDependents";
+import { resolvePlan } from "./resolvePlan";
 import { resolveRewindPlan } from "./resolveRewindPlan";
 import type { BacklogItem } from "./types";
 import { updateCurrentPhase } from "./updateCurrentPhase";
@@ -24,7 +26,8 @@ export async function rewindItemToPhase(
 		};
 	}
 	const currentPhase = item.currentPhase ?? 1;
-	if (phaseNumber >= currentPhase) {
+	const doneAhead = item.donePhases?.includes(phaseNumber) ?? false;
+	if (phaseNumber >= currentPhase && !doneAhead) {
 		return {
 			ok: false,
 			error: `Phase ${phaseNumber} is not earlier than the current phase (${currentPhase}).`,
@@ -38,7 +41,13 @@ export async function rewindItemToPhase(
 		`Rewound to phase ${phaseNumber} (${phaseName}): ${reason}`,
 		{ phase: phaseNumber },
 	);
-	await updateCurrentPhase(orm, item.id, phaseNumber);
+	await updateCurrentPhase(orm, item.id, Math.min(phaseNumber, currentPhase));
+	await resetPhaseAndDependents(
+		orm,
+		item.id,
+		resolvePlan(item),
+		phaseNumber - 1,
+	);
 	await updateStatus(orm, item.id, "in-progress");
 
 	writeSignal("rewind", { itemId: item.id, targetPhase: phaseNumber - 1 });

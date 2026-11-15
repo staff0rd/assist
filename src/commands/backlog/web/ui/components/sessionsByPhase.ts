@@ -1,4 +1,5 @@
 import type {
+	PhaseRuns,
 	PhaseSession,
 	PhaseStatus,
 	PhaseUsage,
@@ -16,10 +17,15 @@ export function reviewPhaseIndex(phases: PlanPhase[]): number {
 export function phaseStatus(
 	index: number,
 	currentPhase: number | undefined,
+	runs: PhaseRuns = {},
 ): PhaseStatus {
 	if (currentPhase === undefined) return "upcoming";
 	const phaseNumber = index + 1;
-	if (phaseNumber < currentPhase) return "done";
+	if (phaseNumber < currentPhase || runs.donePhases?.includes(phaseNumber))
+		return "done";
+	const running = runs.runningPhases ?? [];
+	if (running.length > 0)
+		return running.includes(phaseNumber) ? "current" : "upcoming";
 	if (phaseNumber === currentPhase) return "current";
 	return "upcoming";
 }

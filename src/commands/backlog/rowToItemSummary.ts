@@ -11,6 +11,8 @@ type ItemSummaryRow = {
 	githubIssue: string | null;
 	currentPhase: number | null;
 	planPhaseCount: number | null;
+	runningPhases?: number[] | null;
+	donePhases?: number[] | null;
 	tokensUp: number | null;
 	tokensDown: number | null;
 	activeMs: number | null;
@@ -29,6 +31,8 @@ export function rowToItemSummary(row: ItemSummaryRow): BacklogItemSummary {
 		githubIssue: row.githubIssue ?? undefined,
 		currentPhase: row.currentPhase ?? undefined,
 		totalPhases: (row.planPhaseCount || 1) + 1,
+		...(row.runningPhases?.length && { runningPhases: row.runningPhases }),
+		...(row.donePhases?.length && { donePhases: row.donePhases }),
 		usageTotal:
 			row.tokensUp == null
 				? undefined

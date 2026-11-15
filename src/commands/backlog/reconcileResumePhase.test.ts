@@ -19,6 +19,10 @@ vi.mock("./appendComment", () => ({
 	appendComment: vi.fn(),
 }));
 
+vi.mock("./phaseRun/resetPhaseAndDependents", () => ({
+	resetPhaseAndDependents: vi.fn(),
+}));
+
 vi.mock("./updateCurrentPhase", () => ({
 	updateCurrentPhase: vi.fn(),
 }));

@@ -56,6 +56,11 @@ const assistConfigShape = {
 			dir: DEFAULT_BACKUP_DIR,
 			staleAfter: DEFAULT_BACKUP_STALE_AFTER,
 		}),
+	backlog: z
+		.strictObject({
+			maxParallelPhases: z.number().int().positive().optional(),
+		})
+		.optional(),
 	clone: z
 		.strictObject({
 			baseDir: z.string().default(DEFAULT_CLONE_DIR),

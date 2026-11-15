@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
 import { items, planPhases, planTasks } from "../../shared/db/schema";
 import { remapDependsOnAround } from "./dependsOn/remapDependsOnAround";
+import { resetStoredDependents } from "./phaseRun/resetStoredDependents";
 import { shiftPhasesUp } from "./shiftPhasesUp";
 
 export async function insertPhaseAt(
@@ -44,6 +45,7 @@ export async function insertPhaseAt(
 				.update(items)
 				.set({ currentPhase: phaseIdx + 1 })
 				.where(eq(items.id, itemId));
+			await resetStoredDependents(tx, itemId, phaseIdx);
 		}
 	});
 }

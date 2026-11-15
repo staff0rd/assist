@@ -40,7 +40,7 @@ export function PhaseMeter({ item }: { item: BacklogItemSummary }) {
 	return (
 		<Box sx={meterSx} title={`Phase ${meter.reached} of ${meter.total}`}>
 			<Box component="span" sx={labelSx}>
-				{`${meter.reached}/${meter.total}`}
+				{meter.label}
 			</Box>
 			<Box component="span" sx={trackSx} aria-hidden>
 				{meter.segments.map((segment) => (

@@ -16,6 +16,7 @@ export function spawnAssistCreate(
 		title: d.title as string | undefined,
 		subtitle: d.subtitle as string | undefined,
 		...(d.autoApprove === true && { autoApprove: true }),
+		...(typeof d.startPoint === "string" && { startPoint: d.startPoint }),
 	};
 	const snapshot = parseTransferSnapshot(d.transfer);
 	if (snapshot)

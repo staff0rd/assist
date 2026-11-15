@@ -67,6 +67,27 @@ describe("loadItemSummaries", () => {
 		});
 	});
 
+	it("lists the phases running in parallel and done ahead of currentPhase", async () => {
+		await orm.insert(items).values({
+			id: 1,
+			origin: "test",
+			name: "Parallel",
+			status: "in-progress",
+			currentPhase: 2,
+		});
+		await orm.insert(planPhases).values([
+			{ itemId: 1, idx: 0, name: "One", runState: "done" },
+			{ itemId: 1, idx: 1, name: "Two", runState: "running" },
+			{ itemId: 1, idx: 2, name: "Three", runState: "done" },
+			{ itemId: 1, idx: 3, name: "Four", runState: "running" },
+		]);
+
+		const [summary] = await loadItemSummaries(orm);
+
+		expect(summary.runningPhases).toEqual([2, 4]);
+		expect(summary.donePhases).toEqual([1, 3]);
+	});
+
 	it("sums phase usage into an item-level total, or omits it when absent", async () => {
 		await orm
 			.insert(items)

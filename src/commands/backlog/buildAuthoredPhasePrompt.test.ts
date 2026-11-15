@@ -203,4 +203,30 @@ describe("buildAuthoredPhasePrompt", () => {
 			).toBe(buildAuthoredPhasePrompt(makeBacklogItem(), 1, phase));
 		});
 	});
+
+	it("asks a parallel phase to land on the item branch before phase-done", () => {
+		const prompt = buildAuthoredPhasePrompt(
+			makeBacklogItem({ id: 7 }),
+			2,
+			phase,
+			{
+				commitBeforePhaseEnd: false,
+				land: true,
+			},
+		);
+
+		expect(prompt).toContain("assist backlog land");
+		expect(prompt.indexOf("assist backlog land")).toBeLessThan(
+			prompt.indexOf("assist backlog phase-done"),
+		);
+		expect(prompt).toContain(
+			"Once it has landed, run: assist backlog phase-done",
+		);
+	});
+
+	it("leaves landing out of a phase running on the item branch", () => {
+		expect(buildAuthoredPhasePrompt(makeBacklogItem(), 2, phase)).not.toContain(
+			"assist backlog land",
+		);
+	});
 });

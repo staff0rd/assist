@@ -9,12 +9,12 @@ import { exportBacklog } from "../backlog/exportBacklog";
 
 type BackupOptions = { out?: string };
 
-export /**
+/**
  * Write a backlog database dump to the configured (or `--out`) directory and,
  * on success, record the dump's path and byte size in the backups table. If the
  * dump fails the error propagates and no row is inserted.
  */
-async function backup({ out }: BackupOptions): Promise<void> {
+export async function backup({ out }: BackupOptions): Promise<void> {
 	const dir = expandTilde(out ?? loadConfig().backup.dir);
 	await mkdir(dir, { recursive: true });
 

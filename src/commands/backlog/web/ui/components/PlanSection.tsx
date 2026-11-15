@@ -1,18 +1,8 @@
 import { Box, Stack, Typography } from "@mui/material";
-import type { PhaseSession, PhaseUsage, PlanPhase } from "../types";
 import { ItemUsageTotal } from "./ItemUsageTotal";
 import { itemSectionAnchor } from "./itemSectionAnchor";
-import { PhaseCardList } from "./PhaseCardList";
+import { PhaseCardList, type PhaseCardListProps } from "./PhaseCardList";
 import { sectionHeadingSx } from "./sectionHeadingSx";
-
-type PlanSectionProps = {
-	phases: PlanPhase[];
-	currentPhase?: number;
-	itemId?: number;
-	usage?: PhaseUsage[];
-	sessions?: PhaseSession[];
-	onRewind?: () => Promise<void>;
-};
 
 const headerRowSx = {
 	alignItems: "baseline",
@@ -25,11 +15,12 @@ const overlineSx = [sectionHeadingSx, { mb: 0 }];
 export function PlanSection({
 	phases,
 	currentPhase,
+	runs,
 	itemId,
 	usage,
 	sessions,
 	onRewind,
-}: PlanSectionProps) {
+}: PhaseCardListProps) {
 	if (phases.length === 0) return null;
 	return (
 		<Box {...itemSectionAnchor("plan")}>
@@ -42,6 +33,7 @@ export function PlanSection({
 			<PhaseCardList
 				phases={phases}
 				currentPhase={currentPhase}
+				runs={runs}
 				itemId={itemId}
 				usage={usage}
 				sessions={sessions}

@@ -41,6 +41,11 @@ export async function resolvePhaseResult(
 	const signal = readSignal();
 	cleanupSignal();
 
+	if (signal?.event === "cancel") {
+		console.log(chalk.yellow("\nPhase cancelled."));
+		return { kind: "abort" };
+	}
+
 	if (signal?.event === "rewind") {
 		const targetPhase = signal.targetPhase as number;
 		const targetPhaseNumber = targetPhase + 1;

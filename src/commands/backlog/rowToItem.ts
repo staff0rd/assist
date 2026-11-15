@@ -1,5 +1,6 @@
 import type { CommentRow, ItemRow, LinkRow } from "../../shared/db/schema";
 import { attachGitRefs } from "./attachGitRefs";
+import { attachPhaseRuns } from "./attachPhaseRuns";
 import { attachSessions } from "./attachSessions";
 import { attachUsage } from "./attachUsage";
 import { buildPlan } from "./buildPlan";
@@ -58,6 +59,7 @@ function attachLinks(item: BacklogItem, rel: Relations, id: number): void {
 function attachPlan(item: BacklogItem, rel: Relations, id: number): void {
 	const phases = rel.phases.get(id) ?? [];
 	if (phases.length > 0) item.plan = buildPlan(phases, rel.tasks.get(id) ?? []);
+	attachPhaseRuns(item, phases);
 }
 
 /** Assemble a domain item from its row and the pre-grouped relation rows. */

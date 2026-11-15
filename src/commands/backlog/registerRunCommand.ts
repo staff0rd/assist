@@ -2,6 +2,7 @@ import type { Command } from "commander";
 import { configHelp } from "../../shared/configHelp";
 import { harnessConfigHelp } from "./harnessConfigHelp";
 import { harnessDefaultsConfigHelp } from "./harnessDefaultsConfigHelp";
+import { registerPhaseRunCommands } from "./registerPhaseRunCommands";
 
 export function registerRunCommand(cmd: Command): void {
 	const command = cmd
@@ -52,4 +53,5 @@ export function registerRunCommand(cmd: Command): void {
 			},
 		);
 	configHelp(command, [...harnessConfigHelp, ...harnessDefaultsConfigHelp]);
+	registerPhaseRunCommands(cmd);
 }

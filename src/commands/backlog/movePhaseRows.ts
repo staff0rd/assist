@@ -11,7 +11,12 @@ export async function movePhaseRows(
 	toIdx: number,
 ): Promise<void> {
 	const [phaseRow] = await tx
-		.select({ name: planPhases.name, manualChecks: planPhases.manualChecks })
+		.select({
+			name: planPhases.name,
+			manualChecks: planPhases.manualChecks,
+			runState: planPhases.runState,
+			runToken: planPhases.runToken,
+		})
 		.from(planPhases)
 		.where(and(eq(planPhases.itemId, itemId), eq(planPhases.idx, fromIdx)));
 	const tasks = await tx
@@ -33,6 +38,8 @@ export async function movePhaseRows(
 		idx: toIdx,
 		name: phaseRow.name,
 		manualChecks: phaseRow.manualChecks,
+		runState: phaseRow.runState,
+		runToken: phaseRow.runToken,
 	});
 	if (tasks.length) {
 		await tx.insert(planTasks).values(

@@ -1652,6 +1652,12 @@ Commands:
                                                   --story to a screenshot declared on a docs page
                                                   whose PNG is added or changed in the working tree
   run [options] <id>                              Run a backlog item's plan phase-by-phase
+  run-phase [options] <id> <phase>                Run one ready phase in this worktree, alongside
+                                                  the item's other ready phases (started by 'backlog
+                                                  run')
+  land                                            Land this parallel phase's commits on the item
+                                                  branch: rebase onto it, run assist verify if it
+                                                  moved, then fast-forward it
   search <query>                                  Search backlog items by keyword
   update-field [options] <id>                     Update fields on a backlog item
   update-phase|edit-phase [options] <id> <phase>  Modify a plan phase on a backlog item
@@ -1683,6 +1689,7 @@ Commands:
 
 Config:
   assist config set database.url postgresql://... # Postgres connection string for backlog storage (or ASSIST_DATABASE_URL)
+  assist config set backlog.maxParallelPhases 3   # how many independent phases 'backlog run' runs at once, each in its own worktree (default: 3; 1 runs phases one at a time)
   assist config set clone.baseDir ~/git           # base directory 'backlog clone' clones repos into (default: ~/git)
   assist config set docs.refreshAfter 5           # queue a 'Refresh docs' item once this many done stories are unswept (unset: Refresh docs is off — no button, no refresh-docs, no docs locking)
 
@@ -1980,6 +1987,31 @@ Config:
   assist config set harness.defaults.design.model <model>             # model for design sessions in the New Session dialog on the type's harness; unset uses the harness's own default
   assist config set harness.defaults.run.harness <claude|codex|pi>    # harness for backlog runs (assist backlog run, web Start buttons) when none is picked; unset falls back to harness.engine
   assist config set harness.defaults.run.model <model>                # model for backlog runs (assist backlog run, web Start buttons) on the type's harness; unset uses the harness's own default
+
+=== assist backlog run-phase --help
+Usage: assist backlog run-phase [options] <id> <phase>
+
+Run one ready phase in this worktree, alongside the item's other ready phases (started by 'backlog
+run')
+
+Options:
+  --token <token>        Run token the phase was assigned
+  --item-tree <path>     Worktree holding the item branch the phase lands on
+  --no-write             Run the harness without write access
+  --harness <harness>    Coding harness to launch
+  --model <model>        Model to launch the harness with
+  --resume-session <id>  Resume the phase's interrupted session (used by the sessions daemon on
+                         restart)
+  -h, --help             display help for command
+
+=== assist backlog land --help
+Usage: assist backlog land [options]
+
+Land this parallel phase's commits on the item branch: rebase onto it, run assist verify if it
+moved, then fast-forward it
+
+Options:
+  -h, --help  display help for command
 
 === assist backlog search --help
 Usage: assist backlog search [options] <query>
