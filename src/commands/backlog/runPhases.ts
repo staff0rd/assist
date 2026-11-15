@@ -5,7 +5,9 @@ import type { PhasesResult } from "./phaseRun/PhasesResult";
 import { runPhaseStep } from "./phaseRun/runPhaseStep";
 import { schedulePhases } from "./phaseRun/schedulePhases";
 import { settledResult } from "./phaseRun/settledResult";
-import type { ParallelRunState } from "./phaseRun/waitOnParallelPhases";
+import type { ParallelRunState } from "./phaseRun/parkOnParallelPhases";
+import { isWake } from "./phaseRun/isWake";
+import { consumePause } from "./consumePause";
 import { reloadPlan } from "./reloadPlan";
 import { getReady } from "./shared";
 import type { BacklogItem, BacklogRunOptions, PlanPhase } from "./types";
@@ -13,7 +15,8 @@ import type { BacklogItem, BacklogRunOptions, PlanPhase } from "./types";
 /**
  * Run every phase whose dependencies are done: a lone ready phase runs in this
  * session on the item branch; several run at once, each in its own session
- * and worktree, up to the parallel cap.
+ * and worktree, up to the parallel cap, and this run parks until the daemon
+ * wakes it once they end.
  */
 export async function runPhases(
 	item: BacklogItem,
@@ -24,7 +27,8 @@ export async function runPhases(
 	const itemTree = process.cwd();
 	const parallel: ParallelRunState = {
 		cap: parallelPhaseCap(itemTree),
-		pauseRequested: false,
+		// why: a pause requested while parked applies once the daemon wakes the run.
+		pauseRequested: isWake() && consumePause(item.id),
 		itemTree,
 		spawnOptions: withoutResumeSession(spawnOptions),
 	};

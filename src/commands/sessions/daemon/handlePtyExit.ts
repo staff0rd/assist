@@ -2,6 +2,7 @@ import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { handleErroredExit } from "./handleErroredExit";
 import { handleFailedResume } from "./handleFailedResume";
+import { handleParkedExit } from "./handleParkedExit";
 import { handleRefusedRun } from "./handleRefusedRun";
 import { handleStoppedExit } from "./handleStoppedExit";
 import type { OnStatusChange } from "./types";
@@ -34,6 +35,7 @@ export function handlePtyExit(
 	if (handleStoppedExit(session, exitCode, onStatusChange)) return;
 	refreshActivity(session);
 	if (handleRefusedRun(session, exitCode, onStatusChange)) return;
+	if (handleParkedExit(session, exitCode, onStatusChange)) return;
 	if (handleFailedResume(session, exitCode, onStatusChange)) return;
 	const priorStatus = session.status;
 	if (exitCode !== 0) {

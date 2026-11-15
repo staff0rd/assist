@@ -2,7 +2,7 @@
 import type { HarnessKind } from "../../../shared/harnesses";
 import { ActiveSelection } from "./ActiveSelection";
 import type { SessionClient } from "./broadcast";
-import { broadcastSessions } from "./broadcastSessions";
+import { notifySessions } from "./notifySessions";
 import { SessionIo } from "./SessionIo";
 import { ClientHub, persistUsagePeak } from "./ClientHub";
 import type { AssistSessionMeta } from "./createAssistSession";
@@ -248,8 +248,8 @@ export class SessionManager {
 		// During shutdown pty exits must not rewrite sessions.json, or the
 		// done statuses would erase the metadata that resume needs on restart
 		if (this.shuttingDown) return;
-		const linked = this.links.sessions();
-		broadcastSessions(this.sessions, this.clients, linked, this.active);
+		const { sessions, clients, onStatusChange, links, active } = this;
+		notifySessions(sessions, clients, onStatusChange, links, active);
 		this.onIdleChange?.(this.isIdle());
 	};
 }

@@ -11,4 +11,5 @@ export const statusGlyph: Record<
 	done: "✓",
 	error: "✕",
 	stopped: "○",
+	parked: "◌",
 };

@@ -8,7 +8,9 @@ export async function runOnce(
 	startPhase: number,
 	plan: PlanPhase[],
 	spawnOptions?: BacklogRunOptions,
-): Promise<ReviewResult | { kind: "fail" } | { kind: "paused" }> {
+): Promise<
+	ReviewResult | { kind: "fail" } | { kind: "paused" } | { kind: "parked" }
+> {
 	// why: resume only reaches the review when the restart interrupted the review.
 	const reviewOptions =
 		startPhase >= plan.length
@@ -17,5 +19,6 @@ export async function runOnce(
 	const phases = await runPhases(item, startPhase, plan, spawnOptions);
 	if (phases.kind === "fail") return { kind: "fail" };
 	if (phases.kind === "paused") return { kind: "paused" };
+	if (phases.kind === "parked") return { kind: "parked" };
 	return runReview(item, plan, reviewOptions);
 }

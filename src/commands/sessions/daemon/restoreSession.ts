@@ -6,7 +6,7 @@ import { relaunchHeldSession } from "./relaunchHeldSession";
 import { relaunchWrapperSession } from "./relaunchWrapperSession";
 import { restoreBase } from "./restoreBase";
 import { restoreInteractiveSession } from "./restoreInteractiveSession";
-import { stoppedSession } from "./runningSession";
+import { parkedSession, stoppedSession } from "./runningSession";
 import { isUpdate, updatedSession } from "./updatedSession";
 import { needsWrapperRelaunch } from "./needsWrapperRelaunch";
 
@@ -19,6 +19,9 @@ export function restoreSession(
 	const base = restoreBase(id, persisted);
 
 	if (persisted.status === "stopped") return stoppedSession(base, persisted);
+
+	// why: a parked run has no process; the daemon wakes it once its phase sessions end.
+	if (persisted.status === "parked") return parkedSession(base, persisted);
 
 	if (persisted.status === "error")
 		return errorSession(

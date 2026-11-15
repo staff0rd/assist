@@ -1,8 +1,10 @@
 import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
 import { clearPause, isPausePending } from "./consumePause";
+import { isWake } from "./phaseRun/isWake";
 
 export function discardStalePause(itemId: number): void {
 	if (!isPausePending(itemId)) return;
+	if (isWake()) return;
 	if (process.env.ASSIST_KEEP_PAUSE) {
 		appendDaemonLog(
 			`backlog run ${itemId}: kept the pending pause file at run start; ` +

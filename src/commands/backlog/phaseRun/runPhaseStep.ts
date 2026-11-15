@@ -5,8 +5,8 @@ import { runInlinePhase } from "./runInlinePhase";
 import type { PhaseSchedule } from "./schedulePhases";
 import {
 	type ParallelRunState,
-	waitOnParallelPhases,
-} from "./waitOnParallelPhases";
+	parkOnParallelPhases,
+} from "./parkOnParallelPhases";
 
 type StepResult = {
 	stop?: PhasesResult;
@@ -14,7 +14,7 @@ type StepResult = {
 	ranInline: boolean;
 };
 
-/** One pass of the phase loop: run the lone ready phase here, or start ready phases in parallel and wait on them. */
+/** One pass of the phase loop: run the lone ready phase here, or start ready phases in parallel and park until they end. */
 export async function runPhaseStep(
 	item: BacklogItem,
 	plan: PlanPhase[],
@@ -27,7 +27,8 @@ export async function runPhaseStep(
 		? undefined
 		: inlinePhase(schedule, parallel.cap, preferred);
 	if (inline === undefined) {
-		await waitOnParallelPhases(item, plan, schedule, parallel);
+		if (await parkOnParallelPhases(item, plan, schedule, parallel))
+			return { stop: { kind: "parked" }, ranInline: false };
 		return { preferred, ranInline: false };
 	}
 	const result = await runInlinePhase(item, inline, plan, phaseOptions);

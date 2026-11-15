@@ -19,7 +19,8 @@ export type SessionStatus =
 	| "waiting"
 	| "done"
 	| "error"
-	| "stopped";
+	| "stopped"
+	| "parked";
 
 export type OnStatusChange = (
 	session: Session,

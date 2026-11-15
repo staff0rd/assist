@@ -13,7 +13,8 @@ export type SessionStatus =
 	| "waiting"
 	| "done"
 	| "error"
-	| "stopped";
+	| "stopped"
+	| "parked";
 
 export type SessionInfo = SessionInfoBase & {
 	status: SessionStatus;

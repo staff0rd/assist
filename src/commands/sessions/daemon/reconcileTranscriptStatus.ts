@@ -12,7 +12,8 @@ function isFinished(session: Session): boolean {
 	return (
 		session.status === "done" ||
 		session.status === "error" ||
-		session.status === "stopped"
+		session.status === "stopped" ||
+		session.status === "parked"
 	);
 }
 

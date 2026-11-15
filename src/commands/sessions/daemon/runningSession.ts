@@ -30,6 +30,13 @@ export function stoppedSession(
 	};
 }
 
+export function parkedSession(
+	base: RestoreBase,
+	persisted: PersistedSession,
+): Session {
+	return restoredSession(base, persisted, null, "parked");
+}
+
 function restoredSession(
 	base: RestoreBase,
 	persisted: PersistedSession,

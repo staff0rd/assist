@@ -30,6 +30,12 @@ export function applySetStatus(
 		);
 		return;
 	}
+	if (session.status === "parked") {
+		daemonLog(
+			`set-status for parked session id=${id} status=${status} (its process has exited; it wakes when its phases end; ignoring)`,
+		);
+		return;
+	}
 	rebind?.(session);
 	clearPendingSubmit(session);
 	if (opensPrompt(status, source)) session.permissionActive = true;

@@ -11,7 +11,9 @@ export const persistedSessionSchema = z.object({
 	subtitle: z.string().optional(),
 	commandType: z.enum(["claude", "run", "assist"]),
 	harness: z.enum(harnessKinds).optional(),
-	status: z.enum(["running", "waiting", "done", "error", "stopped"]).optional(),
+	status: z
+		.enum(["running", "waiting", "done", "error", "stopped", "parked"])
+		.optional(),
 	error: z.string().optional(),
 	cwd: z.string(),
 	startedAt: z.number(),

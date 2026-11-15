@@ -3,18 +3,15 @@ import { harnessAdapter } from "../../shared/harnessAdapters/harnessAdapter";
 import { buildFeature } from "../../shared/harnessAdapters/harnessFeatures";
 import { acquireLock, foreignLockHolder, releaseLock } from "./acquireLock";
 import { launchBlocker } from "../../shared/harnessAdapters/launchBlocker";
-import { ensureStoryBranch } from "./ensureStoryBranch";
 import { parseItemId } from "./formatItemId";
 import { prepareRun } from "./prepareRun";
 import { reportDuplicateRun } from "./reportDuplicateRun";
 import { resumeDoneConversation } from "./resumeDoneConversation";
-import { setStatus } from "./shared";
 import type { BacklogRunOptions } from "./types";
-import { discardStalePause } from "./discardStalePause";
 import { runPrepared } from "./runPrepared";
 import { withoutResumeSession } from "../../shared/spawnClaude";
-import { clearFailedPhases } from "./phaseRun/clearFailedPhases";
 import { logProgress } from "./logProgress";
+import { readyRunStart } from "./readyRunStart";
 
 export async function run(
 	id: string,
@@ -54,10 +51,8 @@ async function runLocked(
 		return resumeDoneConversation(prepared, spawnOptions);
 	}
 
-	await ensureStoryBranch(prepared.item);
-	await setStatus(id, "in-progress");
-	discardStalePause(prepared.item.id);
-	if (!spawnOptions?.resumeSessionId) await clearFailedPhases(prepared.item.id);
+	if (!(await readyRunStart(id, prepared.item, spawnOptions?.resumeSessionId)))
+		return true;
 	logProgress(prepared);
 	return runPrepared(
 		id,

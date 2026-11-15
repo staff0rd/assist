@@ -12,6 +12,7 @@ export const statusColors: Record<DisplayStatus, string> = {
 	done: "info.main",
 	error: "error.main",
 	stopped: "text.secondary",
+	parked: "text.secondary",
 };
 
 export function contextColor(pct: number, harness?: HarnessKind): string {

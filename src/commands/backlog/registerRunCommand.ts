@@ -42,7 +42,8 @@ export function registerRunCommand(cmd: Command): void {
 				 * interrupted phase; pulling would move the working tree out from
 				 * under that in-flight conversation, and a pull failure would abort
 				 * the restore entirely. Only pull on a fresh run. */
-				if (!opts.resumeSession) await pullIfConfigured();
+				const { isWake } = await import("./phaseRun/isWake");
+				if (!opts.resumeSession && !isWake()) await pullIfConfigured();
 				const harness = resolveHarness(opts.harness, "run");
 				await backlogRun(id, {
 					allowEdits: opts.write !== false,

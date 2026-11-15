@@ -51,6 +51,7 @@ export function persistLiveSessions(sessions: Map<string, Session>): void {
 		(s) =>
 			(s.pty ||
 				s.status === "stopped" ||
+				s.status === "parked" ||
 				s.status === "error" ||
 				(s.awaitingSeed && s.pendingStart)) &&
 			s.status !== "done",
