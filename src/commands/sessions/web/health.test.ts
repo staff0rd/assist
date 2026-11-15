@@ -24,6 +24,10 @@ vi.mock("../daemon/connectToDaemon", () => ({
 	isDaemonRunning: () => mockIsDaemonRunning(),
 }));
 
+vi.mock("../daemon/runtime/readNodeRuntimeReport", () => ({
+	readNodeRuntimeReport: () => undefined,
+}));
+
 const mockQueryNodes = vi.fn();
 vi.mock("../nodes/queryNodes", () => ({
 	queryNodes: () => mockQueryNodes(),
