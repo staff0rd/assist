@@ -631,7 +631,7 @@ Options:
   -h, --help      display help for command
 
 Commands:
-  migrate         Apply pending migrations in order (build ships up to migration 11)
+  migrate         Apply pending migrations in order (build ships up to migration 12)
   status          Report whether the database is in sync, behind, or ahead of this build
   drop-retired    Drop retired tables left by removed features, after confirming each
   help [command]  display help for command
@@ -639,7 +639,7 @@ Commands:
 === assist db migrate --help
 Usage: assist db migrate [options]
 
-Apply pending migrations in order (build ships up to migration 11)
+Apply pending migrations in order (build ships up to migration 12)
 
 Options:
   -h, --help  display help for command
@@ -1722,7 +1722,14 @@ Options:
   -h, --help       display help for command
 
 The payload is strict JSON: { name, type, description?, acceptanceCriteria?, phases? }.
-Each phase is { name, tasks, manualChecks? } and needs at least one task.
+Each phase is { name, tasks, manualChecks?, dependsOn? } and needs at least one task.
+
+dependsOn lists the earlier phase numbers a phase needs, e.g. [2]. Leave it out
+and the phase waits for the previous one. Give it when a phase only needs an
+earlier phase, not the one right before it, so independent phases can run side
+by side; [] means it needs no earlier phase. Only mark phases independent when
+they touch different code and neither needs the other's changes. Entries must
+name earlier phases: forward or self references are rejected.
 
 The Review phase is owned by the runner and appended to every plan automatically,
 so it must not be authored: a phase named "Review" is rejected. Do not add a final
@@ -1738,6 +1745,8 @@ Options:
   --task <task...>           Task description (repeatable)
   --manual-check <check...>  Manual check description (repeatable)
   --position <position>      1-indexed position to insert at (default: append)
+  --depends-on <phase...>    Earlier phase numbers this phase waits for (default: the previous
+                             phase; pass none for no dependencies)
   -h, --help                 display help for command
 
 === assist backlog show --help
@@ -2028,8 +2037,8 @@ Usage: assist backlog update-plan [options] <id>
 Replace an item's whole plan from a JSON payload, previewed and applied in one approval
 
 Options:
-  --json <file|->  Path to a JSON payload of { phases: [{ name, tasks, manualChecks }] }, or - to
-                   read it from stdin
+  --json <file|->  Path to a JSON payload of { phases: [{ name, tasks, manualChecks?, dependsOn? }]
+                   }, or - to read it from stdin
   -h, --help       display help for command
 
 === assist backlog move-phase --help

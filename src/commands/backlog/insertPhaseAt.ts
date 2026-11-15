@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
 import { items, planPhases, planTasks } from "../../shared/db/schema";
+import { remapDependsOnAround } from "./dependsOn/remapDependsOnAround";
 import { shiftPhasesUp } from "./shiftPhasesUp";
 
 export async function insertPhaseAt(
@@ -11,14 +12,26 @@ export async function insertPhaseAt(
 	tasks: string[],
 	manualChecks: string | null,
 	currentPhase: number | undefined,
+	dependsOn: number[] | null = null,
 ): Promise<void> {
 	await orm.transaction(async (tx) => {
-		// Open a gap by shifting existing phases at or after the insertion point.
-		await shiftPhasesUp(tx, itemId, phaseIdx);
-
-		await tx
-			.insert(planPhases)
-			.values({ itemId, idx: phaseIdx, name, manualChecks });
+		await remapDependsOnAround(
+			tx,
+			itemId,
+			(oldIdxs) => [
+				...oldIdxs.slice(0, phaseIdx),
+				undefined,
+				...oldIdxs.slice(phaseIdx),
+			],
+			async () => {
+				// Open a gap by shifting existing phases at or after the insertion point.
+				await shiftPhasesUp(tx, itemId, phaseIdx);
+				await tx
+					.insert(planPhases)
+					.values({ itemId, idx: phaseIdx, name, manualChecks });
+			},
+			dependsOn,
+		);
 
 		if (tasks.length) {
 			await tx

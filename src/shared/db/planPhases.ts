@@ -10,6 +10,8 @@ export const planPhases = pgTable(
 		idx: integer().notNull(),
 		name: text().notNull(),
 		manualChecks: text("manual_checks"),
+		/** 0-based idx of the phases this one waits for; null means the previous phase. */
+		dependsOn: integer("depends_on").array(),
 	},
 	(t) => [primaryKey({ columns: [t.itemId, t.idx] })],
 );

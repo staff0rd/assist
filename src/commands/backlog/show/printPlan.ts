@@ -29,7 +29,7 @@ function printPhase(
 	sessions: PhaseSession[],
 ): void {
 	console.log(phaseHeader(index, phase.name, isCurrent));
-	printPhaseTasks(phase);
+	printPhaseTasks(phase, index + 1);
 	printPhaseSessions(sessions);
 }
 

@@ -87,6 +87,10 @@ Two tests for each phase before proposing the plan:
 
 Keep phases small (2-4 tasks each). A typical item should have 2-3 phases.
 
+### Phase dependencies
+
+Each phase waits for the previous one by default. When a phase only needs an earlier phase, not the one right before it, give it `dependsOn` with the earlier phase numbers it needs (e.g. phases 3–5 each building on phase 2 alone get `"dependsOn": [2]`), so independent phases can run side by side. Use `[]` for a phase that needs no earlier phase. Only mark phases independent when they touch different code and neither needs the other's changes; when unsure, leave `dependsOn` out.
+
 ### Docs pages belong to Refresh docs
 
 Run `assist config get docs.refreshAfter 2>&1`. If it prints a number, this repo uses **Refresh docs**: docs pages are updated by a separate Refresh docs item after stories ship, and are locked while other items are implemented. In that case:
@@ -113,13 +117,14 @@ cat <<'JSON' | assist backlog propose --json - 2>&1
   "acceptanceCriteria": ["criterion 1", "criterion 2"],
   "phases": [
     { "name": "Phase one name", "tasks": ["Task 1", "Task 2"] },
-    { "name": "Phase two name", "tasks": ["Task 1"], "manualChecks": ["optional check"] }
+    { "name": "Phase two name", "tasks": ["Task 1"], "manualChecks": ["optional check"] },
+    { "name": "Phase three name", "tasks": ["Task 1"], "dependsOn": [1] }
   ]
 }
 JSON
 ```
 
-The payload is strict JSON — an unknown key is an error. `\n` inside the `description` string is a JSON escape and becomes a real newline, which is what the markdown rendering needs. Each phase needs at least one task; omit `manualChecks` for the phases that don't need any (most of them). A phase named `Review` is rejected: the runner appends that phase itself.
+The payload is strict JSON — an unknown key is an error. `\n` inside the `description` string is a JSON escape and becomes a real newline, which is what the markdown rendering needs. Each phase needs at least one task; omit `manualChecks` for the phases that don't need any (most of them), and `dependsOn` for phases that need the phase before them. A phase named `Review` is rejected: the runner appends that phase itself.
 
 Always run `propose` **as a background task**, and do no other work until it returns. In a web session it blocks on the preview pane until the user decides, which can take far longer than the default command timeout, and the pending preview dies with the process — a killed `propose` abandons the item. To revise the item while its preview is still pending, re-run `propose` with the revised payload directly — do not stop the earlier task. The pane swaps to the new version, and the earlier task exits 0 printing `Superseded by a newer preview — no decision; ignore this result.` without creating anything: ignore it. In a Claude SDK session (`ASSIST_SDK_AGENT=1`) or a Codex session hosted by the assist daemon (`ASSIST_SESSION=1`), run `propose` in the foreground instead: it returns at once, so end your turn and do nothing else — the command's output and exit code arrive as your next message, and a superseded run delivers nothing.
 

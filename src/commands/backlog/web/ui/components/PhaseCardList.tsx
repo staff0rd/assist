@@ -1,6 +1,7 @@
 import { Stack } from "@mui/material";
 import type { PhaseSession, PhaseUsage, PlanPhase } from "../types";
 import { PhaseCard } from "./PhaseCard";
+import { phaseDependencies } from "./phaseDependencies";
 import {
 	phaseStatus,
 	REVIEW_PHASE,
@@ -44,6 +45,7 @@ export function PhaseCardList({
 					phase={phase}
 					index={i}
 					status={phaseStatus(i, currentPhase)}
+					dependsOn={phaseDependencies(phase, i, currentPhase)}
 					itemId={itemId}
 					usage={byPhase.get(i)}
 					sessions={i === reviewIdx ? reviewSessions : sessionsFor.get(i)}

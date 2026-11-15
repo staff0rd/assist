@@ -9,6 +9,7 @@ type ProposedPhase = {
 	name: string;
 	tasks: string[];
 	manualChecks?: string[];
+	dependsOn?: number[];
 };
 
 export async function reviewProposedPhase(

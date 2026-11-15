@@ -1,6 +1,7 @@
 import { eq } from "drizzle-orm";
 import type { Db } from "../../../shared/db/Db";
 import { items, planPhases, planTasks } from "../../../shared/db/schema";
+import { toStoredDependsOn } from "../dependsOn/toStoredDependsOn";
 import { serializeManualChecks } from "../serializeManualChecks";
 import { clampCurrentPhase } from "./clampCurrentPhase";
 import type { PlanUpdatePhase } from "./planUpdateSchema";
@@ -22,6 +23,7 @@ export async function replacePlan(
 					idx,
 					name: phase.name,
 					manualChecks: serializeManualChecks(phase.manualChecks),
+					dependsOn: toStoredDependsOn(phase.dependsOn, idx),
 				})),
 			);
 		}

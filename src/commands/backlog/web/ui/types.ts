@@ -8,6 +8,7 @@ export type PlanPhase = {
 	name: string;
 	tasks: PlanTask[];
 	manualChecks?: string[];
+	dependsOn?: number[];
 };
 
 export type PhaseUsage = {

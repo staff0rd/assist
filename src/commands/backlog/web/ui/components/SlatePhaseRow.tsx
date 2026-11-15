@@ -24,6 +24,11 @@ export function SlatePhaseRow({
 			</Box>
 			<Box component="span" className="phase-label">
 				{section.title}
+				{section.caption && (
+					<Box component="span" className="phase-caption">
+						{section.caption}
+					</Box>
+				)}
 			</Box>
 		</ButtonBase>
 	);

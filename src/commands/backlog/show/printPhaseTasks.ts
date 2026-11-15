@@ -1,7 +1,15 @@
 import chalk from "chalk";
+import { differingDependsOn } from "../dependsOn/differingDependsOn";
+import { formatDependsOn } from "../dependsOn/formatDependsOn";
 import type { PlanPhase } from "../types";
 
-export function printPhaseTasks(phase: PlanPhase): void {
+export function printPhaseTasks(phase: PlanPhase, phaseNumber: number): void {
+	const dependsOn = differingDependsOn(phase.dependsOn, phaseNumber);
+	if (dependsOn)
+		console.log(
+			`      ${chalk.dim(`Depends on: ${formatDependsOn(dependsOn)}`)}`,
+		);
+
 	for (const task of phase.tasks) {
 		console.log(`      - ${task.task}`);
 	}

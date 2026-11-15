@@ -42,5 +42,9 @@ export function registerItemCommands(cmd: Command): void {
 			"--position <position>",
 			"1-indexed position to insert at (default: append)",
 		)
+		.option(
+			"--depends-on <phase...>",
+			"Earlier phase numbers this phase waits for (default: the previous phase; pass none for no dependencies)",
+		)
 		.action(lazyAction(() => import("./addPhase"), "addPhase"));
 }

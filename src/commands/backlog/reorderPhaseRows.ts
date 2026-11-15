@@ -1,8 +1,6 @@
-import { and, asc, eq } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
-import { planPhases, planTasks } from "../../shared/db/schema";
-import { reindexPhases } from "./reindexPhases";
-import { shiftPhasesUp } from "./shiftPhasesUp";
+import { remapDependsOnAround } from "./dependsOn/remapDependsOnAround";
+import { movePhaseRows } from "./movePhaseRows";
 
 export async function reorderPhaseRows(
 	orm: Db,
@@ -10,42 +8,22 @@ export async function reorderPhaseRows(
 	fromIdx: number,
 	toIdx: number,
 ): Promise<void> {
-	await orm.transaction(async (tx) => {
-		const [phaseRow] = await tx
-			.select({ name: planPhases.name, manualChecks: planPhases.manualChecks })
-			.from(planPhases)
-			.where(and(eq(planPhases.itemId, itemId), eq(planPhases.idx, fromIdx)));
-		const tasks = await tx
-			.select({ idx: planTasks.idx, task: planTasks.task })
-			.from(planTasks)
-			.where(and(eq(planTasks.itemId, itemId), eq(planTasks.phaseIdx, fromIdx)))
-			.orderBy(asc(planTasks.idx));
-
-		await tx
-			.delete(planTasks)
-			.where(
-				and(eq(planTasks.itemId, itemId), eq(planTasks.phaseIdx, fromIdx)),
-			);
-		await tx
-			.delete(planPhases)
-			.where(and(eq(planPhases.itemId, itemId), eq(planPhases.idx, fromIdx)));
-		await reindexPhases(tx, itemId);
-		await shiftPhasesUp(tx, itemId, toIdx);
-		await tx.insert(planPhases).values({
+	await orm.transaction((tx) =>
+		remapDependsOnAround(
+			tx,
 			itemId,
-			idx: toIdx,
-			name: phaseRow.name,
-			manualChecks: phaseRow.manualChecks,
-		});
-		if (tasks.length) {
-			await tx.insert(planTasks).values(
-				tasks.map((t) => ({
-					itemId,
-					phaseIdx: toIdx,
-					idx: t.idx,
-					task: t.task,
-				})),
-			);
-		}
-	});
+			(oldIdxs) => movedOrder(oldIdxs, fromIdx, toIdx),
+			() => movePhaseRows(tx, itemId, fromIdx, toIdx),
+		),
+	);
+}
+
+function movedOrder(
+	oldIdxs: number[],
+	fromIdx: number,
+	toIdx: number,
+): number[] {
+	const order = oldIdxs.filter((idx) => idx !== fromIdx);
+	order.splice(toIdx, 0, fromIdx);
+	return order;
 }

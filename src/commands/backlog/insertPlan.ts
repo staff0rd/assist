@@ -1,5 +1,6 @@
 import type { BacklogDatabase } from "../../shared/db/Db";
 import { planPhases, planTasks } from "../../shared/db/schema";
+import { toStoredDependsOn } from "./dependsOn/toStoredDependsOn";
 import type { BacklogItem } from "./types";
 
 export async function insertPlan(
@@ -15,6 +16,7 @@ export async function insertPlan(
 			manualChecks: phase.manualChecks
 				? JSON.stringify(phase.manualChecks)
 				: null,
+			dependsOn: toStoredDependsOn(phase.dependsOn, pi),
 		})),
 	);
 	const tasks = item.plan.flatMap((phase, pi) =>

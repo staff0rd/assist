@@ -17,6 +17,7 @@ function rowToPhase(p: PhaseRow, byPhase: Map<number, TaskRow[]>): PlanPhase {
 		tasks: (byPhase.get(p.idx) ?? []).map((t) => ({ task: t.task })),
 	};
 	if (p.manualChecks) phase.manualChecks = JSON.parse(p.manualChecks);
+	if (p.dependsOn) phase.dependsOn = p.dependsOn.map((dep) => dep + 1);
 	return phase;
 }
 

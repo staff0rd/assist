@@ -16,5 +16,11 @@ export function slatePhaseRowSx(active: boolean) {
 			lineHeight: "18px",
 			overflowWrap: "anywhere",
 		},
+		"& .phase-caption": {
+			display: "block",
+			fontSize: 11,
+			lineHeight: "16px",
+			color: "text.secondary",
+		},
 	} as const;
 }

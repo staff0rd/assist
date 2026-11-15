@@ -1,4 +1,5 @@
 import type { BacklogItem, PhaseStatus } from "../types";
+import { dependsOnCaption } from "./dependsOnCaption";
 import { ITEM_SECTION_IDS, phaseAnchor } from "./itemSectionAnchor";
 import { phaseStatus, REVIEW_PHASE, reviewPhaseIndex } from "./sessionsByPhase";
 
@@ -7,6 +8,7 @@ export type ItemNavSection = {
 	label: string;
 	title?: string;
 	status?: PhaseStatus;
+	caption?: string;
 	nested?: boolean;
 };
 
@@ -20,13 +22,17 @@ function planSections(item: BacklogItem): ItemNavSection[] {
 	const allPhases = hasReview ? [...phases, REVIEW_PHASE] : phases;
 	return [
 		{ id: ITEM_SECTION_IDS.plan, label: "Phases" },
-		...allPhases.map((phase, i) => ({
-			id: phaseAnchor(i).id,
-			label: `${i + 1}`,
-			title: phase.name,
-			status: phaseStatus(i, item.currentPhase),
-			nested: true,
-		})),
+		...allPhases.map((phase, i) => {
+			const caption = dependsOnCaption(phase, i);
+			return {
+				id: phaseAnchor(i).id,
+				label: `${i + 1}`,
+				title: phase.name,
+				status: phaseStatus(i, item.currentPhase),
+				...(caption ? { caption } : {}),
+				nested: true,
+			};
+		}),
 	];
 }
 

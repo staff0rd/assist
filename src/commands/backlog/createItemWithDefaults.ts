@@ -1,6 +1,7 @@
 import { getDb } from "../../shared/db/getDb";
 import { insertItem } from "./insertItem";
 import { insertPhaseAt } from "./insertPhaseAt";
+import { toStoredDependsOn } from "./dependsOn/toStoredDependsOn";
 import { serializeManualChecks } from "./serializeManualChecks";
 import { getOrigin } from "./shared";
 import type { BacklogType } from "./types";
@@ -9,6 +10,7 @@ type NewItemPhase = {
 	name: string;
 	tasks: string[];
 	manualChecks?: string[];
+	dependsOn?: number[];
 };
 
 type NewItemFields = {
@@ -47,6 +49,7 @@ export async function createItemWithDefaults(
 				phase.tasks,
 				serializeManualChecks(phase.manualChecks),
 				undefined,
+				toStoredDependsOn(phase.dependsOn, idx),
 			);
 		}
 	} else if (fields.type === "bug") {

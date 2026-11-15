@@ -19,6 +19,8 @@ const planPhaseSchema = z.strictObject({
 	name: z.string(),
 	tasks: z.array(planTaskSchema),
 	manualChecks: z.array(z.string()).optional(),
+	/** 1-based phases this one waits for; absent means the previous phase. */
+	dependsOn: z.array(z.number()).optional(),
 });
 
 /* why: read-only on the item detail path (joined from the phase_usage table),

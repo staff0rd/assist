@@ -6,6 +6,7 @@ import type {
 	PlanPhase,
 } from "../types";
 import { phaseAnchor } from "./itemSectionAnchor";
+import { DependsOnRow, type PhaseDependency } from "./DependsOnRow";
 import { ManualChecks } from "./ManualChecks";
 import { markers, phaseCardSx } from "./phaseCardSx";
 import { PhaseSessionsLine } from "./PhaseSessionsLine";
@@ -17,6 +18,7 @@ type PhaseCardProps = {
 	phase: PlanPhase;
 	index: number;
 	status: PhaseStatus;
+	dependsOn?: PhaseDependency[];
 	itemId?: number;
 	usage?: PhaseUsage;
 	sessions?: PhaseSession[];
@@ -27,6 +29,7 @@ export function PhaseCard({
 	phase,
 	index,
 	status,
+	dependsOn,
 	itemId,
 	usage,
 	sessions,
@@ -48,6 +51,7 @@ export function PhaseCard({
 				itemId={itemId}
 				onRewind={onRewind}
 			/>
+			{dependsOn && <DependsOnRow dependsOn={dependsOn} />}
 			{usage && <PhaseUsageLine usage={usage} />}
 			<TaskList tasks={phase.tasks} marker={marker} />
 			{checks.length > 0 && <ManualChecks checks={checks} />}

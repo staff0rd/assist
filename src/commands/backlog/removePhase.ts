@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { and, eq } from "drizzle-orm";
 import { planPhases, planTasks } from "../../shared/db/schema";
+import { remapDependsOnAround } from "./dependsOn/remapDependsOnAround";
 import { formatItemId } from "./formatItemId";
 import { findPhase } from "./findPhase";
 import { adjustCurrentPhase, reindexPhases } from "./reindexPhases";
@@ -11,15 +12,24 @@ export async function removePhase(id: string, phase: string): Promise<void> {
 	const { item, orm, itemId, phaseIdx } = found;
 
 	await orm.transaction(async (tx) => {
-		await tx
-			.delete(planTasks)
-			.where(
-				and(eq(planTasks.itemId, itemId), eq(planTasks.phaseIdx, phaseIdx)),
-			);
-		await tx
-			.delete(planPhases)
-			.where(and(eq(planPhases.itemId, itemId), eq(planPhases.idx, phaseIdx)));
-		await reindexPhases(tx, itemId);
+		await remapDependsOnAround(
+			tx,
+			itemId,
+			(oldIdxs) => oldIdxs.filter((idx) => idx !== phaseIdx),
+			async () => {
+				await tx
+					.delete(planTasks)
+					.where(
+						and(eq(planTasks.itemId, itemId), eq(planTasks.phaseIdx, phaseIdx)),
+					);
+				await tx
+					.delete(planPhases)
+					.where(
+						and(eq(planPhases.itemId, itemId), eq(planPhases.idx, phaseIdx)),
+					);
+				await reindexPhases(tx, itemId);
+			},
+		);
 		await adjustCurrentPhase(tx, item, phaseIdx);
 	});
 

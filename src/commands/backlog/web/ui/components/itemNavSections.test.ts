@@ -132,4 +132,24 @@ describe("itemNavSections", () => {
 			"Comments",
 		]);
 	});
+
+	it("captions phases whose dependencies differ from the previous phase", () => {
+		const sections = itemNavSections(
+			makeBacklogItem({
+				plan: [
+					{ name: "First", tasks: [] },
+					{ name: "Second", tasks: [], dependsOn: [1] },
+					{ name: "Third", tasks: [], dependsOn: [1] },
+					{ name: "Fourth", tasks: [], dependsOn: [] },
+				],
+			}),
+		);
+
+		expect(sections.slice(1).map((s) => s.caption)).toEqual([
+			undefined,
+			undefined,
+			"after 1",
+			"no dependencies",
+		]);
+	});
 });

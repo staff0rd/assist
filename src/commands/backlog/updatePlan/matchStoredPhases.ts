@@ -8,7 +8,8 @@ export function isIdenticalPhase(a: DiffPhase, b: DiffPhase): boolean {
 	return (
 		a.name === b.name &&
 		sameList(a.tasks, b.tasks) &&
-		sameList(a.manualChecks, b.manualChecks)
+		sameList(a.manualChecks, b.manualChecks) &&
+		JSON.stringify(a.dependsOn) === JSON.stringify(b.dependsOn)
 	);
 }
 

@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { REVIEW_PHASE_NAME } from "../buildPhasePrompt";
+import { refinePhaseDependsOn } from "../dependsOn/refinePhaseDependsOn";
 
 const PHASE_DEFINITION = /^\W*phase\s+\d+\s*[:.)\-–—]/i;
 
@@ -16,6 +17,7 @@ export const proposedPhaseSchema = z.strictObject({
 		.array(z.string().trim().min(1))
 		.min(1, "a phase needs at least one task"),
 	manualChecks: z.array(z.string().trim().min(1)).default([]),
+	dependsOn: z.array(z.number().int()).optional(),
 });
 
 export const proposedItemSchema = z.strictObject({
@@ -34,7 +36,10 @@ export const proposedItemSchema = z.strictObject({
 				),
 		)
 		.default([]),
-	phases: z.array(proposedPhaseSchema).default([]),
+	phases: z
+		.array(proposedPhaseSchema)
+		.superRefine(refinePhaseDependsOn)
+		.default([]),
 });
 
 export type ProposedItem = z.infer<typeof proposedItemSchema>;

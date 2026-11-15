@@ -21,7 +21,7 @@ export function registerUpdateCommands(cmd: Command): void {
 			)
 			.requiredOption(
 				"--json <file|->",
-				"Path to a JSON payload of { phases: [{ name, tasks, manualChecks }] }, or - to read it from stdin",
+				"Path to a JSON payload of { phases: [{ name, tasks, manualChecks?, dependsOn? }] }, or - to read it from stdin",
 			)
 			.action(lazyAction(() => import("./updatePlan"), "updatePlan")),
 		"/refine",

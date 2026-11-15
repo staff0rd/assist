@@ -2,6 +2,8 @@ export type DiffPhase = {
 	name: string;
 	tasks: string[];
 	manualChecks: string[];
+	/** 1-based, only when it differs from the previous phase. */
+	dependsOn?: number[];
 };
 
 type PlanPhaseChange = "unchanged" | "added" | "edited" | "moved";
