@@ -1,3 +1,10 @@
+## [0.1182.5](https://github.com/staff0rd/assist/compare/v0.1182.4...v0.1182.5) (2026-11-15)
+
+
+### Bug Fixes
+
+* flag parallel phases off by default ([6bf77c6](https://github.com/staff0rd/assist/commit/6bf77c6184c0786d9eaf5ea22be525adcb1372cd))
+
 ## [0.1182.4](https://github.com/staff0rd/assist/compare/v0.1182.3...v0.1182.4) (2026-11-15)
 
 
