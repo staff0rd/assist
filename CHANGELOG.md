@@ -1,3 +1,10 @@
+## [0.1181.2](https://github.com/staff0rd/assist/compare/v0.1181.1...v0.1181.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* tolerate a DB ahead of the build ([efa79d9](https://github.com/staff0rd/assist/commit/efa79d9f6bcb296f7a232310866ea089f615a1a3))
+
 ## [0.1181.1](https://github.com/staff0rd/assist/compare/v0.1181.0...v0.1181.1) (2026-11-15)
 
 
