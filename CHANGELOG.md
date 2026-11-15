@@ -1,3 +1,10 @@
+# [0.1178.0](https://github.com/staff0rd/assist/compare/v0.1177.1...v0.1178.0) (2026-11-15)
+
+
+### Features
+
+* declare and show phase dependencies ([68cb256](https://github.com/staff0rd/assist/commit/68cb256156d31ba3eefb0ad6d0e3000c632e4320))
+
 ## [0.1177.1](https://github.com/staff0rd/assist/compare/v0.1177.0...v0.1177.1) (2026-11-15)
 
 
