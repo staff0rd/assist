@@ -11,6 +11,7 @@ import { migration0009InboxMessages } from "./migrations/migration0009InboxMessa
 import { migration0010UserConfig } from "./migrations/migration0010UserConfig";
 import { migration0011JobRuns } from "./migrations/migration0011JobRuns";
 import { migration0012PhaseDependsOn } from "./migrations/migration0012PhaseDependsOn";
+import { migration0013PhaseRunState } from "./migrations/migration0013PhaseRunState";
 
 export const migrations: readonly Migration[] = [
 	migration0001Baseline,
@@ -25,6 +26,7 @@ export const migrations: readonly Migration[] = [
 	migration0010UserConfig,
 	migration0011JobRuns,
 	migration0012PhaseDependsOn,
+	migration0013PhaseRunState,
 ];
 
 export const latestMigrationId: number = migrations.reduce(
