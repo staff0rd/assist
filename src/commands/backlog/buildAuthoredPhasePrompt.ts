@@ -47,7 +47,7 @@ function buildLandLines(confirmSuffix: string): string[] {
 	return [
 		"",
 		"This phase runs in its own worktree, in parallel with other phases of this item. It is only done once its commits have landed on the item branch.",
-		`Once verify passes${confirmSuffix}, commit your work and run \`assist backlog land\`: it rebases onto the item branch, re-runs \`assist verify\` if the branch moved, and fast-forwards the item branch. If it stops on conflicts, resolve them (keeping the other phases' work), \`git rebase --continue\`, and run it again; if verify fails, fix it, commit, and run it again.`,
+		`Once verify passes${confirmSuffix}, commit your work and run \`assist backlog land\`: it rebases onto the item branch, re-runs \`assist verify\` if the branch moved, and pushes your commits to it. If it stops on conflicts, resolve them (keeping the other phases' work), \`git rebase --continue\`, and run it again; if verify fails, fix it, commit, and run it again.`,
 	];
 }
 

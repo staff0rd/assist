@@ -4,6 +4,7 @@ import { clearSignalOwner, recordSignalOwner } from "../recordSignalOwner";
 import { resolvePlan } from "../resolvePlan";
 import { findOneItem } from "../shared";
 import type { BacklogRunOptions } from "../types";
+import { adoptItemUpstream } from "./adoptItemUpstream";
 import { phaseStartRefusal } from "./phaseStartRefusal";
 import { watchPhaseCancel } from "./watchPhaseCancel";
 import { runUntilSettled } from "./runUntilSettled";
@@ -34,6 +35,10 @@ export async function runParallelPhase(
 	process.env.ASSIST_SESSION_ID ??= String(process.pid);
 	process.env.ASSIST_BACKLOG_PHASE = String(phaseNumber);
 	process.env.ASSIST_PHASE_LAND_TREE = options.itemTree;
+	adoptItemUpstream(
+		options.itemTree,
+		`backlog run-phase ${itemId} phase ${phaseNumber}`,
+	);
 	recordSignalOwner(itemId, idx);
 	const watcher = watchPhaseCancel(itemId, idx, options.token);
 	try {

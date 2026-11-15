@@ -83,4 +83,21 @@ describe("landPhase", () => {
 
 		expect(unlandedPhaseError(3)).toBeUndefined();
 	});
+
+	it("pushes to the remote branch the phase tracks and pulls it into the item tree", () => {
+		const remote = join(root, "remote.git");
+		execFileSync("git", ["init", "-q", "--bare", "-b", "item", remote]);
+		git(itemTree, "remote", "add", "origin", remote);
+		git(itemTree, "push", "-q", "-u", "origin", "item");
+		git(phaseTree, "branch", "--set-upstream-to", "origin/item");
+		commit(phaseTree, "phase.txt", "phase");
+
+		landPhase();
+
+		const head = git(phaseTree, "rev-parse", "HEAD");
+		expect(process.exitCode).toBeUndefined();
+		expect(git(remote, "rev-parse", "item")).toBe(head);
+		expect(git(itemTree, "rev-parse", "HEAD")).toBe(head);
+		expect(unlandedPhaseError(2)).toBeUndefined();
+	});
 });

@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { join } from "node:path";
 import chalk from "chalk";
 import { landingFailed } from "./landingFailed";
+import { landingTarget } from "./landingTarget";
 import { landTree } from "./landTree";
 import { isAncestor, phaseGit } from "./phaseGit";
 import { rebaseOnto } from "./rebaseOnto";
@@ -17,7 +18,7 @@ function rebaseInProgress(): boolean {
 	);
 }
 
-/** Land a parallel phase's commits on the item branch: rebase, verify if the branch moved, then fast-forward it. */
+/** Land a parallel phase's commits: rebase onto the branch it lands on, verify if that moved, then push (or fast-forward) it. */
 export function landPhase(): void {
 	const tree = landTree();
 	if (!tree)
@@ -31,24 +32,25 @@ export function landPhase(): void {
 	if (phaseGit(["status", "--porcelain"]).out)
 		return landingFailed("Commit your work before landing it.");
 
+	const target = landingTarget(tree);
 	for (let attempt = 0; attempt < MAX_ATTEMPTS; attempt++) {
-		const target = phaseGit(["rev-parse", "HEAD"], tree).out;
-		if (isAncestor("HEAD", target)) {
-			console.log(chalk.green("Already landed on the item branch."));
+		const tip = target.tip();
+		if (isAncestor("HEAD", tip)) {
+			console.log(chalk.green(`Already landed on ${target.label}.`));
 			return;
 		}
-		if (!isAncestor(target, "HEAD")) {
-			if (!rebaseOnto(target) || !verifyAfterRebase()) return;
+		if (!isAncestor(tip, "HEAD")) {
+			if (!rebaseOnto(tip) || !verifyAfterRebase()) return;
 		}
 		const head = phaseGit(["rev-parse", "HEAD"]).out;
-		if (phaseGit(["merge", "--ff-only", head], tree).ok) {
+		if (target.publish(head)) {
 			console.log(
-				chalk.green(`Landed ${head.slice(0, 8)} on the item branch.`),
+				chalk.green(`Landed ${head.slice(0, 8)} on ${target.label}.`),
 			);
 			return;
 		}
 	}
 	landingFailed(
-		`Could not fast-forward the item branch in ${tree}: it kept moving or has uncommitted changes. Run \`assist backlog land\` again.`,
+		`Could not land on ${target.label}: it kept moving or was rejected. Run \`assist backlog land\` again.`,
 	);
 }

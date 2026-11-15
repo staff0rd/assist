@@ -1,3 +1,4 @@
+import { landingTarget } from "./landingTarget";
 import { landTree } from "./landTree";
 import { parallelPhaseNumber } from "./parallelPhaseNumber";
 import { isAncestor, phaseGit } from "./phaseGit";
@@ -8,7 +9,8 @@ export function unlandedPhaseError(phaseNumber: number): string | undefined {
 	if (!tree || parallelPhaseNumber() !== phaseNumber) return undefined;
 	if (phaseGit(["status", "--porcelain"]).out)
 		return "Phase not landed: commit your work, then run `assist backlog land` before phase-done.";
-	const target = phaseGit(["rev-parse", "HEAD"], tree).out;
-	if (target && isAncestor("HEAD", target)) return undefined;
-	return "Phase not landed: run `assist backlog land` to rebase onto the item branch, verify and fast-forward it, then run phase-done again.";
+	const target = landingTarget(tree);
+	const tip = target.tip();
+	if (tip && isAncestor("HEAD", tip)) return undefined;
+	return `Phase not landed on ${target.label}: run \`assist backlog land\`, then run phase-done again.`;
 }
