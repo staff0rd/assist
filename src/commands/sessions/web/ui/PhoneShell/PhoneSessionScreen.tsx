@@ -1,13 +1,12 @@
-import { useParams } from "react-router";
-import { sessionTitle } from "../App/sessionTitle";
 import type { SessionSocket } from "../useSessionSocket";
+import { sessionTitle } from "../App/sessionTitle";
 import { PhoneMoreButton } from "./PhoneActions/PhoneMoreButton";
 import { PhoneBackButton } from "./PhoneBackButton";
 import { PhoneNavBar } from "./PhoneNavBar";
 import { PhoneReconnectingBar } from "./PhoneReconnectingBar";
 import { PhoneSessionBody } from "./PhoneSessionBody";
-import { PhoneSessionGone } from "./PhoneSessionGone";
 import { PhoneStatusStrip } from "./PhoneStatusStrip";
+import { useOpenPhoneSession } from "./useOpenPhoneSession";
 import { usePhoneSessionIo } from "./usePhoneSessionIo";
 
 export function PhoneSessionScreen({
@@ -17,12 +16,17 @@ export function PhoneSessionScreen({
 	socket: SessionSocket;
 	keyboardOpen: boolean;
 }) {
-	const { id } = useParams();
-	const session = socket.sessions.find((s) => s.id === id);
+	const session = useOpenPhoneSession(socket);
 	const io = usePhoneSessionIo(session, socket);
-	if (!session) return <PhoneSessionGone />;
-
-	const localNode = socket.nodes?.local;
+	const reconnectingBar = socket.reconnecting && <PhoneReconnectingBar />;
+	if (!session) {
+		return (
+			<>
+				<PhoneNavBar left={<PhoneBackButton />} title="Session" />
+				{reconnectingBar}
+			</>
+		);
+	}
 
 	return (
 		<>
@@ -32,8 +36,8 @@ export function PhoneSessionScreen({
 				title={sessionTitle(session)}
 				right={<PhoneMoreButton session={session} />}
 			/>
-			{socket.reconnecting && <PhoneReconnectingBar />}
-			<PhoneStatusStrip session={session} localNode={localNode} />
+			{reconnectingBar}
+			<PhoneStatusStrip session={session} localNode={socket.nodes?.local} />
 			<PhoneSessionBody
 				session={session}
 				socket={socket}

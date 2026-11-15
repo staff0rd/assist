@@ -7,6 +7,7 @@ type PhoneActions = {
 	isStarred: (session: SessionInfo) => boolean;
 	toggleStar: (session: SessionInfo) => void;
 	dismiss: (session: SessionInfo, opts?: DismissOptions) => void;
+	announceEnded: (sessionId: string, title?: string) => void;
 };
 
 export const PhoneActionsContext = createContext<PhoneActions>({
@@ -14,6 +15,7 @@ export const PhoneActionsContext = createContext<PhoneActions>({
 	isStarred: () => false,
 	toggleStar: () => {},
 	dismiss: () => {},
+	announceEnded: () => {},
 });
 
 export function usePhoneActions(): PhoneActions {
