@@ -1,58 +1,40 @@
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
-import { join } from "node:path";
-import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
-
-vi.mock("../../shared/isApprovedRead", () => ({
-	isApprovedRead: (cmd: string) =>
-		/^(cat|grep|echo)(\s|$)/.test(cmd) ? "Read-only CLI command" : undefined,
-}));
-
+import { describe, expect, it } from "vitest";
 import { findSchemaPathDeny } from "./findSchemaPathDeny";
 
-let root: string;
-
-const TABLE_MODULE = `import { integer, pgTable, text } from "drizzle-orm/pg-core";
-
-export const jobRuns = pgTable("job_runs", {
-	id: integer().primaryKey(),
-	kind: text().notNull(),
-});
-`;
-
 const A1416_HEREDOC = `cat > src/shared/db/jobRuns.ts <<'EOF'
-${TABLE_MODULE}EOF
+import { integer, pgTable } from "drizzle-orm/pg-core";
+export const jobRuns = pgTable("job_runs", { id: integer().primaryKey() });
+EOF
 cat > src/shared/db/migrations/migration0011JobRuns.ts <<'EOF'
-import type { Migration } from "./Migration";
-
-export const migration0011JobRuns: Migration = {
-	id: 11,
-	name: "job runs",
-	sql: "CREATE TABLE IF NOT EXISTS job_runs (id INTEGER PRIMARY KEY)",
-};
+export const migration0011JobRuns = { id: 11 };
 EOF`;
 
-function deny(command: string) {
-	return findSchemaPathDeny("Bash", command, root);
-}
+const A1690_COMMAND = `cd /home/stafford/git/assist-4/src && cat > shared/db/migrations/migration0013PhaseRunState.ts <<'EOF'
+import type { Migration } from "./Migration";
+
+export const migration0013PhaseRunState: Migration = {
+	id: 13,
+	name: "phase run state",
+	sql: "ALTER TABLE plan_phases ADD COLUMN IF NOT EXISTS run_state TEXT",
+};
+EOF
+python3 - <<'PY'
+p = 'shared/db/migrations.ts'
+s = open(p).read()
+s = s.replace('migration0012', 'migration0012, migration0013PhaseRunState')
+open(p, 'w').write(s)
+p = 'shared/db/planPhases.ts'
+s = open(p).read()
+s = s.replace('currentPhase', 'currentPhase, runState')
+open(p, 'w').write(s)
+PY`;
 
 describe("findSchemaPathDeny", () => {
-	beforeAll(() => {
-		root = mkdtempSync(join(tmpdir(), "assist-schema-deny-"));
-		mkdirSync(join(root, "src/shared/db/migrations"), { recursive: true });
-		writeFileSync(join(root, "src/shared/db/items.ts"), TABLE_MODULE);
-		writeFileSync(
-			join(root, "src/shared/db/recordGitRef.ts"),
-			"export function recordGitRef() {}\n",
-		);
-	});
-
-	afterAll(() => {
-		rmSync(root, { recursive: true, force: true });
-	});
-
-	it("denies the a1416 heredoc that wrote a new table module and migration", () => {
-		const decision = deny(A1416_HEREDOC);
+	it.each([
+		["the a1690 command verbatim", A1690_COMMAND],
+		["the a1416 heredoc", A1416_HEREDOC],
+	])("denies %s with the schema lock reason", (_, command) => {
+		const decision = findSchemaPathDeny(command);
 
 		expect(decision?.permissionDecision).toBe("deny");
 		expect(decision?.permissionDecisionReason).toContain(
@@ -61,43 +43,25 @@ describe("findSchemaPathDeny", () => {
 	});
 
 	it.each([
+		"cd src && cat > shared/db/migrations/migration0099X.ts <<'EOF'\nx\nEOF",
+		"cd src/shared/db && cat > migrations/migration0099X.ts <<'EOF'\nx\nEOF",
+		"cd src && python3 -c \"open('shared/db/schema.ts','w').write('x')\"",
+		"cd src && node -e \"fs.writeFileSync('shared/db/items.ts','x')\"",
+		"cd src/shared/db && python3 -c \"open('migrations/migration0099X.ts','w')\"",
 		"sed -i 's/a/b/' src/shared/db/schema.ts",
-		"echo x >> src/shared/db/migrations.ts",
 		"cp /tmp/m.ts src/shared/db/migrations/migration0012Feature.ts",
-		"mv src/shared/db/items.ts src/shared/db/itemsOld.ts",
-		"sed -i 's/a/b/' src/shared/db/items.ts",
-		"rm ./src/shared/db/schema.ts",
-		"git checkout -- src/shared/db/schema.ts",
-		"cat > src/shared/db/schema.ts <<'EOF'\nexport {};\nEOF",
-		"sed -ni 's/a/b/' src/shared/db/schema.ts",
-		"sed -n 's/a/b/w src/shared/db/schema.ts' src/shared/db/items.ts",
-	])("denies the write %s", (command) => {
-		expect(deny(command)?.permissionDecision).toBe("deny");
-	});
-
-	it("denies an absolute path under the project root", () => {
-		expect(
-			deny(`sed -i 's/a/b/' ${root}/src/shared/db/schema.ts`)
-				?.permissionDecision,
-		).toBe("deny");
-	});
-
-	it.each([
+		String.raw`rm .\src\shared\db\schema.ts`,
 		"cat src/shared/db/schema.ts",
-		"grep -n pgTable src/shared/db/items.ts",
 		"sed -n '1,20p' src/shared/db/migrations.ts",
-		"sed --quiet -e '/pgTable/p' src/shared/db/schema.ts",
-		"cat src/shared/db/migrations/migration0011JobRuns.ts",
-	])("allows the read-only %s", (command) => {
-		expect(deny(command)).toBeUndefined();
+	])("denies %s", (command) => {
+		expect(findSchemaPathDeny(command)?.permissionDecision).toBe("deny");
 	});
 
 	it.each([
-		"sed -i 's/a/b/' src/shared/db/recordGitRef.ts",
-		"echo x > src/shared/db/listJobRuns.ts",
-		"sed -i 's/a/b/' src/shared/db/migrations/Migration.ts",
 		"rm -rf dist",
-	])("ignores %s, which writes no schema file", (command) => {
-		expect(deny(command)).toBeUndefined();
+		"cd src && cat commands/schema/isSchemaPath.ts",
+		"grep -rn migrations src/commands",
+	])("ignores %s, which names no db path", (command) => {
+		expect(findSchemaPathDeny(command)).toBeUndefined();
 	});
 });

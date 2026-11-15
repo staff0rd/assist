@@ -220,6 +220,33 @@ describe.each(harnesses)("%s enforcement", (harness, adapter, native) => {
 		);
 	});
 
+	it("denies a relative schema write after cd until the schema is unlocked", async () => {
+		const command = `cd ${root}/src && python3 -c "open('shared/db/schema.ts','w')"`;
+		const locked = await decide(
+			adapter,
+			native.shell(command),
+			identity(harness),
+		);
+		expect(locked?.permissionDecision).toBe("deny");
+
+		approveSession(harness, "conv-a");
+		const unlocked = await decide(
+			adapter,
+			native.shell(command),
+			identity(harness),
+		);
+		expect(unlocked?.permissionDecision).not.toBe("deny");
+
+		const suffix = harness === "claude" ? "" : `:${harness}`;
+		const itemId = await addStory(`phase-1${suffix}`);
+		const phase = await decide(
+			adapter,
+			native.shell(command),
+			identity(harness, { itemId, conversationId: "conv-z" }),
+		);
+		expect(phase?.permissionDecision).not.toBe("deny");
+	});
+
 	it("allows the schema write once this conversation is approved", async () => {
 		approveSession(harness, "conv-a");
 		expect(

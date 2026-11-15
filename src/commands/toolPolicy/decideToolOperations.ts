@@ -31,7 +31,7 @@ async function decideCommandOperation(
 	if (decision?.permissionDecision === "deny") return decision;
 	const docsDeny = findDocsPathDeny(tool, command);
 	if (docsDeny && (await isDocsLocked())) return docsDeny;
-	const schemaDeny = findSchemaPathDeny(tool, command);
+	const schemaDeny = findSchemaPathDeny(command);
 	if (schemaDeny && (await isSchemaLocked(identity))) return schemaDeny;
 	return decision;
 }

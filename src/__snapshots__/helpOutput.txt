@@ -631,7 +631,7 @@ Options:
   -h, --help      display help for command
 
 Commands:
-  migrate         Apply pending migrations in order (build ships up to migration 12)
+  migrate         Apply pending migrations in order (build ships up to migration 13)
   status          Report whether the database is in sync, behind, or ahead of this build
   drop-retired    Drop retired tables left by removed features, after confirming each
   help [command]  display help for command
@@ -639,7 +639,7 @@ Commands:
 === assist db migrate --help
 Usage: assist db migrate [options]
 
-Apply pending migrations in order (build ships up to migration 12)
+Apply pending migrations in order (build ships up to migration 13)
 
 Options:
   -h, --help  display help for command
