@@ -1,20 +1,21 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { findUnmergedPaths } from "./findConflictMarkers";
 
-function git(args: string): string {
-	return execSync(`git ${args}`, {
+function git(...args: string[]): string {
+	return execFileSync("git", args, {
 		encoding: "utf8",
 		stdio: ["pipe", "pipe", "pipe"],
 	});
 }
 
 export function listStashShas(): string[] {
-	return git("stash list --format=%H").split("\n").filter(Boolean);
+	return git("stash", "list", "--format=%H").split("\n").filter(Boolean);
 }
 
 function findStrandedAutostash(head: string, before: string[]): string | null {
 	const known = new Set(before);
-	for (const line of git("stash list --format=%H%x20%P%x20%gs").split("\n")) {
+	const lines = git("stash", "list", "--format=%H %P %gs").split("\n");
+	for (const line of lines) {
 		const [sha, parent, ...subject] = line.split(" ");
 		if (!sha || known.has(sha) || parent !== head) continue;
 		if (subject.join(" ").includes("autostash")) return sha;
@@ -44,7 +45,7 @@ function strandedError(sha: string, reason: string): Error {
 
 function dropBySha(sha: string): void {
 	const index = listStashShas().indexOf(sha);
-	if (index !== -1) git(`stash drop -q stash@{${index}}`);
+	if (index !== -1) git("stash", "drop", "-q", `stash@{${index}}`);
 }
 
 export function recoverAutostash(head: string, before: string[]): void {
@@ -54,7 +55,7 @@ export function recoverAutostash(head: string, before: string[]): void {
 		throw strandedError(sha, "applying it hit conflicts");
 	}
 	try {
-		git(`stash apply -q ${sha}`);
+		git("stash", "apply", "-q", sha);
 	} catch {
 		throw strandedError(sha, "reapplying it failed");
 	}
