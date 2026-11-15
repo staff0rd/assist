@@ -1,3 +1,10 @@
+## [0.1179.2](https://github.com/staff0rd/assist/compare/v0.1179.1...v0.1179.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* drop duplicate docs manual check ([2259a53](https://github.com/staff0rd/assist/commit/2259a539bc5a25299cc30f61f2ad1854b2548154))
+
 ## [0.1179.1](https://github.com/staff0rd/assist/compare/v0.1179.0...v0.1179.1) (2026-11-15)
 
 
