@@ -1,3 +1,10 @@
+# [0.1183.0](https://github.com/staff0rd/assist/compare/v0.1182.5...v0.1183.0) (2026-11-15)
+
+
+### Features
+
+* focus composer on empty clicks ([21ceca4](https://github.com/staff0rd/assist/commit/21ceca48253fa25dd4c72f002fa0e1afef55e2de))
+
 ## [0.1182.5](https://github.com/staff0rd/assist/compare/v0.1182.4...v0.1182.5) (2026-11-15)
 
 
