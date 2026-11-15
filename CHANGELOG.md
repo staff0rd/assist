@@ -1,3 +1,10 @@
+## [0.1180.1](https://github.com/staff0rd/assist/compare/v0.1180.0...v0.1180.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* write worktree config to its own file ([1290757](https://github.com/staff0rd/assist/commit/12907571e62a120afb2eb73f916ead45b3320fe2))
+
 # [0.1180.0](https://github.com/staff0rd/assist/compare/v0.1179.2...v0.1180.0) (2026-11-15)
 
 
