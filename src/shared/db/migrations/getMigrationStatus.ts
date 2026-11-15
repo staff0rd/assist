@@ -24,7 +24,9 @@ export function compareMigrations(appliedIds: number[]): MigrationStatus {
 	return { state: "in-sync", version: expected };
 }
 
-async function readAppliedIds(exec: MigrationExecutor): Promise<number[]> {
+export async function readAppliedIds(
+	exec: MigrationExecutor,
+): Promise<number[]> {
 	const present = await exec.query(
 		`SELECT to_regclass('public.${APPLIED_MIGRATIONS_TABLE}') AS reg`,
 	);
