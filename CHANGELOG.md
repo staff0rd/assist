@@ -1,3 +1,10 @@
+## [0.1180.4](https://github.com/staff0rd/assist/compare/v0.1180.3...v0.1180.4) (2026-11-15)
+
+
+### Bug Fixes
+
+* keep too verbose button out of comments ([a0b7699](https://github.com/staff0rd/assist/commit/a0b7699e0e72afe08c9728398cf5cd2dfb363f02))
+
 ## [0.1180.3](https://github.com/staff0rd/assist/compare/v0.1180.2...v0.1180.3) (2026-11-15)
 
 
