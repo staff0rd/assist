@@ -1,3 +1,10 @@
+## [0.1174.2](https://github.com/staff0rd/assist/compare/v0.1174.1...v0.1174.2) (2026-11-15)
+
+
+### Bug Fixes
+
+* pass --no-daemon only if codex has it ([1a7ebf2](https://github.com/staff0rd/assist/commit/1a7ebf2108c8de000eea3525db625fae548b89a5))
+
 ## [0.1174.1](https://github.com/staff0rd/assist/compare/v0.1174.0...v0.1174.1) (2026-11-14)
 
 
