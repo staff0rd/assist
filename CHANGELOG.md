@@ -1,3 +1,10 @@
+## [0.1176.1](https://github.com/staff0rd/assist/compare/v0.1176.0...v0.1176.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* join hard-wrapped terminal URLs ([29b9e5a](https://github.com/staff0rd/assist/commit/29b9e5a9b196fb9c540d7795e64eddddf33af087))
+
 # [0.1176.0](https://github.com/staff0rd/assist/compare/v0.1175.0...v0.1176.0) (2026-11-15)
 
 
