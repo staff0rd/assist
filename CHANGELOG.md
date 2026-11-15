@@ -1,3 +1,10 @@
+## [0.1181.1](https://github.com/staff0rd/assist/compare/v0.1181.0...v0.1181.1) (2026-11-15)
+
+
+### Bug Fixes
+
+* gate db migrate on schema unlock ([6ede2c2](https://github.com/staff0rd/assist/commit/6ede2c213550ad69e6ac98eedb67fe6d6578aabd))
+
 # [0.1181.0](https://github.com/staff0rd/assist/compare/v0.1180.4...v0.1181.0) (2026-11-15)
 
 
