@@ -1,11 +1,11 @@
 import Box from "@mui/material/Box";
 import type { SdkShellChunk } from "../../../../../../shared/SdkShellRow";
-import { formatToolElapsed } from "./formatToolElapsed";
 import { shellSx } from "./shellSx";
-import { useTickingSeconds } from "./useTickingSeconds";
 import { ShellOutput } from "./ShellOutput";
 import { FinishedMeta } from "./FinishedMeta";
 import { ShellStopButton } from "./ShellStopButton";
+import { ShellDiscardButton } from "./ShellDiscardButton";
+import { RunningMeta } from "./RunningMeta";
 
 type ShellRowStatus = "running" | "held" | "sent";
 
@@ -18,14 +18,8 @@ type Props = {
 	durationMs?: number;
 	stopped?: boolean;
 	onStop?: () => void;
+	onDiscard?: () => void;
 };
-
-function RunningMeta({ startedAt }: { startedAt: number }) {
-	const seconds = useTickingSeconds(
-		Math.floor((Date.now() - startedAt) / 1000),
-	);
-	return <span>Running · {formatToolElapsed(seconds ?? 0)}</span>;
-}
 
 export function ShellRow(props: Props) {
 	const { command, output, status, startedAt } = props;
@@ -38,6 +32,9 @@ export function ShellRow(props: Props) {
 				<Box component="span" sx={shellSx.command} title={command}>
 					{command}
 				</Box>
+				{status === "held" && props.onDiscard && (
+					<ShellDiscardButton command={command} onDiscard={props.onDiscard} />
+				)}
 			</Box>
 			<ShellOutput output={output} />
 			<Box sx={shellSx.meta}>

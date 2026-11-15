@@ -10,6 +10,7 @@ import { handleInterrupt } from "./handleInterrupt";
 import { handleSdkLaunch } from "./sdk/handleSdkLaunch";
 import { handleSdkShell } from "./shell/handleSdkShell";
 import { handleSdkShellStop } from "./shell/handleSdkShellStop";
+import { handleSdkShellDiscard } from "./shell/handleSdkShellDiscard";
 import { handleWebLog } from "./handleWebLog";
 import { handleSearchHistory } from "./historySearch/handleSearchHistory";
 import { creator } from "./creator";
@@ -82,6 +83,7 @@ export const messageHandlers: Record<string, Handler> = {
 	"sdk-launch": handleSdkLaunch,
 	"sdk-shell": handleSdkShell,
 	"sdk-shell-stop": handleSdkShellStop,
+	"sdk-shell-discard": handleSdkShellDiscard,
 	"type-prompt-to-writer": handleTypePromptToWriter,
 	...retryHandlers,
 	dismiss: handleDismiss,

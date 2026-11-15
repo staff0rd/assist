@@ -56,6 +56,7 @@ export const shellSx = {
 	},
 	bang: { color: "secondary.main", fontWeight: 600 },
 	command: {
+		flex: 1,
 		minWidth: 0,
 		overflow: "hidden",
 		textOverflow: "ellipsis",
@@ -98,4 +99,11 @@ export const shellSx = {
 	ok: { color: "success.main", fontFamily: "fontFamilyMono" },
 	bad: { color: "error.main", fontFamily: "fontFamilyMono" },
 	stop: { ml: "auto", py: 0, minWidth: 0 },
+	discard: {
+		flex: "none",
+		p: 0.25,
+		color: "text.secondary",
+		borderRadius: (t: Theme) => `${t.tokens.radius.sm}px`,
+		"&:hover": { color: "text.primary" },
+	},
 } as const;
