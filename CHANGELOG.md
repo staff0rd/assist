@@ -1,3 +1,10 @@
+# [0.1176.0](https://github.com/staff0rd/assist/compare/v0.1175.0...v0.1176.0) (2026-11-15)
+
+
+### Features
+
+* link Artifact rows to their artifact URL ([b22c97d](https://github.com/staff0rd/assist/commit/b22c97dbce57d6451e04e167ab1fb46c6b4452c5))
+
 # [0.1175.0](https://github.com/staff0rd/assist/compare/v0.1174.3...v0.1175.0) (2026-11-15)
 
 
