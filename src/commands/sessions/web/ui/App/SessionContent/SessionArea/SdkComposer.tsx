@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { type Ref, useImperativeHandle } from "react";
 import type { SessionInfo } from "../../../types";
 import type { InterruptSession } from "./LiveTranscriptArea";
 import { SdkComposerActions } from "./SdkComposer/SdkComposerActions";
@@ -12,12 +13,18 @@ export function SdkComposer({
 	session,
 	sendInput,
 	interruptSession,
+	inputRef,
 }: {
 	session: SessionInfo;
 	sendInput: (sessionId: string, data: string) => void;
 	interruptSession: InterruptSession;
+	inputRef?: Ref<HTMLTextAreaElement | null>;
 }) {
 	const c = useSdkComposer(session, sendInput, interruptSession);
+	useImperativeHandle<HTMLTextAreaElement | null, HTMLTextAreaElement | null>(
+		inputRef,
+		() => c.slash.inputRef.current,
+	);
 	return (
 		<Box sx={sdkComposerSx.bar}>
 			<Box sx={sdkComposerSx.inner}>

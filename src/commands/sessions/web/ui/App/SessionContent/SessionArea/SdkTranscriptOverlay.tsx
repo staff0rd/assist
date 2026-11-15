@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { useRef } from "react";
 import type { SessionInfo, Transcript } from "../../../types";
 import {
 	type FetchSessionTranscript,
@@ -6,6 +7,7 @@ import {
 	LiveTranscriptArea,
 } from "./LiveTranscriptArea";
 import { SdkComposer } from "./SdkComposer";
+import { useFocusOnEmptyClick } from "./SdkTranscriptOverlay/useFocusOnEmptyClick";
 import { TranscriptCommentLayer } from "./TranscriptCommentLayer";
 import { tooVerbosePrompt } from "./tooVerbosePrompt";
 import { pasteAndSubmit } from "../../../../../shared/pasteAndSubmit";
@@ -32,8 +34,10 @@ export function SdkTranscriptOverlay({
 	sendInput: (sessionId: string, data: string) => void;
 	interruptSession: InterruptSession;
 }) {
+	const composerRef = useRef<HTMLTextAreaElement | null>(null);
+	const focusOnEmpty = useFocusOnEmptyClick(composerRef);
 	return (
-		<Box sx={overlaySx}>
+		<Box sx={overlaySx} {...focusOnEmpty}>
 			<Box sx={transcriptSx}>
 				<LiveTranscriptArea
 					{...transcript}
@@ -55,6 +59,7 @@ export function SdkTranscriptOverlay({
 				session={transcript.session}
 				sendInput={sendInput}
 				interruptSession={interruptSession}
+				inputRef={composerRef}
 			/>
 		</Box>
 	);
