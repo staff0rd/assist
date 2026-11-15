@@ -79,6 +79,13 @@ export const shellSx = {
 		overflowWrap: "anywhere",
 	},
 	stderr: { color: "error.main" },
+	link: {
+		color: "primary.main",
+		"&:focus-visible": {
+			outline: 2,
+			outlineColor: "primary.main",
+		},
+	},
 	meta: {
 		display: "flex",
 		flexWrap: "wrap",
