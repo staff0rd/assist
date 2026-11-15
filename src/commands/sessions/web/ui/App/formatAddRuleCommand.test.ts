@@ -14,9 +14,9 @@ describe("formatAddRuleCommand", () => {
 		);
 	});
 
-	it("omits the file line when the surface has no path", () => {
+	it("omits the file line and blockquotes when the surface has no path", () => {
 		expect(formatAddRuleCommand({ quote: "quoted", note: "a rule" })).toBe(
-			"/add-rule\n\n```\nquoted\n```\n\na rule",
+			"/add-rule\n\n> quoted\n\na rule",
 		);
 	});
 });

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { pasteAndSubmit } from "../../../../../../shared/pasteAndSubmit";
 import { commentTarget } from "../../../commentTarget";
-import { formatQuotedComment } from "../../../formatQuotedComment";
+import { formatBlockquoteComment } from "../../../formatBlockquoteComment";
 import type { SessionInfo } from "../../../../types";
 
 export function usePreviewCommentSender(
@@ -17,7 +17,7 @@ export function usePreviewCommentSender(
 	return {
 		onSend: (note: string) => {
 			if (!live || !sendInput || quote === undefined) return;
-			pasteAndSubmit(sendInput, live.id, formatQuotedComment(quote, note));
+			pasteAndSubmit(sendInput, live.id, formatBlockquoteComment(quote, note));
 			setSentTo(live.name);
 			onSent();
 		},

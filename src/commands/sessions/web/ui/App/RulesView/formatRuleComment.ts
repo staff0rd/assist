@@ -1,5 +1,5 @@
 import type { RuleEntry, RuleScope } from "../../../../../rules/types";
-import { formatQuotedComment } from "../formatQuotedComment";
+import { formatBlockquoteComment } from "../formatBlockquoteComment";
 
 export type RuleComment = {
 	rule: RuleEntry;
@@ -17,5 +17,5 @@ function ruleHeading({ rule, scope }: RuleComment): string {
 
 export function formatRuleComment(comment: RuleComment): string {
 	const { quote, note } = comment;
-	return `${ruleHeading(comment)}\n\n${formatQuotedComment(quote, note)}`;
+	return `${ruleHeading(comment)}\n\n${formatBlockquoteComment(quote, note)}`;
 }

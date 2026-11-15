@@ -1,5 +1,5 @@
 import type { ScopedRule } from "../../../../../../../../rules/types";
-import { formatQuotedComment } from "../../../../formatQuotedComment";
+import { formatBlockquoteComment } from "../../../../formatBlockquoteComment";
 import { pasteAndSubmit } from "../../../../../../../shared/pasteAndSubmit";
 import { ruleCitationNote } from "../../../../ruleCitationNote";
 
@@ -16,7 +16,7 @@ export function previewRuleCiter(
 			pasteAndSubmit(
 				sendInput,
 				sessionId,
-				formatQuotedComment(quote, ruleCitationNote(rule)),
+				formatBlockquoteComment(quote, ruleCitationNote(rule)),
 			);
 		onSent();
 	};

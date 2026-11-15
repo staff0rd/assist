@@ -1,3 +1,4 @@
+import { formatBlockquoteComment } from "./formatBlockquoteComment";
 import { formatQuotedComment } from "./formatQuotedComment";
 
 export type AddRuleRequest = {
@@ -11,6 +12,6 @@ export function formatAddRuleCommand({
 	quote,
 	note,
 }: AddRuleRequest): string {
-	const file = path ? `File: ${path}\n\n` : "";
-	return `/add-rule\n\n${file}${formatQuotedComment(quote, note)}`;
+	if (!path) return `/add-rule\n\n${formatBlockquoteComment(quote, note)}`;
+	return `/add-rule\n\nFile: ${path}\n\n${formatQuotedComment(quote, note)}`;
 }

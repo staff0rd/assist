@@ -16,9 +16,7 @@ describe("formatRuleComment", () => {
 				quote: "Use tokens",
 				note: "Mention density",
 			}),
-		).toBe(
-			"Rule R9 in `ui/CLAUDE.md`\n\n```\nUse tokens\n```\n\nMention density",
-		);
+		).toBe("Rule R9 in `ui/CLAUDE.md`\n\n> Use tokens\n\nMention density");
 	});
 
 	it("names an advice.rules entry by title and scope", () => {

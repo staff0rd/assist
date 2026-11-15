@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 import { pasteAndSubmit } from "../../../../../shared/pasteAndSubmit";
 import type { SessionInfo } from "../../../types";
-import { formatQuotedComment } from "../../formatQuotedComment";
+import { formatBlockquoteComment } from "../../formatBlockquoteComment";
 import { SelectionCommentLayer } from "../../SelectionCommentLayer";
 import { selectionActions } from "../../selectionActions";
 import { usePreviewSelection } from "../../usePreviewSelection";
@@ -23,7 +23,7 @@ export function TranscriptCommentLayer({
 		pending: selection.pending,
 		clear: selection.clear,
 		onComment: (text: string) => pasteAndSubmit(sendInput, session.id, text),
-		build: (pending, note) => formatQuotedComment(pending.quote, note),
+		build: (pending, note) => formatBlockquoteComment(pending.quote, note),
 	});
 	return (
 		<SelectionCommentLayer
