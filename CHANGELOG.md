@@ -1,3 +1,10 @@
+## [0.1180.3](https://github.com/staff0rd/assist/compare/v0.1180.2...v0.1180.3) (2026-11-15)
+
+
+### Bug Fixes
+
+* add phase run state columns (migration 13) ([b5de040](https://github.com/staff0rd/assist/commit/b5de0405c827bdcb273781e2bef2cd1eb8ae78b9))
+
 ## [0.1180.2](https://github.com/staff0rd/assist/compare/v0.1180.1...v0.1180.2) (2026-11-15)
 
 
