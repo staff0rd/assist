@@ -1,9 +1,10 @@
 import chalk from "chalk";
 import { isGitRepo } from "../../shared/getInstallDir";
+import { reExecOnDeclaredNode } from "../../shared/nodeRuntime/reExecOnDeclaredNode";
 import { sweepStagedAttachments } from "../../shared/sweepStagedAttachments";
 import { startWebServer } from "../../shared/web";
 import { ensureDaemonRunning } from "./daemon/ensureDaemonRunning";
-import { ensureTailscaleServe } from "./nodes/ensureTailscaleServe";
+import { startTailscaleServe } from "./nodes/startTailscaleServe";
 import { attachSessionSocket } from "./web/attachSessionSocket";
 import { handleRequest } from "./web/handleRequest";
 import type { RelayContext } from "./web/handleSocket";
@@ -18,6 +19,9 @@ export async function web(options: {
 	initialPath?: string;
 	open?: boolean;
 }): Promise<void> {
+	reExecOnDeclaredNode({
+		log: (message) => console.error(chalk.yellow(message)),
+	});
 	webStartCommit.capture();
 	const port = Number.parseInt(options.port, 10);
 	const server = startWebServer(
@@ -52,15 +56,5 @@ export async function web(options: {
 		);
 	});
 
-	void ensureTailscaleServe(port).then(
-		(outcome) => console.log(chalk.dim(`tailscale serve: ${outcome}`)),
-		(error) =>
-			console.error(
-				chalk.yellow(
-					`tailscale serve failed: ${
-						error instanceof Error ? error.message : String(error)
-					}`,
-				),
-			),
-	);
+	startTailscaleServe(port);
 }

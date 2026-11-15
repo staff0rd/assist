@@ -1,6 +1,8 @@
 import type { Leftover } from "../daemon/worktree/Leftover";
 import { cleanLeftoversEnabled } from "../daemon/worktree/cleanLeftoversEnabled";
 import { listLeftovers } from "../daemon/worktree/listLeftovers";
+import { localNodeRuntime } from "../daemon/runtime/localNodeRuntime";
+import type { NodeRuntimeReport } from "../daemon/runtime/NodeRuntimeReport";
 import { loadLinkSpecs } from "../shared/loadLinkSpecs";
 import { resolveNodeName } from "../shared/resolveNodeName";
 import { diagnoseLink } from "./diagnoseLink";
@@ -16,6 +18,7 @@ import { printLeftovers } from "./printLeftovers";
 
 type DoctorReport = {
 	local: string;
+	runtime?: NodeRuntimeReport;
 	links: LinkDiagnosis[];
 	suggestion?: LinkSuggestion;
 	leftovers: Leftover[];
@@ -31,6 +34,7 @@ export async function doctorNodes(
 	const probes = buildDoctorProbes(await queryNodes());
 	const report: DoctorReport = {
 		local: resolveNodeName(),
+		runtime: localNodeRuntime(),
 		links: [],
 		leftovers: cleanLeftoversEnabled() ? listLeftovers() : [],
 	};

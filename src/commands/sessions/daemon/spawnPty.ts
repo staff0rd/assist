@@ -1,5 +1,6 @@
 import { existsSync } from "node:fs";
 import * as pty from "node-pty";
+import { withHarnessPath } from "../../../shared/nodeRuntime/withHarnessPath";
 import { daemonLog } from "./daemonLog";
 import { ensureSpawnHelperExecutable } from "./ensureSpawnHelperExecutable";
 import { resolvePtyCommand } from "./resolvePtyCommand";
@@ -27,7 +28,7 @@ export function spawnPty(
 		name: "xterm-256color",
 		...viewerSize(),
 		cwd: cwd ?? process.cwd(),
-		env: sessionChildEnv(process.env, sessionId, extraEnv),
+		env: withHarnessPath(sessionChildEnv(process.env, sessionId, extraEnv)),
 	});
 }
 

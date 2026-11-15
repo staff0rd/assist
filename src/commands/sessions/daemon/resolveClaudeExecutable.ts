@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { loginShellCommand } from "../../../shared/nodeRuntime/loginShellCommand";
 
 const opts = {
 	encoding: "utf8" as const,
@@ -15,7 +16,7 @@ export function resolveClaudeExecutable(): string {
 			? execFileSync("where", ["claude"], opts)
 			: execFileSync(
 					process.env.SHELL ?? "bash",
-					["-l", "-c", "command -v claude"],
+					["-l", "-c", loginShellCommand("command -v claude")],
 					opts,
 				);
 	const lines = found

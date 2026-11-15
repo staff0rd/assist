@@ -1,12 +1,18 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { resolvePtyCommand } from "./resolvePtyCommand";
 
+const binDir = vi.hoisted(() => ({ value: undefined as string | undefined }));
+vi.mock("../../../shared/nodeRuntime/harnessBinDir", () => ({
+	harnessBinDir: () => binDir.value,
+}));
+
 function onPlatform(platform: NodeJS.Platform): void {
 	vi.spyOn(process, "platform", "get").mockReturnValue(platform);
 }
 
 describe("resolvePtyCommand", () => {
 	afterEach(() => {
+		binDir.value = undefined;
 		vi.restoreAllMocks();
 		vi.unstubAllEnvs();
 	});
@@ -19,6 +25,17 @@ describe("resolvePtyCommand", () => {
 			file: "/bin/zsh",
 			args: ["-l", "-c", `exec 'assist' 'draft' 'it'\\''s\nhere'`],
 		});
+	});
+
+	it("exports the declared node's bin dir after the login profile runs", () => {
+		onPlatform("linux");
+		vi.stubEnv("SHELL", "/bin/bash");
+		binDir.value =
+			"/home/u/.local/share/fnm/node-versions/v24.22.1/installation/bin";
+
+		expect(resolvePtyCommand(["codex"]).args[2]).toBe(
+			`export PATH='${binDir.value}':"$PATH"; exec 'codex'`,
+		);
 	});
 
 	it("passes a multi-line assist argument to node directly on Windows", () => {

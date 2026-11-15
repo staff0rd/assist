@@ -7,6 +7,11 @@ export const sessionsConfigHelp: ConfigHelpEntry[] = [
 		note: "this install's node label, shown in the web UI hamburger menu and reported by /api/health (default: OS hostname, with -wsl under WSL)",
 	},
 	{
+		key: "sessions.nodeVersion",
+		setter: "assist config set sessions.nodeVersion 24.22.1 --node",
+		note: "node the web server and daemon run on, re-executing onto it at start when the launching shell resolved another; harness CLIs (claude, codex, pi) the daemon spawns resolve from its global bin. A version or range found under fnm, nvm or volta, or a path to a node binary or install dir (default: whichever node launched assist)",
+	},
+	{
 		key: "sessions.includeCommittedChanges",
 		setter: "assist config set sessions.includeCommittedChanges false --node",
 		note: "default on: session card counts, /diff and the diff scope picker span the commits recorded against the session's backlog item as well as uncommitted work, so they survive the agent committing. Set false to show only uncommitted changes",

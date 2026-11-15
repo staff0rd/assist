@@ -1,5 +1,6 @@
 import { mkdirSync } from "node:fs";
 import { waitForBuild } from "../../../build/waitForBuild";
+import { reExecOnDeclaredNode } from "../../../shared/nodeRuntime/reExecOnDeclaredNode";
 import { broadcast } from "./broadcast";
 import { isDaemonRunning } from "./connectToDaemon";
 import { createAutoExit } from "./createAutoExit";
@@ -7,6 +8,7 @@ import { daemonLog, setDaemonLogSink } from "./daemonLog";
 import { daemonPaths } from "./daemonPaths";
 import { failInterruptedJobRuns } from "./failInterruptedJobRuns";
 import { inboxScanner } from "./inbox/inboxScanner";
+import { logNodeRuntime } from "./runtime/logNodeRuntime";
 import { pollRepoConfigCache } from "./pollRepoConfigCache";
 import { refreshRepoConfigCacheOnStart } from "./refreshRepoConfigCacheOnStart";
 import { SessionManager } from "./SessionManager";
@@ -16,6 +18,7 @@ import { startDaemonServer } from "./startDaemonServer";
 
 export async function runDaemon(): Promise<void> {
 	mkdirSync(daemonPaths.dir, { recursive: true });
+	reExecOnDeclaredNode({ log: daemonLog, allowBlockingChild: false });
 	daemonLog(
 		`starting (reason: ${process.env.ASSIST_DAEMON_SPAWN_REASON ?? "manual"})`,
 	);
@@ -45,5 +48,6 @@ export async function runDaemon(): Promise<void> {
 	void failInterruptedJobRuns();
 	inboxScanner.start((type) => broadcast(manager.clients, { type }));
 	await startDaemonServer(manager, checkAutoExit);
+	void logNodeRuntime();
 	await refreshRepoConfigCacheOnStart();
 }

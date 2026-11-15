@@ -314,6 +314,7 @@ const assistConfigShape = {
 	sessions: z
 		.strictObject({
 			nodeName: z.string().optional(),
+			nodeVersion: z.string().optional(),
 			links: z.array(sessionLinkSchema).optional(),
 			linkVersionCheck: z.enum(["block", "warn", "off"]).default("block"),
 			tailscaleServe: z.boolean().default(true),

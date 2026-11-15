@@ -8,6 +8,7 @@ import {
 	writeSync,
 } from "node:fs";
 import { waitForBuild } from "../../../build/waitForBuild";
+import { assistNodePath } from "../../../shared/nodeRuntime/assistNodePath";
 import { isDaemonRunning } from "./connectToDaemon";
 import { daemonPaths } from "./daemonPaths";
 
@@ -82,7 +83,7 @@ function releaseSpawnLock(): void {
 
 function spawnDaemon(reason: string): void {
 	const log = openSync(daemonPaths.log, "a");
-	const child = spawn(process.execPath, [process.argv[1], "daemon", "run"], {
+	const child = spawn(assistNodePath(), [process.argv[1], "daemon", "run"], {
 		detached: true,
 		windowsHide: true,
 		stdio: ["ignore", log, log],

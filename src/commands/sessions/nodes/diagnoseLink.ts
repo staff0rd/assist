@@ -16,7 +16,13 @@ export async function diagnoseLink(
 	probes: DoctorProbes,
 ): Promise<LinkDiagnosis> {
 	const hops: Hop[] = [];
-	const done = () => ({ ...spec, ok: hops.every((h) => h.ok), hops });
+	const health: { runtime?: LinkDiagnosis["runtime"] } = {};
+	const done = () => ({
+		...spec,
+		ok: hops.every((h) => h.ok),
+		hops,
+		...(health.runtime && { runtime: health.runtime }),
+	});
 	if (isTailscaleLink(spec)) {
 		hops.push(await tailscaleHop(spec, probes));
 		if (!hops.at(-1)?.ok) return done();
@@ -24,6 +30,7 @@ export async function diagnoseLink(
 	const web = await webHop(spec, probes);
 	hops.push(web.hop);
 	if (!web.health) return done();
+	health.runtime = web.health.daemon?.runtime;
 	hops.push(peerDaemonHop(spec, web.health));
 	if (!hops.at(-1)?.ok) return done();
 	hops.push(await helloHop(spec, probes));
