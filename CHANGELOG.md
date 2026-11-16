@@ -1,3 +1,10 @@
+## [0.1193.2](https://github.com/staff0rd/assist/compare/v0.1193.1...v0.1193.2) (2026-11-16)
+
+
+### Bug Fixes
+
+* resume history with configured engine ([a61e1d0](https://github.com/staff0rd/assist/commit/a61e1d0f4c61ae066bdab64b6333660d78d7978b))
+
 ## [0.1193.1](https://github.com/staff0rd/assist/compare/v0.1193.0...v0.1193.1) (2026-11-16)
 
 
