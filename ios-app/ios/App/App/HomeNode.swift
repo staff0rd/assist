@@ -29,8 +29,9 @@ enum HomeNode {
         } catch {
             throw HomeNodeError.unreachable
         }
-        guard (response as? HTTPURLResponse)?.statusCode == status else {
-            throw HomeNodeError.rejected
+        let received = (response as? HTTPURLResponse)?.statusCode
+        guard received == status else {
+            throw received == 404 ? HomeNodeError.appOutdated : HomeNodeError.rejected
         }
         return data
     }
@@ -40,6 +41,7 @@ enum HomeNodeError: Error, CustomLocalizedStringResourceConvertible {
     case noHomeNode
     case unreachable
     case rejected
+    case appOutdated
 
     var localizedStringResource: LocalizedStringResource {
         switch self {
@@ -49,6 +51,8 @@ enum HomeNodeError: Error, CustomLocalizedStringResourceConvertible {
             return "Your home node is unreachable. Check Tailscale is connected."
         case .rejected:
             return "Your home node rejected the request. Check Assist is up to date there."
+        case .appOutdated:
+            return "Your home node doesn't recognise this request. Update the Assist app on your phone."
         }
     }
 }
