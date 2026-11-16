@@ -4,6 +4,7 @@ import { statusPillSx } from "../../../../../../../designSystem/statusPillSx";
 import { displayStatus } from "../../../../../../../displayStatus";
 import { statusGlyph } from "../../../../../../../statusGlyph";
 import { isVerifying } from "../../../../../../isVerifying";
+import { harnessLabel } from "../../../../../../../../../../../shared/harnessAdapters/harnessLabel";
 import { SdkBadge } from "../../../../../../../SdkBadge";
 import { SessionStatusDot } from "./SessionTopBarStatus/SessionStatusDot";
 import { statusColors } from "../../../../../../statusColors";
@@ -28,7 +29,11 @@ export function SessionTopBarStatus({ session }: { session: SessionInfo }) {
 	return (
 		<>
 			<StatusLabel session={session} />
-			{session.sdk && <SdkBadge label="Claude · SDK" />}
+			{session.sdk && (
+				<SdkBadge
+					label={session.harness ? harnessLabel(session.harness) : "SDK"}
+				/>
+			)}
 			{restored !== undefined && (
 				<Typography
 					variant="caption"

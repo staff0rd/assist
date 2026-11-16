@@ -47,4 +47,9 @@ describe("SessionTopBarStatus", () => {
 
 		expect(screen.getByText("not restored")).toBeTruthy();
 	});
+	it("labels a driven session's SDK badge with its harness", () => {
+		renderStatus({ sdk: true, harness: "codex-sdk" });
+
+		expect(screen.getByText("Codex (SDK)")).toBeTruthy();
+	});
 });
