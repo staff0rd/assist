@@ -8,6 +8,7 @@ import { prHeadBranch } from "./prHeadBranch";
 import { reportCwdToDaemon } from "./reportCwdToDaemon";
 import { worktreeHoldingBranch } from "./worktreeHoldingBranch";
 import { failCheckout } from "./failCheckout";
+import { reinstallChangedDeps } from "./reinstallChangedDeps";
 
 function currentBranch(): string | null {
 	return gitSyncOrNull(process.cwd(), ["rev-parse", "--abbrev-ref", "HEAD"]);
@@ -40,6 +41,7 @@ export async function checkoutPr(number: string): Promise<void> {
 		branch === "HEAD"
 			? gitSyncOrNull(process.cwd(), ["rev-parse", "HEAD"])
 			: branch;
+	const before = gitSyncOrNull(process.cwd(), ["rev-parse", "HEAD"]);
 	const stale = headRef ? clearStalePrBranch(process.cwd(), headRef) : "absent";
 	try {
 		execFileSync(commands.checkout.file, commands.checkout.args, {
@@ -48,4 +50,5 @@ export async function checkoutPr(number: string): Promise<void> {
 	} catch {
 		failCheckout(number, headRef, stale, from, commands.checkout);
 	}
+	await reinstallChangedDeps(process.cwd(), before);
 }

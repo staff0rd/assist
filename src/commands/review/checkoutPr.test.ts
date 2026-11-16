@@ -8,6 +8,7 @@ import { checkoutPr } from "./checkoutPr";
 import { clearStalePrBranch } from "./clearStalePrBranch";
 import { moveToPrCheckoutTree } from "./moveToPrCheckoutTree";
 import { prHeadBranch } from "./prHeadBranch";
+import { reinstallChangedDeps } from "./reinstallChangedDeps";
 import { reportCwdToDaemon } from "./reportCwdToDaemon";
 import { worktreeHoldingBranch } from "./worktreeHoldingBranch";
 
@@ -33,6 +34,7 @@ vi.mock("./moveToPrCheckoutTree", () => ({
 	moveToPrCheckoutTree: vi.fn(),
 }));
 vi.mock("./prHeadBranch", () => ({ prHeadBranch: vi.fn() }));
+vi.mock("./reinstallChangedDeps", () => ({ reinstallChangedDeps: vi.fn() }));
 vi.mock("./reportCwdToDaemon", () => ({ reportCwdToDaemon: vi.fn() }));
 vi.mock("./worktreeHoldingBranch", () => ({
 	worktreeHoldingBranch: vi.fn(),
@@ -71,6 +73,7 @@ describe("checkoutPr", () => {
 
 			expect(mockExecFileSync).not.toHaveBeenCalled();
 			expect(moveMock).not.toHaveBeenCalled();
+			expect(reinstallChangedDeps).not.toHaveBeenCalled();
 			expect(chdir).not.toHaveBeenCalled();
 			expect(reportCwdToDaemon).not.toHaveBeenCalled();
 		});
@@ -98,6 +101,19 @@ describe("checkoutPr", () => {
 				"gh",
 				["pr", "checkout", "123"],
 				{ stdio: "inherit" },
+			);
+		});
+
+		it("reinstalls deps against the commit it left", async () => {
+			gitMock.mockImplementation((_cwd, args) =>
+				args[0] === "rev-parse" && args[1] === "HEAD" ? "abc123" : "main",
+			);
+
+			await checkoutPr("123");
+
+			expect(reinstallChangedDeps).toHaveBeenCalledWith(
+				process.cwd(),
+				"abc123",
 			);
 		});
 	});
