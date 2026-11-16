@@ -26,6 +26,9 @@ export function codexSdkOptions(opts: DrivenSessionOpts): {
 		}),
 		...codexSandboxArgs(),
 		...codexDeveloperInstructionsArgs(opts.appendSystemPromptFile),
+		// why: no one can answer an approval prompt in a driven session, so escalations go to Codex's automatic reviewer
+		"-c",
+		'approvals_reviewer="auto_review"',
 	]);
 	return {
 		codex: {
@@ -40,7 +43,7 @@ export function codexSdkOptions(opts: DrivenSessionOpts): {
 			model: config.model,
 			workingDirectory: opts.cwd,
 			sandboxMode: "workspace-write",
-			approvalPolicy: "never",
+			approvalPolicy: "on-request",
 			skipGitRepoCheck: true,
 			additionalDirectories: config.additionalDirectories,
 		},
