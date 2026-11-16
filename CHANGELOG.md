@@ -1,3 +1,15 @@
+# [0.1204.0](https://github.com/staff0rd/assist/compare/v0.1203.0...v0.1204.0) (2026-11-16)
+
+
+### Bug Fixes
+
+* count every phase's commits on card ([e4c2133](https://github.com/staff0rd/assist/commit/e4c21336606c5c9b6d4bd8641d1fef494caad70a))
+
+
+### Features
+
+* rename issues outside web sessions ([826a509](https://github.com/staff0rd/assist/commit/826a50975432199816b7f2ab717f7ce67e2ebc30))
+
 # [0.1203.0](https://github.com/staff0rd/assist/compare/v0.1202.1...v0.1203.0) (2026-11-16)
 
 
