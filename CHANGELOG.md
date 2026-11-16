@@ -1,3 +1,10 @@
+## [0.1202.1](https://github.com/staff0rd/assist/compare/v0.1202.0...v0.1202.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* don't show parked runs as starting ([dda0590](https://github.com/staff0rd/assist/commit/dda05903769c5d218fec6dc2ad69981a65eaa096))
+
 # [0.1202.0](https://github.com/staff0rd/assist/compare/v0.1201.1...v0.1202.0) (2026-11-16)
 
 
