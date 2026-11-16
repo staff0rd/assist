@@ -85,6 +85,7 @@ describe("useOpenPhoneSession", () => {
 		const { rerender } = render(tree({ ...state, sessions: [live] }));
 		rerender(tree({ ...state, sessions: [] }));
 		expect(screen.getByText("open Live session")).toBeTruthy();
+		expect(screen.queryByText("session list")).toBeNull();
 		expect(screen.queryByText(/ended/)).toBeNull();
 	});
 
