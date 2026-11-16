@@ -1,3 +1,10 @@
+## [0.1189.2](https://github.com/staff0rd/assist/compare/v0.1189.1...v0.1189.2) (2026-11-16)
+
+
+### Bug Fixes
+
+* **ios:** fetch Siri repos from new route ([9ebd9ca](https://github.com/staff0rd/assist/commit/9ebd9ca32375c1ea656d1917cd9b29ea570e290e))
+
 ## [0.1189.1](https://github.com/staff0rd/assist/compare/v0.1189.0...v0.1189.1) (2026-11-16)
 
 
