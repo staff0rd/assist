@@ -103,8 +103,7 @@ const codex: CapabilityDeclarations = {
 	),
 	"session.driven": unsupported(
 		"Codex runs in a terminal the daemon mirrors rather than a session the daemon drives",
-		"Codex sessions use the terminal; pick Claude (SDK) for a driven session",
-		"a1684",
+		"pick Codex (SDK) for a session driven through the Codex SDK",
 	),
 	"tasks.background": unsupported(
 		"Codex reports no background tasks to assist",
