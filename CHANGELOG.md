@@ -1,3 +1,10 @@
+# [0.1188.0](https://github.com/staff0rd/assist/compare/v0.1187.0...v0.1188.0) (2026-11-16)
+
+
+### Features
+
+* add --screenshot to issue edit ([c2f03fe](https://github.com/staff0rd/assist/commit/c2f03fe42bcf735ed0b02f10714baba6b4d906b7))
+
 # [0.1187.0](https://github.com/staff0rd/assist/compare/v0.1186.0...v0.1187.0) (2026-11-16)
 
 
