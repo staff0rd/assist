@@ -1,3 +1,10 @@
+## [0.1190.2](https://github.com/staff0rd/assist/compare/v0.1190.1...v0.1190.2) (2026-11-16)
+
+
+### Bug Fixes
+
+* render PR description screenshots ([c017643](https://github.com/staff0rd/assist/commit/c017643b90906e720b381e23a2fae96402b9a3d5))
+
 ## [0.1190.1](https://github.com/staff0rd/assist/compare/v0.1190.0...v0.1190.1) (2026-11-16)
 
 
