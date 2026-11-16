@@ -1,3 +1,10 @@
+## [0.1185.3](https://github.com/staff0rd/assist/compare/v0.1185.2...v0.1185.3) (2026-11-16)
+
+
+### Bug Fixes
+
+* pinned node for installs, refuse on fail ([416ffa2](https://github.com/staff0rd/assist/commit/416ffa21d764913ca8355b4e79fb01c08320475b))
+
 ## [0.1185.2](https://github.com/staff0rd/assist/compare/v0.1185.1...v0.1185.2) (2026-11-16)
 
 
