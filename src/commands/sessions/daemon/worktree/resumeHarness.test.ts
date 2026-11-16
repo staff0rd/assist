@@ -36,3 +36,15 @@ describe("resumeHarness", () => {
 		expect(resumeHarness("codex", "/git/repo")).toBe("codex");
 	});
 });
+
+describe("resumeHarness for Codex", () => {
+	it("resumes a Codex conversation with the configured SDK engine", () => {
+		engine("codex-sdk");
+		expect(resumeHarness("codex", "/git/repo")).toBe("codex-sdk");
+	});
+
+	it("resumes a Codex conversation in the terminal when that is the engine", () => {
+		engine("codex");
+		expect(resumeHarness("codex-sdk", "/git/repo")).toBe("codex");
+	});
+});

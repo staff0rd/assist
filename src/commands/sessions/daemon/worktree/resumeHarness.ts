@@ -1,19 +1,15 @@
-import type { HarnessKind } from "../../../../shared/harnesses";
+import { type HarnessKind, harnesses } from "../../../../shared/harnesses";
+import { resolveHarness } from "../../../../shared/harnessAdapters/harnessLabel";
 import { loadConfigFrom } from "../../../../shared/loadConfigFrom";
 
-const claudeEngines = new Set<HarnessKind | undefined>([
-	undefined,
-	"claude",
-	"claude-sdk",
-]);
-
-/* why: a Claude transcript doesn't record whether it ran in a terminal or the
- * SDK, so history reports it as "claude"; resume it with the configured engine. */
+/* why: a transcript doesn't record whether it ran in a terminal or the SDK, so
+ * history reports the CLI's harness; resume it with the configured engine when
+ * that engine drives the same CLI. */
 export function resumeHarness(
 	harness: HarnessKind | undefined,
 	cwd: string,
 ): HarnessKind | undefined {
-	if (!claudeEngines.has(harness)) return harness;
 	const engine = loadConfigFrom(cwd).harness.engine;
-	return claudeEngines.has(engine) ? engine : harness;
+	const command = harnesses[resolveHarness(harness)]?.command;
+	return command && harnesses[engine]?.command === command ? engine : harness;
 }

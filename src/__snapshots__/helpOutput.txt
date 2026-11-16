@@ -1991,20 +1991,20 @@ Options:
   -h, --help             display help for command
 
 Config:
-  assist config set harness.engine <claude|claude-sdk|codex|pi>       # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key)
-  assist config set harness.exposeCodexActions <true|false>           # force the web UI 'with Codex' actions off even when codex is on PATH
-  assist config set harness.exposePiActions <true|false>              # force the web UI 'with pi' actions off even when pi is on PATH
-  assist config set harness.codexModel <model>                        # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
-  assist config set harness.defaults.draft.harness <claude|codex|pi>  # harness for draft sessions (assist draft, New Session dialog) when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.draft.model <model>              # model for draft sessions (assist draft, New Session dialog) on the type's harness; unset uses the harness's own default
-  assist config set harness.defaults.bug.harness <claude|codex|pi>    # harness for bug sessions (assist bug, New Session dialog) when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.bug.model <model>                # model for bug sessions (assist bug, New Session dialog) on the type's harness; unset uses the harness's own default
-  assist config set harness.defaults.prompt.harness <claude|codex|pi> # harness for prompt sessions in the New Session dialog when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.prompt.model <model>             # model for prompt sessions in the New Session dialog on the type's harness; unset uses the harness's own default
-  assist config set harness.defaults.design.harness <claude|codex|pi> # harness for design sessions in the New Session dialog when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.design.model <model>             # model for design sessions in the New Session dialog on the type's harness; unset uses the harness's own default
-  assist config set harness.defaults.run.harness <claude|codex|pi>    # harness for backlog runs (assist backlog run, web Start buttons) when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.run.model <model>                # model for backlog runs (assist backlog run, web Start buttons) on the type's harness; unset uses the harness's own default
+  assist config set harness.engine <claude|claude-sdk|codex|codex-sdk|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key); codex-sdk (Codex (SDK)) drives your logged-in codex through the Codex SDK
+  assist config set harness.exposeCodexActions <true|false>               # force the web UI 'with Codex' actions off even when codex is on PATH
+  assist config set harness.exposePiActions <true|false>                  # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.codexModel <model>                            # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
+  assist config set harness.defaults.draft.harness <claude|codex|pi>      # harness for draft sessions (assist draft, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.draft.model <model>                  # model for draft sessions (assist draft, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.bug.harness <claude|codex|pi>        # harness for bug sessions (assist bug, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.bug.model <model>                    # model for bug sessions (assist bug, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.prompt.harness <claude|codex|pi>     # harness for prompt sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.prompt.model <model>                 # model for prompt sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.design.harness <claude|codex|pi>     # harness for design sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.design.model <model>                 # model for design sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.run.harness <claude|codex|pi>        # harness for backlog runs (assist backlog run, web Start buttons) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.run.model <model>                    # model for backlog runs (assist backlog run, web Start buttons) on the type's harness; unset uses the harness's own default
 
 === assist backlog run-phase --help
 Usage: assist backlog run-phase [options] <id> <phase>
@@ -3976,20 +3976,20 @@ Options:
   -h, --help             display help for command
 
 Config:
-  assist config set harness.engine <claude|claude-sdk|codex|pi>       # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key)
-  assist config set harness.exposeCodexActions <true|false>           # force the web UI 'with Codex' actions off even when codex is on PATH
-  assist config set harness.exposePiActions <true|false>              # force the web UI 'with pi' actions off even when pi is on PATH
-  assist config set harness.codexModel <model>                        # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
-  assist config set harness.defaults.draft.harness <claude|codex|pi>  # harness for draft sessions (assist draft, New Session dialog) when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.draft.model <model>              # model for draft sessions (assist draft, New Session dialog) on the type's harness; unset uses the harness's own default
-  assist config set harness.defaults.bug.harness <claude|codex|pi>    # harness for bug sessions (assist bug, New Session dialog) when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.bug.model <model>                # model for bug sessions (assist bug, New Session dialog) on the type's harness; unset uses the harness's own default
-  assist config set harness.defaults.prompt.harness <claude|codex|pi> # harness for prompt sessions in the New Session dialog when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.prompt.model <model>             # model for prompt sessions in the New Session dialog on the type's harness; unset uses the harness's own default
-  assist config set harness.defaults.design.harness <claude|codex|pi> # harness for design sessions in the New Session dialog when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.design.model <model>             # model for design sessions in the New Session dialog on the type's harness; unset uses the harness's own default
-  assist config set harness.defaults.run.harness <claude|codex|pi>    # harness for backlog runs (assist backlog run, web Start buttons) when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.run.model <model>                # model for backlog runs (assist backlog run, web Start buttons) on the type's harness; unset uses the harness's own default
+  assist config set harness.engine <claude|claude-sdk|codex|codex-sdk|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key); codex-sdk (Codex (SDK)) drives your logged-in codex through the Codex SDK
+  assist config set harness.exposeCodexActions <true|false>               # force the web UI 'with Codex' actions off even when codex is on PATH
+  assist config set harness.exposePiActions <true|false>                  # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.codexModel <model>                            # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
+  assist config set harness.defaults.draft.harness <claude|codex|pi>      # harness for draft sessions (assist draft, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.draft.model <model>                  # model for draft sessions (assist draft, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.bug.harness <claude|codex|pi>        # harness for bug sessions (assist bug, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.bug.model <model>                    # model for bug sessions (assist bug, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.prompt.harness <claude|codex|pi>     # harness for prompt sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.prompt.model <model>                 # model for prompt sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.design.harness <claude|codex|pi>     # harness for design sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.design.model <model>                 # model for design sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.run.harness <claude|codex|pi>        # harness for backlog runs (assist backlog run, web Start buttons) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.run.model <model>                    # model for backlog runs (assist backlog run, web Start buttons) on the type's harness; unset uses the harness's own default
 
 === assist bug --help
 Usage: assist bug [options] [description]
@@ -4012,20 +4012,20 @@ Options:
   -h, --help             display help for command
 
 Config:
-  assist config set harness.engine <claude|claude-sdk|codex|pi>       # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key)
-  assist config set harness.exposeCodexActions <true|false>           # force the web UI 'with Codex' actions off even when codex is on PATH
-  assist config set harness.exposePiActions <true|false>              # force the web UI 'with pi' actions off even when pi is on PATH
-  assist config set harness.codexModel <model>                        # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
-  assist config set harness.defaults.draft.harness <claude|codex|pi>  # harness for draft sessions (assist draft, New Session dialog) when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.draft.model <model>              # model for draft sessions (assist draft, New Session dialog) on the type's harness; unset uses the harness's own default
-  assist config set harness.defaults.bug.harness <claude|codex|pi>    # harness for bug sessions (assist bug, New Session dialog) when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.bug.model <model>                # model for bug sessions (assist bug, New Session dialog) on the type's harness; unset uses the harness's own default
-  assist config set harness.defaults.prompt.harness <claude|codex|pi> # harness for prompt sessions in the New Session dialog when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.prompt.model <model>             # model for prompt sessions in the New Session dialog on the type's harness; unset uses the harness's own default
-  assist config set harness.defaults.design.harness <claude|codex|pi> # harness for design sessions in the New Session dialog when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.design.model <model>             # model for design sessions in the New Session dialog on the type's harness; unset uses the harness's own default
-  assist config set harness.defaults.run.harness <claude|codex|pi>    # harness for backlog runs (assist backlog run, web Start buttons) when none is picked; unset falls back to harness.engine
-  assist config set harness.defaults.run.model <model>                # model for backlog runs (assist backlog run, web Start buttons) on the type's harness; unset uses the harness's own default
+  assist config set harness.engine <claude|claude-sdk|codex|codex-sdk|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key); codex-sdk (Codex (SDK)) drives your logged-in codex through the Codex SDK
+  assist config set harness.exposeCodexActions <true|false>               # force the web UI 'with Codex' actions off even when codex is on PATH
+  assist config set harness.exposePiActions <true|false>                  # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.codexModel <model>                            # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
+  assist config set harness.defaults.draft.harness <claude|codex|pi>      # harness for draft sessions (assist draft, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.draft.model <model>                  # model for draft sessions (assist draft, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.bug.harness <claude|codex|pi>        # harness for bug sessions (assist bug, New Session dialog) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.bug.model <model>                    # model for bug sessions (assist bug, New Session dialog) on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.prompt.harness <claude|codex|pi>     # harness for prompt sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.prompt.model <model>                 # model for prompt sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.design.harness <claude|codex|pi>     # harness for design sessions in the New Session dialog when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.design.model <model>                 # model for design sessions in the New Session dialog on the type's harness; unset uses the harness's own default
+  assist config set harness.defaults.run.harness <claude|codex|pi>        # harness for backlog runs (assist backlog run, web Start buttons) when none is picked; unset falls back to harness.engine
+  assist config set harness.defaults.run.model <model>                    # model for backlog runs (assist backlog run, web Start buttons) on the type's harness; unset uses the harness's own default
 
 === assist review-pr-comments --help
 Usage: assist review-pr-comments [options] [number]
@@ -4048,10 +4048,10 @@ Options:
   -h, --help             display help for command
 
 Config:
-  assist config set harness.engine <claude|claude-sdk|codex|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key)
-  assist config set harness.exposeCodexActions <true|false>     # force the web UI 'with Codex' actions off even when codex is on PATH
-  assist config set harness.exposePiActions <true|false>        # force the web UI 'with pi' actions off even when pi is on PATH
-  assist config set harness.codexModel <model>                  # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
+  assist config set harness.engine <claude|claude-sdk|codex|codex-sdk|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key); codex-sdk (Codex (SDK)) drives your logged-in codex through the Codex SDK
+  assist config set harness.exposeCodexActions <true|false>               # force the web UI 'with Codex' actions off even when codex is on PATH
+  assist config set harness.exposePiActions <true|false>                  # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.codexModel <model>                            # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
 
 === assist fix-conflict --help
 Usage: assist fix-conflict [options] [number]
@@ -4071,10 +4071,10 @@ Options:
   -h, --help             display help for command
 
 Config:
-  assist config set harness.engine <claude|claude-sdk|codex|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key)
-  assist config set harness.exposeCodexActions <true|false>     # force the web UI 'with Codex' actions off even when codex is on PATH
-  assist config set harness.exposePiActions <true|false>        # force the web UI 'with pi' actions off even when pi is on PATH
-  assist config set harness.codexModel <model>                  # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
+  assist config set harness.engine <claude|claude-sdk|codex|codex-sdk|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key); codex-sdk (Codex (SDK)) drives your logged-in codex through the Codex SDK
+  assist config set harness.exposeCodexActions <true|false>               # force the web UI 'with Codex' actions off even when codex is on PATH
+  assist config set harness.exposePiActions <true|false>                  # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.codexModel <model>                            # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
 
 === assist refine --help
 Usage: assist refine [options] [id]
@@ -4094,10 +4094,10 @@ Options:
   -h, --help             display help for command
 
 Config:
-  assist config set harness.engine <claude|claude-sdk|codex|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key)
-  assist config set harness.exposeCodexActions <true|false>     # force the web UI 'with Codex' actions off even when codex is on PATH
-  assist config set harness.exposePiActions <true|false>        # force the web UI 'with pi' actions off even when pi is on PATH
-  assist config set harness.codexModel <model>                  # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
+  assist config set harness.engine <claude|claude-sdk|codex|codex-sdk|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key); codex-sdk (Codex (SDK)) drives your logged-in codex through the Codex SDK
+  assist config set harness.exposeCodexActions <true|false>               # force the web UI 'with Codex' actions off even when codex is on PATH
+  assist config set harness.exposePiActions <true|false>                  # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.codexModel <model>                            # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
 
 === assist signal --help
 Usage: assist signal [options] [command]
