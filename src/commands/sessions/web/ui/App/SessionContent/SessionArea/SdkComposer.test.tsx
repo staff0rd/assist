@@ -284,7 +284,12 @@ describe("SdkComposer", () => {
 				{ status: "waiting", sdkPromptSuggestion: "commit this", ...overrides },
 				initial,
 			);
-		const tabHint = () => screen.queryByText("use suggestion");
+		const tabHint = () =>
+			screen.queryByText((_, el) =>
+				Boolean(
+					el?.matches("span") && el.textContent?.endsWith("use suggestion"),
+				),
+			);
 
 		it("shows the suggestion as ghost text in the empty field", () => {
 			const { field } = suggested();
@@ -317,6 +322,36 @@ describe("SdkComposer", () => {
 			expect(field.getAttribute("placeholder")).not.toBe("commit this");
 			fireEvent.keyDown(field, { key: "Tab" });
 			expect(value(field)).toBe("");
+		});
+
+		it("fills the field on right-arrow without sending", () => {
+			const { field, sendInput } = suggested();
+			fireEvent.keyDown(field, { key: "ArrowRight" });
+			expect(value(field)).toBe("commit this");
+			expect(sendInput).not.toHaveBeenCalled();
+		});
+
+		it("leaves typed text alone on right-arrow", () => {
+			const { field } = suggested({}, "fix");
+			fireEvent.keyDown(field, { key: "ArrowRight" });
+			expect(value(field)).toBe("fix");
+		});
+
+		it("does nothing special on right-arrow without a suggestion", () => {
+			const { field } = suggested({ sdkPromptSuggestion: undefined });
+			fireEvent.keyDown(field, { key: "ArrowRight" });
+			expect(value(field)).toBe("");
+		});
+
+		it("ignores right-arrow with a modifier", () => {
+			const { field } = suggested();
+			fireEvent.keyDown(field, { key: "ArrowRight", shiftKey: true });
+			expect(value(field)).toBe("");
+		});
+
+		it("names both keys in the hint", () => {
+			suggested();
+			expect(tabHint()?.textContent).toBe("Tab / → use suggestion");
 		});
 
 		it("keeps Tab for the slash list when it is open", () => {
