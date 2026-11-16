@@ -110,6 +110,8 @@ export type Session = SdkViewState & {
 	pendingRestart?: () => void;
 	pendingDismiss?: () => void;
 	pendingStart?: () => Session["pty"];
+	/** A held start that will run as a daemon-driven session, so views treat it as one before its process exists. */
+	drivenStart?: boolean;
 	awaitingSeed?: boolean;
 	seeding?: string;
 	cols?: number;

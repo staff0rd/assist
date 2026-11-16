@@ -53,3 +53,27 @@ describe("toSessionInfo joinable", () => {
 		).toBe(false);
 	});
 });
+
+describe("toSessionInfo sdk", () => {
+	it("reports a held driven start as an sdk session before its process exists", () => {
+		const info = toSessionInfo(
+			makeSession({ pty: null, pendingStart: () => null, drivenStart: true }),
+		);
+
+		expect(info.sdk).toBe(true);
+	});
+
+	it("leaves a held terminal start without the sdk flag", () => {
+		const info = toSessionInfo(
+			makeSession({ pty: null, pendingStart: () => null }),
+		);
+
+		expect(info.sdk).toBeUndefined();
+	});
+
+	it("drops the sdk flag once a held driven start fails without a process", () => {
+		const info = toSessionInfo(makeSession({ pty: null, drivenStart: true }));
+
+		expect(info.sdk).toBeUndefined();
+	});
+});

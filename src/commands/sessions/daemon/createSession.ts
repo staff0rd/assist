@@ -3,6 +3,7 @@ import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
 import { preassignedId } from "../../../shared/harnessAdapters/preassignedId";
 import type { HarnessKind } from "../../../shared/harnesses";
 import { startOrHoldPty } from "./startOrHoldPty";
+import { startsDriven } from "./startsDriven";
 import type { Session } from "./types";
 import { sessionBase } from "./sessionBase";
 
@@ -54,6 +55,7 @@ export function createSession(
 					...sessionModeLaunch(adapter, { design, auto, model }),
 				}),
 			holdPty,
+			() => startsDriven(harness),
 		),
 		cwd,
 		initialPrompt: prompt,

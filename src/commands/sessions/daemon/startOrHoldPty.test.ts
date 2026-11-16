@@ -24,4 +24,23 @@ describe("startOrHoldPty", () => {
 		expect(result.pty).toBeNull();
 		expect(result.pendingStart).toBe(start);
 	});
+
+	it("marks a held start that will run driven", () => {
+		const result = startOrHoldPty(
+			() => pty,
+			true,
+			() => true,
+		);
+
+		expect(result.drivenStart).toBe(true);
+	});
+
+	it("does not decide drivenness for a start that runs immediately", () => {
+		const driven = vi.fn(() => true);
+
+		const result = startOrHoldPty(() => pty, false, driven);
+
+		expect(driven).not.toHaveBeenCalled();
+		expect(result.drivenStart).toBeUndefined();
+	});
 });

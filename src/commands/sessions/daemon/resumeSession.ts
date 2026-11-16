@@ -2,6 +2,7 @@ import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
 import type { HarnessKind } from "../../../shared/harnesses";
 import type { Session } from "./createSession";
 import { startOrHoldPty } from "./startOrHoldPty";
+import { startsDriven } from "./startsDriven";
 
 export function resumeSession(
 	id: string,
@@ -26,6 +27,7 @@ export function resumeSession(
 		...startOrHoldPty(
 			() => adapter.interactive({ resumeId: sessionId, cwd, sessionId: id }),
 			holdPty,
+			() => startsDriven(harness),
 		),
 		scrollback: "",
 		/* why: bind the card to the conversation it is resuming so a daemon restart

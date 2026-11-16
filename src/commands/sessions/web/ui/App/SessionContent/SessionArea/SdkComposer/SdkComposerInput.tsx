@@ -31,7 +31,7 @@ export function SdkComposerInput({
 				c.shell && shellSx.field,
 			]}
 			inputProps={{
-				"aria-label": c.shell ? "Shell command" : "Message Claude",
+				"aria-label": c.shell ? "Shell command" : `Message ${c.agent}`,
 				onScroll: backdrop.onScroll,
 			}}
 		/>

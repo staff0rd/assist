@@ -38,7 +38,7 @@ function setup(
 			interruptSession={interruptSession}
 		/>,
 	);
-	const field = screen.getByLabelText("Message Claude");
+	const field = screen.getByLabelText(/^Message /);
 	type(field, initial);
 	return { field, sendInput, interruptSession };
 }
@@ -258,6 +258,11 @@ describe("SdkComposer", () => {
 		it("offers nothing for a harness without slash suggestions", () => {
 			setup({ status: "waiting", harness: "codex" }, "/dr");
 			expect(screen.queryByRole("listbox")).toBeNull();
+		});
+
+		it("names a Codex session's agent in the composer label", () => {
+			setup({ status: "waiting", harness: "codex-sdk" }, "");
+			expect(screen.getByLabelText("Message Codex")).toBeTruthy();
 		});
 	});
 

@@ -11,6 +11,8 @@ export function toSessionViewInfo({
 	activeViewerNode,
 	transfer,
 	pty,
+	pendingStart,
+	drivenStart,
 	sdkActivity,
 	sdkActivityElapsed,
 	sdkProcess,
@@ -23,7 +25,7 @@ export function toSessionViewInfo({
 	sdkResuming,
 }: Session) {
 	return {
-		sdk: pty?.sdk ? true : undefined,
+		sdk: pty?.sdk || (!pty && pendingStart && drivenStart) ? true : undefined,
 		sdkActivity,
 		sdkActivityElapsed,
 		sdkProcess,

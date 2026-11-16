@@ -1,6 +1,8 @@
 import type { Session } from "./createSession";
 import { spawnAssistProcess } from "./spawnAssistProcess";
+import { assistArgsHarness } from "./assistArgsHarness";
 import { startOrHoldPty } from "./startOrHoldPty";
+import { startsDriven } from "./startsDriven";
 
 export type AssistSessionMeta = {
 	title?: string;
@@ -33,6 +35,7 @@ export function createAssistSession(
 		...startOrHoldPty(
 			() => spawnAssistProcess(["assist", ...assistArgs], cwd, id),
 			holdPty,
+			() => startsDriven(assistArgsHarness(assistArgs, cwd)),
 		),
 		scrollback: "",
 		assistArgs,
