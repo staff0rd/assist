@@ -28,7 +28,7 @@ describe("recoverAutostash", () => {
 		}
 		repo = mkdtempSync(join(tmpdir(), "assist-autostash-"));
 		sh("git init -q -b main && git config user.email t@t");
-		sh("git config user.name t");
+		sh("git config user.name t && git config core.autocrlf false");
 		writeFileSync(join(repo, "file.txt"), "base\n");
 		sh("git add -A && git commit -q -m init");
 		process.chdir(repo);
