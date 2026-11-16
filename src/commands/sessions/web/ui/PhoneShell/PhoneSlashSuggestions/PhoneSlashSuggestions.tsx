@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
+import type { SxProps, Theme } from "@mui/material/styles";
 import type { PointerEvent } from "react";
 import type { SlashCommand } from "../../../slashCommands/readSlashCommands";
 import { SlashCommandLabel } from "../../slashSuggestions/SlashCommandLabel";
@@ -11,11 +12,21 @@ type Props = {
 	matches: SlashCommand[];
 	query: string;
 	onPick: (name: string) => void;
+	sx?: SxProps<Theme>;
 };
 
-export function PhoneSlashSuggestions({ matches, query, onPick }: Props) {
+export function PhoneSlashSuggestions({
+	matches,
+	query,
+	onPick,
+	sx: extraSx,
+}: Props) {
 	return (
-		<Box sx={sx.list} role="listbox" aria-label="Skill suggestions">
+		<Box
+			sx={[sx.list, ...(Array.isArray(extraSx) ? extraSx : [extraSx])]}
+			role="listbox"
+			aria-label="Skill suggestions"
+		>
 			{matches.map((command, i) => (
 				<ButtonBase
 					key={`${command.scope}:${command.name}`}

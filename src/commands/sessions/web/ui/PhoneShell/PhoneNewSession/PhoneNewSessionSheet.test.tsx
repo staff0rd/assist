@@ -5,6 +5,7 @@ import {
 	fireEvent,
 	render,
 	screen,
+	waitFor,
 	within,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -40,8 +41,22 @@ vi.mock("../../useHarnessCapabilities", () => ({
 	}),
 }));
 
+const apiFetch = vi.hoisted(() =>
+	vi.fn(async (_url: string) => ({
+		json: async () => ({
+			commands: [
+				{ name: "draft", scope: "user", description: "Draft an item" },
+				{ name: "drift", scope: "project" },
+				{ name: "commit", scope: "user" },
+			],
+		}),
+	})),
+);
+vi.mock("../../apiFetch", () => ({ apiFetch }));
+
 afterEach(() => {
 	cleanup();
+	apiFetch.mockClear();
 	configured.harnesses = {};
 	configured.models = {};
 });
@@ -133,5 +148,51 @@ describe("PhoneNewSessionSheet", () => {
 			undefined,
 			"sonnet",
 		);
+	});
+
+	it("lists matching skills under the prompt and fills the picked one", async () => {
+		renderSheet();
+		const prompt = screen.getByRole("textbox", {
+			name: "Prompt",
+		}) as HTMLTextAreaElement;
+		await waitFor(() =>
+			expect(apiFetch).toHaveBeenCalledWith(
+				expect.stringContaining("cwd=%2Fmac%2Fassist"),
+			),
+		);
+
+		fireEvent.change(prompt, { target: { value: "/dr" } });
+		fireEvent.select(prompt, { target: { selectionEnd: 3 } });
+		const list = await screen.findByRole("listbox", {
+			name: "Skill suggestions",
+		});
+		expect(within(list).getAllByRole("option")).toHaveLength(2);
+		expect(
+			prompt.compareDocumentPosition(list) & Node.DOCUMENT_POSITION_FOLLOWING,
+		).toBeTruthy();
+		expect(
+			list.compareDocumentPosition(
+				screen.getByRole("button", { name: /assist/ }),
+			) & Node.DOCUMENT_POSITION_FOLLOWING,
+		).toBeTruthy();
+
+		fireEvent.click(within(list).getByRole("option", { name: /draft/ }));
+
+		expect(prompt.value).toBe("/draft ");
+		expect(screen.queryByRole("listbox")).toBeNull();
+	});
+
+	it("suggests no skills for a harness without slash suggestions", async () => {
+		configured.harnesses = { draft: "codex" };
+		renderSheet();
+		fireEvent.click(screen.getByRole("radio", { name: "Draft" }));
+		await waitFor(() => expect(apiFetch).toHaveBeenCalled());
+		const prompt = screen.getByRole("textbox", { name: "Prompt" });
+
+		fireEvent.change(prompt, { target: { value: "/dr" } });
+		fireEvent.select(prompt, { target: { selectionEnd: 3 } });
+
+		await new Promise((resolve) => setTimeout(resolve, 0));
+		expect(screen.queryByRole("listbox")).toBeNull();
 	});
 });
