@@ -18,6 +18,8 @@ export function PrPreviewSlideInPane({
 		return (
 			<ShowPane
 				preview={preview}
+				session={session}
+				sendInput={pane.sendInput}
 				onClose={() => onDecision("reject", miroDecisionDetails())}
 			/>
 		);

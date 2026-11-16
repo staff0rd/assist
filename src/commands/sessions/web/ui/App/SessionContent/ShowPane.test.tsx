@@ -1,6 +1,14 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
+import { selectPreviewText } from "../../../../../../test/selectPreviewText";
 import { ShowPane } from "./ShowPane";
 
 vi.mock(
@@ -110,5 +118,78 @@ describe("ShowPane width toggle", () => {
 
 		fireEvent.click(screen.getByLabelText("Fill the window with preview"));
 		expect(onToggleMode).toHaveBeenCalled();
+	});
+});
+
+describe("ShowPane selection comments", () => {
+	const liveSession = makeSessionInfo({
+		id: "daemon-1",
+		name: "show-42",
+		commandType: "claude",
+		status: "running",
+	});
+
+	it("sends a question about selected text to the session and stays open", async () => {
+		const sendInput = vi.fn();
+		const onClose = vi.fn();
+		render(
+			<ShowPane
+				preview={preview}
+				session={liveSession}
+				sendInput={sendInput}
+				onClose={onClose}
+			/>,
+		);
+
+		selectPreviewText(document.body, "See");
+		fireEvent.change(screen.getByPlaceholderText("Add a note…"), {
+			target: { value: "is this current?" },
+		});
+		fireEvent.click(screen.getByRole("button", { name: "Send to agent" }));
+
+		const data = sendInput.mock.calls.map(([, chunk]) => chunk).join("");
+		expect(sendInput.mock.calls[0]?.[0]).toBe("daemon-1");
+		expect(data).toContain('Shown "Links"');
+		expect(data).toContain("See");
+		expect(data).toContain("is this current?");
+		expect(onClose).not.toHaveBeenCalled();
+		expect(await screen.findByText("Question sent to show-42")).toBeTruthy();
+	});
+
+	it("shows the unavailable reason without a live session", async () => {
+		render(<ShowPane preview={preview} onClose={vi.fn()} />);
+
+		selectPreviewText(document.body, "See");
+
+		expect(
+			await screen.findByText(
+				"Comments are unavailable — that session is no longer live.",
+			),
+		).toBeTruthy();
+		expect(screen.queryByPlaceholderText("Add a note…")).toBeNull();
+	});
+
+	it("copies a code block without opening the popover", async () => {
+		const writeText = vi.fn().mockResolvedValue(undefined);
+		Object.defineProperty(navigator, "clipboard", {
+			value: { writeText },
+			configurable: true,
+		});
+		render(
+			<ShowPane
+				preview={preview}
+				session={liveSession}
+				sendInput={vi.fn()}
+				onClose={vi.fn()}
+			/>,
+		);
+
+		const copy = screen.getAllByRole("button", { name: "Copy" })[1];
+		fireEvent.mouseDown(copy);
+		fireEvent.mouseUp(copy);
+		fireEvent.click(copy);
+
+		await waitFor(() => expect(writeText).toHaveBeenCalledWith("const x = 1;"));
+		expect(screen.queryByPlaceholderText("Add a note…")).toBeNull();
 	});
 });
