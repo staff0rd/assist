@@ -1,3 +1,15 @@
+# [0.1189.0](https://github.com/staff0rd/assist/compare/v0.1188.0...v0.1189.0) (2026-11-16)
+
+
+### Bug Fixes
+
+* use execFileSync for quoted commands ([9bde363](https://github.com/staff0rd/assist/commit/9bde36305427cc5bc6b87f51d91bfdf70a829147))
+
+
+### Features
+
+* lint rule preferring execFileSync ([0aca87b](https://github.com/staff0rd/assist/commit/0aca87b6a26a07d4f6ad32d59acf9c77744b3232))
+
 # [0.1188.0](https://github.com/staff0rd/assist/compare/v0.1187.0...v0.1188.0) (2026-11-16)
 
 
