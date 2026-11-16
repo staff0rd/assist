@@ -7,6 +7,7 @@ import { daemonLog } from "../daemonLog";
 import { resumeSession } from "../resumeSession";
 import type { TreeSpawnContext } from "./allocateAndBind";
 import { bindResumedWorktree } from "./bindNewWorktree";
+import { resumeHarness } from "./resumeHarness";
 import { resumeInReplacementTree } from "./resumeInReplacementTree";
 
 export function resumeInTree(
@@ -14,8 +15,9 @@ export function resumeInTree(
 	sessionId: string,
 	cwd: string,
 	name: string | undefined,
-	harness?: HarnessKind,
+	requestedHarness?: HarnessKind,
 ): string {
+	const harness = resumeHarness(requestedHarness, cwd);
 	if (!existsSync(cwd))
 		return resumeInReplacementTree(ctx, sessionId, cwd, name, harness);
 	const blocker = launchBlocker(

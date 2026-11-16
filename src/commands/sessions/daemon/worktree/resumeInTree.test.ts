@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as fsMockModule from "../../../../test/mocks/fsMock";
 import type { Session } from "../createSession";
+import { resumeHarness } from "./resumeHarness";
 import { resumeInReplacementTree } from "./resumeInReplacementTree";
 import { type TreeSpawnContext } from "./spawnInTree";
 import { resumeInTree } from "./resumeInTree";
@@ -17,6 +18,9 @@ vi.mock("./resumeInReplacementTree", () => ({
 }));
 vi.mock("./detectExistingWorktree", () => ({
 	detectExistingWorktree: () => ({ path: "/git/repo-2", clone: "/git/repo" }),
+}));
+vi.mock("./resumeHarness", () => ({
+	resumeHarness: vi.fn(() => "claude"),
 }));
 vi.mock("../spawnClaude", () => ({
 	spawnClaude: vi.fn(() => ({ fake: "pty" })),
@@ -71,8 +75,25 @@ describe("resumeInTree", () => {
 			"abc12345",
 			"/git/repo-2",
 			"work",
-			undefined,
+			"claude",
 		);
 		expect(sessions.size).toBe(0);
+	});
+
+	it("resumes with the harness resolved from the configured engine", () => {
+		vi.mocked(resumeHarness).mockReturnValueOnce("claude-sdk");
+		existsMock.mockReturnValue(false);
+		const { ctx } = context();
+
+		resumeInTree(ctx, "abc12345", "/git/repo-2", "work", "claude");
+
+		expect(resumeHarness).toHaveBeenCalledWith("claude", "/git/repo-2");
+		expect(replacementMock).toHaveBeenCalledWith(
+			ctx,
+			"abc12345",
+			"/git/repo-2",
+			"work",
+			"claude-sdk",
+		);
 	});
 });
