@@ -1,3 +1,15 @@
+# [0.1198.0](https://github.com/staff0rd/assist/compare/v0.1197.0...v0.1198.0) (2026-11-16)
+
+
+### Bug Fixes
+
+* show Dismissed for dismissed question panes ([9705151](https://github.com/staff0rd/assist/commit/97051519eec3b771a2d2603cdfc01ed39297f2cd))
+
+
+### Features
+
+* add --screenshot to issue comment ([cc60e15](https://github.com/staff0rd/assist/commit/cc60e15ede5a16ad69be794d9762789c6e415dd2))
+
 # [0.1197.0](https://github.com/staff0rd/assist/compare/v0.1196.0...v0.1197.0) (2026-11-16)
 
 
