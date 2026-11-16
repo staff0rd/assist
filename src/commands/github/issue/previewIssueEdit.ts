@@ -11,16 +11,20 @@ export async function previewIssueEdit(
 	fresh: boolean | undefined,
 	body: string | undefined,
 	screenshots: PreviewAttachment[] = [],
+	title?: string,
 ): Promise<void> {
+	if (title !== undefined) validateIssueBody(title, "");
 	const proposed = body ? await readBodyArgument(body) : undefined;
 	const issue = prepareIssueEdit(number, repo, fresh, proposed);
+	const heading =
+		title === undefined ? issue.title : `${issue.title} → ${title}`;
 	const edited = await reviewProposedIssueEdit(
-		`Edit ${issue.target}: ${issue.title}`,
+		`Edit ${issue.target}: ${heading}`,
 		issue.body,
 		{ path: issue.bodyPath, save: issue.save },
 		screenshots,
 	);
-	validateIssueBody(issue.title, edited.body);
+	validateIssueBody(title ?? issue.title, edited.body);
 
 	pushUnchangedIssue(
 		number,
@@ -29,5 +33,8 @@ export async function previewIssueEdit(
 		issue.updatedAt,
 		issue.bodyPath,
 		edited.screenshots,
+		title === undefined
+			? undefined
+			: { title, bodyChanged: edited.body !== issue.fetchedBody },
 	);
 }

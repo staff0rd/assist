@@ -948,6 +948,7 @@ Options:
   -R, --repo <owner/repo>  Target repository (defaults to the current repo)
   --body <body>            Proposed replacement body to preview instead of the current one (- reads
                            it from stdin)
+  --title <title>          Rename the issue, previewed with the body before it is pushed
   --fresh                  Discard any working file for the issue and re-fetch its body from GitHub
   --fetch                  Write the issue's current body to its working file and print the path,
                            without previewing

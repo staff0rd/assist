@@ -657,3 +657,123 @@ describe("editIssue --screenshot", () => {
 		]);
 	});
 });
+
+describe("editIssue --title", () => {
+	it("previews the rename in the header with the current body", async () => {
+		webSession();
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+
+		await editIssue("42", { title: "Tidy the changelog" });
+
+		expect(mockRequestPreviewDecision).toHaveBeenCalledWith(
+			expect.objectContaining({
+				title: "Edit acme/widgets#42: Tidy the history → Tidy the changelog",
+				body: "# History\n\nlots of noise",
+			}),
+		);
+	});
+
+	it("pushes only the title when the body is unchanged", async () => {
+		webSession();
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+
+		await editIssue("42", {
+			repo: "acme/widgets",
+			title: "Tidy the changelog",
+		});
+
+		expect(ghCalls("edit").map((call) => call[1])).toEqual([
+			[
+				"issue",
+				"edit",
+				"42",
+				"--title",
+				"Tidy the changelog",
+				"--repo",
+				"acme/widgets",
+			],
+		]);
+	});
+
+	it("pushes the title and body in one edit when --body is given", async () => {
+		webSession();
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+
+		await editIssue("42", { title: "Tidy the changelog", body: "# New" });
+
+		expect(previewedBody()).toBe("# New");
+		expect(ghCalls("edit").map((call) => call[1])).toEqual([
+			[
+				"issue",
+				"edit",
+				"42",
+				"--body-file",
+				workingBodyPath(),
+				"--title",
+				"Tidy the changelog",
+			],
+		]);
+	});
+
+	it("pushes nothing when the preview is rejected", async () => {
+		webSession();
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		exitThrows();
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "reject",
+			reason: "different name",
+		});
+
+		await expect(
+			editIssue("42", { title: "Tidy the changelog" }),
+		).rejects.toThrow("process.exit");
+
+		expect(ghCalls("edit")).toEqual([]);
+	});
+
+	it("rejects a title referencing Claude before previewing", async () => {
+		webSession();
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		exitThrows();
+
+		await expect(
+			editIssue("42", { title: "Renamed by Claude" }),
+		).rejects.toThrow("process.exit");
+
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+		expect(execFileSync).not.toHaveBeenCalled();
+	});
+
+	it("pushes nothing when the issue moved after it was fetched", async () => {
+		webSession();
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		exitThrows();
+		ghViewReturns(
+			issueJson(),
+			issueJson({ updatedAt: "2026-08-02T09:30:00Z" }),
+		);
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+
+		await expect(
+			editIssue("42", { title: "Tidy the changelog" }),
+		).rejects.toThrow("process.exit");
+
+		expect(ghCalls("edit")).toEqual([]);
+	});
+
+	it.each([{ parent: "7" }, { fetch: true }])(
+		"is a usage error with %o",
+		async (extra) => {
+			webSession();
+			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+			exitThrows();
+
+			await expect(
+				editIssue("42", { title: "Tidy the changelog", ...extra }),
+			).rejects.toThrow("process.exit");
+
+			expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("Usage:"));
+			expect(execFileSync).not.toHaveBeenCalled();
+		},
+	);
+});

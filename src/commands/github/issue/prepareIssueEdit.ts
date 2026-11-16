@@ -9,6 +9,7 @@ type PreparedIssueEdit = {
 	target: string;
 	updatedAt: string;
 	body: string;
+	fetchedBody: string;
 	bodyPath: string;
 	save: (markdown: string) => string;
 };
@@ -41,6 +42,7 @@ export function prepareIssueEdit(
 		target,
 		updatedAt: issue.updatedAt,
 		body,
+		fetchedBody: issue.body,
 		bodyPath,
 		save,
 	};

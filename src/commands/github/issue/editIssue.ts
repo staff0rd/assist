@@ -1,4 +1,8 @@
 import { parseScreenshotSpecs } from "../../prs/parseScreenshotSpecs";
+import {
+	parseEditIssueArgs,
+	type EditIssueOptions,
+} from "./parseEditIssueArgs";
 import { inWebSession } from "../../sessions/shared/inWebSession";
 import { attachIssueScreenshots } from "./attachIssueScreenshots";
 import { fetchIssueToWorkingFile } from "./fetchIssueToWorkingFile";
@@ -6,27 +10,11 @@ import { previewIssueEdit } from "./previewIssueEdit";
 import { setIssueParent } from "./setIssueParent";
 import { viewIssue } from "./viewIssue";
 
-type EditIssueOptions = {
-	repo?: string;
-	fresh?: boolean;
-	fetch?: boolean;
-	body?: string;
-	parent?: string;
-	screenshot?: string[];
-};
-
-const USAGE =
-	"Usage: assist github issue edit <number> [-R <owner>/<repo>] [--body <body>] [--fetch] [--parent <issue>] [--screenshot '[Group/]Caption=path']";
-
 export async function editIssue(
 	numberArg: string,
 	options: EditIssueOptions,
 ): Promise<void> {
-	const number = Number.parseInt(numberArg, 10);
-	if (!Number.isInteger(number) || number <= 0) {
-		console.error(USAGE);
-		process.exit(1);
-	}
+	const number = parseEditIssueArgs(numberArg, options);
 
 	const screenshots = parseScreenshotSpecs(options.screenshot);
 
@@ -60,5 +48,6 @@ export async function editIssue(
 		options.fresh,
 		options.body,
 		screenshots,
+		options.title,
 	);
 }

@@ -10,8 +10,12 @@ export function pushIssueBody(
 	repo: string | undefined,
 	bodyPath: string,
 	attachments: PreviewAttachment[] = [],
+	title?: string,
 ): void {
-	const repoArgs = repo ? ["--repo", repo] : [];
+	const repoArgs = [
+		...(title === undefined ? [] : ["--title", title]),
+		...(repo ? ["--repo", repo] : []),
+	];
 	if (attachments.length > 0) {
 		const body = mergeIssueScreenshots(
 			readFileSync(bodyPath, "utf8"),

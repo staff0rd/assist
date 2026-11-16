@@ -17,6 +17,10 @@ export function registerEditIssue(issueCommand: Command): void {
 			"Proposed replacement body to preview instead of the current one (- reads it from stdin)",
 		)
 		.option(
+			"--title <title>",
+			"Rename the issue, previewed with the body before it is pushed",
+		)
+		.option(
 			"--fresh",
 			"Discard any working file for the issue and re-fetch its body from GitHub",
 		)
