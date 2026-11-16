@@ -1,3 +1,10 @@
+# [0.1186.0](https://github.com/staff0rd/assist/compare/v0.1185.5...v0.1186.0) (2026-11-16)
+
+
+### Features
+
+* right-arrow accepts prompt suggestion ([7bbc96b](https://github.com/staff0rd/assist/commit/7bbc96b2efb7df498b61b94009f01a265e3f936b))
+
 ## [0.1185.5](https://github.com/staff0rd/assist/compare/v0.1185.4...v0.1185.5) (2026-11-16)
 
 
