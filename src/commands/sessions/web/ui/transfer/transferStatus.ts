@@ -1,3 +1,4 @@
+import type { SessionTransferStage } from "../../../shared/SessionInfoBase";
 import type { SessionInfo } from "../types";
 
 type TransferStatus = {
@@ -6,6 +7,7 @@ type TransferStatus = {
 	pending: boolean;
 	queued: boolean;
 	failed: boolean;
+	stage?: SessionTransferStage;
 };
 
 const idle = { pending: false, queued: false, failed: false };
@@ -33,5 +35,6 @@ export function transferStatus(session: SessionInfo): TransferStatus {
 		label: `Transferring to ${transfer.target}…`,
 		title: `Transferring to ${transfer.target}`,
 		pending: true,
+		stage: transfer.stage ?? "snapshotting",
 	};
 }

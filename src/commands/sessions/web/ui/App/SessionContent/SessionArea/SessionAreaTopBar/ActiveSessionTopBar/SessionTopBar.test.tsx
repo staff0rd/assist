@@ -364,6 +364,13 @@ describe("SessionTopBar identity", () => {
 });
 
 describe("SessionTopBar control cluster", () => {
+	it("hides the actions while a transfer is in flight", () => {
+		renderTopBar(makeSessionInfo({ transfer: { target: "mac" } }));
+		expect(
+			screen.queryByTitle("Dismiss session 1 (Shift skips confirmation)"),
+		).toBeNull();
+	});
+
 	it("wraps its controls rather than shrinking identity", () => {
 		panelWidth = 700;
 		identityWidth = 900;

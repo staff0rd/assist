@@ -81,6 +81,19 @@ describe("transferSession", () => {
 		);
 	});
 
+	it("notifies the snapshotting then launching stage", async () => {
+		const { session, deps, client } = setup({
+			type: "created",
+			sessionId: "mac:3",
+		});
+		const stages: unknown[] = [];
+		vi.mocked(deps.notify).mockImplementation(() =>
+			stages.push(session.transfer?.stage),
+		);
+		await transferSession(client, deps, request);
+		expect(stages.slice(0, 2)).toEqual(["snapshotting", "launching"]);
+	});
+
 	it("refuses sessions that are not backlog runs", async () => {
 		const { session, deps, routed, sent, client } = setup(undefined);
 		session.assistArgs = ["draft"];

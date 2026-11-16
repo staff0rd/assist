@@ -3,6 +3,7 @@ import { useRef } from "react";
 import { SessionTopBarCaptions } from "./SessionTopBar/SessionTopBarCaptions";
 import { SessionTopBarControls } from "./SessionTopBar/SessionTopBarControls";
 import { barGap, useTopBarLayout } from "./SessionTopBar/useTopBarLayout";
+import { transferStatus } from "../../../../../transfer/transferStatus";
 import type { SessionControlHandlers, SessionInfo } from "../../../../../types";
 
 const barSx = {
@@ -35,12 +36,14 @@ export function SessionTopBar({
 				budget={layout.budget}
 				onIdentityWidth={layout.setIdentityWidth}
 			/>
-			<SessionTopBarControls
-				session={session}
-				labelled={layout.labelled}
-				available={layout.available}
-				{...handlers}
-			/>
+			{!transferStatus(session).pending && (
+				<SessionTopBarControls
+					session={session}
+					labelled={layout.labelled}
+					available={layout.available}
+					{...handlers}
+				/>
+			)}
 		</Box>
 	);
 }

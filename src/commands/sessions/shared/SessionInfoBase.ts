@@ -106,8 +106,11 @@ export type SessionInfoBase = SdkViewState & {
 	transfer?: SessionTransfer;
 };
 
+export type SessionTransferStage = "snapshotting" | "launching";
+
 export type SessionTransfer = {
 	target: string;
+	stage?: SessionTransferStage;
 	error?: string;
 	queued?: { cwd?: string };
 };

@@ -10,6 +10,8 @@ import { SessionAreaTopBar } from "./SessionAreaTopBar";
 import { SessionDiffSplit } from "./SessionDiffSplit";
 import type { SendPrDecision } from "./SessionPreviewSplit";
 import { SessionTerminalColumn } from "./SessionTerminalColumn";
+import { TransferPanel } from "./TransferPanel";
+import { transferStatus } from "../../../transfer/transferStatus";
 import type { TerminalAreaProps } from "./TerminalArea";
 
 const areaSx = {
@@ -33,6 +35,8 @@ export function ActiveSessionArea({
 }: ActiveSessionAreaProps) {
 	const activeSession = column.sessions.find((s) => s.id === column.activeId);
 	const node = activeSession?.node;
+	const transferring =
+		activeSession !== undefined && transferStatus(activeSession).pending;
 	return (
 		<ApiNodeContext.Provider value={node}>
 			<SessionSlashProviders session={activeSession}>
@@ -42,13 +46,20 @@ export function ActiveSessionArea({
 						sessions={column.sessions}
 						lifecycle={lifecycle}
 					/>
-					<SessionDiffSplit
-						sessionId={column.activeId}
-						sessions={column.sessions}
-						sendInput={column.sendInput}
-					>
-						<SessionTerminalColumn {...column} activeSession={activeSession} />
-					</SessionDiffSplit>
+					{transferring ? (
+						<TransferPanel session={activeSession} />
+					) : (
+						<SessionDiffSplit
+							sessionId={column.activeId}
+							sessions={column.sessions}
+							sendInput={column.sendInput}
+						>
+							<SessionTerminalColumn
+								{...column}
+								activeSession={activeSession}
+							/>
+						</SessionDiffSplit>
+					)}
 				</Box>
 			</SessionSlashProviders>
 		</ApiNodeContext.Provider>

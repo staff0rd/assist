@@ -30,4 +30,23 @@ describe("transferStatus", () => {
 			queued: false,
 		});
 	});
+
+	it("reports the in-flight stage, snapshotting until told otherwise", () => {
+		expect(transferStatus(session({ target: "mac" })).stage).toBe(
+			"snapshotting",
+		);
+		expect(
+			transferStatus(session({ target: "mac", stage: "launching" })).stage,
+		).toBe("launching");
+	});
+
+	it("reports no stage for queued or failed transfers", () => {
+		expect(
+			transferStatus(session({ target: "mac", queued: {}, stage: "launching" }))
+				.stage,
+		).toBeUndefined();
+		expect(
+			transferStatus(session({ target: "mac", error: "down" })).stage,
+		).toBeUndefined();
+	});
 });

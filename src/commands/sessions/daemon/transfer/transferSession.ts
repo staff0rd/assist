@@ -36,7 +36,7 @@ export async function transferSession(
 	daemonLog(
 		`session ${id} transfer to ${target} (cwd=${cwd ?? "default"}) trace=${traceId}: snapshotting tree`,
 	);
-	s.transfer = { target };
+	s.transfer = { target, stage: "snapshotting" };
 	deps.notify();
 	const pushed = await snapshotOrFail(s, args, traceId);
 	if (!pushed.ok) {
