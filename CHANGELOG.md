@@ -1,3 +1,10 @@
+## [0.1199.1](https://github.com/staff0rd/assist/compare/v0.1199.0...v0.1199.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* select the new session after transfer ([c0a7427](https://github.com/staff0rd/assist/commit/c0a74277d9a133ab584c0954c54f56140e2e582a))
+
 # [0.1199.0](https://github.com/staff0rd/assist/compare/v0.1198.2...v0.1199.0) (2026-11-16)
 
 
