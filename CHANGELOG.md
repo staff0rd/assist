@@ -1,3 +1,10 @@
+## [0.1190.3](https://github.com/staff0rd/assist/compare/v0.1190.2...v0.1190.3) (2026-11-16)
+
+
+### Bug Fixes
+
+* fit and sign PR screenshots ([d5ec2cd](https://github.com/staff0rd/assist/commit/d5ec2cd03cf335a2d7df372270185782490e0e9d))
+
 ## [0.1190.2](https://github.com/staff0rd/assist/compare/v0.1190.1...v0.1190.2) (2026-11-16)
 
 
