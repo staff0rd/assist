@@ -1,6 +1,6 @@
 import type { SessionInfo } from "../../../../types";
 
-const ENDED = new Set(["done", "stopped", "error"]);
+const ENDED = new Set(["done", "stopped", "error", "parked"]);
 
 function placeholder(live: boolean, resuming: boolean, running: boolean) {
 	if (!live) return "This session has ended";

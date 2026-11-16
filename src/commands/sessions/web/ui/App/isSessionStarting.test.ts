@@ -13,4 +13,9 @@ describe("isSessionStarting", () => {
 		const session = makeSessionInfo({ status: "waiting", sdk: true });
 		expect(isSessionStarting(session, new Set())).toBe(false);
 	});
+
+	it("does not treat a parked backlog run as starting, since it has no process", () => {
+		const session = makeSessionInfo({ status: "parked" });
+		expect(isSessionStarting(session, new Set())).toBe(false);
+	});
 });
