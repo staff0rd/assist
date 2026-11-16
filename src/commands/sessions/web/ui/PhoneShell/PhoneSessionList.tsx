@@ -4,8 +4,9 @@ import { useRef } from "react";
 import type { SessionInfo } from "../types";
 import { PhoneRepoChips } from "./PhoneRepoChips";
 import { PhoneFilteredSessions } from "./PhoneRepoChips/PhoneFilteredSessions";
-import { useSessionRepoFilter } from "./PhoneRepoChips/useSessionRepoFilter";
+import { useRepoFilter } from "./PhoneRepoChips/useRepoFilter";
 import { PhoneSessionsNavBar } from "./PhoneSessionsNavBar";
+import { needsAttention } from "./groupSessionsByStatus";
 import { PullIndicator } from "./PullIndicator";
 import { usePullToRefresh } from "./usePullToRefresh";
 
@@ -35,7 +36,10 @@ export function PhoneSessionList({
 }: Props) {
 	const bodyRef = useRef<HTMLDivElement | null>(null);
 	const { pull, refreshing } = usePullToRefresh(bodyRef, onRefresh);
-	const { repo, selectRepo, chips, shown } = useSessionRepoFilter(sessions);
+	const { repo, selectRepo, chips, shown } = useRepoFilter(
+		sessions,
+		needsAttention,
+	);
 
 	return (
 		<>

@@ -16,9 +16,11 @@ import {
 export function PhoneHistoryRow({
 	entry,
 	localNode,
+	hideRepo,
 }: {
 	entry: HistoricalSession;
 	localNode: string | undefined;
+	hideRepo?: boolean;
 }) {
 	const navigate = useNavigate();
 	return (
@@ -35,7 +37,7 @@ export function PhoneHistoryRow({
 			<Box sx={phoneRowTitleSx}>{entry.title ?? entry.name}</Box>
 			<ChevronRightIcon fontSize="small" sx={phoneRowChevronSx} />
 			<Box sx={phoneRowMetaSx}>
-				<span>{repoLabel(entry.cwd)}</span>
+				{!hideRepo && <span>{repoLabel(entry.cwd)}</span>}
 				<span>{formatRelativeTime(entry.lastActivity ?? entry.timestamp)}</span>
 				{entry.node && entry.node !== localNode && (
 					<Box component="span" sx={tokenBadgeSx("neutral")}>
