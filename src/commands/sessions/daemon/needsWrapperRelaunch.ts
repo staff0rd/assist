@@ -1,3 +1,4 @@
+import { isBacklogRunSession, isRunPhaseSession } from "./isBacklogRunSession";
 import type { PersistedSession } from "./loadPersistedSessions";
 
 const LAUNCH_COMMANDS = ["draft", "feat", "bug", "refine"];
@@ -11,11 +12,7 @@ export function needsWrapperRelaunch(
 function isBacklogRun(
 	persisted: PersistedSession,
 ): persisted is PersistedSession & { assistArgs: string[] } {
-	return (
-		persisted.commandType === "assist" &&
-		persisted.assistArgs?.[0] === "backlog" &&
-		persisted.assistArgs?.[1] === "run"
-	);
+	return isBacklogRunSession(persisted) || isRunPhaseSession(persisted);
 }
 
 function isOnceLaunch(
