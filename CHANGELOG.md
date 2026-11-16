@@ -1,3 +1,10 @@
+# [0.1206.0](https://github.com/staff0rd/assist/compare/v0.1205.3...v0.1206.0) (2026-11-16)
+
+
+### Features
+
+* codex-sdk daemon launches and usage ([b553b97](https://github.com/staff0rd/assist/commit/b553b977e782d0740e7c345fc2022beb1bf298d2))
+
 ## [0.1205.3](https://github.com/staff0rd/assist/compare/v0.1205.2...v0.1205.3) (2026-11-16)
 
 
