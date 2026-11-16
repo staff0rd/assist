@@ -77,4 +77,26 @@ describe("transcriptMessages with pane replies", () => {
 			),
 		).toEqual([{ role: "user", text: "Red, darker", sent: delivered }]);
 	});
+
+	it("matches a reply command to the leading words of the delivered label", () => {
+		const sent =
+			"`assist backlog add-phase a1` finished with exit code 1:\n\nRejected: no";
+		expect(
+			transcriptMessages(
+				claudeConversationReader,
+				[userLine(sent, "2026-11-16T10:00:01.000Z")],
+				[{ at: reply.at, command: "backlog", text: "Rejected\n\nno" }],
+			),
+		).toEqual([{ role: "user", text: "Rejected\n\nno", sent }]);
+	});
+
+	it("does not match a command that only shares a prefix", () => {
+		expect(
+			transcriptMessages(
+				claudeConversationReader,
+				[userLine(delivered, "2026-11-16T10:00:01.000Z")],
+				[{ at: reply.at, command: "ask", text: "Approved" }],
+			),
+		).toEqual([{ role: "user", text: delivered }]);
+	});
 });

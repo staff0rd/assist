@@ -30,51 +30,56 @@ const questionBody = JSON.stringify({
 });
 
 describe("paneEchoText", () => {
-	it("returns a trimmed check note", () => {
+	it("returns the check verdict and trimmed note", () => {
 		expect(
 			paneEchoText(preview("check"), {
-				answers: { result: "works", note: "  fine  " },
+				answers: { result: "doesn't work", note: "  still blank  " },
 			}),
-		).toBe("fine");
+		).toBe("Doesn't work\n\nstill blank");
 	});
 
-	it("returns nothing for a check without a note", () => {
+	it("returns just the verdict for a check without a note", () => {
 		expect(
 			paneEchoText(preview("check"), { answers: { result: "works" } }),
-		).toBe("");
+		).toBe("Works");
 	});
 
-	it("returns the reject reason and each comment with its excerpt", () => {
+	it("returns Rejected, the reason and each comment with its excerpt", () => {
 		expect(
 			paneEchoText(preview("ask"), {
 				decision: "reject",
 				reason: " Too vague ",
 				comments: [{ quote: "line one\nline two", note: "Be specific" }],
 			}),
-		).toBe("Too vague\n\n> line one\n> line two\n\nBe specific");
+		).toBe("Rejected\n\nToo vague\n\n> line one\n> line two\n\nBe specific");
 	});
 
-	it("returns approve comments on a propose preview", () => {
+	it("returns Approved and comments on a propose preview", () => {
 		expect(
 			paneEchoText(preview("backlog-item"), {
 				decision: "approve",
 				comments: [{ quote: "Goal", note: "Add a test" }],
 			}),
-		).toBe("> Goal\n\nAdd a test");
+		).toBe("Approved\n\n> Goal\n\nAdd a test");
 	});
 
-	it("returns nothing for a plain approve", () => {
-		expect(paneEchoText(preview("ask"), { decision: "approve" })).toBe("");
-	});
+	it.each(["ask", "rule", "design"] as const)(
+		"returns Approved for a plain %s approve",
+		(kind) => {
+			expect(paneEchoText(preview(kind), { decision: "approve" })).toBe(
+				"Approved",
+			);
+		},
+	);
 
-	it("returns nothing for a dismissed pane", () => {
+	it("returns Dismissed for a dismissed pane", () => {
 		expect(
 			paneEchoText(preview("ask"), {
 				decision: "reject",
 				reason: "x",
 				dismissed: true,
 			}),
-		).toBe("");
+		).toBe("Dismissed");
 	});
 
 	it("returns the picked labels and Other text of a question answer", () => {

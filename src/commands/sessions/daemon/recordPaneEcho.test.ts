@@ -58,12 +58,16 @@ describe("recordPaneEcho", () => {
 		expect(session.lastEchoAt).toBeDefined();
 	});
 
-	it("records nothing for a dismissed question", () => {
+	it("records Dismissed for a dismissed question", () => {
 		recordPaneEcho(paneSession("question"), {
 			answers: { "Which colour?": "Red" },
 			dismissed: true,
 		});
-		expect(appendTranscriptEcho).not.toHaveBeenCalled();
+		expect(appendTranscriptEcho).toHaveBeenCalledWith("conv-1", {
+			at: expect.any(String),
+			command: "ask-question",
+			text: "Dismissed",
+		});
 	});
 
 	it("records nothing for a non-SDK session", () => {
@@ -73,10 +77,36 @@ describe("recordPaneEcho", () => {
 		expect(appendTranscriptEcho).not.toHaveBeenCalled();
 	});
 
-	it("records nothing for a check note", () => {
-		recordPaneEcho(paneSession("check", true, ""), {
-			answers: { result: "works", note: "a note" },
-		});
+	it.each([
+		[
+			"check",
+			{ answers: { result: "works", note: "ok" } },
+			"ask-check",
+			"Works\n\nok",
+		],
+		["ask", { decision: "approve" }, "ask", "Approved"],
+		[
+			"backlog-item",
+			{ decision: "reject", reason: "No" },
+			"backlog",
+			"Rejected\n\nNo",
+		],
+		["rule", { decision: "approve" }, "rules", "Approved"],
+		["design", { decision: "approve" }, "ask-design", "Approved"],
+	] as const)(
+		"records a %s reply tied to its command",
+		(kind, d, command, text) => {
+			recordPaneEcho(paneSession(kind, true, ""), d);
+			expect(appendTranscriptEcho).toHaveBeenCalledWith("conv-1", {
+				at: expect.any(String),
+				command,
+				text,
+			});
+		},
+	);
+
+	it("records nothing for a preview kind with no reply", () => {
+		recordPaneEcho(paneSession("pr", true, ""), { decision: "approve" });
 		expect(appendTranscriptEcho).not.toHaveBeenCalled();
 	});
 });

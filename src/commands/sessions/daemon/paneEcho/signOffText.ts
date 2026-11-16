@@ -14,11 +14,14 @@ function formatComment({ quote, note }: PrPreviewComment): string {
 }
 
 export function signOffText(d: Record<string, unknown>): string {
+	const verdict = d.decision === "approve" ? "Approved" : "Rejected";
 	const reason = typeof d.reason === "string" ? d.reason.trim() : "";
 	const comments = Array.isArray(d.comments)
 		? d.comments.filter(isComment).filter((c) => c.note.trim())
 		: [];
-	return [...(reason ? [reason] : []), ...comments.map(formatComment)].join(
-		"\n\n",
-	);
+	return [
+		verdict,
+		...(reason ? [reason] : []),
+		...comments.map(formatComment),
+	].join("\n\n");
 }

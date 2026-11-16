@@ -1,5 +1,5 @@
-import { CHECK_NOTE_KEY } from "../../shared/askCheckInputSchema";
 import type { PrPreview } from "../../shared/SessionInfoBase";
+import { checkReplyText } from "./checkReplyText";
 import { questionAnswerText } from "./questionAnswerText";
 import { signOffText } from "./signOffText";
 
@@ -17,15 +17,16 @@ export function paneEchoText(
 	preview: PrPreview,
 	d: Record<string, unknown>,
 ): string {
-	if (d.dismissed === true) return "";
+	if (d.dismissed === true) return "Dismissed";
 	switch (preview.kind) {
 		case "check":
-			return (answersOf(d)[CHECK_NOTE_KEY] ?? "").trim();
+			return checkReplyText(answersOf(d));
 		case "question":
 			return questionAnswerText(preview.body, answersOf(d));
 		case "ask":
 		case "backlog-item":
 		case "rule":
+		case "design":
 			return signOffText(d);
 		default:
 			return "";

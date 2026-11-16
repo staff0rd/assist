@@ -12,7 +12,8 @@ export type TranscriptEcho = { at: string; command: string; text: string };
 
 /* why: a pane reply is recorded at decision time, before its deferred result
  * is delivered, so the delivered message is the first of that command's
- * results at or after the reply. Older unclaimed replies for the command
+ * results at or after the reply. A reply's command may be just the leading
+ * words of the delivered label (e.g. `backlog` for `backlog add-phase a1`). Older unclaimed replies for the command
  * (e.g. their session ended before delivery) are dropped so they never
  * replace a later result. */
 function claimReply(
@@ -21,12 +22,14 @@ function claimReply(
 ): TranscriptEcho | undefined {
 	if (event.kind !== "message" || event.role !== "user" || !event.at) return;
 	const at = event.at;
+	const label = /^`assist ([^`]+)` finished with exit code /.exec(
+		event.text,
+	)?.[1];
+	if (!label) return;
 	const matching = replies.filter(
 		(reply) =>
 			reply.at <= at &&
-			event.text.startsWith(
-				`\`assist ${reply.command}\` finished with exit code `,
-			),
+			(label === reply.command || label.startsWith(`${reply.command} `)),
 	);
 	const reply = matching.at(-1);
 	if (!reply) return;

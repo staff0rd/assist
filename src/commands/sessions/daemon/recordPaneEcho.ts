@@ -7,6 +7,11 @@ import { paneEchoText } from "./paneEcho/paneEchoText";
 
 const replyCommands: Partial<Record<NonNullable<PrPreview["kind"]>, string>> = {
 	question: "ask-question",
+	check: "ask-check",
+	ask: "ask",
+	"backlog-item": "backlog",
+	rule: "rules",
+	design: "ask-design",
 };
 
 export function recordPaneEcho(
