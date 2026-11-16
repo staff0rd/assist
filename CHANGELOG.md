@@ -1,3 +1,15 @@
+# [0.1200.0](https://github.com/staff0rd/assist/compare/v0.1199.1...v0.1200.0) (2026-11-16)
+
+
+### Bug Fixes
+
+* dismiss finished phase cards ([524f5af](https://github.com/staff0rd/assist/commit/524f5af2829a5b8ca5baca4729bda050217dfda4))
+
+
+### Features
+
+* add queued and failed transfer banners ([c91203e](https://github.com/staff0rd/assist/commit/c91203ead11e9ba940a15175e3b6972c5241d8a3))
+
 ## [0.1199.1](https://github.com/staff0rd/assist/compare/v0.1199.0...v0.1199.1) (2026-11-16)
 
 
