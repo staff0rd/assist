@@ -1,3 +1,10 @@
+## [0.1185.2](https://github.com/staff0rd/assist/compare/v0.1185.1...v0.1185.2) (2026-11-16)
+
+
+### Bug Fixes
+
+* neutral wording for related PRs check ([432ff45](https://github.com/staff0rd/assist/commit/432ff45a6a623db68157406c62a39d398d694ee1))
+
 ## [0.1185.1](https://github.com/staff0rd/assist/compare/v0.1185.0...v0.1185.1) (2026-11-16)
 
 
