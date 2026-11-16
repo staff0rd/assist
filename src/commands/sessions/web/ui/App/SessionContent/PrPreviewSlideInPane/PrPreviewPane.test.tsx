@@ -1248,7 +1248,6 @@ describe("PrPreviewPane inline comments", () => {
 		const kinds = [
 			"backlog-item",
 			"pr-comment",
-			"github-issue-comment",
 			"miro-board",
 			"slack-post",
 		] as const;

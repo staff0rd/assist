@@ -1,8 +1,14 @@
 import { execFileSync } from "node:child_process";
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../../test/mocks/childProcessMock";
 
 const mockRequestPreviewDecision = vi.fn();
+const stageScreenshots = vi.fn(async (shots: { path: string }[] = []) =>
+	shots.map((s) => ({ ...s, path: `/staged/${s.path.split("/").pop()}` })),
+);
 
 vi.mock("node:child_process", async () =>
 	(
@@ -16,11 +22,20 @@ vi.mock("../../sessions/shared/requestPreviewDecision", () => ({
 		mockRequestPreviewDecision(...args),
 }));
 
+vi.mock("../../prs/stageScreenshots", () => ({
+	stageScreenshots: (...args: unknown[]) =>
+		stageScreenshots(...(args as [{ path: string }[]])),
+}));
+
 import { commentIssue } from "./commentIssue";
 
 beforeEach(() => {
 	vi.mocked(execFileSync).mockReset();
+	vi.mocked(execFileSync).mockReturnValue(
+		"https://github.com/acme/widgets/issues/42#issuecomment-1\n",
+	);
 	mockRequestPreviewDecision.mockReset();
+	stageScreenshots.mockClear();
 	delete process.env.ASSIST_SESSION;
 	delete process.env.ASSIST_SESSION_ID;
 	vi.spyOn(console, "log").mockImplementation(() => {});
@@ -144,6 +159,118 @@ describe("commentIssue preview", () => {
 		expect(output).toContain("too terse");
 		expect(output).toContain("> Details");
 		expect(output).toContain("say which commit");
+		expect(execFileSync).not.toHaveBeenCalled();
+	});
+});
+
+describe("commentIssue --screenshot", () => {
+	function screenshotFile(name: string): string {
+		const path = join(mkdtempSync(join(tmpdir(), "comment-screenshot-")), name);
+		writeFileSync(path, "");
+		return path;
+	}
+
+	it("pre-stages the screenshots in the preview and attaches what the reviewer kept", async () => {
+		process.env.ASSIST_SESSION = "1";
+		process.env.ASSIST_SESSION_ID = "s1";
+		const shot = screenshotFile("crash.png");
+		mockRequestPreviewDecision.mockImplementation(
+			async (request: { screenshots?: { path: string; alt: string }[] }) => ({
+				decision: "approve",
+				screenshots: [
+					...(request.screenshots ?? []),
+					{ path: "/staged/dropped.png", alt: "dropped" },
+				],
+			}),
+		);
+
+		await commentIssue("42", {
+			body: "Details",
+			screenshot: [`Crash=${shot}`],
+		});
+
+		const request = mockRequestPreviewDecision.mock.calls[0]?.[0];
+		expect(request?.body).toBe("Details");
+		expect(request?.screenshots).toEqual([
+			{ path: "/staged/crash.png", alt: "Crash" },
+		]);
+		expect(execFileSync).toHaveBeenCalledWith(
+			"gh",
+			[
+				"issue",
+				"comment",
+				"42",
+				"--body",
+				"Details\n\n## Screenshots\n\n![Crash](/staged/crash.png)\n\n![dropped](/staged/dropped.png)",
+				"--attach",
+				"/staged/crash.png",
+				"--attach",
+				"/staged/dropped.png",
+			],
+			expect.anything(),
+		);
+	});
+
+	it("attaches nothing when the reviewer removed the pre-staged screenshot", async () => {
+		process.env.ASSIST_SESSION = "1";
+		process.env.ASSIST_SESSION_ID = "s1";
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+
+		await commentIssue("42", {
+			body: "Details",
+			screenshot: [`Crash=${screenshotFile("crash.png")}`],
+		});
+
+		expect(execFileSync).toHaveBeenCalledWith(
+			"gh",
+			["issue", "comment", "42", "--body", "Details"],
+			expect.anything(),
+		);
+	});
+
+	it("appends and attaches the screenshots directly outside a web session", async () => {
+		const shot = screenshotFile("crash.png");
+
+		await commentIssue("42", {
+			body: "Details",
+			screenshot: [`Crash=${shot}`],
+		});
+
+		expect(stageScreenshots).not.toHaveBeenCalled();
+		expect(execFileSync).toHaveBeenCalledWith(
+			"gh",
+			[
+				"issue",
+				"comment",
+				"42",
+				"--body",
+				`Details\n\n## Screenshots\n\n![Crash](${shot})`,
+				"--attach",
+				shot,
+			],
+			expect.anything(),
+		);
+	});
+
+	it.each([
+		["a missing file", () => "Crash=missing.png", "file not found"],
+		[
+			"an extension gh cannot attach",
+			() => `Log=${screenshotFile("crash.txt")}`,
+			"gh cannot attach .txt",
+		],
+	])("exits before any preview on %s", async (_, spec, message) => {
+		process.env.ASSIST_SESSION = "1";
+		process.env.ASSIST_SESSION_ID = "s1";
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		exitThrows();
+
+		await expect(
+			commentIssue("42", { body: "Details", screenshot: [spec()] }),
+		).rejects.toThrow("process.exit");
+
+		expect(errorSpy.mock.calls[0]?.[0]).toContain(message);
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
 		expect(execFileSync).not.toHaveBeenCalled();
 	});
 });

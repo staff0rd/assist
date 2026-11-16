@@ -147,8 +147,10 @@ Do not mention `assist`, the assist backlog, or any backlog item number in the c
 **Post it** through the assist wrapper, which validates the body and, in a web session, opens the preview pane for approve/reject before anything lands:
 
 ```
-assist github issue comment <number> -R <owner>/<repo> --body "<comment>" 2>&1
+assist github issue comment <number> -R <owner>/<repo> --body "<comment>" [--screenshot '[Group/]Caption=path']... 2>&1
 ```
+
+When you already have an image or video to include (e.g. a file the user pointed at on disk), pass it with `--screenshot '[Group/]Caption=path'`, once per file, rather than asking the user to drop it into the preview. It is attached under `## Screenshots` for you; never author that section yourself.
 
 Display the result so the user can see it landed. If the command exits non-zero, relay the rejection reason and any inline comments, revise the draft accordingly, and run it again — nothing was posted.
 

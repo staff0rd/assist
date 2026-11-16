@@ -160,4 +160,22 @@ describe("editIssueComment preview", () => {
 		expect(output).toContain("too terse");
 		expect(execFileSync).not.toHaveBeenCalled();
 	});
+
+	it("refuses to patch when the reviewer dropped screenshots into the amend", async () => {
+		process.env.ASSIST_SESSION = "1";
+		process.env.ASSIST_SESSION_ID = "s1";
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		exitThrows();
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			screenshots: [{ path: "/s/a.png", alt: "a" }],
+		});
+
+		await expect(
+			editIssueComment("12345", { body: "Details" }),
+		).rejects.toThrow("process.exit");
+
+		expect(errorSpy.mock.calls[0]?.[0]).toContain("left unchanged");
+		expect(execFileSync).not.toHaveBeenCalled();
+	});
 });

@@ -23,4 +23,13 @@ describe("previewPaneCapabilities", () => {
 			closeOnly: false,
 		});
 	});
+
+	it("gives an issue comment pane screenshots without making it editable", () => {
+		expect(previewPaneCapabilities("github-issue-comment")).toEqual({
+			isPr: false,
+			screenshots: true,
+			editable: false,
+			closeOnly: false,
+		});
+	});
 });

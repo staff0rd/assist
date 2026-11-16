@@ -1,14 +1,18 @@
-import { execFileSync } from "node:child_process";
 import { validateProposedContent } from "../../../shared/validateProposedContent";
+import { appendScreenshots } from "../../prs/appendScreenshots";
+import { attachArgs } from "../../prs/attachArgs";
+import { parseScreenshotSpecs } from "../../prs/parseScreenshotSpecs";
+import { runGhWithAttachments } from "../../prs/runGhWithAttachments";
 import { reviewProposedIssueComment } from "./reviewProposedIssueComment";
 
 type CommentIssueOptions = {
 	body?: string;
 	repo?: string;
+	screenshot?: string[];
 };
 
 const USAGE =
-	"Usage: assist github issue comment <number> --body <body> [-R <owner>/<repo>]";
+	"Usage: assist github issue comment <number> --body <body> [-R <owner>/<repo>] [--screenshot '[Group/]Caption=path']";
 
 export async function commentIssue(
 	numberArg: string,
@@ -30,16 +34,25 @@ export async function commentIssue(
 		body,
 	);
 
-	await reviewProposedIssueComment(`Comment on ${target}`, body);
+	const screenshots = parseScreenshotSpecs(options.screenshot);
+	const decision = await reviewProposedIssueComment(
+		`Comment on ${target}`,
+		body,
+		screenshots,
+	);
+	const attachments = decision ? (decision.screenshots ?? []) : screenshots;
 
-	const args = ["issue", "comment", String(number), "--body", body];
+	const args = [
+		"issue",
+		"comment",
+		String(number),
+		"--body",
+		appendScreenshots(body, attachments),
+	];
 	if (options.repo) args.push("--repo", options.repo);
+	args.push(...attachArgs(attachments));
 
-	try {
-		execFileSync("gh", args, { stdio: "inherit" });
-	} catch {
-		process.exit(1);
-	}
-
+	const output = runGhWithAttachments(args, attachments).trim();
+	if (output) console.log(output);
 	console.log(`Comment posted to ${target}`);
 }

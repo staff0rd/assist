@@ -974,10 +974,13 @@ Comment on a GitHub issue (body of - reads it from stdin)
 Options:
   --body <body>            Comment body (- reads it from stdin)
   -R, --repo <owner/repo>  Target repository (defaults to the current repo)
+  --screenshot <spec>      Attach an image or video as '[Group/]Caption=path' under ## Screenshots
+                           (repeatable) (default: [])
   -h, --help               display help for command
 
 The comment is outward-facing: write it for the repo's readers, not the team. It is rejected if it references Claude or an assist backlog item.
 In an assist web session the body is previewed for approve/reject first (with inline comments); nothing is posted until it is approved.
+When you already have an image or video to include (e.g. a file the user pointed at), pass it with --screenshot '[Group/]Caption=path' (once per file) rather than asking the reviewer to drop it in; a missing file or an extension gh cannot attach fails before anything is previewed. In a web session it arrives pre-staged in the preview, and the reviewer may also drop or paste more screenshots or video into the pane; on approval gh attaches them all (gh 2.99.0+) under a ## Screenshots section of the comment. Outside a web session the --screenshot files are attached directly. Never author a ## Screenshots section yourself.
 
 === assist github issue edit-comment --help
 Usage: assist github issue edit-comment [options] <comment-id>

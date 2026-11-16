@@ -2,6 +2,7 @@ import { execFileSync } from "node:child_process";
 import { validateProposedContent } from "../../../shared/validateProposedContent";
 import { resolveIssueRepoTarget } from "./resolveIssueRepoTarget";
 import { reviewProposedIssueComment } from "./reviewProposedIssueComment";
+import { commentUrl } from "./commentUrl";
 
 type EditIssueCommentOptions = {
 	body?: string;
@@ -31,7 +32,13 @@ export async function editIssueComment(
 		body,
 	);
 
-	await reviewProposedIssueComment(`Amend ${target}`, body);
+	const decision = await reviewProposedIssueComment(`Amend ${target}`, body);
+	if (decision?.screenshots?.length) {
+		console.error(
+			`Screenshots cannot be uploaded to an amended comment; ${target} was left unchanged. Post them in a new comment with assist github issue comment --screenshot instead.`,
+		);
+		process.exit(1);
+	}
 
 	const args = [
 		"api",
@@ -53,13 +60,4 @@ export async function editIssueComment(
 	}
 
 	console.log(`Comment updated: ${commentUrl(raw) ?? target}`);
-}
-
-function commentUrl(raw: string): string | undefined {
-	try {
-		const parsed = JSON.parse(raw) as { html_url?: string };
-		return parsed.html_url;
-	} catch {
-		return undefined;
-	}
 }

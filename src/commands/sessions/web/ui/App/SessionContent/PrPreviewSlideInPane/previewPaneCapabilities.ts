@@ -12,7 +12,8 @@ export function previewPaneCapabilities(kind: PreviewKind | undefined): {
 		screenshots:
 			resolved === "pr" ||
 			resolved === "github-issue" ||
-			resolved === "github-issue-edit",
+			resolved === "github-issue-edit" ||
+			resolved === "github-issue-comment",
 		editable: resolved === "github-issue-edit",
 		closeOnly: resolved === "show",
 	};
