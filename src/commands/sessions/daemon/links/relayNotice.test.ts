@@ -20,11 +20,15 @@ function setup() {
 describe("relayNotice", () => {
 	it("namespaces a transfer's source id with the peer node", () => {
 		const { state, sent } = setup();
-		relayNotice(state, {
-			type: "notice",
-			message: "Transferred to mac",
-			transfer: { sourceId: "7", sessionId: "mac:3", node: "mac" },
-		});
+		relayNotice(
+			state,
+			{
+				type: "notice",
+				message: "Transferred to mac",
+				transfer: { sourceId: "7", sessionId: "mac:3", node: "mac" },
+			},
+			"laptop",
+		);
 		expect(sent).toEqual([
 			{
 				type: "notice",
@@ -34,9 +38,27 @@ describe("relayNotice", () => {
 		]);
 	});
 
+	it("strips this node's prefix from a session transferred here", () => {
+		const { state, sent } = setup();
+		relayNotice(
+			state,
+			{
+				type: "notice",
+				message: "Transferred to laptop",
+				transfer: { sourceId: "7", sessionId: "laptop:3", node: "laptop" },
+			},
+			"laptop",
+		);
+		expect(sent[0].transfer).toEqual({
+			sourceId: "work-win:7",
+			sessionId: "3",
+			node: "laptop",
+		});
+	});
+
 	it("relays a plain notice unchanged", () => {
 		const { state, sent } = setup();
-		relayNotice(state, { type: "notice", message: "up to date" });
+		relayNotice(state, { type: "notice", message: "up to date" }, "laptop");
 		expect(sent).toEqual([{ type: "notice", message: "up to date" }]);
 	});
 });
