@@ -25,8 +25,8 @@ function makeQuery() {
 	};
 }
 
-function relayWithEvents() {
-	const relay = createSdkRelay("session 1");
+function relayWithEvents(backgroundTasks = true) {
+	const relay = createSdkRelay("session 1", backgroundTasks);
 	const events: SdkSessionEvent[] = [];
 	relay.handle.onEvent((event) => events.push(event));
 	return { relay, events };
@@ -70,6 +70,7 @@ describe("createSdkRelay", () => {
 			{ kind: "queued", texts: [] },
 			{ kind: "pending", texts: [] },
 			{ kind: "background", tasks: [] },
+			{ kind: "suggestion", text: null },
 			{ kind: "interrupting", pending: false },
 		]);
 	});
@@ -82,5 +83,30 @@ describe("createSdkRelay", () => {
 		first.emit({ kind: "activity", text: "stale" });
 		first.exit(0);
 		expect(events).toEqual([]);
+	});
+
+	it("relays each phase query's own events once the previous query ends", () => {
+		const { relay, events } = relayWithEvents(false);
+		const first = makeQuery();
+		relay.handle.attach?.(first.query, false);
+		first.emit({ kind: "conversation", id: "thread-1" });
+		first.exit(0);
+		events.length = 0;
+		const second = makeQuery();
+		relay.handle.attach?.(second.query, false);
+		second.emit({ kind: "conversation", id: "thread-2" });
+		relay.handle.send("next");
+		expect(events).toEqual([{ kind: "conversation", id: "thread-2" }]);
+		expect(second.query.sdk.send).toHaveBeenCalledWith("next");
+		expect(first.query.sdk.send).not.toHaveBeenCalled();
+	});
+
+	it("offers stopTask only for a harness with background tasks", () => {
+		expect(relayWithEvents(false).relay.handle.stopTask).toBeUndefined();
+		const { relay } = relayWithEvents(true);
+		const { query } = makeQuery();
+		relay.handle.attach?.(query, false);
+		void relay.handle.stopTask?.("task-1");
+		expect(query.sdk.stopTask).toHaveBeenCalledWith("task-1");
 	});
 });

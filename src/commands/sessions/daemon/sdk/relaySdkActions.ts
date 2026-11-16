@@ -6,6 +6,7 @@ type SdkHandle = NonNullable<SessionProcess["sdk"]>;
 export function relaySdkActions(
 	label: string,
 	current: () => SessionProcess | undefined,
+	backgroundTasks: boolean,
 ): Pick<SdkHandle, "send" | "interrupt" | "dequeue" | "stopTask"> {
 	const dropped = (action: string) =>
 		daemonLog(
@@ -26,13 +27,15 @@ export function relaySdkActions(
 			dropped("dequeue");
 			return false;
 		},
-		stopTask: (taskId) => {
-			const stopTask = current()?.sdk?.stopTask;
-			return stopTask
-				? stopTask(taskId)
-				: Promise.reject(
-						new Error("no driven query with background tasks attached"),
-					);
-		},
+		...(backgroundTasks && {
+			stopTask: (taskId: string) => {
+				const stopTask = current()?.sdk?.stopTask;
+				return stopTask
+					? stopTask(taskId)
+					: Promise.reject(
+							new Error("no driven query with background tasks attached"),
+						);
+			},
+		}),
 	};
 }

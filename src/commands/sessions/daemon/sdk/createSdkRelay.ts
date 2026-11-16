@@ -8,7 +8,7 @@ import { relaySdkActions } from "./relaySdkActions";
 
 type SdkHandle = NonNullable<SessionProcess["sdk"]>;
 
-export function createSdkRelay(label: string) {
+export function createSdkRelay(label: string, backgroundTasks: boolean) {
 	const listeners: ((event: SdkSessionEvent) => void)[] = [];
 	let current: SessionProcess | undefined;
 	let prefixer: (() => string) | undefined;
@@ -23,7 +23,7 @@ export function createSdkRelay(label: string) {
 	};
 	const handle: SdkHandle = {
 		onEvent: (listener) => listeners.push(listener),
-		...relaySdkActions(label, () => current),
+		...relaySdkActions(label, () => current, backgroundTasks),
 		setPrefix: (provider) => {
 			prefixer = provider;
 			current?.sdk?.setPrefix?.(provider);

@@ -12,6 +12,6 @@ export function spawnAssistProcess(
 ): SessionProcess {
 	const harness = assistArgsHarness(args.slice(1), cwd);
 	if (harness && harnessCapability(harness, "session.driven").supported)
-		return spawnSdkWorkflow(args, cwd, sessionId, extraEnv);
+		return spawnSdkWorkflow(harness, args, cwd, sessionId, extraEnv);
 	return spawnPty(args, cwd, sessionId, extraEnv);
 }

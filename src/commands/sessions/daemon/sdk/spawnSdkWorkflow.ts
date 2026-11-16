@@ -1,3 +1,5 @@
+import type { HarnessKind } from "../../../../shared/harnesses";
+import { harnessCapability } from "../../../../shared/harnessAdapters/harnessCapability";
 import type { SessionProcess } from "../../../../shared/harnessAdapters/types";
 import { daemonLog } from "../daemonLog";
 import { refuseMissingCwd } from "../spawnPty";
@@ -9,6 +11,7 @@ import { startWorkflowChild } from "./startWorkflowChild";
 import { trackWorkflowExit } from "./trackWorkflowExit";
 
 export function spawnSdkWorkflow(
+	harness: HarnessKind,
 	args: string[],
 	cwd: string | undefined,
 	sessionId: string | undefined,
@@ -17,7 +20,10 @@ export function spawnSdkWorkflow(
 	refuseMissingCwd(cwd, sessionId);
 	const label = `session ${sessionId ?? "?"}`;
 	const child = startWorkflowChild(args, cwd, sessionId, extraEnv);
-	const relay = createSdkRelay(label);
+	const relay = createSdkRelay(
+		label,
+		harnessCapability(harness, "tasks.background").supported,
+	);
 	const dataListeners: ((data: string) => void)[] = [];
 	pipeWorkflowOutput(child, label, (data) => {
 		for (const listener of dataListeners) listener(data);

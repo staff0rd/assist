@@ -7,5 +7,6 @@ export function emitClearedSdkState(emit: (event: SdkSessionEvent) => void) {
 	emit({ kind: "queued", texts: [] });
 	emit({ kind: "pending", texts: [] });
 	emit({ kind: "background", tasks: [] });
+	emit({ kind: "suggestion", text: null });
 	emit({ kind: "interrupting", pending: false });
 }

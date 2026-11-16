@@ -123,11 +123,7 @@ export const harnessCapabilityDeclarations: Record<
 		...codex,
 		// why: a driven session runs with ASSIST_SDK_AGENT, so a command that waits on the user defers to the daemon, which sends the decision as the next turn
 		"tasks.notifyOnExit": supported,
-		"session.driven": unsupported(
-			"Codex (SDK) drives interactive sessions only; workflow commands do not start Codex queries yet",
-			"run workflow commands on Codex or Claude (SDK)",
-			"a1684",
-		),
+		"session.driven": supported,
 	},
 	pi: {
 		"skills.native": supported,
