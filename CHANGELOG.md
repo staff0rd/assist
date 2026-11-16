@@ -1,3 +1,10 @@
+# [0.1196.0](https://github.com/staff0rd/assist/compare/v0.1195.0...v0.1196.0) (2026-11-16)
+
+
+### Features
+
+* comment on stacked show text ([f50364c](https://github.com/staff0rd/assist/commit/f50364c3727f3cb0b7ccd9d44073e9510b7feb7a))
+
 # [0.1195.0](https://github.com/staff0rd/assist/compare/v0.1194.0...v0.1195.0) (2026-11-16)
 
 
