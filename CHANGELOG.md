@@ -1,3 +1,10 @@
+# [0.1192.0](https://github.com/staff0rd/assist/compare/v0.1191.0...v0.1192.0) (2026-11-16)
+
+
+### Features
+
+* copy conversation id on phone history ([5eb93bf](https://github.com/staff0rd/assist/commit/5eb93bf394c8af70a63b1f9eb4afb65cf09e70b0))
+
 # [0.1191.0](https://github.com/staff0rd/assist/compare/v0.1190.3...v0.1191.0) (2026-11-16)
 
 
