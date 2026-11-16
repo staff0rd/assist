@@ -1,3 +1,10 @@
+## [0.1185.1](https://github.com/staff0rd/assist/compare/v0.1185.0...v0.1185.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* keep current backlog config keys ([a266f84](https://github.com/staff0rd/assist/commit/a266f8477cdb6748509c1ece27b4793c9ff360cd))
+
 # [0.1185.0](https://github.com/staff0rd/assist/compare/v0.1184.0...v0.1185.0) (2026-11-15)
 
 
