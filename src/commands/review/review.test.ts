@@ -305,6 +305,33 @@ describe("review", () => {
 		});
 	});
 
+	describe("when --high-level is a daemon-run deferred command outside a Claude session", () => {
+		beforeEach(() => {
+			vi.stubEnv("CLAUDECODE", undefined);
+			vi.stubEnv("ASSIST_DEFERRED_RUN", "1");
+		});
+		afterEach(() => {
+			vi.unstubAllEnvs();
+		});
+
+		it("should open the checklist in place instead of launching a harness", async () => {
+			await review({ highLevel: true, number: "123" });
+
+			expect(mockRunHighLevelReview).toHaveBeenCalledWith("123", {
+				force: undefined,
+			});
+			expect(mockSpawnClaude).not.toHaveBeenCalled();
+			expect(mockSpawnCodex).not.toHaveBeenCalled();
+		});
+
+		it("should not refuse a Codex harness it never launches", async () => {
+			await review({ highLevel: true, number: "123", harness: "codex" });
+
+			expect(mockRunHighLevelReview).toHaveBeenCalled();
+			expect(process.exitCode).toBeUndefined();
+		});
+	});
+
 	describe("when --checkout-only is given without a PR number", () => {
 		it("should reject", async () => {
 			await expect(review({ checkoutOnly: true })).rejects.toThrow(

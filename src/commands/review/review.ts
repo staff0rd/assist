@@ -1,4 +1,4 @@
-import { isAgentHarness } from "../../lib/isAgentHarness";
+import { runsInSession } from "./runsInSession";
 import { emitActivity } from "../../shared/emitActivity";
 import { findRepoRoot } from "../../shared/findRepoRoot";
 import type { ReviewOptions } from "./ReviewOptions";
@@ -31,7 +31,7 @@ export async function review(options: ReviewOptions = {}): Promise<void> {
 	const { harness } = options;
 	if (options.checkoutOnly && options.number)
 		return checkoutPrSession(options.number, { harness });
-	if (options.highLevel && options.number && !isAgentHarness())
+	if (options.highLevel && options.number && !runsInSession())
 		return checkoutPrSession(options.number, {
 			harness,
 			skill: {

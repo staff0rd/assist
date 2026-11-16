@@ -129,6 +129,24 @@ describe("reopenDeferredCommands", () => {
 		expect(session.deferredCommands).toBeUndefined();
 	});
 
+	it("re-runs a pending high-level review without the daemon's harness marker", () => {
+		vi.stubEnv("CLAUDECODE", undefined);
+		const review = {
+			argv: ["review", "--high-level", "2264"],
+			cwd: "/repo",
+			env: {},
+		};
+		setup({ send: vi.fn() }, review);
+		vi.unstubAllEnvs();
+
+		const [run] = mockRun.mock.calls[0];
+		expect(run).toMatchObject({ argv: review.argv, cwd: "/repo" });
+		expect(run.env.CLAUDECODE).toBeUndefined();
+		expect(daemonLog).toHaveBeenCalledWith(
+			expect.stringContaining("reopened after daemon restart"),
+		);
+	});
+
 	it("drops pending commands of a session that is not live", () => {
 		const session = setup();
 

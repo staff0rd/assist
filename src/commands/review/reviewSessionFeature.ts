@@ -1,4 +1,4 @@
-import { isAgentHarness } from "../../lib/isAgentHarness";
+import { runsInSession } from "./runsInSession";
 import {
 	highLevelReviewFeature,
 	reviewCheckoutFeature,
@@ -13,7 +13,7 @@ export function reviewSessionFeature(
 ): HarnessFeature | undefined {
 	if (options.checkoutOnly) return reviewCheckoutFeature;
 	if (options.highLevel)
-		return options.number && !isAgentHarness()
+		return options.number && !runsInSession()
 			? highLevelReviewFeature
 			: undefined;
 	const session = postSynthesisSession(options)?.feature;
