@@ -1,3 +1,10 @@
+# [0.1207.0](https://github.com/staff0rd/assist/compare/v0.1206.0...v0.1207.0) (2026-11-16)
+
+
+### Features
+
+* codex-sdk next-turn decisions ([bd35719](https://github.com/staff0rd/assist/commit/bd3571994dbd1d533f64a88c06449e5243030eea))
+
 # [0.1206.0](https://github.com/staff0rd/assist/compare/v0.1205.3...v0.1206.0) (2026-11-16)
 
 
