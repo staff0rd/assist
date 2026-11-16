@@ -1,3 +1,10 @@
+## [0.1198.2](https://github.com/staff0rd/assist/compare/v0.1198.1...v0.1198.2) (2026-11-16)
+
+
+### Bug Fixes
+
+* keep screenshots on issue previews ([9066b3d](https://github.com/staff0rd/assist/commit/9066b3d7954a293bdf118c7abca1c33a3a4a92e1))
+
 ## [0.1198.1](https://github.com/staff0rd/assist/compare/v0.1198.0...v0.1198.1) (2026-11-16)
 
 
