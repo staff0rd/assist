@@ -1,3 +1,10 @@
+## [0.1189.4](https://github.com/staff0rd/assist/compare/v0.1189.3...v0.1189.4) (2026-11-16)
+
+
+### Bug Fixes
+
+* **ios:** match Siri repo answers as text ([9007a6a](https://github.com/staff0rd/assist/commit/9007a6aec9e41c6cb4f29b1200b3b1aa9180fefc))
+
 ## [0.1189.3](https://github.com/staff0rd/assist/compare/v0.1189.2...v0.1189.3) (2026-11-16)
 
 
