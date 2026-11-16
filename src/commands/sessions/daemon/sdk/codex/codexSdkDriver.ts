@@ -5,6 +5,8 @@ import type { DrivenSessionDriver } from "../DrivenSessionDriver";
 import { awaitCodexResume } from "./awaitCodexResume";
 import { codexSdkOptions } from "./codexSdkOptions";
 import { codexTurnEvents } from "./codexTurnEvents";
+import { recordCodexTurnUsage } from "./recordCodexTurnUsage";
+import { withCodexTurnUsage } from "./withCodexTurnUsage";
 
 export const codexSdkDriver: DrivenSessionDriver = {
 	harness: "codex-sdk",
@@ -22,11 +24,15 @@ export const codexSdkDriver: DrivenSessionDriver = {
 		const turns = codexTurnEvents(
 			input,
 			async (text, signal) =>
-				(
-					await thread.runStreamed(text, {
-						signal: AbortSignal.any([abort.signal, signal]),
-					})
-				).events,
+				withCodexTurnUsage(
+					(
+						await thread.runStreamed(text, {
+							signal: AbortSignal.any([abort.signal, signal]),
+						})
+					).events,
+					(usage) =>
+						void recordCodexTurnUsage(label, opts.sessionId, thread.id, usage),
+				),
 			label,
 		);
 		return { events: turns.events, interrupt: turns.interrupt };

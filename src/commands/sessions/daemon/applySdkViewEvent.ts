@@ -6,7 +6,7 @@ import { daemonLog } from "./daemonLog";
 
 export function applySdkViewEvent(
 	session: Session,
-	event: Exclude<SdkSessionEvent, { kind: "status" }>,
+	event: Exclude<SdkSessionEvent, { kind: "status" | "conversation" }>,
 ): void {
 	if (event.kind === "activity") {
 		session.sdkActivity = event.text ?? undefined;

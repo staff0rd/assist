@@ -11,6 +11,7 @@ import { inboxScanner } from "./inbox/inboxScanner";
 import { logNodeRuntime } from "./runtime/logNodeRuntime";
 import { pollRepoConfigCache } from "./pollRepoConfigCache";
 import { refreshRepoConfigCacheOnStart } from "./refreshRepoConfigCacheOnStart";
+import { recordHarnessUsage } from "./recordHarnessUsage";
 import { SessionManager } from "./SessionManager";
 import { setSdkUsageSink } from "./sdk/sdkUsageSink";
 import { startDaemonLogTrimmer } from "./startDaemonLogTrimmer";
@@ -42,6 +43,8 @@ export async function runDaemon(): Promise<void> {
 		limits: (rateLimits) => manager.clients.updateLimits(rateLimits),
 		usage: (claudeSessionId, transcriptPath, usedPct) =>
 			manager.recordUsage(claudeSessionId, transcriptPath, usedPct),
+		session: (sessionId, account, usage) =>
+			recordHarnessUsage(manager, sessionId, account, usage),
 	});
 	startDaemonLogTrimmer();
 	pollRepoConfigCache();

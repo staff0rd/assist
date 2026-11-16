@@ -8,7 +8,7 @@ vi.mock("../../../shared/findSessionJsonlPath", () => ({
 	findSessionJsonlPath: vi.fn(async () => "/t/abc.jsonl"),
 }));
 
-const sink = { limits: vi.fn(), usage: vi.fn() };
+const sink = { limits: vi.fn(), usage: vi.fn(), session: vi.fn() };
 
 const message = (m: unknown) => m as SDKMessage;
 

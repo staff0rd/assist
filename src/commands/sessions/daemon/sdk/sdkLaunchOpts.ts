@@ -21,6 +21,7 @@ export function sdkLaunchOpts(
 		conversationId: optional(d.conversationId),
 		resumeId: optional(d.resumeId),
 		model: optional(d.model),
+		allowEdits: typeof d.allowEdits === "boolean" ? d.allowEdits : undefined,
 		launcherEnv: stringRecord(d.env),
 	};
 }

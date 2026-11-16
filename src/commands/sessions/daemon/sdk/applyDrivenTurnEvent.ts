@@ -13,6 +13,7 @@ export function applyDrivenTurnEvent(
 	else if (event.kind === "elapsed") turn.setElapsed(event.seconds);
 	else if (event.kind === "suggestion")
 		control.emit({ kind: "suggestion", text: event.text });
+	else if (event.kind === "conversation") control.emit(event);
 	else if (backgroundTasks)
 		control.emit({ kind: "background", tasks: event.tasks });
 }

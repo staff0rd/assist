@@ -5,4 +5,5 @@ export type DrivenTurnEvent =
 	| { kind: "activity"; text: string }
 	| { kind: "elapsed"; seconds: number }
 	| { kind: "background"; tasks: string[] }
-	| { kind: "suggestion"; text: string | null };
+	| { kind: "suggestion"; text: string | null }
+	| { kind: "conversation"; id: string };

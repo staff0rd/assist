@@ -2,6 +2,7 @@ import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import type { OnStatusChange } from "./types";
 import { applySdkViewEvent } from "./applySdkViewEvent";
+import { bindDrivenConversation } from "./bindDrivenConversation";
 import { takeHeldShellResults } from "./shell/takeHeldShellResults";
 
 export function wireSdkEvents(
@@ -13,6 +14,10 @@ export function wireSdkEvents(
 	session.pty?.sdk?.setPrefix?.(() => takeHeldShellResults(session, notify));
 	session.pty?.sdk?.onEvent((event) => {
 		if (session.status === "done" || session.status === "stopped") return;
+		if (event.kind === "conversation") {
+			bindDrivenConversation(session, event.id, notify, onStatusChange);
+			return;
+		}
 		if (event.kind !== "status") {
 			applySdkViewEvent(session, event);
 			notify?.();

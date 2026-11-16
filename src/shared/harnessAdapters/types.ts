@@ -21,7 +21,8 @@ export type SdkSessionEvent =
 	| { kind: "background"; tasks: string[] }
 	| { kind: "suggestion"; text: string | null }
 	| { kind: "interrupting"; pending: boolean }
-	| { kind: "resumed" };
+	| { kind: "resumed" }
+	| { kind: "conversation"; id: string };
 
 type SdkSessionHandle = {
 	onEvent: (listener: (event: SdkSessionEvent) => void) => void;
@@ -128,6 +129,7 @@ export type DrivenSessionOpts = {
 	resumeId?: string;
 	appendSystemPromptFile?: string;
 	model?: string;
+	allowEdits?: boolean;
 	launcherEnv?: Record<string, string>;
 };
 

@@ -1,4 +1,12 @@
+import type { ResponseUsage } from "../../../../shared/db/recordPhaseTranscriptUsage";
+import type { HarnessKind } from "../../../../shared/harnesses";
 import type { RateLimits } from "../../../../shared/RateLimits";
+
+export type DrivenUsage = {
+	responses: ResponseUsage[];
+	usedPct?: number;
+	rateLimits?: RateLimits;
+};
 
 type SdkUsageSink = {
 	limits: (rateLimits: RateLimits) => void;
@@ -6,6 +14,11 @@ type SdkUsageSink = {
 		conversationId: string,
 		transcriptPath: string | undefined,
 		usedPct: number | undefined,
+	) => void;
+	session: (
+		sessionId: string,
+		account: HarnessKind,
+		usage: DrivenUsage,
 	) => void;
 };
 

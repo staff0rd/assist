@@ -13,7 +13,7 @@ export function codexEventTurnEvents(
 			return [{ kind: "activity", text: codexItemActivity(event.item) }];
 		case "thread.started":
 			daemonLog(`${label} codex thread started: ${event.thread_id}`);
-			return [];
+			return [{ kind: "conversation", id: event.thread_id }];
 		case "turn.failed":
 			daemonLog(`${label} codex turn failed: ${event.error.message}`);
 			return [];

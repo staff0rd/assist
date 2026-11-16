@@ -10,6 +10,7 @@ export type SdkLaunch = {
 	conversationId?: string;
 	resumeId?: string;
 	model?: string;
+	allowEdits?: boolean;
 };
 
 type SdkExit = { type: string; exitCode?: number; error?: string };

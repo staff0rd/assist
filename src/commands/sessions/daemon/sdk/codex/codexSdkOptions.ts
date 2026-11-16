@@ -1,6 +1,7 @@
 import type { CodexOptions, ThreadOptions } from "@openai/codex-sdk";
 import { buildHarnessCodexArgs } from "../../../../../shared/buildHarnessCodexArgs";
 import { codexSandboxArgs } from "../../../../../shared/codexSandboxArgs";
+import { codexSandboxMode } from "../../../../../shared/codexSandboxMode";
 import { codexSessionEnvArgs } from "../../../../../shared/codexSessionEnvArgs";
 import type { DrivenSessionOpts } from "../../../../../shared/harnessAdapters/types";
 import { resolveCodexModel } from "../../../../../shared/resolveCodexModel";
@@ -42,7 +43,7 @@ export function codexSdkOptions(opts: DrivenSessionOpts): {
 		thread: {
 			model: config.model,
 			workingDirectory: opts.cwd,
-			sandboxMode: "workspace-write",
+			sandboxMode: codexSandboxMode(opts.allowEdits),
 			approvalPolicy: "on-request",
 			skipGitRepoCheck: true,
 			additionalDirectories: config.additionalDirectories,

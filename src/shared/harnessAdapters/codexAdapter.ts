@@ -5,6 +5,7 @@ import { resolveCodexSessionId } from "../../commands/sessions/shared/codex/reso
 import { codexConversationReader } from "./codexConversationReader";
 import { codexHookProbe } from "./codexHookProbe";
 import { harnessLabel } from "./harnessLabel";
+import { codexSandboxMode } from "../codexSandboxMode";
 import { readCodexRulePerms } from "../readCodexRulePerms";
 import { spawnCodex } from "../spawnCodex";
 import { codexOneShot } from "./codexOneShot";
@@ -16,9 +17,6 @@ import { detectHarness } from "./detectHarness";
 import { harnessCapabilityDeclarations } from "./harnessCapabilityDeclarations";
 import { rejectConnectorRun } from "./rejectConnectorRun";
 import type { HarnessAdapter } from "./types";
-
-const sandbox = (allowEdits: boolean | undefined) =>
-	allowEdits === false ? "read-only" : "workspace-write";
 
 export const codexAdapter: HarnessAdapter = {
 	kind: "codex",
@@ -49,16 +47,16 @@ export const codexAdapter: HarnessAdapter = {
 	launchSkill: (skill, args, { cwd, allowEdits, model }) =>
 		spawnCodex(args ?? "", {
 			cwd,
-			sandbox: sandbox(allowEdits),
+			sandbox: codexSandboxMode(allowEdits),
 			skill,
 			model,
 		}),
 	launchPrompt: (prompt, { cwd, allowEdits, model }) =>
-		spawnCodex(prompt, { cwd, sandbox: sandbox(allowEdits), model }),
+		spawnCodex(prompt, { cwd, sandbox: codexSandboxMode(allowEdits), model }),
 	resume: (conversationId, nudge, { cwd, allowEdits }) =>
 		spawnCodex(nudge, {
 			cwd,
-			sandbox: sandbox(allowEdits),
+			sandbox: codexSandboxMode(allowEdits),
 			resumeSessionId: conversationId,
 		}),
 	interactive: ({

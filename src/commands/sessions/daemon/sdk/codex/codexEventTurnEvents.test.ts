@@ -58,8 +58,16 @@ describe("codexEventTurnEvents", () => {
 		).toEqual([{ kind: "activity", text: "Working · Reasoning" }]);
 	});
 
+	it("reports the started thread as the session's conversation", () => {
+		expect(
+			codexEventTurnEvents(
+				{ type: "thread.started", thread_id: "t" },
+				"session s",
+			),
+		).toEqual([{ kind: "conversation", id: "t" }]);
+	});
+
 	it.each([
-		{ type: "thread.started", thread_id: "t" } as const,
 		{ type: "turn.started" } as const,
 		{ type: "turn.failed", error: { message: "nope" } } as const,
 		{ type: "error", message: "nope" } as const,

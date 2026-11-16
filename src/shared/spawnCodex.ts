@@ -2,9 +2,9 @@ import { buildHarnessCodexArgs } from "./buildHarnessCodexArgs";
 import { codexIsolatedHookArgs } from "./codexIsolatedHookArgs";
 import { codexSandboxArgs } from "./codexSandboxArgs";
 import { codexSessionEnvArgs } from "./codexSessionEnvArgs";
+import { codexSkillPrompt } from "./codexSkillPrompt";
 import { harnesses } from "./harnesses";
 import { prepareCodexHookTrust } from "./prepareCodexHookTrust";
-import { neutralizeCodexSkillMentions } from "./neutralizeCodexSkillMentions";
 import { type SpawnResult, spawnInherit } from "./spawnInherit";
 import { trustCodexProject } from "./trustCodexProject";
 
@@ -22,12 +22,7 @@ export function spawnCodex(
 	trustCodexProject(cwd);
 	const untrusted = prepareCodexHookTrust();
 	if (untrusted) console.error(untrusted);
-	const text = [
-		options.skill && `$${options.skill}`,
-		prompt && neutralizeCodexSkillMentions(prompt),
-	]
-		.filter(Boolean)
-		.join(" ");
+	const text = codexSkillPrompt(options.skill, prompt);
 	const override =
 		options.model && !options.resumeSessionId
 			? { args: ["-m", options.model], env: {} }
