@@ -3,6 +3,7 @@ import { resolveHarness } from "./harnessLabel";
 import { claudeAdapter } from "./claudeAdapter";
 import { claudeSdkAdapter } from "./claudeSdkAdapter";
 import { codexAdapter } from "./codexAdapter";
+import { codexSdkAdapter } from "./codexSdkAdapter";
 import { piAdapter } from "./piAdapter";
 import type { HarnessAdapter } from "./types";
 
@@ -10,6 +11,7 @@ const adapters: Record<HarnessKind, HarnessAdapter> = {
 	claude: claudeAdapter,
 	"claude-sdk": claudeSdkAdapter,
 	codex: codexAdapter,
+	"codex-sdk": codexSdkAdapter,
 	pi: piAdapter,
 };
 

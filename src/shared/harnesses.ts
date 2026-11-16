@@ -2,7 +2,12 @@ import * as os from "node:os";
 import * as path from "node:path";
 import { checkCliAvailable } from "./checkCliAvailable";
 
-export type HarnessKind = "claude" | "claude-sdk" | "codex" | "pi";
+export type HarnessKind =
+	| "claude"
+	| "claude-sdk"
+	| "codex"
+	| "codex-sdk"
+	| "pi";
 
 export type Harness = {
 	kind: HarnessKind;
@@ -28,20 +33,23 @@ const claudeHarness: Harness = {
 	},
 };
 
+const codexHarness: Harness = {
+	kind: "codex",
+	command: "codex",
+	homeDir: path.join(os.homedir(), ".codex"),
+	sync: {
+		commandDest: (name) => path.join("skills", name, "SKILL.md"),
+		designPromptDest: path.join("assist", "design-system-prompt.md"),
+		designSkillDest: (name) => path.join("skills", name, "SKILL.md"),
+		nativeDesignSkills: true,
+	},
+};
+
 export const harnesses: Record<HarnessKind, Harness> = {
 	claude: claudeHarness,
 	"claude-sdk": { ...claudeHarness, kind: "claude-sdk" },
-	codex: {
-		kind: "codex",
-		command: "codex",
-		homeDir: path.join(os.homedir(), ".codex"),
-		sync: {
-			commandDest: (name) => path.join("skills", name, "SKILL.md"),
-			designPromptDest: path.join("assist", "design-system-prompt.md"),
-			designSkillDest: (name) => path.join("skills", name, "SKILL.md"),
-			nativeDesignSkills: true,
-		},
-	},
+	codex: codexHarness,
+	"codex-sdk": { ...codexHarness, kind: "codex-sdk" },
 	pi: {
 		kind: "pi",
 		command: "pi",

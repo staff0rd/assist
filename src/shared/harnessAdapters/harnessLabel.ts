@@ -4,6 +4,7 @@ const HARNESS_LABELS: Record<HarnessKind, string> = {
 	claude: "Claude",
 	"claude-sdk": "Claude (SDK)",
 	codex: "Codex",
+	"codex-sdk": "Codex (SDK)",
 	pi: "pi",
 };
 
@@ -11,6 +12,7 @@ const HARNESS_PRODUCT_LABELS: Record<HarnessKind, string> = {
 	claude: "Claude Code",
 	"claude-sdk": "Claude Code",
 	codex: "Codex",
+	"codex-sdk": "Codex",
 	pi: "pi",
 };
 

@@ -4,7 +4,11 @@ import type { AssistConfig } from "../../../shared/types";
 
 const OFF_SWITCHES: Partial<
 	Record<HarnessKind, "exposeCodexActions" | "exposePiActions">
-> = { codex: "exposeCodexActions", pi: "exposePiActions" };
+> = {
+	codex: "exposeCodexActions",
+	"codex-sdk": "exposeCodexActions",
+	pi: "exposePiActions",
+};
 
 export function harnessOffSwitch(
 	kind: HarnessKind,

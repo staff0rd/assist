@@ -73,7 +73,7 @@ describe("harnessCapabilities", () => {
 	it("probes each harness once however many features resolve", () => {
 		mockIsHarnessAvailable.mockReturnValue(true);
 		run();
-		expect(mockIsHarnessAvailable).toHaveBeenCalledTimes(4);
+		expect(mockIsHarnessAvailable).toHaveBeenCalledTimes(5);
 	});
 
 	it("resolves Refine unavailable with the detection reason when a harness is not on PATH", () => {

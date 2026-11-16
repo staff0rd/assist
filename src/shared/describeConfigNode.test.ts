@@ -160,7 +160,7 @@ describe("describeConfigNode", () => {
 		expect(node("harness.engine")).toMatchObject({
 			kind: "scalar",
 			type: "enum",
-			enumValues: ["claude", "claude-sdk", "codex", "pi"],
+			enumValues: ["claude", "claude-sdk", "codex", "codex-sdk", "pi"],
 			defaultValue: "claude",
 		});
 		expect(node("run[].server")).toMatchObject({

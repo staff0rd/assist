@@ -4,5 +4,6 @@ export const harnessModels: Record<HarnessKind, readonly string[]> = {
 	claude: ["fable", "opus", "sonnet", "haiku"],
 	"claude-sdk": ["fable", "opus", "sonnet", "haiku"],
 	codex: [],
+	"codex-sdk": [],
 	pi: [],
 };

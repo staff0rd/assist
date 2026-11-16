@@ -1074,7 +1074,7 @@ Options:
   --harness <kind>  Harness to scan with; defaults to Claude. Exits with the reasons, before
                     spawning, when the inbox scan is unavailable on it (it needs read-only Gmail and
                     Slack connectors and a tool allow-list) (choices: "claude", "claude-sdk",
-                    "codex", "pi")
+                    "codex", "codex-sdk", "pi")
   -h, --help        display help for command
 
 === assist inbox list --help

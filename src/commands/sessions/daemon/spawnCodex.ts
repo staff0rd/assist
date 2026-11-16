@@ -1,12 +1,10 @@
 import { buildHarnessCodexArgs } from "../../../shared/buildHarnessCodexArgs";
 import { codexIsolatedHookArgs } from "../../../shared/codexIsolatedHookArgs";
 import { codexSandboxArgs } from "../../../shared/codexSandboxArgs";
-import { prepareCodexHookTrust } from "../../../shared/prepareCodexHookTrust";
 import { codexSessionEnvArgs } from "../../../shared/codexSessionEnvArgs";
 import { codexDeveloperInstructionsArgs } from "./codexDeveloperInstructionsArgs";
-import { daemonLog } from "./daemonLog";
+import { prepareCodexLaunch } from "./prepareCodexLaunch";
 import { spawnPty } from "./spawnPty";
-import { trustCodexProject } from "../../../shared/trustCodexProject";
 
 type SpawnOpts = {
 	prompt?: string;
@@ -18,10 +16,7 @@ type SpawnOpts = {
 };
 
 export function spawnCodex(opts: SpawnOpts = {}) {
-	const trusted = trustCodexProject(opts.cwd);
-	if (trusted) daemonLog(`codex: trusted ${trusted} in config.toml`);
-	const untrusted = prepareCodexHookTrust();
-	if (untrusted) daemonLog(`codex: ${untrusted}`);
+	prepareCodexLaunch(opts.cwd);
 	const override = opts.model
 		? { args: ["-m", opts.model], env: {} }
 		: buildHarnessCodexArgs();

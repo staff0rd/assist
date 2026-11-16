@@ -42,79 +42,89 @@ const claudeSdk: CapabilityDeclarations = {
 	"tasks.background": supported,
 };
 
+const codex: CapabilityDeclarations = {
+	"skills.native": supported,
+	"launch.terminal": supported,
+	"conversation.resume": supported,
+	"conversation.relocate": supported,
+	"conversation.id": supported,
+	"conversation.preassignId": unsupported(
+		"Codex assigns its own conversation id when its rollout starts",
+		"assist binds the Codex conversation id from the rollout after launch",
+	),
+	"systemPrompt.append": unsupported(
+		"Design launches on Codex have not passed manual testing: sessions arrived without the design prompt or stopped before designing anything",
+		"start design sessions with Claude",
+		"a1589",
+	),
+	"tasks.notifyOnExit": unsupported(
+		"Codex runs a background command in an exec session that reports nothing back once the turn ends, so an agent that ends its turn never sees a command that waits on the user, such as review-high-level's verdict",
+		"run the high-level review on Claude; assist ask-question, ask and ask-check hand off to the daemon, which types the decision into Codex as its next turn",
+		"a1573",
+	),
+	"preview.nextTurn": supported,
+	"artifacts.publish": unsupported(
+		"Codex has no tool that publishes a claude.ai artifact, and assist ask-design reviews only artifact links",
+		"design in Codex and deliver the HTML file, then review it in chat; start the design session with Claude for preview-pane review rounds",
+		"a1567",
+	),
+	"transcript.read": supported,
+	"oneShot.text": supported,
+	"oneShot.structured": supported,
+	"usage.rateLimits": supported,
+	"tools.restrict": unsupported(
+		"assist cannot yet limit a headless Codex run to an allow-list of connector tools",
+		"run the inbox scan with Claude (assist inbox scan --harness claude)",
+		"a1562",
+	),
+	"connector.gmail.read": unsupported(
+		"Codex has no verified read-only Gmail connector",
+		"run the inbox scan with Claude (assist inbox scan --harness claude)",
+		"a1562",
+	),
+	"connector.slack.read": unsupported(
+		"Codex has no verified read-only Slack connector",
+		"run the inbox scan with Claude (assist inbox scan --harness claude)",
+		"a1562",
+	),
+	"intercept.command": supported,
+	"intercept.fileRead": supported,
+	"intercept.fileWrite": supported,
+	"intercept.editDiff": unsupported(
+		"assist's maintainability-override and comment guards run only in Claude's edit hook, so Codex patches are not checked for override markers or new code comments",
+		"the shared policy still applies the allowlist, restricted paths and docs/schema locks; run work that must keep those guards on Claude",
+		"a1592",
+	),
+	// codex-cli 0.167.1 reports request_user_input and selectable request_user_input_async via PreToolUse; captured in question fixtures and replayed through codexHook.
+	"intercept.question": supported,
+	"slashCommands.suggest": unsupported(
+		"assist reads skills and commands only from Claude's home and project dirs",
+		"type the Codex skill name in full in the phone reply bar",
+	),
+	"session.driven": unsupported(
+		"Codex runs in a terminal the daemon mirrors rather than a session the daemon drives",
+		"Codex sessions use the terminal; pick Claude (SDK) for a driven session",
+		"a1684",
+	),
+	"tasks.background": unsupported(
+		"Codex reports no background tasks to assist",
+		"Codex sessions show no background-task rows",
+	),
+};
+
 export const harnessCapabilityDeclarations: Record<
 	HarnessKind,
 	CapabilityDeclarations
 > = {
 	claude,
 	"claude-sdk": claudeSdk,
-	codex: {
-		"skills.native": supported,
-		"launch.terminal": supported,
-		"conversation.resume": supported,
-		"conversation.relocate": supported,
-		"conversation.id": supported,
-		"conversation.preassignId": unsupported(
-			"Codex assigns its own conversation id when its rollout starts",
-			"assist binds the Codex conversation id from the rollout after launch",
-		),
-		"systemPrompt.append": unsupported(
-			"Design launches on Codex have not passed manual testing: sessions arrived without the design prompt or stopped before designing anything",
-			"start design sessions with Claude",
-			"a1589",
-		),
-		"tasks.notifyOnExit": unsupported(
-			"Codex runs a background command in an exec session that reports nothing back once the turn ends, so an agent that ends its turn never sees a command that waits on the user, such as review-high-level's verdict",
-			"run the high-level review on Claude; assist ask-question, ask and ask-check hand off to the daemon, which types the decision into Codex as its next turn",
-			"a1573",
-		),
-		"preview.nextTurn": supported,
-		"artifacts.publish": unsupported(
-			"Codex has no tool that publishes a claude.ai artifact, and assist ask-design reviews only artifact links",
-			"design in Codex and deliver the HTML file, then review it in chat; start the design session with Claude for preview-pane review rounds",
-			"a1567",
-		),
-		"transcript.read": supported,
-		"oneShot.text": supported,
-		"oneShot.structured": supported,
-		"usage.rateLimits": supported,
-		"tools.restrict": unsupported(
-			"assist cannot yet limit a headless Codex run to an allow-list of connector tools",
-			"run the inbox scan with Claude (assist inbox scan --harness claude)",
-			"a1562",
-		),
-		"connector.gmail.read": unsupported(
-			"Codex has no verified read-only Gmail connector",
-			"run the inbox scan with Claude (assist inbox scan --harness claude)",
-			"a1562",
-		),
-		"connector.slack.read": unsupported(
-			"Codex has no verified read-only Slack connector",
-			"run the inbox scan with Claude (assist inbox scan --harness claude)",
-			"a1562",
-		),
-		"intercept.command": supported,
-		"intercept.fileRead": supported,
-		"intercept.fileWrite": supported,
-		"intercept.editDiff": unsupported(
-			"assist's maintainability-override and comment guards run only in Claude's edit hook, so Codex patches are not checked for override markers or new code comments",
-			"the shared policy still applies the allowlist, restricted paths and docs/schema locks; run work that must keep those guards on Claude",
-			"a1592",
-		),
-		// codex-cli 0.167.1 reports request_user_input and selectable request_user_input_async via PreToolUse; captured in question fixtures and replayed through codexHook.
-		"intercept.question": supported,
-		"slashCommands.suggest": unsupported(
-			"assist reads skills and commands only from Claude's home and project dirs",
-			"type the Codex skill name in full in the phone reply bar",
-		),
+	codex,
+	"codex-sdk": {
+		...codex,
 		"session.driven": unsupported(
-			"Codex runs in a terminal the daemon mirrors rather than a session the daemon drives",
-			"Codex sessions use the terminal; pick Claude (SDK) for a driven session",
+			"Codex (SDK) drives interactive sessions only; workflow commands do not start Codex queries yet",
+			"run workflow commands on Codex or Claude (SDK)",
 			"a1684",
-		),
-		"tasks.background": unsupported(
-			"Codex reports no background tasks to assist",
-			"Codex sessions show no background-task rows",
 		),
 	},
 	pi: {
