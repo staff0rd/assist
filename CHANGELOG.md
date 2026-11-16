@@ -1,3 +1,10 @@
+# [0.1209.0](https://github.com/staff0rd/assist/compare/v0.1208.1...v0.1209.0) (2026-11-16)
+
+
+### Features
+
+* slash lookup in phone new session ([ac54132](https://github.com/staff0rd/assist/commit/ac54132177b2eeefbb098ec1102cdc0a20aab8ab))
+
 ## [0.1208.1](https://github.com/staff0rd/assist/compare/v0.1208.0...v0.1208.1) (2026-11-16)
 
 
