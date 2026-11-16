@@ -115,6 +115,20 @@ describe("editIssue arguments", () => {
 		expect(execFileSync).not.toHaveBeenCalled();
 	});
 
+	it.each([{ parent: "7" }, { fetch: true }])(
+		"rejects --title combined with %o",
+		async (extra) => {
+			const error = vi.spyOn(console, "error").mockImplementation(() => {});
+			exitThrows();
+
+			await expect(
+				editIssue("42", { title: "Tidy the changelog", ...extra }),
+			).rejects.toThrow("process.exit");
+			expect(error).toHaveBeenCalledWith(expect.stringMatching(/^Usage: /));
+			expect(execFileSync).not.toHaveBeenCalled();
+		},
+	);
+
 	it("fetches the issue body, title and updatedAt", async () => {
 		webSession();
 		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
