@@ -18,11 +18,18 @@ export function paneEchoText(
 	d: Record<string, unknown>,
 ): string {
 	if (d.dismissed === true) return "Dismissed";
+	const paneDismissed = d.decision === "reject";
 	switch (preview.kind) {
 		case "check":
-			return checkReplyText(answersOf(d));
+			return paneDismissed
+				? ["Dismissed", checkReplyText(answersOf(d))]
+						.filter(Boolean)
+						.join("\n\n")
+				: checkReplyText(answersOf(d));
 		case "question":
-			return questionAnswerText(preview.body, answersOf(d));
+			return paneDismissed
+				? "Dismissed"
+				: questionAnswerText(preview.body, answersOf(d));
 		case "ask":
 		case "backlog-item":
 		case "rule":

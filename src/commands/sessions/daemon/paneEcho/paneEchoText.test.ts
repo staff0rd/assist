@@ -82,6 +82,21 @@ describe("paneEchoText", () => {
 		).toBe("Dismissed");
 	});
 
+	it("returns Dismissed for a dismissed question pane", () => {
+		expect(
+			paneEchoText(preview("question", questionBody), { decision: "reject" }),
+		).toBe("Dismissed");
+	});
+
+	it("returns Dismissed and the note for a dismissed check pane", () => {
+		expect(
+			paneEchoText(preview("check"), {
+				decision: "reject",
+				answers: { note: " later today " },
+			}),
+		).toBe("Dismissed\n\nlater today");
+	});
+
 	it("returns the picked labels and Other text of a question answer", () => {
 		expect(
 			paneEchoText(preview("question", questionBody), {
