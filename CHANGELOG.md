@@ -1,3 +1,11 @@
+## [0.1209.3](https://github.com/staff0rd/assist/compare/v0.1209.2...v0.1209.3) (2026-11-16)
+
+
+### Bug Fixes
+
+* drop Codex 5h usage filter ([3cdbc2b](https://github.com/staff0rd/assist/commit/3cdbc2bc5603a576ad51bc8df4badab21b2c10e5))
+* point codex driven remedy at SDK ([a172f1c](https://github.com/staff0rd/assist/commit/a172f1c39d2254e37b3d95dfbe192bb7a3215562))
+
 ## [0.1209.2](https://github.com/staff0rd/assist/compare/v0.1209.1...v0.1209.2) (2026-11-16)
 
 
