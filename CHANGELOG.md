@@ -1,3 +1,10 @@
+## [0.1198.1](https://github.com/staff0rd/assist/compare/v0.1198.0...v0.1198.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* reopen deferred high-level review ([701f549](https://github.com/staff0rd/assist/commit/701f549f9724b754f146955a8461d40b7c239375)), closes [hi#level](https://github.com/hi/issues/level)
+
 # [0.1198.0](https://github.com/staff0rd/assist/compare/v0.1197.0...v0.1198.0) (2026-11-16)
 
 
