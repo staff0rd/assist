@@ -10,9 +10,11 @@ import { CollapsedSessions } from "./CollapsedSessions";
 export function PhoneSessionGroups({
 	sessions,
 	localNode,
+	hideRepo,
 }: {
 	sessions: SessionInfo[];
 	localNode: string | undefined;
+	hideRepo?: boolean;
 }) {
 	if (sessions.length === 0) return <Box sx={phoneEmptySx}>No sessions</Box>;
 
@@ -24,18 +26,21 @@ export function PhoneSessionGroups({
 				label={`${statusGlyph.question} Answer here`}
 				sessions={questions}
 				localNode={localNode}
+				hideRepo={hideRepo}
 				tone="accent"
 			/>
 			<PhoneSessionSection
 				label={`${statusGlyph.waiting} Needs you`}
 				sessions={needsYou}
 				localNode={localNode}
+				hideRepo={hideRepo}
 				tone="warning"
 			/>
 			<PhoneSessionSection
 				label="Running"
 				sessions={running}
 				localNode={localNode}
+				hideRepo={hideRepo}
 			/>
 			<CollapsedSessions
 				label="Review"
@@ -44,6 +49,7 @@ export function PhoneSessionGroups({
 				sessions={review}
 				needsYou={review.filter(needsAttention).length}
 				localNode={localNode}
+				hideRepo={hideRepo}
 				defaultExpanded
 			/>
 			<CollapsedSessions
@@ -52,6 +58,7 @@ export function PhoneSessionGroups({
 				glyphColor={statusColors.done}
 				sessions={done}
 				localNode={localNode}
+				hideRepo={hideRepo}
 			/>
 		</>
 	);

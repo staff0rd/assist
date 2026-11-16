@@ -260,6 +260,7 @@ export const slateDesign: DesignTokens = {
 			suggestionListMaxHeight: 280,
 			reviewDialog: { title: 17, item: 15, option: 14 },
 			newSessionDialogWidth: 720,
+			chip: { height: 26, dot: 6 },
 			tabBar: { height: 44, icon: 20, label: 10, badge: 16, insetTrim: 0 },
 		},
 		touch: {
@@ -274,6 +275,7 @@ export const slateDesign: DesignTokens = {
 			suggestionListMaxHeight: 198,
 			reviewDialog: { title: 20, item: 17, option: 16 },
 			newSessionDialogWidth: 720,
+			chip: { height: 34, dot: 6 },
 			tabBar: { height: 49, icon: 26, label: 11, badge: 18, insetTrim: 12 },
 		},
 	},

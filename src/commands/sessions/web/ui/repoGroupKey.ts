@@ -1,6 +1,6 @@
 import type { RepoGroup } from "../../shared/RepoGroup";
 
-type Grouped = { cwd?: string; repoGroup?: RepoGroup };
+export type Grouped = { cwd?: string; repoGroup?: RepoGroup };
 
 export function repoGroupKey(session: Grouped): string | undefined {
 	return session.repoGroup?.origin || session.cwd || undefined;

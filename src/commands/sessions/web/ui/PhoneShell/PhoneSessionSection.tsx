@@ -11,11 +11,13 @@ export function PhoneSessionSection({
 	sessions,
 	localNode,
 	tone,
+	hideRepo,
 }: {
 	label: string;
 	sessions: SessionInfo[];
 	localNode: string | undefined;
 	tone?: PhoneSectionTone;
+	hideRepo?: boolean;
 }) {
 	if (sessions.length === 0) return null;
 	return (
@@ -32,6 +34,7 @@ export function PhoneSessionSection({
 					session={s}
 					localNode={localNode}
 					showMessage={tone !== undefined}
+					hideRepo={hideRepo}
 				/>
 			))}
 		</>

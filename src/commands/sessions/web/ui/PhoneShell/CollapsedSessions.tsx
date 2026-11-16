@@ -7,6 +7,7 @@ export function CollapsedSessions({
 	sessions,
 	localNode,
 	defaultExpanded = false,
+	hideRepo,
 	...tally
 }: {
 	sessions: SessionInfo[];
@@ -16,6 +17,7 @@ export function CollapsedSessions({
 	glyphColor: string;
 	needsYou?: number;
 	defaultExpanded?: boolean;
+	hideRepo?: boolean;
 }) {
 	const [expanded, setExpanded] = useState(defaultExpanded);
 	if (sessions.length === 0) return null;
@@ -29,7 +31,12 @@ export function CollapsedSessions({
 			/>
 			{expanded &&
 				sessions.map((s) => (
-					<PhoneSessionRow key={s.id} session={s} localNode={localNode} />
+					<PhoneSessionRow
+						key={s.id}
+						session={s}
+						localNode={localNode}
+						hideRepo={hideRepo}
+					/>
 				))}
 		</>
 	);

@@ -1,12 +1,11 @@
 import Box from "@mui/material/Box";
 import { phoneScrollAttr } from "./PhoneNavStack/phoneScrollAttr";
 import { useRef } from "react";
-import { useHomeNodeContext } from "../HomeNodeGate/useHomeNodeContext";
 import type { SessionInfo } from "../types";
-import { PhoneListNavActions } from "./PhoneListNavActions";
-import { PhoneNavBar } from "./PhoneNavBar";
-import { PhoneNodeChip } from "./PhoneNodeChip";
-import { PhoneSessionGroups } from "./PhoneSessionGroups";
+import { PhoneRepoChips } from "./PhoneRepoChips";
+import { PhoneFilteredSessions } from "./PhoneRepoChips/PhoneFilteredSessions";
+import { useSessionRepoFilter } from "./PhoneRepoChips/useSessionRepoFilter";
+import { PhoneSessionsNavBar } from "./PhoneSessionsNavBar";
 import { PullIndicator } from "./PullIndicator";
 import { usePullToRefresh } from "./usePullToRefresh";
 
@@ -36,24 +35,30 @@ export function PhoneSessionList({
 }: Props) {
 	const bodyRef = useRef<HTMLDivElement | null>(null);
 	const { pull, refreshing } = usePullToRefresh(bodyRef, onRefresh);
-	const homeName = useHomeNodeContext()?.home?.name;
+	const { repo, selectRepo, chips, shown } = useSessionRepoFilter(sessions);
 
 	return (
 		<>
-			<PhoneNavBar
-				left={
-					<PhoneNodeChip
-						name={homeName ?? localNode}
-						tone={reconnecting ? "warn" : "ok"}
-						onClick={onOpenNodes}
-					/>
-				}
-				title="Sessions"
-				right={<PhoneListNavActions onNewSession={onNewSession} />}
+			<PhoneSessionsNavBar
+				localNode={localNode}
+				reconnecting={reconnecting}
+				onOpenNodes={onOpenNodes}
+				onNewSession={onNewSession}
+			/>
+			<PhoneRepoChips
+				chips={chips}
+				total={sessions.length}
+				selected={repo}
+				onSelect={selectRepo}
 			/>
 			<Box ref={bodyRef} sx={bodySx} {...phoneScrollAttr}>
 				<PullIndicator pull={pull} refreshing={refreshing} />
-				<PhoneSessionGroups sessions={sessions} localNode={localNode} />
+				<PhoneFilteredSessions
+					sessions={shown}
+					repo={repo}
+					localNode={localNode}
+					onShowAll={() => selectRepo(null)}
+				/>
 			</Box>
 		</>
 	);

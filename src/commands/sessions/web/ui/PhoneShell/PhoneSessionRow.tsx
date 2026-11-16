@@ -17,24 +17,22 @@ import {
 	phoneRowSx,
 	phoneRowTitleSx,
 } from "./phoneRowSx";
-
-function attentionMessage(session: SessionInfo): string | undefined {
-	if (session.status === "error") return session.error;
-	return session.pendingPrPreview?.title ?? session.lastAssistantMessage;
-}
+import { attentionMessage } from "./attentionMessage";
 
 export function PhoneSessionRow({
 	session,
 	localNode,
 	showMessage,
+	hideRepo,
 }: {
 	session: SessionInfo;
 	localNode: string | undefined;
 	showMessage?: boolean;
+	hideRepo?: boolean;
 }) {
 	const navigate = useNavigate();
 	const status = displayStatus(session);
-	const repo = repoLabel(session.cwd);
+	const repo = hideRepo ? "" : repoLabel(session.cwd);
 	const phase = phaseLabel(session);
 	const message = showMessage ? attentionMessage(session) : undefined;
 

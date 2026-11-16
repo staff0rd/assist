@@ -7,7 +7,10 @@ import { createDesignTheme } from "../designSystem/createDesignTheme";
 import type { SessionInfo } from "../types";
 import { PhoneSessionList } from "./PhoneSessionList";
 
-afterEach(cleanup);
+afterEach(() => {
+	cleanup();
+	localStorage.clear();
+});
 
 function session(
 	id: string,
@@ -138,5 +141,97 @@ describe("PhoneSessionList", () => {
 		renderList([session("run", "running")]);
 
 		expect(screen.queryByRole("button", { name: /Review/ })).toBeNull();
+	});
+
+	describe("repo chips", () => {
+		const assist = { origin: "/git/assist", clone: "/git/assist" };
+		const worktree = { origin: "/git/assist", clone: "/git/assist-5" };
+		const chipNames = () =>
+			screen.getAllByRole("radio").map((c) => c.textContent ?? "");
+		const repoSessions = () => [
+			session("a-run", "running", { cwd: "/git/assist", repoGroup: assist }),
+			session("a-done", "done", { cwd: "/git/assist-5", repoGroup: worktree }),
+			session("a-ask", "waiting", {
+				cwd: "/git/assist-5",
+				repoGroup: worktree,
+			}),
+			session("o-run", "running", { cwd: "/git/other" }),
+			session("o-q", "running", {
+				cwd: "/git/other",
+				pendingPrPreview: {
+					requestId: "r",
+					title: "Question",
+					body: "",
+					prNumber: null,
+					kind: "question",
+				},
+			}),
+			session("z-run", "running", { cwd: "/git/zed" }),
+		];
+
+		it("lists All then repos by count, grouping clones of one origin", () => {
+			renderList(repoSessions());
+
+			expect(chipNames()).toEqual(["All6", "assist3", "other2", "zed1"]);
+			expect(
+				screen.getByRole("radio", { name: /All/ }).getAttribute("aria-checked"),
+			).toBe("true");
+		});
+
+		it("marks repos with a session needing you with a dot", () => {
+			renderList(repoSessions());
+
+			const dotted = screen
+				.getAllByRole("radio")
+				.filter((c) => c.querySelector("[aria-label='needs you']"))
+				.map((c) => c.textContent);
+			expect(dotted).toEqual(["assist3", "other2"]);
+		});
+
+		it("filters every group to the selected repo and hides the repo label", () => {
+			renderList(repoSessions());
+			expect(rowTitles()[0]).toContain("other");
+
+			fireEvent.click(screen.getByRole("radio", { name: /other/ }));
+			expect(rowTitles()).toEqual([
+				expect.stringContaining("Session o-q"),
+				expect.stringContaining("Session o-run"),
+			]);
+			expect(rowTitles().some((r) => r.includes("other"))).toBe(false);
+
+			fireEvent.click(screen.getByRole("radio", { name: /assist/ }));
+			fireEvent.click(screen.getByRole("button", { name: /Done/ }));
+			expect(rowTitles()).toEqual([
+				expect.stringContaining("Session a-ask"),
+				expect.stringContaining("Session a-run"),
+				expect.stringContaining("Session a-done"),
+			]);
+
+			fireEvent.click(screen.getByRole("radio", { name: /All/ }));
+			expect(rowTitles()).toHaveLength(6);
+		});
+
+		it("restores the stored repo on mount", () => {
+			localStorage.setItem("assist.phone.repoFilter", "/git/zed");
+			renderList(repoSessions());
+
+			expect(
+				screen.getByRole("radio", { name: /zed/ }).getAttribute("aria-checked"),
+			).toBe("true");
+			expect(rowTitles()).toEqual([expect.stringContaining("Session z-run")]);
+		});
+
+		it("keeps an empty selected repo at 0 with a Show all repos button", () => {
+			localStorage.setItem("assist.phone.repoFilter", "/git/gone");
+			renderList(repoSessions());
+
+			expect(chipNames()).toContain("gone0");
+			expect(screen.getByText("No sessions in gone")).toBeTruthy();
+			expect(localStorage.getItem("assist.phone.repoFilter")).toBe("/git/gone");
+
+			fireEvent.click(screen.getByRole("button", { name: "Show all repos" }));
+			expect(chipNames()).not.toContain("gone0");
+			expect(localStorage.getItem("assist.phone.repoFilter")).toBeNull();
+		});
 	});
 });
