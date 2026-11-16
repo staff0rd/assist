@@ -1,3 +1,10 @@
+## [0.1185.5](https://github.com/staff0rd/assist/compare/v0.1185.4...v0.1185.5) (2026-11-16)
+
+
+### Bug Fixes
+
+* refetch transcript on every change ([b15fd10](https://github.com/staff0rd/assist/commit/b15fd10d3f6ce5d653a6737dd988848ab056e54d))
+
 ## [0.1185.4](https://github.com/staff0rd/assist/compare/v0.1185.3...v0.1185.4) (2026-11-16)
 
 
