@@ -1,3 +1,10 @@
+## [0.1205.3](https://github.com/staff0rd/assist/compare/v0.1205.2...v0.1205.3) (2026-11-16)
+
+
+### Bug Fixes
+
+* discard cancelled parallel phase work ([08e3a4b](https://github.com/staff0rd/assist/commit/08e3a4b673128e4d1bcc21967c49611c281836ae))
+
 ## [0.1205.2](https://github.com/staff0rd/assist/compare/v0.1205.1...v0.1205.2) (2026-11-16)
 
 
