@@ -1,3 +1,10 @@
+# [0.1208.0](https://github.com/staff0rd/assist/compare/v0.1207.0...v0.1208.0) (2026-11-16)
+
+
+### Features
+
+* codex-sdk workflows ([e96f887](https://github.com/staff0rd/assist/commit/e96f887c0a8c4a71aafe2a49d70781029b12f7f1))
+
 # [0.1207.0](https://github.com/staff0rd/assist/compare/v0.1206.0...v0.1207.0) (2026-11-16)
 
 
