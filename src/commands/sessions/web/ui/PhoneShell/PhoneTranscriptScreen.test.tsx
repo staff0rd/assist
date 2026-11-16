@@ -94,3 +94,22 @@ describe("PhoneTranscriptScreen resume", () => {
 		expect(screen.queryByText("live screen")).toBeNull();
 	});
 });
+
+describe("PhoneTranscriptScreen meta line", () => {
+	it("shows repo, relative age and the harness-labelled id chip", () => {
+		vi.useFakeTimers({ toFake: ["Date"] });
+		vi.setSystemTime(new Date("2026-11-01T02:00:00Z"));
+		renderScreen(socketWith([]));
+		vi.useRealTimers();
+		expect(screen.getByText("wt")).toBeTruthy();
+		expect(screen.getByText("2h ago")).toBeTruthy();
+		expect(
+			screen.getByRole("button", { name: "Copy Codex session id conv-1" }),
+		).toBeTruthy();
+	});
+
+	it("omits the meta line until the history entry loads", () => {
+		renderScreen({ ...socketWith([]), history: [] } as SessionSocket);
+		expect(screen.queryByRole("button", { name: /session id/ })).toBeNull();
+	});
+});

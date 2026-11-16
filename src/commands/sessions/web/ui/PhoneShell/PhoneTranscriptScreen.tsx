@@ -7,6 +7,7 @@ import type { SessionSocket } from "../useSessionSocket";
 import { PhoneBackButton } from "./PhoneBackButton";
 import { PhoneNavBar } from "./PhoneNavBar";
 import { PhoneResumeButton } from "./PhoneTranscript/PhoneResumeButton";
+import { PhoneTranscriptMeta } from "./PhoneTranscript/PhoneTranscriptMeta";
 import { PhoneResumingToast } from "./PhoneTranscript/PhoneResumingToast";
 import { usePhoneResume } from "./PhoneTranscript/usePhoneResume";
 import { transcriptTitle } from "./transcriptTitle";
@@ -41,6 +42,7 @@ export function PhoneTranscriptScreen({ socket }: { socket: SessionSocket }) {
 					<PhoneResumeButton disabled={!entry || resuming} onResume={resume} />
 				}
 			/>
+			{entry && <PhoneTranscriptMeta entry={entry} />}
 			<Box sx={bodySx}>
 				<TranscriptArea sessionId={id} transcript={socket.transcript} />
 			</Box>
