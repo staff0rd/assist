@@ -1,3 +1,10 @@
+# [0.1202.0](https://github.com/staff0rd/assist/compare/v0.1201.1...v0.1202.0) (2026-11-16)
+
+
+### Features
+
+* caption reopen row with review head ([a9b34fc](https://github.com/staff0rd/assist/commit/a9b34fc23d21a008078fd27249ce58d0339a5a17))
+
 ## [0.1201.1](https://github.com/staff0rd/assist/compare/v0.1201.0...v0.1201.1) (2026-11-16)
 
 
