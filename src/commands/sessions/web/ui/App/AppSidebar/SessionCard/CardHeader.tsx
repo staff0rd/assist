@@ -10,6 +10,8 @@ import { SessionStatusGlyph } from "./CardHeader/SessionStatusGlyph";
 import { SessionVerifyRing } from "./CardHeader/SessionVerifyRing";
 import { sessionTitle } from "../../sessionTitle";
 import type { CardHeaderProps } from "../../../types";
+import { TransferGlyph } from "../../../transfer/TransferGlyph";
+import { transferIndicator } from "../../../transfer/transferIndicator";
 
 const spinnerSx = { gridColumn: 1, gridRow: 1, justifySelf: "center" } as const;
 
@@ -41,6 +43,8 @@ function StatusRail({
 }: Pick<CardHeaderProps, "session" | "loading">) {
 	if (areChipsLoading(session, loading))
 		return <CircularProgress size={11} sx={spinnerSx} />;
+	const transfer = transferIndicator(session);
+	if (transfer) return <TransferGlyph {...transfer} />;
 	if (isVerifying(session)) return <SessionVerifyRing />;
 	return <SessionStatusGlyph status={displayStatus(session)} />;
 }

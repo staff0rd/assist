@@ -1,5 +1,6 @@
 import type { Theme } from "@mui/material/styles";
 import type { DisplayStatus } from "../displayStatus";
+import type { TransferTone } from "../transfer/transferIndicator";
 
 const rowSx = {
 	width: "100%",
@@ -25,8 +26,15 @@ const rowWash: Partial<
 	error: "error",
 };
 
-export function phoneRowSx(status: DisplayStatus) {
-	const wash = rowWash[status];
+const transferWash: Partial<
+	Record<TransferTone, keyof Theme["tokens"]["color"]["wash"]>
+> = {
+	pending: "accent",
+	failed: "error",
+};
+
+export function phoneRowSx(status: DisplayStatus, transfer?: TransferTone) {
+	const wash = transfer ? transferWash[transfer] : rowWash[status];
 	const bgcolor = wash
 		? (t: Theme) => t.tokens.color.wash[wash]
 		: "background.default";

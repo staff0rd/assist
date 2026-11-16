@@ -5,6 +5,7 @@ import { displayStatus } from "../../displayStatus";
 import { sessionCardSx } from "./SessionCard/sessionCardSx";
 import type { SessionControlHandlers, SessionInfo } from "../../types";
 import { ApiNodeContext } from "../../useApiNode";
+import { transferIndicator } from "../../transfer/transferIndicator";
 
 export function SessionCard({
 	session,
@@ -26,7 +27,11 @@ export function SessionCard({
 		<ApiNodeContext.Provider value={session.node}>
 			<ButtonBase
 				onClick={onClick}
-				sx={sessionCardSx(active, displayStatus(session))}
+				sx={sessionCardSx(
+					active,
+					displayStatus(session),
+					transferIndicator(session)?.tone,
+				)}
 				data-session-id={session.id}
 			>
 				<CardHeader

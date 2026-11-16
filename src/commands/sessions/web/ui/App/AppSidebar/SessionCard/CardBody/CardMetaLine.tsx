@@ -4,6 +4,8 @@ import { CardChips } from "./CardMetaLine/CardChips";
 import { CardToggleCaptions } from "./CardMetaLine/CardToggleCaptions";
 import { sessionToggles } from "../../../sessionToggles";
 import type { SessionInfo } from "../../../../types";
+import { TransferCaption } from "../../../../transfer/TransferCaption";
+import { transferIndicator } from "../../../../transfer/transferIndicator";
 
 const metaSx = {
 	gridColumn: 2,
@@ -20,6 +22,13 @@ const metaSx = {
 
 export function CardMetaLine({ session }: { session: SessionInfo }) {
 	if (areChipsLoading(session, false)) return null;
+	const transfer = transferIndicator(session);
+	if (transfer)
+		return (
+			<Box sx={metaSx}>
+				<TransferCaption {...transfer} />
+			</Box>
+		);
 
 	return (
 		<Box sx={metaSx}>

@@ -2,22 +2,20 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Box from "@mui/material/Box";
 import ButtonBase from "@mui/material/ButtonBase";
 import { useNavigate } from "react-router";
-import { SessionStatusGlyph } from "../App/AppSidebar/SessionCard/CardHeader/SessionStatusGlyph";
-import { repoLabel } from "../App/repoLabel";
 import { sessionTitle } from "../App/sessionTitle";
 import { displayStatus } from "../displayStatus";
 import type { SessionInfo } from "../types";
 import { PhoneSwipeRow } from "./PhoneActions/PhoneSwipeRow";
-import { PhoneBadges } from "./PhoneBadges";
-import { phaseLabel } from "./phaseLabel";
 import {
 	phoneRowChevronSx,
 	phoneRowMessageSx,
-	phoneRowMetaSx,
 	phoneRowSx,
 	phoneRowTitleSx,
 } from "./phoneRowSx";
 import { attentionMessage } from "./attentionMessage";
+import { transferIndicator } from "../transfer/transferIndicator";
+import { PhoneRowGlyph } from "./PhoneRowGlyph";
+import { PhoneRowMeta } from "./PhoneRowMeta";
 
 export function PhoneSessionRow({
 	session,
@@ -32,28 +30,28 @@ export function PhoneSessionRow({
 }) {
 	const navigate = useNavigate();
 	const status = displayStatus(session);
-	const repo = hideRepo ? "" : repoLabel(session.cwd);
-	const phase = phaseLabel(session);
 	const message = showMessage ? attentionMessage(session) : undefined;
+	const transfer = transferIndicator(session);
 
 	return (
 		<PhoneSwipeRow session={session}>
 			{(consumeClick) => (
 				<ButtonBase
-					sx={phoneRowSx(status)}
+					sx={phoneRowSx(status, transfer?.tone)}
 					onClick={() => {
 						if (!consumeClick()) navigate(`/session/${session.id}`);
 					}}
 					data-testid="phone-session-row"
 				>
-					<SessionStatusGlyph status={status} />
+					<PhoneRowGlyph status={status} transfer={transfer} />
 					<Box sx={phoneRowTitleSx}>{sessionTitle(session)}</Box>
 					<ChevronRightIcon fontSize="small" sx={phoneRowChevronSx} />
-					<Box sx={phoneRowMetaSx}>
-						{repo && <span>{repo}</span>}
-						{phase && <span>{phase}</span>}
-						<PhoneBadges session={session} localNode={localNode} />
-					</Box>
+					<PhoneRowMeta
+						session={session}
+						localNode={localNode}
+						hideRepo={hideRepo}
+						transfer={transfer}
+					/>
 					{message && <Box sx={phoneRowMessageSx}>{message}</Box>}
 				</ButtonBase>
 			)}

@@ -1,6 +1,8 @@
 import { type SxProps, type Theme } from "@mui/material/styles";
 import type { DisplayStatus } from "../../../displayStatus";
+import type { TransferTone } from "../../../transfer/transferIndicator";
 import { selectionSx } from "./sessionCardSx/selectionSx";
+import { transferCardSx } from "./sessionCardSx/transferCardSx";
 
 const attentionWash: Partial<
 	Record<DisplayStatus, keyof Theme["tokens"]["color"]["wash"]>
@@ -22,6 +24,7 @@ function cardBackground(t: Theme, active: boolean, status: DisplayStatus) {
 export function sessionCardSx(
 	active: boolean,
 	status: DisplayStatus,
+	transfer?: TransferTone,
 ): SxProps<Theme> {
 	return (t) => ({
 		display: "grid",
@@ -34,5 +37,6 @@ export function sessionCardSx(
 		transition:
 			"background 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease",
 		"&:hover": !active ? { bgcolor: "action.hover" } : undefined,
+		...transferCardSx(t, active, transfer),
 	});
 }

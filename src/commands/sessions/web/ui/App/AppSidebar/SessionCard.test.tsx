@@ -6,6 +6,7 @@ import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo"
 import { renderWithTheme as render } from "../../../../../../test/renderWithTheme";
 import { SessionCard } from "./SessionCard";
 import { StarredSessionsProvider } from "../useStarredSessions";
+import type { SessionInfo } from "../../types";
 
 afterEach(() => {
 	cleanup();
@@ -142,5 +143,53 @@ describe("SessionCard dismiss confirmation", () => {
 
 		expect(onDismiss).toHaveBeenCalledTimes(1);
 		expect(onClick).not.toHaveBeenCalled();
+	});
+});
+
+describe("SessionCard transfer state", () => {
+	function renderTransfer(transfer: SessionInfo["transfer"]) {
+		return render(
+			<SessionCard
+				session={{ ...session, transfer }}
+				active={false}
+				loading={false}
+				onClick={() => {}}
+				onDismiss={() => {}}
+				onSetAutoApprove={() => {}}
+				onSetAutoAdvance={() => {}}
+			/>,
+			{ wrapper: Stars },
+		);
+	}
+
+	it("shows the transfer icon and target in place of the status while in flight", () => {
+		renderTransfer({ target: "mac-mini" });
+		expect(screen.getByTestId("transfer-glyph-pending")).toBeTruthy();
+		expect(
+			screen.getByText("Transferring → mac-mini", { selector: "span" }),
+		).toBeTruthy();
+		expect(screen.queryByTitle("running")).toBeNull();
+	});
+
+	it("shows the queued target", () => {
+		renderTransfer({ target: "mac-mini", queued: {} });
+		expect(screen.getByTestId("transfer-glyph-queued")).toBeTruthy();
+		expect(
+			screen.getByText("Transfer to mac-mini queued", { selector: "span" }),
+		).toBeTruthy();
+	});
+
+	it("shows Transfer failed when the transfer errored", () => {
+		renderTransfer({ target: "mac-mini", error: "link mac-mini is down" });
+		expect(screen.getByTestId("transfer-glyph-failed")).toBeTruthy();
+		expect(
+			screen.getByText("Transfer failed", { selector: "span" }),
+		).toBeTruthy();
+	});
+
+	it("shows the status glyph when no transfer is set", () => {
+		renderTransfer(undefined);
+		expect(screen.queryByTestId(/transfer-glyph/)).toBeNull();
+		expect(screen.getByTitle("running")).toBeTruthy();
 	});
 });
