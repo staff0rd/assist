@@ -1,3 +1,10 @@
+## [0.1189.5](https://github.com/staff0rd/assist/compare/v0.1189.4...v0.1189.5) (2026-11-16)
+
+
+### Bug Fixes
+
+* restore phase cards via their wrapper ([08ee079](https://github.com/staff0rd/assist/commit/08ee0792a64486be026bf11e95e35473bb157d99))
+
 ## [0.1189.4](https://github.com/staff0rd/assist/compare/v0.1189.3...v0.1189.4) (2026-11-16)
 
 
