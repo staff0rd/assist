@@ -3,8 +3,11 @@ import { repoLabel } from "../../App/repoLabel";
 import { sessionTitle } from "../../App/sessionTitle";
 import { displayStatus } from "../../displayStatus";
 import type { SessionInfo } from "../../types";
+import { PhoneConversationIdChip } from "../PhoneConversationIdChip";
 import { PhoneSheetGrab } from "../PhoneSheetGrab";
 import { PhoneSessionIdCopy } from "./PhoneSessionIdCopy";
+
+const idRowSx = { display: "flex", mt: 0.75 } as const;
 
 const headerSx = { px: 2, pt: 0.75, pb: 1.25 } as const;
 
@@ -28,6 +31,7 @@ export function PhoneActionSheetHeader({
 	]
 		.filter(Boolean)
 		.join(" · ");
+	const conversationId = session.harnessSessionId ?? session.claudeSessionId;
 	return (
 		<>
 			<PhoneSheetGrab />
@@ -40,6 +44,14 @@ export function PhoneActionSheetHeader({
 					{" · "}
 					<PhoneSessionIdCopy id={session.id} />
 				</Box>
+				{conversationId && (
+					<Box sx={idRowSx}>
+						<PhoneConversationIdChip
+							conversationId={conversationId}
+							harness={session.harness}
+						/>
+					</Box>
+				)}
 			</Box>
 		</>
 	);
