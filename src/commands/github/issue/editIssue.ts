@@ -4,7 +4,7 @@ import {
 	type EditIssueOptions,
 } from "./parseEditIssueArgs";
 import { inWebSession } from "../../sessions/shared/inWebSession";
-import { attachIssueScreenshots } from "./attachIssueScreenshots";
+import { applyIssueEdit } from "./applyIssueEdit";
 import { fetchIssueToWorkingFile } from "./fetchIssueToWorkingFile";
 import { previewIssueEdit } from "./previewIssueEdit";
 import { setIssueParent } from "./setIssueParent";
@@ -29,12 +29,13 @@ export async function editIssue(
 	}
 
 	if (!inWebSession()) {
-		if (screenshots.length > 0) {
-			await attachIssueScreenshots(
+		if (screenshots.length > 0 || options.title !== undefined) {
+			await applyIssueEdit(
 				number,
 				options.repo,
 				options.body,
 				screenshots,
+				options.title,
 			);
 			return;
 		}

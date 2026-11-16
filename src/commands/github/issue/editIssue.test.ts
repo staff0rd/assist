@@ -761,6 +761,93 @@ describe("editIssue --title", () => {
 		expect(ghCalls("edit")).toEqual([]);
 	});
 
+	it("renames the issue directly outside a web session", async () => {
+		await editIssue("42", {
+			repo: "acme/widgets",
+			title: "Tidy the changelog",
+		});
+
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+		expect(ghCalls("edit").map((call) => call[1])).toEqual([
+			[
+				"issue",
+				"edit",
+				"42",
+				"--title",
+				"Tidy the changelog",
+				"--repo",
+				"acme/widgets",
+			],
+		]);
+		expect(console.log).toHaveBeenCalledWith(
+			"Issue renamed on acme/widgets#42",
+		);
+	});
+
+	it("names the issue from its URL when renaming without --repo outside a web session", async () => {
+		await editIssue("42", { title: "Tidy the changelog" });
+
+		expect(console.log).toHaveBeenCalledWith(
+			"Issue renamed on acme/widgets#42",
+		);
+	});
+
+	it("pushes the title and --body together outside a web session", async () => {
+		await editIssue("42", { title: "Tidy the changelog", body: "# New" });
+
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+		expect(readFileSync(workingBodyPath(), "utf8")).toBe("# New");
+		expect(ghCalls("edit").map((call) => call[1])).toEqual([
+			[
+				"issue",
+				"edit",
+				"42",
+				"--body-file",
+				workingBodyPath(),
+				"--title",
+				"Tidy the changelog",
+			],
+		]);
+	});
+
+	it("pushes the title with the attached screenshots outside a web session", async () => {
+		const shot = join(
+			mkdtempSync(join(tmpdir(), "issue-screenshot-")),
+			"a.png",
+		);
+		writeFileSync(shot, "");
+
+		await editIssue("42", {
+			title: "Tidy the changelog",
+			screenshot: [`Crash=${shot}`],
+		});
+
+		expect(ghCalls("edit").map((call) => call[1])).toEqual([
+			[
+				"issue",
+				"edit",
+				"42",
+				"--body",
+				`# History\n\nlots of noise\n\n## Screenshots\n\n![Crash](${shot})`,
+				"--title",
+				"Tidy the changelog",
+				"--attach",
+				shot,
+			],
+		]);
+	});
+
+	it("rejects a title referencing Claude outside a web session", async () => {
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		exitThrows();
+
+		await expect(
+			editIssue("42", { title: "Renamed by Claude" }),
+		).rejects.toThrow("process.exit");
+
+		expect(execFileSync).not.toHaveBeenCalled();
+	});
+
 	it.each([{ parent: "7" }, { fetch: true }])(
 		"is a usage error with %o",
 		async (extra) => {
