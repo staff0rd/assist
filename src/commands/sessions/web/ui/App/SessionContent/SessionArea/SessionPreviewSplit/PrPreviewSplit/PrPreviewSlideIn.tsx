@@ -43,7 +43,12 @@ export function PrPreviewSlideIn({
 				</CoveredPane>
 			)}
 			{stackedShow && (
-				<StackedShowPane show={stackedShow} onDecision={onDecision} />
+				<StackedShowPane
+					show={stackedShow}
+					session={session}
+					sendInput={sendInput}
+					onDecision={onDecision}
+				/>
 			)}
 		</Box>
 	);
