@@ -1,3 +1,10 @@
+# [0.1190.0](https://github.com/staff0rd/assist/compare/v0.1189.5...v0.1190.0) (2026-11-16)
+
+
+### Features
+
+* comment on selected show text ([883a522](https://github.com/staff0rd/assist/commit/883a522dd44da48df66a63c082b1081bdbb469d3))
+
 ## [0.1189.5](https://github.com/staff0rd/assist/compare/v0.1189.4...v0.1189.5) (2026-11-16)
 
 
