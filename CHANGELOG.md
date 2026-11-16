@@ -1,3 +1,10 @@
+# [0.1191.0](https://github.com/staff0rd/assist/compare/v0.1190.3...v0.1191.0) (2026-11-16)
+
+
+### Features
+
+* resume sessions from phone history ([91ec831](https://github.com/staff0rd/assist/commit/91ec831fdbd755cfb74820dbf02126cf4015d94f))
+
 ## [0.1190.3](https://github.com/staff0rd/assist/compare/v0.1190.2...v0.1190.3) (2026-11-16)
 
 
