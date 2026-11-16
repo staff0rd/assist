@@ -1,3 +1,10 @@
+## [0.1205.2](https://github.com/staff0rd/assist/compare/v0.1205.1...v0.1205.2) (2026-11-16)
+
+
+### Bug Fixes
+
+* unlock codex-sdk composer on resume ([a35343e](https://github.com/staff0rd/assist/commit/a35343e1db746e1c041b7d9848695f3e6c27e3d0))
+
 ## [0.1205.1](https://github.com/staff0rd/assist/compare/v0.1205.0...v0.1205.1) (2026-11-16)
 
 
