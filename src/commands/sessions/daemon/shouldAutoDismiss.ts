@@ -1,4 +1,5 @@
 import type { Session } from "./createSession";
+import { isRunPhaseSession } from "./isBacklogRunSession";
 
 export function shouldAutoDismiss(
 	session: Session,
@@ -10,6 +11,8 @@ export function shouldAutoDismiss(
 	/* why: a backlog run that reached its review phase (#409) dismisses on a
 	 * clean exit whether "Continue" (autoAdvance) is on or off. */
 	if (session.reviewStarted) return true;
+	// why: a finished parallel phase's worktree is reaped and its path reused by the next phase, which a lingering card would show as its own.
+	if (isRunPhaseSession(session)) return true;
 	if (session.activity?.kind === "backlog" && session.autoAdvance === false)
 		return true;
 	const args = session.assistArgs;

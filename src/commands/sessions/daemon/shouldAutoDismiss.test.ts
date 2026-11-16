@@ -3,6 +3,23 @@ import { makeSession } from "../../../test/mothers/makeSession";
 import { shouldAutoDismiss } from "./shouldAutoDismiss";
 
 describe("shouldAutoDismiss", () => {
+	describe("when a parallel phase exits", () => {
+		const phase = (exitStatus: "done" | "error") =>
+			makeSession({
+				commandType: "assist",
+				status: exitStatus,
+				assistArgs: ["backlog", "run-phase", "a1717", "2", "--token", "t"],
+			});
+
+		it("dismisses it once it finished cleanly", () => {
+			expect(shouldAutoDismiss(phase("done"), 0)).toBe(true);
+		});
+
+		it("keeps a failed phase", () => {
+			expect(shouldAutoDismiss(phase("error"), 1)).toBe(false);
+		});
+	});
+
 	describe("when a draft --once session exits cleanly", () => {
 		it("dismisses", () => {
 			const session = makeSession({
