@@ -6,6 +6,7 @@ import { findOneItem } from "../shared";
 import type { BacklogRunOptions } from "../types";
 import { adoptItemUpstream } from "./adoptItemUpstream";
 import { phaseStartRefusal } from "./phaseStartRefusal";
+import { discardIfCancelled } from "./discardIfCancelled";
 import { watchPhaseCancel } from "./watchPhaseCancel";
 import { runUntilSettled } from "./runUntilSettled";
 
@@ -40,11 +41,17 @@ export async function runParallelPhase(
 		`backlog run-phase ${itemId} phase ${phaseNumber}`,
 	);
 	recordSignalOwner(itemId, idx);
-	const watcher = watchPhaseCancel(itemId, idx, options.token);
+	const watcher = watchPhaseCancel(
+		itemId,
+		idx,
+		options.token,
+		options.itemTree,
+	);
 	try {
 		return await runUntilSettled(found.item, idx, plan, options, watcher);
 	} finally {
 		watcher.stop();
+		await discardIfCancelled(itemId, idx, options.token, options.itemTree);
 		clearSignalOwner(itemId, idx);
 	}
 }

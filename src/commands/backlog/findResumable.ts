@@ -7,6 +7,8 @@ export function findResumable(items: BacklogFile): BacklogItem | undefined {
 		(i) =>
 			i.status === "in-progress" &&
 			i.plan &&
+			// why: a run parked on parallel phases holds no lock; the daemon wakes it once they end.
+			!i.runningPhases?.length &&
 			!isLockedByOther(i.id) &&
 			!isBlocked(i, items),
 	);

@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { formatItemId } from "../formatItemId";
 import { phaseAlreadyDone } from "./phaseAlreadyDone";
-import { ownsPhase } from "./watchPhaseCancel";
+import { ownsPhase } from "./ownsPhase";
 
 /** The result a parallel phase session ends with before starting, or undefined when it should run. */
 export async function phaseStartRefusal(

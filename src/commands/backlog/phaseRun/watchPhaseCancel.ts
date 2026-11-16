@@ -1,9 +1,9 @@
 import { mkdirSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import { appendDaemonLog } from "../../sessions/daemon/appendDaemonLog";
-import { getReady } from "../shared";
 import { getSignalPath } from "../writeSignal";
-import { loadPhaseRunRows } from "./loadPhaseProgress";
+import { discardIfCancelled } from "./discardIfCancelled";
+import { ownsPhase } from "./ownsPhase";
 import { phaseAlreadyDone } from "./phaseAlreadyDone";
 
 const POLL_MS = 5_000;
@@ -21,16 +21,6 @@ async function stillPhaseWork(
 	);
 }
 
-export async function ownsPhase(
-	itemId: number,
-	idx: number,
-	token: string,
-): Promise<boolean> {
-	const { orm } = await getReady();
-	const row = (await loadPhaseRunRows(orm, itemId)).find((r) => r.idx === idx);
-	return row?.runState === "running" && row.runToken === token;
-}
-
 function cancelOwnHarness(): void {
 	const path = getSignalPath();
 	if (!path) return;
@@ -41,12 +31,14 @@ function cancelOwnHarness(): void {
 /**
  * Stop this parallel phase once the run no longer gives it the phase (a rewind
  * reset it, or a newer session took it over): signal the harness to exit, and
- * exit outright if nothing is left to notice the signal.
+ * exit outright, discarding the phase's work, if nothing is left to notice the
+ * signal.
  */
 export function watchPhaseCancel(
 	itemId: number,
 	idx: number,
 	token: string,
+	itemTree: string,
 ): { cancelled: () => boolean; stop: () => void } {
 	let cancelled = false;
 	const timer = setInterval(() => {
@@ -58,7 +50,11 @@ export function watchPhaseCancel(
 					`backlog run-phase ${itemId} phase ${idx + 1}: cancelled (rewound or superseded)`,
 				);
 				cancelOwnHarness();
-				setTimeout(() => process.exit(0), EXIT_GRACE_MS).unref();
+				setTimeout(() => {
+					void discardIfCancelled(itemId, idx, token, itemTree).finally(() =>
+						process.exit(0),
+					);
+				}, EXIT_GRACE_MS).unref();
 			},
 			() => {},
 		);

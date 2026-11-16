@@ -5,7 +5,7 @@ import { getReady } from "../shared";
 import type { BacklogItem, BacklogRunOptions, PlanPhase } from "../types";
 import { markPhaseDone } from "./markPhaseDone";
 import { setPhaseRunState } from "./setPhaseRunState";
-import { ownsPhase } from "./watchPhaseCancel";
+import { ownsPhase } from "./ownsPhase";
 
 type ParallelPhaseOptions = BacklogRunOptions & {
 	token: string;
