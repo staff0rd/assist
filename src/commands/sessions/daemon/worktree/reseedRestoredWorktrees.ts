@@ -2,7 +2,7 @@ import type { PortWaitDeps } from "../awaitServerPort";
 import type { Session } from "../createSession";
 import { daemonLog } from "../daemonLog";
 import { startHeldInTree } from "../startHeldInTree";
-import { seedHeldSession } from "./bindNewWorktree";
+import { seedHeldSession } from "./seedHeldSession";
 
 type HeldTree = { session: Session; clone: string };
 
@@ -12,8 +12,15 @@ export function reseedRestoredWorktrees(deps: PortWaitDeps): void {
 		daemonLog(
 			`session ${session.id} ("${session.name}") restored mid worktree setup; re-seeding ${path} before starting it`,
 		);
-		seedHeldSession(session, path, clone, notify, (seeded) =>
-			startHeldInTree(seeded, sessions, clients, onStatusChange, notify),
+		seedHeldSession(session, path, clone, notify, (seeded, failure) =>
+			startHeldInTree(
+				seeded,
+				sessions,
+				clients,
+				onStatusChange,
+				notify,
+				failure,
+			),
 		);
 	}
 }

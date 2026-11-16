@@ -8,7 +8,7 @@ export type TreeSpawnContext = {
 	sessions: Map<string, Session>;
 	spawnWith: SpawnSession;
 	notify: () => void;
-	startHeld: (session: Session) => void;
+	startHeld: (session: Session, failure?: string) => void;
 };
 
 export function allocateAndBind(

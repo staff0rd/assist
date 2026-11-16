@@ -62,4 +62,39 @@ describe("startHeldInTree", () => {
 		expect(elsewhere.pty).toBeNull();
 		expect(elsewhere.pendingStart).toBeDefined();
 	});
+
+	it("refuses the other sessions held on the tree when its install failed", () => {
+		const startJoined = vi.fn(pendingStart);
+		const seeded = makeSession({
+			id: "4",
+			cwd: "/git/repo-2",
+			pty: null,
+			pendingStart,
+		});
+		const joined = makeSession({
+			id: "5",
+			cwd: "/git/repo-2",
+			pty: null,
+			pendingStart: startJoined,
+		});
+		const failure = "worktree /git/repo-2 install failed (exit 1)";
+
+		startHeldInTree(
+			seeded,
+			new Map([
+				[seeded.id, seeded],
+				[joined.id, joined],
+			]),
+			new Set<SessionClient>(),
+			(session, status) => {
+				session.status = status;
+			},
+			vi.fn(),
+			failure,
+		);
+
+		expect(startJoined).not.toHaveBeenCalled();
+		expect(joined.status).toBe("error");
+		expect(joined.error).toBe(failure);
+	});
 });

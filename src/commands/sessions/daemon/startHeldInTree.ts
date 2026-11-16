@@ -1,4 +1,5 @@
 import type { SessionClient } from "./broadcast";
+import { failHeldStart } from "./failHeldStart";
 import { startHeldSession } from "./startHeldSession";
 import type { OnStatusChange, Session } from "./types";
 
@@ -8,6 +9,7 @@ export function startHeldInTree(
 	clients: Set<SessionClient>,
 	onStatusChange: OnStatusChange,
 	notify: () => void,
+	failure?: string,
 ): void {
 	const start = (session: Session) =>
 		startHeldSession(session, sessions, clients, onStatusChange, notify);
@@ -17,6 +19,8 @@ export function startHeldInTree(
 			session !== seeded &&
 			session.pendingStart &&
 			session.cwd === seeded.cwd
-		)
+		) {
+			if (failure) failHeldStart(session, failure);
 			start(session);
+		}
 }

@@ -37,6 +37,22 @@ vi.mock("./resolveInstallCommand", () => ({
 	resolveInstallCommand: () => "npm install",
 }));
 
+type InstallNode =
+	| { ok: true; binDir: string | undefined; description: string }
+	| { ok: false; error: string };
+
+const unpinned: InstallNode = {
+	ok: true,
+	binDir: undefined,
+	description: "the login shell's default node",
+};
+
+const mockNode = vi.fn((_dir: string, _root: string): InstallNode => unpinned);
+
+vi.mock("./resolveInstallNode", () => ({
+	resolveInstallNode: (dir: string, root: string) => mockNode(dir, root),
+}));
+
 vi.mock("./detectInstallCommand", () => ({
 	detectInstallCommand: (dir: string) => mockDetect(dir),
 }));
@@ -82,6 +98,8 @@ describe("runInstall", () => {
 		});
 		mockDetect.mockReset();
 		mockDetect.mockReturnValue("npm install");
+		mockNode.mockReset();
+		mockNode.mockReturnValue(unpinned);
 		logs.length = 0;
 	});
 
@@ -112,7 +130,57 @@ describe("runInstall", () => {
 		]);
 	});
 
-	it("releases the held session once, however many times the install reports closing", () => {
+	it("puts the pinned node's bin folder first on PATH and logs where it came from", () => {
+		mockNode.mockReturnValue({
+			ok: true,
+			binDir: "/fnm/v24.22.1/bin",
+			description:
+				"node v24.22.1 (/fnm/v24.22.1/bin) pinned by /tree/.node-version",
+		});
+
+		seed("/home/me/git/assist-2");
+
+		expect(invocation().args.at(-1)).toBe(
+			"export PATH='/fnm/v24.22.1/bin':\"$PATH\"; cd '/home/me/git/assist-2' && npm install",
+		);
+		expect(logs).toContain(
+			"worktree /home/me/git/assist-2 install runs on node v24.22.1 (/fnm/v24.22.1/bin) pinned by /tree/.node-version",
+		);
+	});
+
+	it("prepends the pinned node on Windows paths", () => {
+		mockNode.mockReturnValue({
+			ok: true,
+			binDir: String.raw`C:\fnm\v24`,
+			description: "pinned",
+		});
+
+		seed(String.raw`C:\git\assist-2`);
+
+		expect(invocation().args).toEqual([
+			"/c",
+			String.raw`set "PATH=C:\fnm\v24;%PATH%" && cd /d "C:\git\assist-2" && npm install`,
+		]);
+	});
+
+	it("fails without installing when the pinned node cannot be resolved", () => {
+		const onSeeded = vi.fn();
+		mockNode.mockReturnValue({
+			ok: false,
+			error: '.node-version pins node "26" but it could not be resolved',
+		});
+
+		seed("/home/me/git/assist-2", onSeeded);
+
+		expect(mockSpawn).not.toHaveBeenCalled();
+		expect(onSeeded).toHaveBeenCalledWith({
+			ok: false,
+			reason: '.node-version pins node "26" but it could not be resolved',
+			output: "",
+		});
+	});
+
+	it("reports success once, however many times the install reports closing", () => {
 		const onSeeded = vi.fn();
 
 		seed("/home/me/git/assist-2", onSeeded);
@@ -120,16 +188,65 @@ describe("runInstall", () => {
 		child.emit("close", 0, null);
 
 		expect(onSeeded).toHaveBeenCalledTimes(1);
+		expect(onSeeded).toHaveBeenCalledWith({ ok: true });
 	});
 
-	it("releases the held session when the install cannot start at all", () => {
+	it("reports the exit code and output tail when the install fails", () => {
+		const onSeeded = vi.fn();
+
+		seed("/home/me/git/assist-2", onSeeded);
+		child.stderr.emit("data", Buffer.from("npm ERR! cipm failed\n"));
+		child.emit("close", 1, null);
+
+		expect(onSeeded).toHaveBeenCalledWith({
+			ok: false,
+			reason: "exit 1",
+			output: "npm ERR! cipm failed",
+		});
+	});
+
+	it("reports the signal when the install is killed", () => {
+		const onSeeded = vi.fn();
+
+		seed("/home/me/git/assist-2", onSeeded);
+		child.emit("close", null, "SIGKILL");
+
+		expect(onSeeded).toHaveBeenCalledWith(
+			expect.objectContaining({ ok: false, reason: "signal SIGKILL" }),
+		);
+	});
+
+	it("reports a failure when the install cannot start at all", () => {
 		const onSeeded = vi.fn();
 
 		seed("/home/me/git/assist-2", onSeeded);
 		child.emit("error", new Error("spawn bash ENOENT"));
 
 		expect(onSeeded).toHaveBeenCalledTimes(1);
+		expect(onSeeded).toHaveBeenCalledWith(
+			expect.objectContaining({
+				ok: false,
+				reason: "failed to start: spawn bash ENOENT",
+			}),
+		);
 	});
+
+	it.runIf(process.platform !== "win32")(
+		"reports a failure when the install is stopped at teardown",
+		() => {
+			const onSeeded = vi.fn();
+			const kill = spyKill();
+
+			seed("/home/me/git/assist-2", onSeeded);
+			stopInstall("/home/me/git/assist-2");
+			child.emit("close", 0, null);
+
+			expect(onSeeded).toHaveBeenCalledWith(
+				expect.objectContaining({ ok: false, reason: "stopped at teardown" }),
+			);
+			kill.restore();
+		},
+	);
 
 	it.runIf(process.platform !== "win32")(
 		"tracks the install in its own process group so teardown can kill it",
@@ -182,6 +299,8 @@ describe("runInstall", () => {
 			children[0].emit("close", 0, null);
 
 			expect(onSeeded).toHaveBeenCalledTimes(1);
+			expect(onSeeded).toHaveBeenCalledWith({ ok: true });
+			expect(mockNode).toHaveBeenCalledWith(resolve(tree, "coach-tools"), tree);
 			expect(logs).toContain(
 				`worktree ${tree} installing deps in coach-tools: npm install`,
 			);
@@ -235,7 +354,7 @@ describe("runInstall", () => {
 			expect(args.at(-1)).toMatch(/&& pnpm install$/);
 		});
 
-		it("skips the paths nested in one that failed, still releasing the session", () => {
+		it("skips the paths nested in one that failed and reports the failed path", () => {
 			const onSeeded = vi.fn();
 
 			seedPaths([".", "a", "b"], onSeeded);
@@ -243,19 +362,32 @@ describe("runInstall", () => {
 
 			expect(spawnedCwds()).toEqual([tree]);
 			expect(onSeeded).toHaveBeenCalledTimes(1);
+			expect(onSeeded).toHaveBeenCalledWith({
+				ok: false,
+				path: ".",
+				reason: "exit 1",
+				output: "",
+			});
 			expect(logs).toContain(`worktree ${tree} install skipping a: . failed`);
 			expect(logs).toContain(`worktree ${tree} install skipping b: . failed`);
 		});
 
-		it("keeps installing sibling paths when one fails", () => {
+		it("keeps installing sibling paths when one fails, then reports the failure", () => {
 			const onSeeded = vi.fn();
 
 			seedPaths(["a", "b"], onSeeded);
-			children[0].emit("close", 1, null);
+			children[0].stderr.emit("data", Buffer.from("killed\n"));
+			children[0].emit("close", null, "SIGTERM");
 			expect(onSeeded).not.toHaveBeenCalled();
 			children[1].emit("close", 0, null);
 
 			expect(onSeeded).toHaveBeenCalledTimes(1);
+			expect(onSeeded).toHaveBeenCalledWith({
+				ok: false,
+				path: "a",
+				reason: "signal SIGTERM",
+				output: "killed",
+			});
 			expect(logs).toContain(`worktree ${tree} install in b complete`);
 		});
 
@@ -269,13 +401,15 @@ describe("runInstall", () => {
 			expect(spawnedCwds()).toEqual([resolve(tree, "b")]);
 			children[0].emit("close", 0, null);
 
-			expect(onSeeded).toHaveBeenCalledTimes(1);
+			expect(onSeeded).toHaveBeenCalledWith(
+				expect.objectContaining({ ok: false, path: "missing" }),
+			);
 			expect(logs).toContain(
 				`worktree ${tree} install in missing failed: no package.json at ${resolve(tree, "missing")}`,
 			);
 		});
 
-		it("releases the session when nothing can install", () => {
+		it("reports a failure once when nothing can install", () => {
 			const onSeeded = vi.fn();
 			mockDetect.mockReturnValue(null);
 
@@ -283,6 +417,9 @@ describe("runInstall", () => {
 
 			expect(spawnedCwds()).toEqual([]);
 			expect(onSeeded).toHaveBeenCalledTimes(1);
+			expect(onSeeded).toHaveBeenCalledWith(
+				expect.objectContaining({ ok: false, path: "a" }),
+			);
 		});
 
 		it.runIf(process.platform !== "win32")(
@@ -299,6 +436,9 @@ describe("runInstall", () => {
 				expect(kill.killed).toEqual([-4321, -4322]);
 				expect(spawnedCwds()).toEqual([resolve(tree, "a"), resolve(tree, "b")]);
 				expect(onSeeded).toHaveBeenCalledTimes(1);
+				expect(onSeeded).toHaveBeenCalledWith(
+					expect.objectContaining({ ok: false, reason: "stopped at teardown" }),
+				);
 				expect(logs).toContain(
 					`worktree ${tree} install skipping b/nested: install stopped`,
 				);

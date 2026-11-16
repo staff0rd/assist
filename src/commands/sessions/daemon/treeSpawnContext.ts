@@ -14,7 +14,14 @@ export function treeSpawnContext(
 		sessions,
 		spawnWith,
 		notify,
-		startHeld: (session) =>
-			startHeldInTree(session, sessions, clients, onStatusChange, notify),
+		startHeld: (session, failure) =>
+			startHeldInTree(
+				session,
+				sessions,
+				clients,
+				onStatusChange,
+				notify,
+				failure,
+			),
 	};
 }

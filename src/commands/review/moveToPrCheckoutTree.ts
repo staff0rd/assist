@@ -1,6 +1,7 @@
 import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
 import { allocateTree } from "../sessions/daemon/worktree/allocateTree";
 import { persistedTreeRoots } from "../sessions/daemon/worktree/persistedTreeRoots";
+import { installFailureMessage } from "../sessions/daemon/worktree/installFailureMessage";
 import { seedWorktree } from "../sessions/daemon/worktree/seedWorktree";
 
 function placedByDaemon(): boolean {
@@ -10,7 +11,11 @@ function placedByDaemon(): boolean {
 function seed(worktreePath: string, clone: string): Promise<void> {
 	console.log(`Preparing ${worktreePath}…`);
 	return new Promise<void>((resolve) =>
-		seedWorktree(worktreePath, clone, resolve),
+		seedWorktree(worktreePath, clone, (outcome) => {
+			if (!outcome.ok)
+				console.warn(installFailureMessage(worktreePath, outcome));
+			resolve();
+		}),
 	);
 }
 

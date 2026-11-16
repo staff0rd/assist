@@ -22,7 +22,7 @@ export function refuseSpawn(
 	emitSessionOutput(
 		session,
 		clients,
-		`\r\n\x1b[31mCannot start this session: ${reason}\x1b[0m\r\n`,
+		`\r\n\x1b[31mCannot start this session: ${reason.replace(/\r?\n/g, "\r\n")}\x1b[0m\r\n`,
 	);
 	onStatusChange(session, "error");
 }

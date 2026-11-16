@@ -2,14 +2,16 @@ import type { Session } from "../createSession";
 import type { Allocation } from "./allocateTree";
 import { detectExistingWorktree } from "./detectExistingWorktree";
 import { noteWorktreeHarness } from "./noteWorktreeHarness";
-import { seedWorktree } from "./seedWorktree";
 import { refuseUnallocatedStart } from "./refuseUnallocatedStart";
+import { seedHeldSession } from "./seedHeldSession";
+
+type StartHeld = (session: Session, failure?: string) => void;
 
 export function bindNewWorktree(
 	session: Session | undefined,
 	alloc: Allocation,
 	notify: () => void,
-	startHeld: (session: Session) => void = () => {},
+	startHeld: StartHeld = () => {},
 ): void {
 	if (alloc.kind !== "worktree" || !alloc.cwd || !alloc.clone || !session)
 		return;
@@ -24,27 +26,6 @@ export function bindNewWorktree(
 		);
 	}
 	notify();
-}
-
-export function seedHeldSession(
-	session: Session,
-	path: string,
-	clone: string,
-	notify: () => void,
-	startHeld: (session: Session) => void,
-): void {
-	seedWorktree(
-		path,
-		clone,
-		() => {
-			session.seeding = undefined;
-			startHeld(session);
-		},
-		(installPath) => {
-			session.seeding = `Installing dependencies${installPath ? ` in ${installPath}` : ""}…`;
-			notify();
-		},
-	);
 }
 
 export function bindRestoredWorktrees(sessions: Map<string, Session>): void {

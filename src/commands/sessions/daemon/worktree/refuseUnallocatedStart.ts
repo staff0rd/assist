@@ -1,5 +1,6 @@
 import type { Session } from "../createSession";
 import { daemonLog } from "../daemonLog";
+import { failHeldStart } from "../failHeldStart";
 
 export function refuseUnallocatedStart(
 	session: Session,
@@ -11,8 +12,6 @@ export function refuseUnallocatedStart(
 	daemonLog(
 		`session ${session.id} worktree ${path} could not be created: ${reason}`,
 	);
-	session.pendingStart = () => {
-		throw new Error(`worktree ${path} could not be created: ${reason}`);
-	};
+	failHeldStart(session, `worktree ${path} could not be created: ${reason}`);
 	startHeld(session);
 }

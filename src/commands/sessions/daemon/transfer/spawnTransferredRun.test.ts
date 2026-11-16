@@ -11,8 +11,9 @@ import { spawnTransferredRun } from "./spawnTransferredRun";
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("../worktree/allocateTree", () => ({ allocateTree: vi.fn() }));
 vi.mock("../worktree/seedWorktree", () => ({
-	seedWorktree: vi.fn((_p: string, _c: string, onSeeded: () => void) =>
-		onSeeded(),
+	seedWorktree: vi.fn(
+		(_p: string, _c: string, onSeeded: (outcome: { ok: true }) => void) =>
+			onSeeded({ ok: true }),
 	),
 }));
 vi.mock("../worktree/refuseUnallocatedStart", () => ({

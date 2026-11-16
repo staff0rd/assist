@@ -13,8 +13,12 @@ vi.mock("../sessions/daemon/worktree/allocateTree", () => ({
 	allocateTree: vi.fn(),
 }));
 vi.mock("../sessions/daemon/worktree/seedWorktree", () => ({
-	seedWorktree: vi.fn((_path: string, _clone: string, onSeeded: () => void) =>
-		onSeeded(),
+	seedWorktree: vi.fn(
+		(
+			_path: string,
+			_clone: string,
+			onSeeded: (outcome: { ok: true }) => void,
+		) => onSeeded({ ok: true }),
 	),
 }));
 

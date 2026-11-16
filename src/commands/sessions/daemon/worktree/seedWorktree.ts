@@ -2,12 +2,13 @@ import { copyFileSync, existsSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
 import { daemonLog } from "../daemonLog";
 import { runInstall } from "./runInstall";
+import type { SeedOutcome } from "./SeedOutcome";
 import { worktreeConfigFor } from "./worktreeConfigFor";
 
 export function seedWorktree(
 	worktreePath: string,
 	clone: string,
-	onSeeded: () => void = () => {},
+	onSeeded: (outcome: SeedOutcome) => void = () => {},
 	onInstalling?: (path?: string) => void,
 ): void {
 	const cfg = worktreeConfigFor(clone);
