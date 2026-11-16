@@ -1,3 +1,10 @@
+## [0.1193.1](https://github.com/staff0rd/assist/compare/v0.1193.0...v0.1193.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* run queued transfer at SDK phase end ([625a2eb](https://github.com/staff0rd/assist/commit/625a2eb24df579276325e7c0d78a136ef398b020))
+
 # [0.1193.0](https://github.com/staff0rd/assist/compare/v0.1192.0...v0.1193.0) (2026-11-16)
 
 
