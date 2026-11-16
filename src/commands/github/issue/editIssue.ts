@@ -1,4 +1,6 @@
+import { parseScreenshotSpecs } from "../../prs/parseScreenshotSpecs";
 import { inWebSession } from "../../sessions/shared/inWebSession";
+import { attachIssueScreenshots } from "./attachIssueScreenshots";
 import { fetchIssueToWorkingFile } from "./fetchIssueToWorkingFile";
 import { previewIssueEdit } from "./previewIssueEdit";
 import { setIssueParent } from "./setIssueParent";
@@ -10,10 +12,11 @@ type EditIssueOptions = {
 	fetch?: boolean;
 	body?: string;
 	parent?: string;
+	screenshot?: string[];
 };
 
 const USAGE =
-	"Usage: assist github issue edit <number> [-R <owner>/<repo>] [--body <body>] [--fetch] [--parent <issue>]";
+	"Usage: assist github issue edit <number> [-R <owner>/<repo>] [--body <body>] [--fetch] [--parent <issue>] [--screenshot '[Group/]Caption=path']";
 
 export async function editIssue(
 	numberArg: string,
@@ -24,6 +27,8 @@ export async function editIssue(
 		console.error(USAGE);
 		process.exit(1);
 	}
+
+	const screenshots = parseScreenshotSpecs(options.screenshot);
 
 	if (options.parent) {
 		setIssueParent(number, options.repo, options.parent);
@@ -36,9 +41,24 @@ export async function editIssue(
 	}
 
 	if (!inWebSession()) {
+		if (screenshots.length > 0) {
+			await attachIssueScreenshots(
+				number,
+				options.repo,
+				options.body,
+				screenshots,
+			);
+			return;
+		}
 		viewIssue(number, options.repo);
 		return;
 	}
 
-	await previewIssueEdit(number, options.repo, options.fresh, options.body);
+	await previewIssueEdit(
+		number,
+		options.repo,
+		options.fresh,
+		options.body,
+		screenshots,
+	);
 }

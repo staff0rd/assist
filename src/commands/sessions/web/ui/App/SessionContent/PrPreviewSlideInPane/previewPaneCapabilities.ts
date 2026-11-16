@@ -9,7 +9,10 @@ export function previewPaneCapabilities(kind: PreviewKind | undefined): {
 	const resolved = kind ?? "pr";
 	return {
 		isPr: resolved === "pr",
-		screenshots: resolved === "pr" || resolved === "github-issue",
+		screenshots:
+			resolved === "pr" ||
+			resolved === "github-issue" ||
+			resolved === "github-issue-edit",
 		editable: resolved === "github-issue-edit",
 		closeOnly: resolved === "show",
 	};

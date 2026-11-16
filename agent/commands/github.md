@@ -48,14 +48,16 @@ Display the result to the user.
 Rework the issue's body in the assist web preview pane. This is what a bare issue reference runs. Run it and nothing else:
 
 ```
-assist github issue edit <number> -R <owner>/<repo> 2>&1
+assist github issue edit <number> -R <owner>/<repo> [--screenshot '[Group/]Caption=path']... 2>&1
 ```
 
 If you already know the body you want (e.g. the user asked for a specific rewrite), read the current body with `gh issue view`, compose the revision, and pass it with `--body -` on stdin so the first preview shows your proposal rather than the unchanged body.
 
+When you already have an image or video to add to the issue (e.g. a file the user pointed at on disk), pass it with `--screenshot '[Group/]Caption=path'`, once per file, rather than asking the user to drop it into the preview. It is attached under the body's `## Screenshots` section for you; never author that section yourself.
+
 For a targeted change to the current body (strike items out, tick a box), run `assist github issue edit <number> -R <owner>/<repo> --fetch` first: it writes the current body to the working file and prints its path without opening a preview. Edit that file in place, then run the command without `--fetch` so the first preview shows your revision. Never run it without `--fetch` just to get the body.
 
-Do not check for a web session yourself — the command already knows. In a web session it fetches the issue's current body, opens it in the preview pane, and pushes the pane's markdown back on approval; outside one it just prints the issue. Only the body is ever touched — the title, labels, assignees and state are left alone.
+Do not check for a web session yourself — the command already knows. In a web session it fetches the issue's current body, opens it in the preview pane, and pushes the pane's markdown back on approval; outside one it just prints the issue, or with `--screenshot` attaches the files to the current body directly. Only the body is ever touched — the title, labels, assignees and state are left alone.
 
 Display the output so the user can see what happened. If the command exits non-zero, relay what it reported and stop — nothing was pushed. Two cases to relay verbatim:
 

@@ -1,18 +1,27 @@
 import { randomUUID } from "node:crypto";
+import { stageScreenshots } from "../../prs/stageScreenshots";
 import { awaitPreviewApproval } from "../../sessions/shared/awaitPreviewApproval";
+import type { PreviewAttachment } from "../../sessions/shared/PreviewAttachment";
 
 type IssueWorkingCopy = {
 	path: string;
 	save: (edited: string) => void;
 };
 
+type ReviewedIssueEdit = {
+	body: string;
+	screenshots: PreviewAttachment[];
+};
+
 export async function reviewProposedIssueEdit(
 	title: string,
 	body: string,
 	working: IssueWorkingCopy,
-): Promise<string> {
+	screenshots: PreviewAttachment[] = [],
+): Promise<ReviewedIssueEdit> {
 	const sessionId = process.env.ASSIST_SESSION_ID;
-	if (process.env.ASSIST_SESSION !== "1" || !sessionId) return body;
+	if (process.env.ASSIST_SESSION !== "1" || !sessionId)
+		return { body, screenshots };
 
 	const decision = await awaitPreviewApproval(
 		"GitHub issue edit preview",
@@ -23,6 +32,9 @@ export async function reviewProposedIssueEdit(
 			body,
 			prNumber: null,
 			kind: "github-issue-edit",
+			screenshots: screenshots.length
+				? await stageScreenshots(screenshots)
+				: undefined,
 		},
 		{
 			saveEditedBody: working.save,
@@ -30,5 +42,8 @@ export async function reviewProposedIssueEdit(
 		},
 	);
 
-	return decision.body ?? body;
+	return {
+		body: decision.body ?? body,
+		screenshots: decision.screenshots ?? [],
+	};
 }

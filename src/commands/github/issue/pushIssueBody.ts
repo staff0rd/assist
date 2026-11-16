@@ -1,15 +1,45 @@
 import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
+import { attachArgs } from "../../prs/attachArgs";
+import { runGhWithAttachments } from "../../prs/runGhWithAttachments";
+import type { PreviewAttachment } from "../../sessions/shared/PreviewAttachment";
+import { mergeIssueScreenshots } from "./mergeIssueScreenshots";
 
 export function pushIssueBody(
 	number: number,
 	repo: string | undefined,
 	bodyPath: string,
+	attachments: PreviewAttachment[] = [],
 ): void {
-	const args = ["issue", "edit", String(number), "--body-file", bodyPath];
-	if (repo) args.push("--repo", repo);
+	const repoArgs = repo ? ["--repo", repo] : [];
+	if (attachments.length > 0) {
+		const body = mergeIssueScreenshots(
+			readFileSync(bodyPath, "utf8"),
+			attachments,
+		);
+		process.stdout.write(
+			runGhWithAttachments(
+				[
+					"issue",
+					"edit",
+					String(number),
+					"--body",
+					body,
+					...repoArgs,
+					...attachArgs(attachments),
+				],
+				attachments,
+			),
+		);
+		return;
+	}
 
 	try {
-		execFileSync("gh", args, { stdio: "inherit" });
+		execFileSync(
+			"gh",
+			["issue", "edit", String(number), "--body-file", bodyPath, ...repoArgs],
+			{ stdio: "inherit" },
+		);
 	} catch {
 		process.exit(1);
 	}

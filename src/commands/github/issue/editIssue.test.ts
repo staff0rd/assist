@@ -7,6 +7,9 @@ import type * as childProcessMockModule from "../../../test/mocks/childProcessMo
 
 const execFileSync = vi.mocked(execFileSyncFn);
 const mockRequestPreviewDecision = vi.fn();
+const stageScreenshots = vi.fn(async (shots: { path: string }[] = []) =>
+	shots.map((s) => ({ ...s, path: `/staged/${s.path.split("/").pop()}` })),
+);
 
 vi.mock("node:child_process", async () =>
 	(
@@ -18,6 +21,11 @@ vi.mock("node:child_process", async () =>
 vi.mock("../../sessions/shared/requestPreviewDecision", () => ({
 	requestPreviewDecision: (...args: unknown[]) =>
 		mockRequestPreviewDecision(...args),
+}));
+
+vi.mock("../../prs/stageScreenshots", () => ({
+	stageScreenshots: (...args: unknown[]) =>
+		stageScreenshots(...(args as [{ path: string }[]])),
 }));
 
 import { editIssue } from "./editIssue";
@@ -82,6 +90,7 @@ function ghCalls(verb: string) {
 beforeEach(() => {
 	execFileSync.mockReset();
 	mockRequestPreviewDecision.mockReset();
+	stageScreenshots.mockClear();
 	storeDir = mkdtempSync(join(tmpdir(), "assist-issue-edit-"));
 	process.env.ASSIST_STORE_DIR = storeDir;
 	delete process.env.ASSIST_SESSION;
@@ -494,5 +503,157 @@ describe("editIssue resume", () => {
 		await editIssue("42", {});
 
 		expect(previewedBody(1)).toBe(REVISED);
+	});
+});
+
+describe("editIssue --screenshot", () => {
+	function screenshotFile(name: string): string {
+		const path = join(mkdtempSync(join(tmpdir(), "issue-screenshot-")), name);
+		writeFileSync(path, "");
+		return path;
+	}
+
+	function pushedArgs(): unknown {
+		return ghCalls("edit")[0]?.[1];
+	}
+
+	it("pre-stages the screenshots beside the body and attaches what the reviewer kept", async () => {
+		webSession();
+		const shot = screenshotFile("crash.png");
+		mockRequestPreviewDecision.mockImplementation(
+			async (request: { screenshots?: unknown[] }) => ({
+				decision: "approve",
+				screenshots: request.screenshots,
+			}),
+		);
+
+		await editIssue("42", {
+			repo: "acme/widgets",
+			screenshot: [`Crash=${shot}`],
+		});
+
+		expect(mockRequestPreviewDecision.mock.calls[0][0]).toEqual(
+			expect.objectContaining({
+				kind: "github-issue-edit",
+				body: "# History\n\nlots of noise",
+				screenshots: [{ path: "/staged/crash.png", alt: "Crash" }],
+			}),
+		);
+		expect(pushedArgs()).toEqual([
+			"issue",
+			"edit",
+			"42",
+			"--body",
+			"# History\n\nlots of noise\n\n## Screenshots\n\n![Crash](/staged/crash.png)",
+			"--repo",
+			"acme/widgets",
+			"--attach",
+			"/staged/crash.png",
+		]);
+	});
+
+	it("attaches a screenshot the reviewer dropped into the pane", async () => {
+		webSession();
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			body: "# History\n\nedited",
+			screenshots: [{ path: "/staged/u1/drop.png", alt: "drop" }],
+		});
+
+		await editIssue("42", {});
+
+		expect(pushedArgs()).toEqual([
+			"issue",
+			"edit",
+			"42",
+			"--body",
+			"# History\n\nedited\n\n## Screenshots\n\n![drop](/staged/u1/drop.png)",
+			"--attach",
+			"/staged/u1/drop.png",
+		]);
+	});
+
+	it("adds to an existing Screenshots section rather than replacing it", async () => {
+		webSession();
+		ghViewReturns(
+			issueJson({
+				body: "# History\n\n## Screenshots\n\n![Old](https://example.com/old.png)\n\n## Notes\n\nend",
+			}),
+		);
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			screenshots: [{ path: "/staged/new.png", alt: "New" }],
+		});
+
+		await editIssue("42", {});
+
+		expect(pushedArgs()).toEqual(
+			expect.arrayContaining([
+				"# History\n\n## Screenshots\n\n![Old](https://example.com/old.png)\n\n![New](/staged/new.png)\n\n## Notes\n\nend",
+			]),
+		);
+	});
+
+	it("pushes with --body-file when the reviewer removed every screenshot", async () => {
+		webSession();
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+
+		await editIssue("42", { screenshot: [`Crash=${screenshotFile("a.png")}`] });
+
+		expect(pushedArgs()).toEqual([
+			"issue",
+			"edit",
+			"42",
+			"--body-file",
+			workingBodyPath(),
+		]);
+	});
+
+	it("exits before previewing when a screenshot file is missing", async () => {
+		webSession();
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		exitThrows();
+
+		await expect(
+			editIssue("42", { screenshot: ["Crash=/no/such/file.png"] }),
+		).rejects.toThrow("process.exit");
+
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+		expect(execFileSync).not.toHaveBeenCalled();
+	});
+
+	it("exits before previewing when gh cannot attach the extension", async () => {
+		webSession();
+		vi.spyOn(console, "error").mockImplementation(() => {});
+		exitThrows();
+
+		await expect(
+			editIssue("42", { screenshot: [`Doc=${screenshotFile("notes.txt")}`] }),
+		).rejects.toThrow("process.exit");
+
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+	});
+
+	it("appends and attaches the screenshots directly outside a web session", async () => {
+		const shot = screenshotFile("crash.png");
+
+		await editIssue("42", {
+			repo: "acme/widgets",
+			screenshot: [`Crash=${shot}`],
+		});
+
+		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
+		expect(stageScreenshots).not.toHaveBeenCalled();
+		expect(pushedArgs()).toEqual([
+			"issue",
+			"edit",
+			"42",
+			"--body",
+			`# History\n\nlots of noise\n\n## Screenshots\n\n![Crash](${shot})`,
+			"--repo",
+			"acme/widgets",
+			"--attach",
+			shot,
+		]);
 	});
 });

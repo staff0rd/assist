@@ -1,3 +1,4 @@
+import type { PreviewAttachment } from "../../sessions/shared/PreviewAttachment";
 import { fetchIssue } from "./fetchIssue";
 import { pushIssueBody } from "./pushIssueBody";
 
@@ -7,6 +8,7 @@ export function pushUnchangedIssue(
 	target: string,
 	fetchedAt: string,
 	bodyPath: string,
+	attachments: PreviewAttachment[] = [],
 ): void {
 	if (fetchIssue(number, repo).updatedAt !== fetchedAt) {
 		console.error(
@@ -15,6 +17,6 @@ export function pushUnchangedIssue(
 		process.exit(1);
 	}
 
-	pushIssueBody(number, repo, bodyPath);
+	pushIssueBody(number, repo, bodyPath, attachments);
 	console.log(`Issue body updated on ${target}`);
 }
