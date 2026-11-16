@@ -31,6 +31,6 @@ export function buildPrPreview(
 				? d.reviewAfter
 				: undefined,
 		metadata: parsePreviewMetadata(d.metadata),
-		screenshots: kind === "pr" ? toAttachments(d.screenshots) : undefined,
+		screenshots: toAttachments(d.screenshots),
 	};
 }
