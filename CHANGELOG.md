@@ -1,3 +1,11 @@
+## [0.1185.4](https://github.com/staff0rd/assist/compare/v0.1185.3...v0.1185.4) (2026-11-16)
+
+
+### Bug Fixes
+
+* run stash git commands without shell ([2836fbc](https://github.com/staff0rd/assist/commit/2836fbc6cf9f3880588f23462f23faeae2ec7393))
+* stash format quoting on Windows commit ([07635cb](https://github.com/staff0rd/assist/commit/07635cb7945db40f928c586531c2b5bc954e3da0))
+
 ## [0.1185.3](https://github.com/staff0rd/assist/compare/v0.1185.2...v0.1185.3) (2026-11-16)
 
 
