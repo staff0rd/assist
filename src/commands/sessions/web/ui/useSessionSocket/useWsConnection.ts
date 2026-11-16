@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { resolveActiveId } from "./useWsConnection/resolveActiveId";
 import type { HistoricalSession } from "../types";
 import { useActiveId } from "./useWsConnection/useActiveId";
-import { useActiveIdReconciler } from "./useWsConnection/useActiveIdReconciler";
 import { useDaemonState } from "./useWsConnection/useDaemonState";
 import { useInitialized } from "./useWsConnection/useInitialized";
 import { useNotices } from "../useNotices";
@@ -11,6 +9,7 @@ import { useRateLimitsState } from "./useWsConnection/useRateLimitsState";
 import { useSessionsSync } from "./useWsConnection/useSessionsSync";
 import { useTerminalRefs } from "./useWsConnection/useTerminalRefs";
 import { useTranscriptState } from "./useWsConnection/useTranscriptState";
+import { useSessionSelection } from "./useWsConnection/useSessionSelection";
 import { useWebSocket } from "./useWsConnection/useWebSocket";
 
 export function useWsConnection() {
@@ -26,12 +25,19 @@ export function useWsConnection() {
 	const terminals = useTerminalRefs();
 	const { sessions, sessionsLoaded, handleSessions } =
 		useSessionsSync(syncSessions);
+	const { handoffTransfer } = useSessionSelection(
+		sessions,
+		daemon.activeByRepo,
+		getActiveId,
+		setActiveId,
+	);
 
 	const { wsRef, requestHistory, reconnecting } = useWebSocket({
 		handleSessions,
 		setHistory,
 		getActiveId,
 		setActiveId,
+		handoffTransfer,
 		...daemon,
 		...transcripts,
 		setCurrentCwd,
@@ -41,12 +47,6 @@ export function useWsConnection() {
 		markInitialized,
 		...terminals,
 	});
-
-	useActiveIdReconciler(
-		sessions,
-		setActiveId,
-		resolveActiveId(daemon.activeByRepo, sessions),
-	);
 
 	return {
 		sessions,

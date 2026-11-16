@@ -15,6 +15,7 @@ type WsDeps = {
 	setHistory: WsDispatch["setHistory"];
 	getActiveId: WsDispatch["getActiveId"];
 	setActiveId: WsDispatch["setActiveId"];
+	handoffTransfer: WsDispatch["handoffTransfer"];
 	setActiveByRepo: WsDispatch["setActiveByRepo"];
 	setDaemonVersion: WsDispatch["setDaemonVersion"];
 	setNodes: WsDispatch["setNodes"];

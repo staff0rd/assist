@@ -9,6 +9,7 @@ import {
 } from "./LinkRelayState";
 import { relayHistory } from "./relayHistory";
 import { relayLinkSessions } from "./relayLinkSessions";
+import { relayNotice } from "./relayNotice";
 import { relayReply } from "./relayReply";
 import { relayRunConflict } from "./relayRunConflict";
 import { relayToCreator } from "./relayToCreator";
@@ -33,7 +34,7 @@ const relays: Record<string, Relay> = {
 	clear: relayWithNodeSessionId,
 	created: relayToCreator("created session"),
 	error: relayToCreator("peer error:"),
-	notice: (state, msg) => broadcastToViewers(state, msg),
+	notice: relayNotice,
 	inbox: (state, msg) => broadcastToViewers(state, msg),
 	"run-conflict": relayRunConflict,
 	history: relayHistory,

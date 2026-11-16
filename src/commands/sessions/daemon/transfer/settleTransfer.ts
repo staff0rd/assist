@@ -28,7 +28,12 @@ export function settleTransfer(
 		`session ${s.id} transferred to ${target} as ${outcome.sessionId} trace=${traceId}; closing source`,
 	);
 	s.transfer = undefined;
+	// why: the UI must see the hand-off while the source is still listed, so it can tell whether the source was selected
+	sendTo(client, {
+		type: "notice",
+		message: `Transferred to ${target}`,
+		transfer: { sourceId: s.id, sessionId: outcome.sessionId, node: target },
+	});
 	deps.stop(s.id);
 	deps.discard(s.id);
-	sendTo(client, { type: "notice", message: `Transferred to ${target}` });
 }

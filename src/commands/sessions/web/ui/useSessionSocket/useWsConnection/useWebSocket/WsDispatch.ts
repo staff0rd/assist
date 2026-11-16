@@ -17,6 +17,7 @@ export type WsDispatch = {
 	setHistory: (h: HistoricalSession[]) => void;
 	getActiveId: () => string | null;
 	setActiveId: (id: string) => void;
+	handoffTransfer: (sourceId: string, sessionId: string) => void;
 	setActiveByRepo: (active: Record<string, string>) => void;
 	setDaemonVersion: (version: string) => void;
 	setNodes: (nodes: NodesState) => void;

@@ -122,7 +122,13 @@ describe("transferSession", () => {
 		const logged = vi.mocked(daemonLog).mock.calls.map(([line]) => line);
 		expect(logged.some((line) => line.includes(`trace=${traceId}`))).toBe(true);
 		expect(deps.discard).toHaveBeenCalledWith("7");
-		expect(sent).toEqual([{ type: "notice", message: "Transferred to mac" }]);
+		expect(sent).toEqual([
+			{
+				type: "notice",
+				message: "Transferred to mac",
+				transfer: { sourceId: "7", sessionId: "mac:3", node: "mac" },
+			},
+		]);
 	});
 
 	it("calls route on the links instance so a method using this works", async () => {
@@ -139,7 +145,13 @@ describe("transferSession", () => {
 		deps.links = new Router();
 		await transferSession(client, deps, request);
 		expect(deps.discard).toHaveBeenCalledWith("7");
-		expect(sent).toEqual([{ type: "notice", message: "Transferred to mac" }]);
+		expect(sent).toEqual([
+			{
+				type: "notice",
+				message: "Transferred to mac",
+				transfer: { sourceId: "7", sessionId: "mac:3", node: "mac" },
+			},
+		]);
 	});
 
 	it("keeps the source running with the error when the route throws", async () => {
