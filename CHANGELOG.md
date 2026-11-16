@@ -1,3 +1,10 @@
+# [0.1194.0](https://github.com/staff0rd/assist/compare/v0.1193.2...v0.1194.0) (2026-11-16)
+
+
+### Features
+
+* filter phone sessions by repo chips ([925b7a4](https://github.com/staff0rd/assist/commit/925b7a4f7af8c251e3c4abc093d2ba0b317302a4))
+
 ## [0.1193.2](https://github.com/staff0rd/assist/compare/v0.1193.1...v0.1193.2) (2026-11-16)
 
 
