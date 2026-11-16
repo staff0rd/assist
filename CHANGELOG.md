@@ -1,3 +1,10 @@
+## [0.1208.1](https://github.com/staff0rd/assist/compare/v0.1208.0...v0.1208.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* resume codex history with configured engine ([f65ab9c](https://github.com/staff0rd/assist/commit/f65ab9cb774b5be9a61b5901dd1f69f3e474d1a2))
+
 # [0.1208.0](https://github.com/staff0rd/assist/compare/v0.1207.0...v0.1208.0) (2026-11-16)
 
 
