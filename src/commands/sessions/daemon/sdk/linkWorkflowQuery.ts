@@ -6,6 +6,7 @@ export function linkWorkflowQuery(
 	client: SessionClient,
 	sessionId: string,
 	query: SessionProcess,
+	onEnded: () => void,
 ): void {
 	let ended = false;
 	query.onExit(({ exitCode }) => {
@@ -13,6 +14,7 @@ export function linkWorkflowQuery(
 		daemonLog(
 			`session ${sessionId} sdk workflow query ended: exit ${exitCode}`,
 		);
+		onEnded();
 		sendTo(client, { type: "sdk-exit", sessionId, exitCode });
 	});
 	client.onClose?.(() => {

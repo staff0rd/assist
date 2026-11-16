@@ -12,6 +12,7 @@ type TransferRequest = {
 	sessionId: string;
 	target: string;
 	cwd?: string;
+	phaseEnded?: boolean;
 };
 
 function refuse(client: SessionClient, id: string, message: string): void {
@@ -22,14 +23,14 @@ function refuse(client: SessionClient, id: string, message: string): void {
 export async function transferSession(
 	client: SessionClient,
 	deps: TransferDeps,
-	{ sessionId: id, target, cwd }: TransferRequest,
+	{ sessionId: id, target, cwd, phaseEnded }: TransferRequest,
 ): Promise<void> {
 	const s = deps.session(id);
 	const refused = transferRefusal(s, target, deps.links);
 	const args = s && backlogRunArgs(s);
 	if (refused || !s || !args)
 		return refuse(client, id, refused ?? "unknown session");
-	if (s.status === "running")
+	if (s.status === "running" && !phaseEnded)
 		return queueTransfer(client, deps.notify, s, target, cwd);
 	const traceId = newTraceId();
 	daemonLog(

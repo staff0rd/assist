@@ -17,7 +17,7 @@ export function makeManagerStatusHandler(
 		notify: () => host.update(() => true),
 		idle: (session) => {
 			flushDeferredResults(session, host);
-			transfer(session);
+			void transfer(session);
 		},
 	});
 }

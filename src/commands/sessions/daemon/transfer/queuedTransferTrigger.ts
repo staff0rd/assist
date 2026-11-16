@@ -8,11 +8,14 @@ export type TriggerHost = TransferHost & {
 	dismissSession: (id: string, closeServerRuns?: boolean) => void;
 };
 
-export function queuedTransferTrigger(host: TriggerHost): (s: Session) => void {
+export function queuedTransferTrigger(
+	host: TriggerHost,
+): (s: Session, phaseEnded?: boolean) => Promise<void> | undefined {
 	const viewers: SessionClient = {
 		send: (raw) => {
 			for (const viewer of host.clients.viewers()) viewer.send(raw);
 		},
 	};
-	return (s) => void runQueuedTransfer(viewers, transferDepsFor(host), s);
+	return (s, phaseEnded) =>
+		runQueuedTransfer(viewers, transferDepsFor(host), s, phaseEnded);
 }

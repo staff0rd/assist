@@ -42,9 +42,22 @@ describe("runQueuedTransfer", () => {
 				sessionId: "7",
 				target: "mac",
 				cwd: "/Users/me/assist",
+				phaseEnded: false,
 			});
 		},
 	);
+
+	it("runs the queued transfer at a workflow phase boundary while still running", async () => {
+		const s = queuedSession("running");
+		await runQueuedTransfer(client, deps, s, true);
+		expect(s.transfer).toBeUndefined();
+		expect(transferSession).toHaveBeenCalledWith(client, deps, {
+			sessionId: "7",
+			target: "mac",
+			cwd: "/Users/me/assist",
+			phaseEnded: true,
+		});
+	});
 
 	it("does nothing when no transfer is queued", () => {
 		const s = makeSession({ status: "waiting", transfer: { target: "mac" } });
