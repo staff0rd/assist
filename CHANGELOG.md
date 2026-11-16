@@ -1,3 +1,10 @@
+# [0.1205.0](https://github.com/staff0rd/assist/compare/v0.1204.0...v0.1205.0) (2026-11-16)
+
+
+### Features
+
+* add codex-sdk session harness ([9bac3bb](https://github.com/staff0rd/assist/commit/9bac3bbc85b705c07e5a10a084416e55ea0a5c2b))
+
 # [0.1204.0](https://github.com/staff0rd/assist/compare/v0.1203.0...v0.1204.0) (2026-11-16)
 
 
