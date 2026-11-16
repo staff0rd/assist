@@ -1,3 +1,10 @@
+# [0.1193.0](https://github.com/staff0rd/assist/compare/v0.1192.0...v0.1193.0) (2026-11-16)
+
+
+### Features
+
+* conversation id on phone action sheet ([212c7f8](https://github.com/staff0rd/assist/commit/212c7f848b2c1319438c72844672b7b668eccddc))
+
 # [0.1192.0](https://github.com/staff0rd/assist/compare/v0.1191.0...v0.1192.0) (2026-11-16)
 
 
