@@ -24,6 +24,7 @@ export function restoreBase(id: string, persisted: PersistedSession) {
 		autoAdvance: restoredAutoAdvance(id, persisted),
 		autoApprove: persisted.autoApprove,
 		reviewStarted: persisted.reviewStarted,
+		highLevelReviewHead: persisted.highLevelReviewHead,
 		launchedFrom: persisted.launchedFrom,
 		pendingPrompts: persisted.pendingPrompts,
 		pendingDeferredResults: persisted.pendingDeferredResults,

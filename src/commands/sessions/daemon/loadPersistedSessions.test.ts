@@ -304,7 +304,7 @@ describe("persistLiveSessions", () => {
 		expect(restoreBase("1", parsed).starred).toBe(true);
 	});
 
-	it("round-trips the auto-advance, auto-approve and review-started toggles", () => {
+	it("round-trips the auto-advance, auto-approve and review-started toggles and the high-level review head", () => {
 		const sessions = new Map<string, Session>([
 			[
 				"1",
@@ -315,6 +315,7 @@ describe("persistLiveSessions", () => {
 					autoAdvance: false,
 					autoApprove: true,
 					reviewStarted: true,
+					highLevelReviewHead: "8a6d21d",
 				}),
 			],
 		]);
@@ -329,6 +330,7 @@ describe("persistLiveSessions", () => {
 			autoAdvance: false,
 			autoApprove: true,
 			reviewStarted: true,
+			highLevelReviewHead: "8a6d21d",
 		});
 
 		loadJsonMock.mockReturnValue(persisted);
@@ -338,6 +340,7 @@ describe("persistLiveSessions", () => {
 			autoAdvance: false,
 			autoApprove: true,
 			reviewStarted: true,
+			highLevelReviewHead: "8a6d21d",
 		});
 	});
 

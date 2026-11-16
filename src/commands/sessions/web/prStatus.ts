@@ -12,7 +12,6 @@ type GhPr = {
 	createdAt?: string;
 	url?: string;
 	isDraft?: boolean;
-	headRefOid?: string;
 };
 
 function toPrSummary(parsed: GhPr): PrSummary | null {
@@ -24,11 +23,10 @@ function toPrSummary(parsed: GhPr): PrSummary | null {
 		createdAt: parsed.createdAt ?? "",
 		url: parsed.url ?? "",
 		isDraft: parsed.isDraft === true,
-		...(parsed.headRefOid ? { headSha: parsed.headRefOid } : {}),
 	};
 }
 
-const prFields = "number,title,author,createdAt,url,isDraft,headRefOid";
+const prFields = "number,title,author,createdAt,url,isDraft";
 
 const getPrByNumber = createCachedGhJson<PrSummary | null>(
 	["pr", "view", "--json", prFields],

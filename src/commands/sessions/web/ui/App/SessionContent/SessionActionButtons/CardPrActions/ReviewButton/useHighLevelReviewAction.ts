@@ -46,8 +46,8 @@ export function useHighLevelReviewAction(
 		};
 	return {
 		label: "Reopen high-level review",
-		caption: pr.headSha
-			? `Saved slices for ${pr.headSha.slice(0, 7)} · no re-slicing`
+		caption: session.highLevelReviewHead
+			? `Saved slices for ${session.highLevelReviewHead} · no re-slicing`
 			: undefined,
 		run: () =>
 			void requestReopenHighLevelReview(session.id, pr.number, node).then(

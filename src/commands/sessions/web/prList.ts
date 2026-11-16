@@ -10,7 +10,6 @@ export type PrSummary = {
 	createdAt: string;
 	url: string;
 	isDraft: boolean;
-	headSha?: string;
 };
 
 type GhPr = {

@@ -30,6 +30,7 @@ export function toPersistedSession(session: Session): PersistedSession {
 		autoAdvance: session.autoAdvance,
 		autoApprove: session.autoApprove,
 		reviewStarted: session.reviewStarted,
+		highLevelReviewHead: session.highLevelReviewHead,
 		launchedFrom: session.launchedFrom,
 		pendingPrompts: session.pendingPrompts,
 		pendingDeferredResults: session.pendingDeferredResults,

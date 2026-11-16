@@ -45,7 +45,6 @@ function renderButton(
 	session?: SessionInfo,
 	activateSession: (id: string) => void = () => {},
 	sendInput: (sessionId: string, data: string) => void = () => {},
-	shownPr: PrSummary = pr,
 ) {
 	render(
 		<SessionLaunchContext.Provider
@@ -58,7 +57,7 @@ function renderButton(
 				sendInput,
 			}}
 		>
-			<ReviewButton cwd="/git/repo" pr={shownPr} session={session} />
+			<ReviewButton cwd="/git/repo" pr={pr} session={session} />
 		</SessionLaunchContext.Provider>,
 	);
 	fireEvent.click(screen.getByRole("button", { name: "Review PR" }));
@@ -313,18 +312,25 @@ describe("ReviewButton on the high-level review session", () => {
 			},
 		);
 
-		it("captions the row with the head it reopens", () => {
+		it("captions the row with the head of the last high-level review", () => {
 			renderButton(
 				vi.fn(),
-				highLevelSession({ pendingPrPreview: undefined }),
-				() => {},
-				() => {},
-				{ ...pr, headSha: "8a6d21d0123456789" },
+				highLevelSession({
+					pendingPrPreview: undefined,
+					highLevelReviewHead: "8a6d21d",
+				}),
 			);
 
 			expect(
 				screen.getByText("Saved slices for 8a6d21d · no re-slicing"),
 			).toBeTruthy();
+		});
+
+		it("omits the caption when the saved head is unknown", () => {
+			renderButton(vi.fn(), highLevelSession({ pendingPrPreview: undefined }));
+
+			expect(screen.getByText("Reopen high-level review")).toBeTruthy();
+			expect(screen.queryByText(/Saved slices for/)).toBeNull();
 		});
 
 		it("shows the no-saved-slices toast when the head has none", async () => {

@@ -29,6 +29,7 @@ export function toSessionInfo(session: Session): SessionInfo {
 		seeding,
 		pendingPrPreview,
 		pendingShow,
+		highLevelReviewHead,
 		resumedOverPreview,
 		undurable,
 	} = session;
@@ -56,6 +57,7 @@ export function toSessionInfo(session: Session): SessionInfo {
 		seeding,
 		pendingPrPreview,
 		pendingShow,
+		highLevelReviewHead,
 		resumedOverPreview,
 		undurable,
 		promptIssue: promptIssueRef(session.initialPrompt),

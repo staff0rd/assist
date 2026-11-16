@@ -84,6 +84,7 @@ export type SessionInfoBase = SdkViewState & {
 	design?: boolean;
 	pendingPrPreview?: PrPreview;
 	pendingShow?: PrPreview;
+	highLevelReviewHead?: string;
 	resumedOverPreview?: string;
 	undurable?: { reason: string; removesTree?: boolean };
 	joinable?: boolean;
