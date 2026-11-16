@@ -69,6 +69,15 @@ describe("stripLegacyConfigKeys", () => {
 		expect(assistConfigSchema.safeParse(stripped).success).toBe(true);
 	});
 
+	it("keeps current backlog keys while dropping the retired one", () => {
+		const stripped = stripLegacyConfigKeys({
+			backlog: { previewComments: true, parallelPhases: true },
+		});
+
+		expect(stripped).toEqual({ backlog: { parallelPhases: true } });
+		expect(assistConfigSchema.safeParse(stripped).success).toBe(true);
+	});
+
 	it("drops the retired roam OAuth block so old configs still parse", () => {
 		const stripped = stripLegacyConfigKeys({
 			worktree: { enabled: true },

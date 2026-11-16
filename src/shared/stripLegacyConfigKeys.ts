@@ -1,4 +1,5 @@
 import { stripLegacyAdviceKeys } from "./stripLegacyAdviceKeys";
+import { stripLegacyBacklogKeys } from "./stripLegacyBacklogKeys";
 import { stripLegacyReviewKeys } from "./stripLegacyReviewKeys";
 import { stripLegacySectionKeys } from "./stripLegacySectionKeys";
 
@@ -19,7 +20,9 @@ export function stripLegacyConfigKeys(
 ): Record<string, unknown> {
 	const stripped = { ...config };
 	if (stripped.repos) stripped.repos = stripRepos(stripped.repos);
-	delete stripped.backlog;
+	if (stripped.backlog)
+		stripped.backlog = stripLegacyBacklogKeys(stripped.backlog);
+	if (stripped.backlog === undefined) delete stripped.backlog;
 	delete stripped.cliReadVerbs;
 	delete stripped.roam;
 	const news = stripped.news;
