@@ -1,3 +1,10 @@
+## [0.1189.3](https://github.com/staff0rd/assist/compare/v0.1189.2...v0.1189.3) (2026-11-16)
+
+
+### Bug Fixes
+
+* **ios:** say update the app on 404 ([d44a46a](https://github.com/staff0rd/assist/commit/d44a46a77ff249770b7b2c02a2c4611d79bd9600))
+
 ## [0.1189.2](https://github.com/staff0rd/assist/compare/v0.1189.1...v0.1189.2) (2026-11-16)
 
 
