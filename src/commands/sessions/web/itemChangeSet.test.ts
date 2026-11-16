@@ -2,19 +2,21 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { loadConfigFrom } from "../../../shared/loadConfigFrom";
 import { execGit } from "./execGit";
 import { itemChangeSet } from "./itemChangeSet";
-import { itemCommits } from "./itemCommits";
+import { itemCommitSources } from "./itemCommitSources";
 import { transcriptCommits } from "./transcriptCommits";
 
 vi.mock("../../../shared/loadConfigFrom", () => ({ loadConfigFrom: vi.fn() }));
 vi.mock("./execGit", () => ({ execGit: vi.fn() }));
-vi.mock("./itemCommits", () => ({ itemCommits: vi.fn(async () => []) }));
+vi.mock("./itemCommitSources", () => ({
+	itemCommitSources: vi.fn(async () => ({ commits: [], conversationIds: [] })),
+}));
 vi.mock("./transcriptCommits", () => ({
 	transcriptCommits: vi.fn(async () => []),
 }));
 
 const loadConfigFromMock = vi.mocked(loadConfigFrom);
 const execGitMock = vi.mocked(execGit);
-const itemCommitsMock = vi.mocked(itemCommits);
+const itemCommitSourcesMock = vi.mocked(itemCommitSources);
 const transcriptCommitsMock = vi.mocked(transcriptCommits);
 
 const EMPTY_TREE = "4b825dc642cb6eb9a060e54bf8d69288fbee4904";
@@ -50,12 +52,16 @@ function withRepo(repo: Repo, dirty: string[] = []): void {
 }
 
 function commits(...shas: string[]): void {
-	itemCommitsMock.mockResolvedValue(shas.map((sha) => ({ sha })));
+	itemCommitSourcesMock.mockResolvedValue({
+		commits: shas.map((sha) => ({ sha })),
+		conversationIds: [],
+	});
 }
 
 describe("itemChangeSet", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		transcriptCommitsMock.mockResolvedValue([]);
 	});
 
 	it("diffs the working tree alone when the flag is off", async () => {
@@ -63,7 +69,7 @@ describe("itemChangeSet", () => {
 		commits("one");
 
 		expect(await itemChangeSet("/repo", nextSession())).toBeUndefined();
-		expect(itemCommitsMock).not.toHaveBeenCalled();
+		expect(itemCommitSourcesMock).not.toHaveBeenCalled();
 		expect(execGitMock).not.toHaveBeenCalled();
 	});
 
@@ -93,7 +99,7 @@ describe("itemChangeSet", () => {
 		config(true);
 
 		expect(await itemChangeSet("/repo")).toBeUndefined();
-		expect(itemCommitsMock).not.toHaveBeenCalled();
+		expect(itemCommitSourcesMock).not.toHaveBeenCalled();
 	});
 
 	it("diffs the working tree alone when the item has no recorded commits", async () => {
@@ -118,14 +124,48 @@ describe("itemChangeSet", () => {
 		expect(changeSet?.groups).toEqual([{ base: "base-one", paths: ["a.ts"] }]);
 	});
 
-	it("prefers the item's commits over the transcript", async () => {
+	it("adds the transcript's unrecorded commits to the item's commits", async () => {
 		config(true);
 		commits("one");
-		withRepo({ one: { parent: "base-one", paths: ["a.ts"] } });
+		transcriptCommitsMock.mockResolvedValueOnce([
+			{ sha: "one" },
+			{ sha: "two" },
+		]);
+		withRepo({
+			one: { parent: "base-one", paths: ["a.ts"] },
+			two: { parent: "one", paths: ["b.ts"] },
+		});
 
-		await itemChangeSet("/repo", nextSession());
+		const changeSet = await itemChangeSet("/repo", nextSession());
 
-		expect(transcriptCommitsMock).not.toHaveBeenCalled();
+		expect(changeSet?.commits).toEqual([{ sha: "one" }, { sha: "two" }]);
+	});
+
+	it("counts an earlier phase's commits when the current conversation made none", async () => {
+		config(true);
+		const review = nextSession();
+		itemCommitSourcesMock.mockResolvedValue({
+			commits: [],
+			conversationIds: ["phase-1", "phase-2", review.conversationId],
+		});
+		transcriptCommitsMock.mockImplementation(async (_cwd, target) =>
+			target.conversationId === "phase-2"
+				? [{ sha: "one" }, { sha: "two" }]
+				: [],
+		);
+		withRepo({
+			one: { parent: "base-one", paths: ["a.ts", "b.ts"] },
+			two: { parent: "one", paths: ["c.ts"] },
+		});
+
+		const changeSet = await itemChangeSet("/repo", review);
+
+		expect(transcriptCommitsMock).toHaveBeenCalledWith("/repo", review);
+		expect(changeSet?.commits).toEqual([{ sha: "one" }, { sha: "two" }]);
+		expect(changeSet?.groups).toEqual([
+			{ base: "base-one", paths: ["a.ts", "b.ts"] },
+			{ base: "one", paths: ["c.ts"] },
+		]);
 	});
 
 	it("groups each path under the parent of the earliest commit that touched it", async () => {
@@ -206,7 +246,10 @@ describe("itemChangeSet", () => {
 
 	it("returns the item's commits alongside the groups", async () => {
 		config(true);
-		itemCommitsMock.mockResolvedValue([{ sha: "one", title: "feat: one" }]);
+		itemCommitSourcesMock.mockResolvedValue({
+			commits: [{ sha: "one", title: "feat: one" }],
+			conversationIds: [],
+		});
 		withRepo({ one: { parent: "base-one", paths: ["a.ts"] } });
 
 		const changeSet = await itemChangeSet("/repo", nextSession());
@@ -223,7 +266,7 @@ describe("itemChangeSet", () => {
 		await itemChangeSet("/repo", session);
 		await itemChangeSet("/repo", session);
 
-		expect(itemCommitsMock).toHaveBeenCalledOnce();
+		expect(itemCommitSourcesMock).toHaveBeenCalledOnce();
 	});
 
 	it("shares one in-flight lookup between concurrent polls", async () => {
@@ -237,7 +280,7 @@ describe("itemChangeSet", () => {
 			itemChangeSet("/repo", session),
 		]);
 
-		expect(itemCommitsMock).toHaveBeenCalledOnce();
+		expect(itemCommitSourcesMock).toHaveBeenCalledOnce();
 	});
 
 	describe("once the commit lookup cache expires", () => {
@@ -265,7 +308,7 @@ describe("itemChangeSet", () => {
 			vi.advanceTimersByTime(60_000);
 			const changeSet = await itemChangeSet("/repo", session);
 
-			expect(itemCommitsMock).toHaveBeenCalledTimes(2);
+			expect(itemCommitSourcesMock).toHaveBeenCalledTimes(2);
 			expect(gitCallsFor("one")).toBe(resolvingOnce);
 			expect(changeSet?.groups).toEqual([
 				{ base: "base-one", paths: ["a.ts"] },

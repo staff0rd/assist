@@ -1,3 +1,4 @@
+import { formatItemId } from "../backlog/formatItemId";
 import { recordSessionRefs } from "../../shared/db/recordSessionRefs";
 import { resolveSessionItemId } from "../../shared/resolveSessionItemId";
 import type { AssistConfig } from "../../shared/types";
@@ -29,11 +30,11 @@ export async function execCommit(
 		await refuseLockedSchema();
 		const sha = commitStaged(message);
 		console.log(`Committed: ${sha}`);
+		await recordCommitActivity(message);
 		if (config.commit?.push) {
 			pushCommit(config.worktree?.trunk === true);
 			console.log("Pushed to remote");
 		}
-		await recordCommitActivity(message);
 		process.exit(0);
 	} catch {
 		process.exit(1);
@@ -42,5 +43,11 @@ export async function execCommit(
 
 async function recordCommitActivity(message: string): Promise<void> {
 	if (resolveSessionItemId() === null) return;
-	await recordSessionRefs(collectCommitRefs(message));
+	const result = await recordSessionRefs(collectCommitRefs(message));
+	if (result.status !== "failed") return;
+	const reason =
+		result.error instanceof Error ? result.error.message : String(result.error);
+	console.error(
+		`Warning: the commit was not recorded on item ${formatItemId(result.itemId)}: ${reason}`,
+	);
 }

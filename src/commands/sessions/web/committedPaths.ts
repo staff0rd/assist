@@ -1,9 +1,8 @@
 import type { CommitRef } from "../../../shared/db/listCommitRefs";
 import type { ConversationTarget } from "../shared/sessionConversationTarget";
-import { itemCommits } from "./itemCommits";
 import { resolveCommitCached } from "./resolveCommitCached";
-import { transcriptCommits } from "./transcriptCommits";
 import { withTimeout } from "../../../shared/withTimeout";
+import { sessionCommits } from "./sessionCommits";
 
 type CommittedPaths = { commits: CommitRef[]; bases: Map<string, string> };
 
@@ -45,11 +44,7 @@ async function loadCommittedPaths(
 	cwd: string,
 	session: ConversationTarget,
 ): Promise<CommittedPaths> {
-	const itemCommitRefs = await itemCommits(session.conversationId);
-	const commits =
-		itemCommitRefs.length > 0
-			? itemCommitRefs
-			: await transcriptCommits(cwd, session);
+	const commits = await sessionCommits(cwd, session);
 	const bases = new Map<string, string>();
 	for (const commit of commits) {
 		const resolved = await resolveCommitCached(key, cwd, commit.sha);
