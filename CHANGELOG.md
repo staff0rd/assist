@@ -1,3 +1,10 @@
+# [0.1187.0](https://github.com/staff0rd/assist/compare/v0.1186.0...v0.1187.0) (2026-11-16)
+
+
+### Features
+
+* add --screenshot to issue create ([b53e377](https://github.com/staff0rd/assist/commit/b53e3772418aa8a4ac38112bd46a0ce4cbc0267b))
+
 # [0.1186.0](https://github.com/staff0rd/assist/compare/v0.1185.5...v0.1186.0) (2026-11-16)
 
 
