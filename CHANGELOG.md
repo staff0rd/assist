@@ -1,3 +1,10 @@
+# [0.1195.0](https://github.com/staff0rd/assist/compare/v0.1194.0...v0.1195.0) (2026-11-16)
+
+
+### Features
+
+* filter phone history by repo chips ([24ca391](https://github.com/staff0rd/assist/commit/24ca3913a36c0eadf0592c62e3148ba60a5839de))
+
 # [0.1194.0](https://github.com/staff0rd/assist/compare/v0.1193.2...v0.1194.0) (2026-11-16)
 
 
