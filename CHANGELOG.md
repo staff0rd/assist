@@ -1,3 +1,10 @@
+# [0.1203.0](https://github.com/staff0rd/assist/compare/v0.1202.1...v0.1203.0) (2026-11-16)
+
+
+### Features
+
+* rename issues with issue edit --title ([55f6e36](https://github.com/staff0rd/assist/commit/55f6e369ff21237e9ba32a9a57c52ef91f3ac4b8))
+
 ## [0.1202.1](https://github.com/staff0rd/assist/compare/v0.1202.0...v0.1202.1) (2026-11-16)
 
 
