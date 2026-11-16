@@ -1,3 +1,10 @@
+## [0.1201.1](https://github.com/staff0rd/assist/compare/v0.1201.0...v0.1201.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* skip What changed toggle in comments ([b73c7a1](https://github.com/staff0rd/assist/commit/b73c7a173a55df6614d3203ce4bec3a86b8501e6))
+
 # [0.1201.0](https://github.com/staff0rd/assist/compare/v0.1200.0...v0.1201.0) (2026-11-16)
 
 
