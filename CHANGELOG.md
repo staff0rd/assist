@@ -1,3 +1,11 @@
+# [0.1199.0](https://github.com/staff0rd/assist/compare/v0.1198.2...v0.1199.0) (2026-11-16)
+
+
+### Features
+
+* show an in-flight transfer panel ([4d89561](https://github.com/staff0rd/assist/commit/4d89561249ae44cc5269fba0a828da76359282ca))
+* show transfer state on session cards ([e7550df](https://github.com/staff0rd/assist/commit/e7550dfb7364994555d80ac49186106087756362))
+
 ## [0.1198.2](https://github.com/staff0rd/assist/compare/v0.1198.1...v0.1198.2) (2026-11-16)
 
 
