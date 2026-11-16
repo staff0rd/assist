@@ -15,18 +15,29 @@ export function ReviewModeItems({
 	pick: (e: { stopPropagation: () => void }, run: () => void) => void;
 	capabilities: HarnessCapabilities;
 }) {
-	return reviewModeEntries(capabilities).map((entry) => (
-		<ReviewMenuRow
-			key={entry.label}
-			entry={entry}
-			onSelect={(e, args) =>
-				pick(
-					e,
-					highLevel && args === entry.args && args.includes("--high-level")
-						? highLevel.run
-						: () => review.launchMode(args),
-				)
-			}
-		/>
-	));
+	return reviewModeEntries(capabilities).map((entry) => {
+		const reopen =
+			highLevel?.label && entry.args.includes("--high-level")
+				? highLevel
+				: undefined;
+		return (
+			<ReviewMenuRow
+				key={entry.label}
+				entry={
+					reopen?.label
+						? { ...entry, label: reopen.label, alternates: [] }
+						: entry
+				}
+				caption={reopen?.caption}
+				onSelect={(e, args) =>
+					pick(
+						e,
+						highLevel && args === entry.args && args.includes("--high-level")
+							? highLevel.run
+							: () => review.launchMode(args),
+					)
+				}
+			/>
+		);
+	});
 }

@@ -37,12 +37,16 @@ function sessionId(): string | undefined {
 
 export async function runHighLevelReview(
 	number: string | undefined,
-	options: { force?: boolean; slices?: string } = {},
+	options: { force?: boolean; slices?: string; reuseSlices?: boolean } = {},
 ): Promise<void> {
 	const force = options.force === true;
 	const session = sessionId();
 	const slicing = session
-		? { force, ...(options.slices ? { slicesFile: options.slices } : {}) }
+		? {
+				force,
+				...(options.slices ? { slicesFile: options.slices } : {}),
+				...(options.reuseSlices ? { reuseOnly: true } : {}),
+			}
 		: undefined;
 	const subject = gatherSubject(resolvePrNumber(number), force, slicing);
 	announceSavedReview(subject, force);

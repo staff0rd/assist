@@ -3,7 +3,8 @@ import type { Theme } from "@mui/material/styles";
 export const reviewAlternateSx = {
 	row: { gap: 0.75 },
 	rowWithAlternates: { gap: 0.75, pr: 0.5 },
-	label: { flex: 1, minWidth: 0 },
+	label: { flex: 1, minWidth: 0, display: "flex", flexDirection: "column" },
+	caption: { fontSize: 12, color: "text.secondary" },
 	group: {
 		display: "flex",
 		gap: 0.25,

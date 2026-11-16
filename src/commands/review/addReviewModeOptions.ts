@@ -15,6 +15,10 @@ export function addReviewModeOptions(command: Command): Command {
 			'With --high-level, in an assist session: read the PR\'s slices from a JSON file of [{title, summary, hunks[]}], where hunks are the path#index labels printed when the command refuses without slices. Unknown refs are dropped with a warning, unclaimed hunks go into an "Everything else" slice, and the slices are saved for this head SHA so a reopen reuses them unless --force is passed',
 		)
 		.option(
+			"--reuse-slices",
+			"With --high-level, in an assist session: open the review only from the slices saved for the PR's current head SHA, exiting non-zero with `No saved slices for #<n> at <sha>` instead of asking for slices when none are saved. Cannot be combined with --force or --slices",
+		)
+		.option(
 			"--configure",
 			"With --high-level: review nothing and instead ask for review.highLevel.criticalPaths, uiPaths and descriptionWordCap one at a time, each prefilled with its current value or, when unset, globs the configured harness.engine proposes from this repo's own tree (for criticalPaths, merged with its defaults), then write the answers in one pass to either this repo's override in the shared assist database or the project assist.yml. A blank answer leaves that key unset",
 		)

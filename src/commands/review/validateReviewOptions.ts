@@ -14,6 +14,7 @@ export function validateReviewOptions(options: ReviewOptions): void {
 	}
 	validateCheckoutOnly(options);
 	validateHighLevel(options);
+	validateReuseSlices(options);
 	validateConfigureOptions(options);
 }
 
@@ -48,6 +49,22 @@ function validateHighLevel(options: ReviewOptions): void {
 	) {
 		console.error(
 			"Error: --high-level cannot be combined with --refine, --apply, --backlog, --submit or --checkout-only.",
+		);
+		process.exit(1);
+	}
+}
+
+function validateReuseSlices(options: ReviewOptions): void {
+	if (!options.reuseSlices) return;
+	if (!options.highLevel || options.configure) {
+		console.error(
+			"Error: --reuse-slices requires --high-level and cannot be combined with --configure.",
+		);
+		process.exit(1);
+	}
+	if (options.force || options.slices) {
+		console.error(
+			"Error: --reuse-slices cannot be combined with --force or --slices.",
 		);
 		process.exit(1);
 	}

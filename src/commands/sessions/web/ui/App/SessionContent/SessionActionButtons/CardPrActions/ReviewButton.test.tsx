@@ -45,6 +45,7 @@ function renderButton(
 	session?: SessionInfo,
 	activateSession: (id: string) => void = () => {},
 	sendInput: (sessionId: string, data: string) => void = () => {},
+	shownPr: PrSummary = pr,
 ) {
 	render(
 		<SessionLaunchContext.Provider
@@ -57,7 +58,7 @@ function renderButton(
 				sendInput,
 			}}
 		>
-			<ReviewButton cwd="/git/repo" pr={pr} session={session} />
+			<ReviewButton cwd="/git/repo" pr={shownPr} session={session} />
 		</SessionLaunchContext.Provider>,
 	);
 	fireEvent.click(screen.getByRole("button", { name: "Review PR" }));
@@ -254,8 +255,26 @@ describe("ReviewButton on the high-level review session", () => {
 	});
 
 	describe("without a pending high-level preview", () => {
-		beforeEach(() => vi.useFakeTimers());
-		afterEach(() => vi.useRealTimers());
+		const fetchMock = vi.fn();
+
+		beforeEach(() => {
+			vi.useFakeTimers({ toFake: ["setTimeout", "clearTimeout"] });
+			fetchMock.mockReset().mockImplementation(async () => Response.json({}));
+			vi.stubGlobal("fetch", fetchMock);
+		});
+		afterEach(() => {
+			vi.useRealTimers();
+			vi.unstubAllGlobals();
+		});
+
+		function reopenRequests() {
+			return fetchMock.mock.calls
+				.filter(([url]) => String(url).includes("reopen-high-level-review"))
+				.map(([url, init]) => [
+					String(url),
+					JSON.parse(String((init as RequestInit).body)),
+				]);
+		}
 
 		it.each([
 			["has no pending preview", { pendingPrPreview: undefined }],
@@ -267,29 +286,76 @@ describe("ReviewButton on the high-level review session", () => {
 				"has a pending preview for another PR",
 				{ pendingPrPreview: { ...highLevelPreview, prNumber: 7 } },
 			],
-		])("reruns the review in the session when it %s", (_, overrides) => {
-			const launchAssist = vi.fn();
-			const activateSession = vi.fn();
+		])(
+			"reopens the review from its saved slices when it %s",
+			(_, overrides) => {
+				const launchAssist = vi.fn();
+				const sendInput = vi.fn();
+				renderButton(
+					launchAssist,
+					highLevelSession(overrides),
+					() => {},
+					sendInput,
+				);
+
+				expect(screen.queryByText("High-level review")).toBeNull();
+				fireEvent.click(screen.getByText("Reopen high-level review"));
+				vi.runAllTimers();
+
+				expect(launchAssist).not.toHaveBeenCalled();
+				expect(sendInput).not.toHaveBeenCalled();
+				expect(reopenRequests()).toEqual([
+					[
+						expect.stringContaining("/api/sessions/reopen-high-level-review"),
+						{ sessionId: "7", prNumber: 42 },
+					],
+				]);
+			},
+		);
+
+		it("captions the row with the head it reopens", () => {
+			renderButton(
+				vi.fn(),
+				highLevelSession({ pendingPrPreview: undefined }),
+				() => {},
+				() => {},
+				{ ...pr, headSha: "8a6d21d0123456789" },
+			);
+
+			expect(
+				screen.getByText("Saved slices for 8a6d21d · no re-slicing"),
+			).toBeTruthy();
+		});
+
+		it("shows the no-saved-slices toast when the head has none", async () => {
+			vi.useRealTimers();
+			fetchMock.mockImplementation(async (url) =>
+				String(url).includes("reopen-high-level-review")
+					? Response.json(
+							{ error: "No saved slices for #42 at 8a6d21d" },
+							{ status: 409 },
+						)
+					: Response.json({}),
+			);
 			const sendInput = vi.fn();
 			renderButton(
-				launchAssist,
-				highLevelSession(overrides),
-				activateSession,
+				vi.fn(),
+				highLevelSession({ pendingPrPreview: undefined }),
+				() => {},
 				sendInput,
 			);
 
-			clickHighLevelReview();
-			vi.runAllTimers();
+			fireEvent.click(screen.getByText("Reopen high-level review"));
 
-			expect(launchAssist).not.toHaveBeenCalled();
-			expect(activateSession).not.toHaveBeenCalled();
-			expect(sendInput.mock.calls).toEqual([
-				["7", bracketedPaste("/review-high-level 42")],
-				["7", SUBMIT],
-			]);
+			expect(
+				await screen.findByText(
+					"No saved slices for #42 at 8a6d21d. Tick Force re-run to slice it again.",
+				),
+			).toBeTruthy();
+			expect(sendInput).not.toHaveBeenCalled();
 		});
 
-		it("passes --force when Force re-run is toggled", () => {
+		it("pastes the skill with --force when Force re-run is toggled", () => {
 			const sendInput = vi.fn();
 			renderButton(
 				vi.fn(),
@@ -301,11 +367,13 @@ describe("ReviewButton on the high-level review session", () => {
 			fireEvent.click(checkbox("Force re-run"));
 			fireEvent.click(checkbox("Announce to Slack after"));
 			clickHighLevelReview();
+			vi.runAllTimers();
 
-			expect(sendInput).toHaveBeenCalledWith(
-				"7",
-				bracketedPaste("/review-high-level 42 --force"),
-			);
+			expect(reopenRequests()).toEqual([]);
+			expect(sendInput.mock.calls).toEqual([
+				["7", bracketedPaste("/review-high-level 42 --force")],
+				["7", SUBMIT],
+			]);
 		});
 	});
 

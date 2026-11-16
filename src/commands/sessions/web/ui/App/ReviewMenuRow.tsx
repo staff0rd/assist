@@ -9,9 +9,11 @@ import { reviewRowKeyDown } from "./reviewRowKeyDown";
 
 export function ReviewMenuRow({
 	entry,
+	caption,
 	onSelect,
 }: {
 	entry: ReviewModeEntry;
+	caption?: string | undefined;
 	onSelect: (e: MouseEvent, args: string[]) => void;
 }) {
 	return (
@@ -26,6 +28,11 @@ export function ReviewMenuRow({
 		>
 			<Box component="span" sx={reviewAlternateSx.label}>
 				{entry.label}
+				{caption && (
+					<Box component="span" sx={reviewAlternateSx.caption}>
+						{caption}
+					</Box>
+				)}
 			</Box>
 			{entry.alternates.length > 0 && (
 				<Box component="span" sx={reviewAlternateSx.group}>

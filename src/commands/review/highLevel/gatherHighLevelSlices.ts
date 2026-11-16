@@ -2,6 +2,7 @@ import { readFileSync } from "node:fs";
 import { formatSlicingRequest } from "./formatSlicingRequest";
 import { highLevelSlicesPath } from "./highLevelSlicesPath";
 import { listHighLevelHunks } from "./listHighLevelHunks";
+import { noSavedSlicesMessage } from "../../../shared/noSavedSlicesMessage";
 import { readJsonFile } from "./readJsonFile";
 import { resolveHighLevelSlices } from "./resolveHighLevelSlices";
 import type { HighLevelFile, HighLevelSlice, HighLevelSliceSet } from "./types";
@@ -10,9 +11,11 @@ import { writeJsonFile } from "./writeJsonFile";
 export type HighLevelSlicing = {
 	slicesFile?: string;
 	force: boolean;
+	reuseOnly?: boolean;
 };
 
 type SlicedHead = {
+	prNumber: number;
 	repo: string;
 	headRef: string;
 	headSha: string;
@@ -56,6 +59,10 @@ export function gatherHighLevelSlices(
 	if (slicing.slicesFile) return sliceFromFile(slicing.slicesFile, files, path);
 	const saved = slicing.force ? undefined : readSavedSlices(path);
 	if (saved) return saved;
+	if (slicing.reuseOnly) {
+		console.error(noSavedSlicesMessage(head.prNumber, head.headSha));
+		process.exit(1);
+	}
 	console.log(formatSlicingRequest(listHighLevelHunks(files)));
 	process.exit(2);
 }

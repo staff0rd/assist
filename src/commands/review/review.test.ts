@@ -154,6 +154,24 @@ describe("review", () => {
 		});
 	});
 
+	describe("when --reuse-slices is combined with --force", () => {
+		it("should reject", async () => {
+			await expect(
+				review({ highLevel: true, reuseSlices: true, force: true }),
+			).rejects.toThrow("process.exit");
+			expect(mockExit).toHaveBeenCalledWith(1);
+		});
+	});
+
+	describe("when --reuse-slices is given without --high-level", () => {
+		it("should reject", async () => {
+			await expect(review({ reuseSlices: true })).rejects.toThrow(
+				"process.exit",
+			);
+			expect(mockExit).toHaveBeenCalledWith(1);
+		});
+	});
+
 	describe("when --backlog is given alone", () => {
 		it("should review", async () => {
 			await review({ backlog: true });
@@ -322,6 +340,15 @@ describe("review", () => {
 			});
 			expect(mockSpawnClaude).not.toHaveBeenCalled();
 			expect(mockSpawnCodex).not.toHaveBeenCalled();
+		});
+
+		it("should pass --reuse-slices through to the checklist", async () => {
+			await review({ highLevel: true, number: "123", reuseSlices: true });
+
+			expect(mockRunHighLevelReview).toHaveBeenCalledWith("123", {
+				reuseSlices: true,
+			});
+			expect(mockSpawnClaude).not.toHaveBeenCalled();
 		});
 
 		it("should not refuse a Codex harness it never launches", async () => {

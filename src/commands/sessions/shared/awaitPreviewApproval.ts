@@ -1,6 +1,7 @@
 import type { PreviewDecision } from "./PreviewDecision";
 import { deferToDaemon } from "./deferToDaemon";
 import { exitNoPreview } from "./exitNoPreview";
+import { previewAwaitingMessage } from "./previewAwaitingMessage";
 import { reportPreviewRejection } from "./reportPreviewRejection";
 import { supersededPreviewMessage } from "./supersededPreviewMessage";
 import {
@@ -21,7 +22,7 @@ export async function awaitPreviewApproval(
 	options: PreviewApprovalOptions = {},
 ): Promise<PreviewDecision> {
 	if (await deferToDaemon()) process.exit(0);
-	console.log("Awaiting your approval in the assist web UI preview pane…");
+	console.log(previewAwaitingMessage);
 
 	let outcome: PreviewOutcome;
 	try {

@@ -11,6 +11,7 @@ export type ReviewOptions = {
 	highLevel?: boolean;
 	configure?: boolean;
 	slices?: string;
+	reuseSlices?: boolean;
 	scope?: string;
 	answer?: string[];
 	verbose?: boolean;

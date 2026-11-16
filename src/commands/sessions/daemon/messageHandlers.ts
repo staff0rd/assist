@@ -4,7 +4,6 @@ import { handleAutoUpdate } from "./autoUpdate/handleAutoUpdate";
 import { handleAutoUpdateControl } from "./autoUpdate/handleAutoUpdateControl";
 import { sendTo } from "./broadcast";
 import { handleHelloRequest } from "./handleHelloRequest";
-import { handleDeferCommand } from "./handleDeferCommand";
 import { handleDequeue } from "./handleDequeue";
 import { handleInterrupt } from "./handleInterrupt";
 import { handleSdkLaunch } from "./sdk/handleSdkLaunch";
@@ -15,7 +14,6 @@ import { handleWebLog } from "./handleWebLog";
 import { handleSearchHistory } from "./historySearch/handleSearchHistory";
 import { creator } from "./creator";
 import { daemonLog } from "./daemonLog";
-import { handleClosePreviews } from "./handleClosePreviews";
 import { handleCodexUsage } from "./handleCodexUsage";
 import { handleCreateRun } from "./handleCreateRun";
 import { handleDismiss } from "./handleDismiss";
@@ -30,6 +28,7 @@ import { inboxHandlers } from "./inbox/inboxHandlers";
 import { handleUserActivity } from "./handleUserActivity";
 import { lifecycleHandlers } from "./lifecycleHandlers";
 import { pinHandlers } from "./pins/pinHandlers";
+import { previewHandlers } from "./previewHandlers";
 import { retryHandlers } from "./retryHandlers";
 import { type Handler, routed } from "./routed";
 import { viewerHandlers } from "./viewerHandlers";
@@ -101,10 +100,7 @@ export const messageHandlers: Record<string, Handler> = {
 		if (!live) daemonLog(`session-live: unknown session id=${d.sessionId}`);
 		sendTo(client, { type: "session-live", live });
 	},
-	"pr-preview": (client, m, d) => m.prPreview.set(client, d),
-	"defer-command": handleDeferCommand,
-	"close-previews": handleClosePreviews,
-	"pr-decision": routed((_client, m, d) => m.prPreview.decide(d)),
+	...previewHandlers,
 	"user-activity": handleUserActivity,
 	"ui-status": (_client, _m, d) =>
 		daemonLog(`ui rendered: id=${d.sessionId} status=${d.status}`),

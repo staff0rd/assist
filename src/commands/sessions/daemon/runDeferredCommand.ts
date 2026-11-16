@@ -14,6 +14,7 @@ export function runDeferredCommand(
 	command: DeferredCommand,
 	onDone: (result: DeferredResult) => void,
 	spawnChild: typeof spawn = spawn,
+	onOutput?: (output: string) => void,
 ): number | undefined {
 	const child = spawnChild(
 		process.execPath,
@@ -28,6 +29,7 @@ export function runDeferredCommand(
 	let output = "";
 	const collect = (chunk: Buffer | string) => {
 		output += chunk.toString();
+		onOutput?.(output);
 	};
 	child.stdout?.on("data", collect);
 	child.stderr?.on("data", collect);

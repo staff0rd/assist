@@ -1,6 +1,5 @@
 import { runsInSession } from "./runsInSession";
 import { emitActivity } from "../../shared/emitActivity";
-import { findRepoRoot } from "../../shared/findRepoRoot";
 import type { ReviewOptions } from "./ReviewOptions";
 import { checkoutPrSession } from "./checkoutPrSession";
 import { checkoutPr } from "./checkoutPr";
@@ -10,13 +9,7 @@ import { reviewPr } from "./reviewPr";
 import { startReviewLog } from "./startReviewLog";
 import { validateReviewOptions } from "./validateReviewOptions";
 import { sessionBlocked } from "./sessionBlocked";
-
-function resolveRepoRoot(): string {
-	const repoRoot = findRepoRoot(process.cwd());
-	if (repoRoot) return repoRoot;
-	console.error("Error: not inside a git repository.");
-	process.exit(1);
-}
+import { resolveRepoRoot } from "./resolveRepoRoot";
 
 export async function review(options: ReviewOptions = {}): Promise<void> {
 	validateReviewOptions(options);
@@ -40,7 +33,11 @@ export async function review(options: ReviewOptions = {}): Promise<void> {
 			},
 		});
 	emitActivity({ kind: "command", name: "review" });
-	const highLevelOptions = { force: options.force, slices: options.slices };
+	const highLevelOptions = {
+		force: options.force,
+		slices: options.slices,
+		reuseSlices: options.reuseSlices,
+	};
 	if (!options.number)
 		return options.highLevel
 			? runHighLevelReview(undefined, highLevelOptions)

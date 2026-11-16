@@ -7,7 +7,12 @@ import { highLevelSlicesPath } from "./highLevelSlicesPath";
 import type { HighLevelFile } from "./types";
 import { writeJsonFile } from "./writeJsonFile";
 
-const head = { repo: "org/repo", headRef: "feat/x", headSha: "abc123" };
+const head = {
+	prNumber: 42,
+	repo: "org/repo",
+	headRef: "feat/x",
+	headSha: "abc1234def",
+};
 const files: HighLevelFile[] = [
 	{
 		path: "src/a.ts",
@@ -124,5 +129,28 @@ describe("gatherHighLevelSlices", () => {
 		expect(() => gatherHighLevelSlices(head, files, { force: true })).toThrow(
 			"exit 2",
 		);
+	});
+
+	it("with reuseOnly, exits 1 naming the PR and short head instead of asking for slices", () => {
+		vi.spyOn(console, "error").mockImplementation(() => {});
+
+		expect(() =>
+			gatherHighLevelSlices(head, files, { force: false, reuseOnly: true }),
+		).toThrow("exit 1");
+		expect(console.error).toHaveBeenCalledWith(
+			"No saved slices for #42 at abc1234",
+		);
+		expect(console.log).not.toHaveBeenCalled();
+	});
+
+	it("with reuseOnly, reopens the saved slices", () => {
+		const saved = gatherHighLevelSlices(head, files, {
+			force: false,
+			slicesFile: slicesFile([{ title: "Swap", summary: "", hunks: [] }]),
+		});
+
+		expect(
+			gatherHighLevelSlices(head, files, { force: false, reuseOnly: true }),
+		).toEqual(saved);
 	});
 });
