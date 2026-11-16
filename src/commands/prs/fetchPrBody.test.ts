@@ -1,8 +1,8 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 
-const mockExecSync = vi.mocked(execSync);
+const mockExecFileSync = vi.mocked(execFileSync);
 const mockGetPreferredRemoteRepo = vi.fn();
 
 vi.mock("node:child_process", async () =>
@@ -21,7 +21,7 @@ import { fetchPrBody } from "./fetchPrBody";
 let errors: string[];
 
 beforeEach(() => {
-	mockExecSync.mockReset();
+	mockExecFileSync.mockReset();
 	mockGetPreferredRemoteRepo.mockReset();
 	mockGetPreferredRemoteRepo.mockReturnValue({ org: "acme", repo: "widgets" });
 	errors = [];
@@ -35,31 +35,32 @@ beforeEach(() => {
 
 describe("fetchPrBody", () => {
 	it("should read the body of a pull request in the current repository", () => {
-		mockExecSync.mockReturnValue(JSON.stringify({ body: "a body" }));
+		mockExecFileSync.mockReturnValue(JSON.stringify({ body: "a body" }));
 
 		expect(fetchPrBody(42, null)).toBe("a body");
-		expect(mockExecSync).toHaveBeenCalledWith(
-			"gh pr view 42 --json body -R acme/widgets",
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"gh",
+			["pr", "view", "42", "--json", "body", "-R", "acme/widgets"],
 			expect.anything(),
 		);
 	});
 
 	it("should read the body of a pull request in another repository", () => {
-		mockExecSync.mockReturnValue(JSON.stringify({ body: "a body" }));
+		mockExecFileSync.mockReturnValue(JSON.stringify({ body: "a body" }));
 
 		expect(fetchPrBody(7, { org: "other", repo: "project" })).toBe("a body");
 		expect(mockGetPreferredRemoteRepo).not.toHaveBeenCalled();
 	});
 
 	it("should treat a pull request with no body as empty", () => {
-		mockExecSync.mockReturnValue(JSON.stringify({ body: null }));
+		mockExecFileSync.mockReturnValue(JSON.stringify({ body: null }));
 
 		expect(fetchPrBody(42, null)).toBe("");
 	});
 
 	it("should explain that a number needs a repository to resolve against", () => {
 		mockGetPreferredRemoteRepo.mockReturnValue(null);
-		mockExecSync.mockImplementation(() => {
+		mockExecFileSync.mockImplementation(() => {
 			throw new Error("fatal: not a git repository");
 		});
 
@@ -71,7 +72,7 @@ describe("fetchPrBody", () => {
 	});
 
 	it("should report a missing pull request", () => {
-		mockExecSync.mockImplementation(() => {
+		mockExecFileSync.mockImplementation(() => {
 			throw new Error("GraphQL: Could not resolve to a PullRequest");
 		});
 
@@ -80,7 +81,7 @@ describe("fetchPrBody", () => {
 	});
 
 	it("should report a missing gh", () => {
-		mockExecSync.mockImplementation(() => {
+		mockExecFileSync.mockImplementation(() => {
 			throw new Error("spawnSync gh ENOENT");
 		});
 

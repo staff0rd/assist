@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 import { fetchPrDiff } from "./fetchPrDiff";
@@ -12,11 +12,12 @@ vi.mock("node:child_process", async () =>
 );
 
 const mockExecSync = vi.mocked(execSync);
+const mockExecFileSync = vi.mocked(execFileSync);
 
 type ExecCall = (cmd: string) => string;
 
 function setupExec(handler: ExecCall): void {
-	mockExecSync.mockImplementation((cmd: string) => {
+	const run = (cmd: string) => {
 		if (cmd.includes("@{u}")) return "origin/main";
 		if (cmd === "git remote") return "origin";
 		if (cmd === "git remote get-url origin") {
@@ -27,7 +28,12 @@ function setupExec(handler: ExecCall): void {
 			throw new Error(`Unexpected command: ${cmd}`);
 		}
 		return result;
-	});
+	};
+	mockExecSync.mockImplementation(run);
+	mockExecFileSync.mockImplementation(
+		(file: string, args?: readonly string[]) =>
+			run([file, ...(args ?? [])].join(" ")),
+	);
 }
 
 beforeEach(() => {

@@ -1,10 +1,23 @@
-import { execSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
 
 export function coverage(): void {
-	const output = execSync(
-		"npx vitest run --coverage --coverage.include='src/**/*.ts' --coverage.all --coverage.reporter=text 2>&1",
-		{ encoding: "utf8", timeout: 120_000 },
+	const result = spawnSync(
+		"npx",
+		[
+			"vitest",
+			"run",
+			"--coverage",
+			"--coverage.include=src/**/*.ts",
+			"--coverage.all",
+			"--coverage.reporter=text",
+		],
+		{
+			encoding: "utf8",
+			timeout: 120_000,
+			shell: process.platform === "win32",
+		},
 	);
+	const output = `${result.stdout ?? ""}${result.stderr ?? ""}`;
 
 	const match = output.match(/All files\s*\|\s*([\d.]+)/);
 	if (!match) {

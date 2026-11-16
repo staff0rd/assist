@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { currentExecutionIdentity } from "../../shared/currentExecutionIdentity";
 import { getProjectRoot } from "../../shared/loadConfig";
 import { isSchemaLocked } from "../schema/isSchemaLocked";
@@ -10,7 +10,7 @@ import { listStagedFiles } from "./listStagedFiles";
 
 function gitShow(spec: string, root: string): string {
 	try {
-		return execSync(`git show "${spec}"`, {
+		return execFileSync("git", ["show", spec], {
 			cwd: root,
 			encoding: "utf8",
 			stdio: ["ignore", "pipe", "ignore"],

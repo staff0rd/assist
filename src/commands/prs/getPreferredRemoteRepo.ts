@@ -1,9 +1,9 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { parseGitHubUrl } from "./parseGitHubUrl";
 
 function tryGetRemoteUrl(remote: string, cwd?: string): string | null {
 	try {
-		return execSync(`git remote get-url ${remote}`, {
+		return execFileSync("git", ["remote", "get-url", remote], {
 			encoding: "utf8",
 			stdio: ["pipe", "pipe", "pipe"],
 			windowsHide: true,

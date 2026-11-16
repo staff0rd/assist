@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { getRepoInfo } from "../prs/shared";
 
 type PrDiffInfo = {
@@ -25,8 +25,8 @@ type RawPr = {
 
 const FIELDS = "number,baseRefName,baseRefOid,headRefName,headRefOid";
 
-function runGh(command: string): string {
-	return execSync(command, {
+function runGh(...args: string[]): string {
+	return execFileSync("gh", args, {
 		encoding: "utf8",
 		stdio: ["ignore", "pipe", "pipe"],
 	});
@@ -39,7 +39,16 @@ function fetchRawPr(
 ): RawPr | undefined {
 	const parsed = JSON.parse(
 		runGh(
-			`gh pr list --state open --head ${branch} --json ${FIELDS} -R ${org}/${repo}`,
+			"pr",
+			"list",
+			"--state",
+			"open",
+			"--head",
+			branch,
+			"--json",
+			FIELDS,
+			"-R",
+			`${org}/${repo}`,
 		),
 	) as RawPr[];
 	return parsed[0];
@@ -66,8 +75,15 @@ export function fetchPrDiffInfo(): PrDiffInfo {
 
 export function fetchPrChangedFiles(prNumber: number): string[] {
 	const { org, repo } = getRepoInfo();
-	const out = execSync(
-		`gh api repos/${org}/${repo}/pulls/${prNumber}/files --paginate --jq ".[].filename"`,
+	const out = execFileSync(
+		"gh",
+		[
+			"api",
+			`repos/${org}/${repo}/pulls/${prNumber}/files`,
+			"--paginate",
+			"--jq",
+			".[].filename",
+		],
 		{
 			encoding: "utf8",
 			maxBuffer: 64 * 1024 * 1024,

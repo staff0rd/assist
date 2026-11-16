@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loadConfig } from "../../shared/loadConfig";
 import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
@@ -22,6 +22,7 @@ vi.mock("../../shared/loadConfig", async () =>
 );
 
 const mockExecSync = vi.mocked(execSync);
+const mockExecFileSync = vi.mocked(execFileSync);
 
 vi.mock("./resolveDefaultBranch", () => ({
 	resolveDefaultBranch: (override?: string) => override ?? "main",
@@ -37,8 +38,8 @@ vi.mock("../../shared/db/recordSessionRefs", () => ({
 
 import { createBranch } from "./createBranch";
 
-function commandsRun(): string[] {
-	return mockExecSync.mock.calls.map((call) => String(call[0]));
+function firstCallOrder(mock: { mock: { invocationCallOrder: number[] } }) {
+	return mock.mock.invocationCallOrder[0];
 }
 
 describe("createBranch", () => {
@@ -54,9 +55,12 @@ describe("createBranch", () => {
 			branchName: "add-login-form",
 			baseRef: "origin/main",
 		});
-		const commands = commandsRun();
-		expect(commands).toContain("git fetch");
-		expect(commands).toContain("git switch -c add-login-form origin/main");
+		expect(mockExecSync).toHaveBeenCalledWith("git fetch", expect.anything());
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"git",
+			["switch", "-c", "add-login-form", "origin/main"],
+			expect.anything(),
+		);
 	});
 
 	it("bases off <ref> verbatim after validating it", async () => {
@@ -69,33 +73,49 @@ describe("createBranch", () => {
 			branchName: "stacked-work",
 			baseRef: "feature/base",
 		});
-		const commands = commandsRun();
-		expect(commands).toContain("git fetch");
-		expect(commands).toContain("git rev-parse --verify feature/base");
-		expect(commands).toContain("git switch -c stacked-work feature/base");
+		expect(mockExecSync).toHaveBeenCalledWith("git fetch", expect.anything());
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"git",
+			["rev-parse", "--verify", "feature/base"],
+			expect.anything(),
+		);
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"git",
+			["switch", "-c", "stacked-work", "feature/base"],
+			expect.anything(),
+		);
 	});
 
 	it("fetches before validating so remote refs are current", async () => {
 		await createBranch({ slug: "stacked-work", from: "origin/some-branch" });
 
-		const commands = commandsRun();
-		expect(commands.indexOf("git fetch")).toBeLessThan(
-			commands.indexOf("git rev-parse --verify origin/some-branch"),
+		expect(mockExecFileSync.mock.calls[0]).toEqual([
+			"git",
+			["rev-parse", "--verify", "origin/some-branch"],
+			expect.anything(),
+		]);
+		expect(mockExecSync.mock.calls[0][0]).toBe("git fetch");
+		expect(firstCallOrder(mockExecSync)).toBeLessThan(
+			firstCallOrder(mockExecFileSync),
 		);
 	});
 
 	it("throws a clear error and creates no branch when --from does not resolve", async () => {
-		mockExecSync.mockImplementation((command: string) => {
-			if (command.startsWith("git rev-parse")) {
+		mockExecFileSync.mockImplementation(((_file: string, args: string[]) => {
+			if (args[0] === "rev-parse") {
 				throw new Error("fatal: Needed a single revision");
 			}
 			return "";
-		});
+		}) as never);
 
 		await expect(
 			createBranch({ slug: "stacked-work", from: "nope" }),
 		).rejects.toThrow('Ref "nope" does not resolve to a valid git ref');
 
-		expect(commandsRun()).not.toContain("git switch -c stacked-work nope");
+		expect(mockExecFileSync).not.toHaveBeenCalledWith(
+			"git",
+			["switch", "-c", "stacked-work", "nope"],
+			expect.anything(),
+		);
 	});
 });

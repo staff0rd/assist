@@ -1,9 +1,10 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 export function noVenv(): void {
 	try {
-		const output = execSync(
-			"find . -type d -name venv -not -path '*/node_modules/*'",
+		const output = execFileSync(
+			"find",
+			[".", "-type", "d", "-name", "venv", "-not", "-path", "*/node_modules/*"],
 			{
 				encoding: "utf8",
 			},

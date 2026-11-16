@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 import { collectCommitRefs } from "./collectCommitRefs";
@@ -18,10 +18,11 @@ vi.mock("../../shared/gitRefUrl", () => ({
 	),
 }));
 
-const mockExecSync = vi.mocked(execSync);
+const mockExecFileSync = vi.mocked(execFileSync);
 
 function stubGit(responses: Record<string, string | Error>) {
-	mockExecSync.mockImplementation((cmd) => {
+	mockExecFileSync.mockImplementation((_file, args) => {
+		const cmd = (args as string[]).join(" ");
 		for (const [fragment, value] of Object.entries(responses)) {
 			if (cmd.includes(fragment)) {
 				if (value instanceof Error) throw value;

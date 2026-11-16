@@ -1,10 +1,10 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 const MIGRATIONS_DIR = "src/shared/db/migrations/";
 const MIGRATION_ID = /^migration(\d+)[A-Za-z0-9]*\.ts$/;
 
-function git(command: string, cwd: string): string {
-	return execSync(`git ${command}`, {
+function git(cwd: string, ...args: string[]): string {
+	return execFileSync("git", args, {
 		cwd,
 		encoding: "utf8",
 		stdio: ["ignore", "pipe", "ignore"],
@@ -14,11 +14,18 @@ function git(command: string, cwd: string): string {
 
 export function listReleasedMigrationIds(repo: string): Set<number> | null {
 	try {
-		git("fetch --quiet origin main", repo);
+		git(repo, "fetch", "--quiet", "origin", "main");
 	} catch {}
 	let listing: string;
 	try {
-		listing = git(`ls-tree --name-only origin/main -- ${MIGRATIONS_DIR}`, repo);
+		listing = git(
+			repo,
+			"ls-tree",
+			"--name-only",
+			"origin/main",
+			"--",
+			MIGRATIONS_DIR,
+		);
 	} catch {
 		return null;
 	}

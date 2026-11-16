@@ -1,8 +1,8 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
-export function tryGit(args: string): string | null {
+export function tryGit(...args: string[]): string | null {
 	try {
-		return execSync(`git ${args}`, {
+		return execFileSync("git", args, {
 			encoding: "utf8",
 			stdio: ["pipe", "pipe", "pipe"],
 		}).trim();

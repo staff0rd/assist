@@ -1,21 +1,18 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 export function checkCliAvailable(cli: string): boolean {
 	const binary = cli.split(/\s+/)[0];
-	const opts = {
-		encoding: "utf8" as const,
-		stdio: ["ignore", "pipe", "pipe"] as ["ignore", "pipe", "pipe"],
-		windowsHide: true,
-	};
+	const [file, args] =
+		process.platform === "win32"
+			? ["where", [binary]]
+			: ["sh", ["-c", 'command -v "$1"', "sh", binary]];
 	try {
-		execSync(`command -v ${binary}`, opts);
+		execFileSync(file, args, {
+			stdio: ["ignore", "pipe", "pipe"],
+			windowsHide: true,
+		});
 		return true;
 	} catch {
-		try {
-			execSync(`where ${binary}`, opts);
-			return true;
-		} catch {
-			return false;
-		}
+		return false;
 	}
 }

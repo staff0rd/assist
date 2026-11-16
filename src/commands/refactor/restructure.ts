@@ -40,7 +40,7 @@ export async function restructure(
 	} = loadConfig().restructure ?? {};
 	const plan = buildPlan(scopeRoot, scoped, ignored, pin);
 	const repoRoot =
-		tryGit(`-C "${scopeRoot}" rev-parse --show-toplevel`) ?? process.cwd();
+		tryGit("-C", scopeRoot, "rev-parse", "--show-toplevel") ?? process.cwd();
 	const limits = checkLayoutLimits(plan, {
 		maxDepth,
 		maxPathLength,

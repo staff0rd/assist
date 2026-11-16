@@ -1,8 +1,7 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { basename } from "node:path";
 import { linkedWorktree } from "../../shared/linkedWorktree";
 import { loadConfig } from "../../shared/loadConfig";
-import { shellQuote } from "../../shared/shellQuote";
 import { createBranch } from "../branch/createBranch";
 import { generateBranchSlug } from "../branch/generateBranchSlug";
 import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
@@ -43,7 +42,7 @@ function adoptRecordedBranch(item: BacklogItem, branch: string): void {
 		execSync("git fetch", { stdio: "ignore" });
 	} catch {}
 	try {
-		execSync(`git switch ${shellQuote(branch)}`, { stdio: "pipe" });
+		execFileSync("git", ["switch", branch], { stdio: "pipe" });
 		log(
 			item,
 			`branch ${branch} already recorded; switched off ${parked} onto it`,

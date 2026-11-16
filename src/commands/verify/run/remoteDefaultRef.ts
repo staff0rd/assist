@@ -10,7 +10,12 @@ function configuredDefaultBranch(): string | undefined {
 }
 
 function originHeadBranch(): string | undefined {
-	const head = tryGit("symbolic-ref --quiet --short refs/remotes/origin/HEAD");
+	const head = tryGit(
+		"symbolic-ref",
+		"--quiet",
+		"--short",
+		"refs/remotes/origin/HEAD",
+	);
 	return head?.startsWith("origin/") ? head.slice("origin/".length) : undefined;
 }
 
@@ -23,7 +28,7 @@ export function remoteDefaultRef(): string | null {
 	].filter((branch): branch is string => Boolean(branch));
 	for (const branch of new Set(branches)) {
 		const ref = `origin/${branch}`;
-		if (tryGit(`rev-parse --verify --quiet ${ref}^{commit}`) !== null)
+		if (tryGit("rev-parse", "--verify", "--quiet", `${ref}^{commit}`) !== null)
 			return ref;
 	}
 	return null;

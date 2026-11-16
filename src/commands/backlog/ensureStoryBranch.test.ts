@@ -43,7 +43,7 @@ vi.mock("node:child_process", async () =>
 	).childProcessMock(),
 );
 
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { linkedWorktree } from "../../shared/linkedWorktree";
 import { loadConfig } from "../../shared/loadConfig";
 import { createBranch } from "../branch/createBranch";
@@ -57,6 +57,7 @@ const mockCreateBranch = createBranch as unknown as MockInstance;
 const mockGenerate = generateBranchSlug as unknown as MockInstance;
 const mockLog = appendDaemonLog as unknown as MockInstance;
 const mockExec = vi.mocked(execSync);
+const mockExecFile = vi.mocked(execFileSync);
 const mockLinked = linkedWorktree as unknown as MockInstance;
 
 function inWorktree(root: string, head: string): void {
@@ -70,10 +71,6 @@ function logged(): string[] {
 	return mockLog.mock.calls.map((call) => String(call[0]));
 }
 
-function gitCommands(): string[] {
-	return mockExec.mock.calls.map((call) => String(call[0]));
-}
-
 describe("ensureStoryBranch", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
@@ -84,6 +81,7 @@ describe("ensureStoryBranch", () => {
 		mockGenerate.mockImplementation((name: string) => deriveBranchSlug(name));
 		mockLinked.mockReturnValue(null);
 		mockExec.mockReturnValue("");
+		mockExecFile.mockReturnValue("");
 		delete process.env.ASSIST_BACKLOG_ITEM_ID;
 	});
 
@@ -210,7 +208,11 @@ describe("ensureStoryBranch", () => {
 			}),
 		);
 
-		expect(gitCommands()).toContain("git switch staff0rd/story");
+		expect(mockExecFile).toHaveBeenCalledWith(
+			"git",
+			["switch", "staff0rd/story"],
+			expect.anything(),
+		);
 		expect(logged()).toEqual([
 			"backlog run 42: branch staff0rd/story already recorded; switched off repo-6 onto it",
 		]);
@@ -226,7 +228,11 @@ describe("ensureStoryBranch", () => {
 			makeBacklogItem({ gitRefs: [{ kind: "branch", ref: "staff0rd/story" }] }),
 		);
 
-		expect(gitCommands()).not.toContain("git switch staff0rd/story");
+		expect(mockExecFile).not.toHaveBeenCalledWith(
+			"git",
+			["switch", "staff0rd/story"],
+			expect.anything(),
+		);
 	});
 
 	it("keeps going when the switch onto the recorded branch fails", async () => {
@@ -234,12 +240,10 @@ describe("ensureStoryBranch", () => {
 			makeAssistConfig({ prs: { required: true } }),
 		);
 		inWorktree("/git/repo-6", "repo-6");
-		mockExec.mockImplementation((command: string) => {
-			if (command.startsWith("git rev-parse")) return "repo-6\n";
-			if (command.startsWith("git switch"))
-				throw new Error("already checked out");
+		mockExecFile.mockImplementation(((_file: string, args: string[]) => {
+			if (args[0] === "switch") throw new Error("already checked out");
 			return "";
-		});
+		}) as never);
 
 		await ensureStoryBranch(
 			makeBacklogItem({

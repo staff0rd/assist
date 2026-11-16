@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { rejectHarnessAttribution } from "../../shared/rejectHarnessAttribution";
 import { resolveCommentWithReply } from "./resolveCommentWithReply";
 import { reviewProposedPrComment } from "./reviewProposedPrComment";
@@ -27,7 +27,7 @@ function validateShaReferences(reason: string): void {
 	const invalidShas: string[] = [];
 	for (const sha of shas) {
 		try {
-			execSync(`git cat-file -t ${sha}`, { stdio: "pipe" });
+			execFileSync("git", ["cat-file", "-t", sha], { stdio: "pipe" });
 		} catch {
 			invalidShas.push(sha);
 		}

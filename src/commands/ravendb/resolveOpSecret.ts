@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import chalk from "chalk";
 
 export function resolveOpSecret(reference: string): string {
@@ -8,7 +8,7 @@ export function resolveOpSecret(reference: string): string {
 	}
 
 	try {
-		return execSync(`op read "${reference}"`, {
+		return execFileSync("op", ["read", reference], {
 			encoding: "utf8",
 			stdio: ["pipe", "pipe", "pipe"],
 		}).trim();

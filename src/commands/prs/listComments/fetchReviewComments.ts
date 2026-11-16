@@ -1,9 +1,9 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import type { ThreadInfo } from "../fetchThreadIds";
 import type { PrComment } from "../types";
 
 function fetchJson(endpoint: string): unknown[] {
-	const result = execSync(`gh api --paginate ${endpoint}`, {
+	const result = execFileSync("gh", ["api", "--paginate", endpoint], {
 		encoding: "utf8",
 	});
 	if (!result.trim()) return [];

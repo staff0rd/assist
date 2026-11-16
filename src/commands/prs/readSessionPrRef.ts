@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import type { GitRef } from "../backlog/types";
 
 export function readSessionPrRef(): GitRef | null {
@@ -9,10 +9,14 @@ export function readSessionPrRef(): GitRef | null {
 		}).trim();
 		if (!branch || branch === "HEAD") return null;
 		const pr = JSON.parse(
-			execSync(`gh pr view ${branch} --json number,title,url,state`, {
-				encoding: "utf8",
-				stdio: ["pipe", "pipe", "pipe"],
-			}),
+			execFileSync(
+				"gh",
+				["pr", "view", branch, "--json", "number,title,url,state"],
+				{
+					encoding: "utf8",
+					stdio: ["pipe", "pipe", "pipe"],
+				},
+			),
 		);
 		if (typeof pr.number !== "number") return null;
 		const ref: GitRef = { kind: "pr", ref: String(pr.number) };

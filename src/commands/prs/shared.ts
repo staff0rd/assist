@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { currentPrSelector } from "./currentPrSelector";
 import { getPreferredRemoteRepo } from "./getPreferredRemoteRepo";
 
@@ -29,9 +29,13 @@ function viewCurrentPr<T>(fields: string): T {
 	const { org, repo } = getRepoInfo();
 	const selector = currentPrSelector(getCurrentBranch(), org);
 	return JSON.parse(
-		execSync(`gh pr view ${selector} --json ${fields} -R ${org}/${repo}`, {
-			encoding: "utf8",
-		}),
+		execFileSync(
+			"gh",
+			["pr", "view", selector, "--json", fields, "-R", `${org}/${repo}`],
+			{
+				encoding: "utf8",
+			},
+		),
 	);
 }
 

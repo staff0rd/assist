@@ -3,7 +3,8 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const gitResponses = new Map<string, string>();
 
 vi.mock("node:child_process", () => ({
-	execSync: (command: string) => {
+	execFileSync: (file: string, args: string[]) => {
+		const command = [file, ...args].join(" ");
 		const response = gitResponses.get(command);
 		if (response === undefined) throw new Error(`git failed: ${command}`);
 		return response;

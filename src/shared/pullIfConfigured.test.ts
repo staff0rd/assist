@@ -1,4 +1,4 @@
-import { execFile, execSync } from "node:child_process";
+import { execFile, execFileSync, execSync } from "node:child_process";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../test/mocks/childProcessMock";
 import type * as loadConfigMockModule from "../test/mocks/loadConfigMock";
@@ -23,6 +23,7 @@ vi.mock("./loadConfig", async () =>
 
 const mockExecSync = vi.mocked(execSync);
 const mockExecFile = vi.mocked(execFile);
+const mockExecFileSync = vi.mocked(execFileSync);
 const mockLoadConfig = vi.mocked(loadConfig);
 
 import { pullIfConfigured } from "./pullIfConfigured";
@@ -50,6 +51,7 @@ describe("pullIfConfigured", () => {
 		await pullIfConfigured();
 
 		expect(mockExecSync).not.toHaveBeenCalled();
+		expect(mockExecFileSync).not.toHaveBeenCalled();
 		expect(exitSpy).not.toHaveBeenCalled();
 	});
 
@@ -58,15 +60,18 @@ describe("pullIfConfigured", () => {
 			makeAssistConfig({ commit: { pull: true } }),
 		);
 		mockExecSync.mockReturnValue("");
+		mockExecFileSync.mockReturnValue("");
 
 		await pullIfConfigured();
 
 		expect(mockExecSync).toHaveBeenCalledWith("git fetch", {
 			stdio: "inherit",
 		});
-		expect(mockExecSync).toHaveBeenCalledWith("git merge --ff-only @{u}", {
-			stdio: ["inherit", "inherit", "pipe"],
-		});
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"git",
+			["merge", "--ff-only", "@{u}"],
+			{ stdio: ["inherit", "inherit", "pipe"] },
+		);
 		expect(mockExecSync).not.toHaveBeenCalledWith(
 			expect.stringContaining("git pull"),
 			expect.anything(),
@@ -78,11 +83,12 @@ describe("pullIfConfigured", () => {
 		mockLoadConfig.mockReturnValue(
 			makeAssistConfig({ commit: { pull: true } }),
 		);
-		mockExecSync.mockImplementation((command: string) => {
-			if (command === "git merge --ff-only @{u}")
+		mockExecSync.mockReturnValue("");
+		mockExecFileSync.mockImplementation(((_file: string, args: string[]) => {
+			if (args.join(" ") === "merge --ff-only @{u}")
 				throw new Error("not possible to fast-forward");
 			return "";
-		});
+		}) as never);
 
 		await expect(pullIfConfigured()).rejects.toThrow("process.exit");
 		expect(exitSpy).toHaveBeenCalledWith(1);
@@ -95,13 +101,14 @@ describe("pullIfConfigured", () => {
 		vi.spyOn(console, "warn").mockImplementation(() => {});
 		vi.spyOn(process.stderr, "write").mockImplementation(() => true);
 		let merges = 0;
-		mockExecSync.mockImplementation((command: string) => {
-			if (command === "git merge --ff-only @{u}" && ++merges === 1)
+		mockExecSync.mockReturnValue("");
+		mockExecFileSync.mockImplementation(((_file: string, args: string[]) => {
+			if (args.join(" ") === "merge --ff-only @{u}" && ++merges === 1)
 				throw Object.assign(new Error("merge failed"), {
 					stderr: "fatal: Unable to create '.git/index.lock': File exists.",
 				});
 			return "";
-		});
+		}) as never);
 
 		await pullIfConfigured();
 
@@ -130,6 +137,7 @@ describe("pullIfConfigured", () => {
 					throw new Error("failed");
 				return "";
 			});
+			mockExecFileSync.mockReturnValue("");
 			return vi.spyOn(console, "warn").mockImplementation(() => {});
 		}
 
@@ -141,8 +149,9 @@ describe("pullIfConfigured", () => {
 			expect(mockExecSync).toHaveBeenCalledWith("git fetch", {
 				stdio: "inherit",
 			});
-			expect(mockExecSync).toHaveBeenCalledWith(
-				"git merge --ff-only origin/trunk",
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"git",
+				["merge", "--ff-only", "origin/trunk"],
 				{ stdio: ["inherit", "inherit", "pipe"] },
 			);
 			expect(warnSpy).not.toHaveBeenCalled();
@@ -154,8 +163,9 @@ describe("pullIfConfigured", () => {
 
 			await pullIfConfigured();
 
-			expect(mockExecSync).not.toHaveBeenCalledWith(
-				expect.stringContaining("git merge --ff-only"),
+			expect(mockExecFileSync).not.toHaveBeenCalledWith(
+				"git",
+				expect.arrayContaining(["merge", "--ff-only"]),
 				expect.anything(),
 			);
 			expect(warnSpy).toHaveBeenCalledWith(
@@ -169,8 +179,9 @@ describe("pullIfConfigured", () => {
 
 			await pullIfConfigured();
 
-			expect(mockExecSync).not.toHaveBeenCalledWith(
-				expect.stringContaining("git merge"),
+			expect(mockExecFileSync).not.toHaveBeenCalledWith(
+				"git",
+				expect.arrayContaining(["merge"]),
 				expect.anything(),
 			);
 			expect(warnSpy).toHaveBeenCalledWith(

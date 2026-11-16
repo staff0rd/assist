@@ -1,8 +1,7 @@
-import { execSync } from "node:child_process";
-import { shellQuote } from "../../shared/shellQuote";
+import { execFileSync, execSync } from "node:child_process";
 
 export function commitStaged(message: string): string {
-	execSync(`git commit -m ${shellQuote(message)}`, { stdio: "inherit" });
+	execFileSync("git", ["commit", "-m", message], { stdio: "inherit" });
 	return execSync("git rev-parse --short=7 HEAD", {
 		encoding: "utf8",
 	}).trim();

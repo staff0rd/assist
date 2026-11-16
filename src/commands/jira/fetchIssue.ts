@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import chalk from "chalk";
 
 export function fetchIssue(
@@ -7,8 +7,9 @@ export function fetchIssue(
 ): Record<string, unknown> {
 	let result: string;
 	try {
-		result = execSync(
-			`acli jira workitem view ${issueKey} -f ${fields} --json`,
+		result = execFileSync(
+			"acli",
+			["jira", "workitem", "view", issueKey, "-f", fields, "--json"],
 			{ encoding: "utf8", stdio: ["pipe", "pipe", "pipe"] },
 		);
 	} catch (error) {

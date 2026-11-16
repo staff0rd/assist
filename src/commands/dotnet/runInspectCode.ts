@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { existsSync, readFileSync, unlinkSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -22,11 +22,17 @@ export function runInspectCode(
 	swea: boolean,
 ): string {
 	const reportPath = path.join(tmpdir(), `inspect-${Date.now()}.xml`);
-	const includeFlag = include ? ` --include="${include}"` : "";
-	const sweaFlag = swea ? " --swea" : "";
 	try {
-		execSync(
-			`jb inspectcode "${slnPath}" -o="${reportPath}"${includeFlag}${sweaFlag} --verbosity=OFF`,
+		execFileSync(
+			"jb",
+			[
+				"inspectcode",
+				slnPath,
+				`-o=${reportPath}`,
+				...(include ? [`--include=${include}`] : []),
+				...(swea ? ["--swea"] : []),
+				"--verbosity=OFF",
+			],
 			{ stdio: "pipe" },
 		);
 	} catch (error) {

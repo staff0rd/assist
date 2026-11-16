@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import chalk from "chalk";
 import { loadConfig } from "../../shared/loadConfig";
 import { resolveRunConfigs } from "../../shared/resolveRunConfigs";
@@ -15,7 +15,7 @@ function resolveMsbuildPath(): string {
 export function assertMsbuildInstalled(): void {
 	const msbuild = resolveMsbuildPath();
 	try {
-		execSync(`"${msbuild}" -version`, { stdio: "pipe" });
+		execFileSync(msbuild, ["-version"], { stdio: "pipe" });
 	} catch {
 		console.error(chalk.red(`msbuild not found at: ${msbuild}`));
 		console.error(
@@ -43,15 +43,17 @@ function parseMsbuildOutput(output: string): Issue[] {
 
 export function runRoslynInspect(slnPath: string): Issue[] {
 	const msbuild = resolveMsbuildPath();
-	let output: string;
-	try {
-		output = execSync(
-			`"${msbuild}" "${slnPath}" -t:Build -v:minimal -maxcpucount -p:EnforceCodeStyleInBuild=true -p:RunAnalyzersDuringBuild=true 2>&1`,
-			{ encoding: "utf8", stdio: "pipe", maxBuffer: 50 * 1024 * 1024 },
-		);
-	} catch (error) {
-		const e = error as { stdout?: string };
-		output = e.stdout ?? "";
-	}
-	return parseMsbuildOutput(output);
+	const result = spawnSync(
+		msbuild,
+		[
+			slnPath,
+			"-t:Build",
+			"-v:minimal",
+			"-maxcpucount",
+			"-p:EnforceCodeStyleInBuild=true",
+			"-p:RunAnalyzersDuringBuild=true",
+		],
+		{ encoding: "utf8", stdio: "pipe", maxBuffer: 50 * 1024 * 1024 },
+	);
+	return parseMsbuildOutput(`${result.stdout ?? ""}${result.stderr ?? ""}`);
 }

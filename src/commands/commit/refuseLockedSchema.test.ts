@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -31,7 +31,7 @@ function stage(path: string, contents = "x\n"): void {
 	const full = join(repo, path);
 	mkdirSync(join(full, ".."), { recursive: true });
 	writeFileSync(full, contents);
-	execSync(`git add "${path}"`, { cwd: repo, stdio: "pipe" });
+	execFileSync("git", ["add", path], { cwd: repo, stdio: "pipe" });
 }
 
 async function addStoryWithPhaseUnlock(phase: number): Promise<number> {

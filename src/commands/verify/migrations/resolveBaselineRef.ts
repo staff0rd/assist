@@ -1,9 +1,9 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { loadConfig } from "../../../shared/loadConfig";
 
 function refExists(ref: string): boolean {
 	try {
-		execSync(`git rev-parse --verify --quiet "${ref}"`, {
+		execFileSync("git", ["rev-parse", "--verify", "--quiet", ref], {
 			stdio: ["pipe", "pipe", "pipe"],
 		});
 		return true;

@@ -1,7 +1,5 @@
-import { execSync } from "node:child_process";
-import { shellQuote } from "../../shared/shellQuote";
+import { execFileSync } from "node:child_process";
 
 export function stageFiles(files: string[]): void {
-	const escaped = files.map(shellQuote).join(" ");
-	execSync(`git add ${escaped}`, { stdio: "inherit" });
+	execFileSync("git", ["add", ...files], { stdio: "inherit" });
 }

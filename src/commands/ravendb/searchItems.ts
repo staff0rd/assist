@@ -1,11 +1,11 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import chalk from "chalk";
 
 type OpItem = { id: string; title: string; vault: { name: string } };
 type OpField = { id: string; label: string; reference: string; value?: string };
 
-function opExec(args: string): string {
-	return execSync(`op ${args}`, {
+function opExec(...args: string[]): string {
+	return execFileSync("op", args, {
 		encoding: "utf8",
 		stdio: ["pipe", "pipe", "pipe"],
 	}).trim();
@@ -14,7 +14,7 @@ function opExec(args: string): string {
 export function searchItems(search: string): OpItem[] {
 	let items: OpItem[];
 	try {
-		items = JSON.parse(opExec("item list --format=json"));
+		items = JSON.parse(opExec("item", "list", "--format=json"));
 	} catch {
 		console.error(
 			chalk.red(
@@ -30,7 +30,7 @@ export function searchItems(search: string): OpItem[] {
 
 export function getItemFields(itemId: string): OpField[] {
 	try {
-		const item = JSON.parse(opExec(`item get "${itemId}" --format=json`));
+		const item = JSON.parse(opExec("item", "get", itemId, "--format=json"));
 		return (item.fields as OpField[]).filter((f) => f.reference && f.label);
 	} catch {
 		console.error(chalk.red("Failed to get item details from 1Password."));

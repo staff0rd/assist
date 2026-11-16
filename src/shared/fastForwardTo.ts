@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import chalk from "chalk";
 import { waitForIndexUnlocked } from "./waitForIndexUnlocked";
 
@@ -9,7 +9,7 @@ export function fastForwardTo(ref: string): void {
 	for (let attempt = 1; ; attempt++) {
 		waitForIndexUnlocked(LOCK_WAIT_MS);
 		try {
-			execSync(`git merge --ff-only ${ref}`, {
+			execFileSync("git", ["merge", "--ff-only", ref], {
 				stdio: ["inherit", "inherit", "pipe"],
 			});
 			return;

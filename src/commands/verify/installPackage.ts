@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { writeFileSync } from "node:fs";
 import chalk from "chalk";
 import {
@@ -34,7 +34,11 @@ function addScript(
 export function installPackage(name: string, cwd: string): boolean {
 	console.log(chalk.dim(`Installing ${name}...`));
 	try {
-		execSync(`npm install -D ${name}`, { stdio: "inherit", cwd });
+		execFileSync("npm", ["install", "-D", name], {
+			stdio: "inherit",
+			cwd,
+			shell: process.platform === "win32",
+		});
 		return true;
 	} catch {
 		console.error(chalk.red(`Failed to install ${name}`));

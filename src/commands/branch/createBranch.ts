@@ -1,9 +1,8 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { recordSessionRefs } from "../../shared/db/recordSessionRefs";
 import { gitRefUrl } from "../../shared/gitRefUrl";
 import { loadConfig } from "../../shared/loadConfig";
 import { resolveSessionItemId } from "../../shared/resolveSessionItemId";
-import { shellQuote } from "../../shared/shellQuote";
 import { buildBranchName } from "./buildBranchName";
 import { resolveDefaultBranch } from "./resolveDefaultBranch";
 
@@ -27,7 +26,7 @@ export async function createBranch({
 	let baseRef: string;
 	if (from) {
 		try {
-			execSync(`git rev-parse --verify ${shellQuote(from)}`, {
+			execFileSync("git", ["rev-parse", "--verify", from], {
 				stdio: ["pipe", "pipe", "pipe"],
 			});
 		} catch {
@@ -38,7 +37,7 @@ export async function createBranch({
 		baseRef = `origin/${resolveDefaultBranch(config.branch?.defaultBranch)}`;
 	}
 
-	execSync(`git switch -c ${shellQuote(branchName)} ${shellQuote(baseRef)}`, {
+	execFileSync("git", ["switch", "-c", branchName, baseRef], {
 		stdio: "inherit",
 	});
 	await recordBranchActivity(branchName);

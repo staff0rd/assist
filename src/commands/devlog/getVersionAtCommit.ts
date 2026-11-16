@@ -1,8 +1,8 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 
 export function getVersionAtCommit(hash: string): string | null {
 	try {
-		const content = execSync(`git show ${hash}:package.json`, {
+		const content = execFileSync("git", ["show", `${hash}:package.json`], {
 			encoding: "utf8",
 		});
 		const pkg = JSON.parse(content);

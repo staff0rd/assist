@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { getRepoInfo, isGhNotInstalled } from "./shared";
 import { isNotFound } from "./isNotFound";
 
@@ -27,10 +27,14 @@ export function fetchPrBody(
 ): string {
 	const { org, repo: name } = repo ?? currentRepo();
 	try {
-		const raw = execSync(`gh pr view ${number} --json body -R ${org}/${name}`, {
-			encoding: "utf8",
-			stdio: ["pipe", "pipe", "pipe"],
-		});
+		const raw = execFileSync(
+			"gh",
+			["pr", "view", String(number), "--json", "body", "-R", `${org}/${name}`],
+			{
+				encoding: "utf8",
+				stdio: ["pipe", "pipe", "pipe"],
+			},
+		);
 		return (JSON.parse(raw) as { body: string | null }).body ?? "";
 	} catch (error) {
 		if (isGhNotInstalled(error)) exitGhNotInstalled();

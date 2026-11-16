@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 import { pushCommit } from "./pushCommit";
@@ -11,22 +11,23 @@ vi.mock("node:child_process", async () =>
 	).childProcessMock(),
 );
 
-const mockExecSync = vi.mocked(execSync);
+const mockExecFileSync = vi.mocked(execFileSync);
 
 type GitOutputs = Record<string, string>;
 
 function gitState(outputs: GitOutputs): void {
-	mockExecSync.mockImplementation((command) => {
+	mockExecFileSync.mockImplementation(((file: string, args: string[]) => {
+		const command = [file, ...args].join(" ");
 		if (command in outputs) return outputs[command];
 		if (command.startsWith("git config --get")) throw new Error("exit 1");
 		return "";
-	});
+	}) as never);
 }
 
 const pushed = () =>
-	mockExecSync.mock.calls
-		.map(([command]) => command)
-		.filter((command) => command.startsWith("git push"));
+	mockExecFileSync.mock.calls
+		.filter(([file, args]) => file === "git" && args?.[0] === "push")
+		.map(([, args]) => args);
 
 beforeEach(() => {
 	vi.clearAllMocks();
@@ -43,7 +44,7 @@ describe("pushCommit", () => {
 
 			pushCommit(true);
 
-			expect(pushed()).toEqual(["git push"]);
+			expect(pushed()).toEqual([["push"]]);
 		});
 	});
 
@@ -57,7 +58,7 @@ describe("pushCommit", () => {
 
 			pushCommit(true);
 
-			expect(pushed()).toEqual(["git push origin HEAD:main"]);
+			expect(pushed()).toEqual([["push", "origin", "HEAD:main"]]);
 		});
 	});
 
@@ -72,7 +73,7 @@ describe("pushCommit", () => {
 			pushCommit(false);
 
 			expect(pushed()).toEqual([
-				"git push --set-upstream origin HEAD:feature-x",
+				["push", "--set-upstream", "origin", "HEAD:feature-x"],
 			]);
 		});
 	});
@@ -83,21 +84,21 @@ describe("pushCommit", () => {
 
 			pushCommit(false);
 
-			expect(pushed()).toEqual(["git push"]);
+			expect(pushed()).toEqual([["push"]]);
 		});
 	});
 
 	describe("when HEAD is detached", () => {
 		it("should push plainly", () => {
-			mockExecSync.mockImplementation((command) => {
-				if (command === "git symbolic-ref --short HEAD")
+			mockExecFileSync.mockImplementation(((_file: string, args: string[]) => {
+				if (args.join(" ") === "symbolic-ref --short HEAD")
 					throw new Error("not a symbolic ref");
 				return "";
-			});
+			}) as never);
 
 			pushCommit(true);
 
-			expect(pushed()).toEqual(["git push"]);
+			expect(pushed()).toEqual([["push"]]);
 		});
 	});
 });

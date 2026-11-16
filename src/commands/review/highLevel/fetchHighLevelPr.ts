@@ -1,6 +1,6 @@
-import { execSync } from "node:child_process";
 import type { PrMergeable } from "./types";
 import { waitForMergeable } from "./waitForMergeable";
+import { ghPrView } from "./ghPrView";
 
 type HighLevelPr = {
 	title: string;
@@ -11,18 +11,6 @@ type HighLevelPr = {
 	mergeable: PrMergeable;
 	linkedIssues: string[];
 };
-
-function ghPrView<T>(
-	prNumber: number,
-	repo: { org: string; repo: string },
-	fields: string,
-): T {
-	const raw = execSync(
-		`gh pr view ${prNumber} --json ${fields} -R ${repo.org}/${repo.repo}`,
-		{ encoding: "utf8" },
-	);
-	return JSON.parse(raw) as T;
-}
 
 export function fetchHighLevelPr(
 	prNumber: number,

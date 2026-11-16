@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 import { fetchPrChangedFiles, fetchPrDiffInfo } from "./fetchPrDiffInfo";
@@ -12,11 +12,12 @@ vi.mock("node:child_process", async () =>
 );
 
 const mockExecSync = vi.mocked(execSync);
+const mockExecFileSync = vi.mocked(execFileSync);
 
 type ExecCall = (cmd: string) => string;
 
 function setupExec(handler: ExecCall): void {
-	mockExecSync.mockImplementation((cmd: string) => {
+	const run = (cmd: string) => {
 		if (cmd.includes("@{u}")) return "origin/main";
 		if (cmd === "git remote") return "origin";
 		if (cmd === "git remote get-url origin") {
@@ -27,7 +28,12 @@ function setupExec(handler: ExecCall): void {
 			throw new Error(`Unexpected command: ${cmd}`);
 		}
 		return result;
-	});
+	};
+	mockExecSync.mockImplementation(run);
+	mockExecFileSync.mockImplementation(
+		(file: string, args?: readonly string[]) =>
+			run([file, ...(args ?? [])].join(" ")),
+	);
 }
 
 beforeEach(() => {
@@ -60,11 +66,22 @@ describe("fetchPrDiffInfo", () => {
 			headSha: "head-sha",
 		});
 
-		const listCall = mockExecSync.mock.calls
-			.map((call) => call[0] as string)
-			.find((cmd) => cmd.includes("gh pr list"));
-		expect(listCall).toContain("--state open");
-		expect(listCall).toContain("--head my-branch");
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"gh",
+			[
+				"pr",
+				"list",
+				"--state",
+				"open",
+				"--head",
+				"my-branch",
+				"--json",
+				"number,baseRefName,baseRefOid,headRefName,headRefOid",
+				"-R",
+				"owner/repo",
+			],
+			expect.anything(),
+		);
 	});
 
 	it("exits when the branch has no open PR", () => {
@@ -106,10 +123,16 @@ describe("fetchPrChangedFiles", () => {
 
 		fetchPrChangedFiles(104);
 
-		const apiCall = mockExecSync.mock.calls
-			.map((call) => call[0] as string)
-			.find((cmd) => cmd.includes("gh api"));
-		expect(apiCall).toContain("repos/owner/repo/pulls/104/files");
-		expect(apiCall).toContain("--paginate");
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"gh",
+			[
+				"api",
+				"repos/owner/repo/pulls/104/files",
+				"--paginate",
+				"--jq",
+				".[].filename",
+			],
+			expect.anything(),
+		);
 	});
 });

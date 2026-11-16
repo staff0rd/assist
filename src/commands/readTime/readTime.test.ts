@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { readFileSync } from "node:fs";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { loadConfig } from "../../shared/loadConfig";
@@ -38,7 +38,7 @@ vi.mock("../../shared/loadConfig", async () =>
 	).loadConfigMock(),
 );
 
-const mockExecSync = vi.mocked(execSync);
+const mockExecFileSync = vi.mocked(execFileSync);
 const mockReadFileSync = vi.mocked(readFileSync);
 const mockLoadConfig = vi.mocked(loadConfig);
 
@@ -49,7 +49,7 @@ function words(count: number): string {
 }
 
 beforeEach(() => {
-	mockExecSync.mockReset();
+	mockExecFileSync.mockReset();
 	mockReadFileSync.mockReset();
 	mockReadBodyArgument.mockReset();
 	mockLoadConfig.mockReturnValue(makeAssistConfig());
@@ -62,12 +62,13 @@ beforeEach(() => {
 describe("readTime", () => {
 	describe("when the target is a PR number", () => {
 		it("should print the word count and read time for that PR", async () => {
-			mockExecSync.mockReturnValue(JSON.stringify({ body: words(50) }));
+			mockExecFileSync.mockReturnValue(JSON.stringify({ body: words(50) }));
 
 			await readTime("42");
 
-			expect(mockExecSync).toHaveBeenCalledWith(
-				"gh pr view 42 --json body -R acme/widgets",
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				["pr", "view", "42", "--json", "body", "-R", "acme/widgets"],
 				expect.anything(),
 			);
 			expect(logged).toEqual(["50 words · ~29s read"]);
@@ -75,8 +76,8 @@ describe("readTime", () => {
 
 		it("should count fenced code at half the prose rate", async () => {
 			const body = ["```", words(40), "```"].join("\n");
-			mockExecSync.mockReturnValueOnce(JSON.stringify({ body }));
-			mockExecSync.mockReturnValueOnce(JSON.stringify({ body: words(40) }));
+			mockExecFileSync.mockReturnValueOnce(JSON.stringify({ body }));
+			mockExecFileSync.mockReturnValueOnce(JSON.stringify({ body: words(40) }));
 
 			await readTime("42");
 			await readTime("42");
@@ -85,7 +86,7 @@ describe("readTime", () => {
 		});
 
 		it("should count an image and a URL as one word each", async () => {
-			mockExecSync.mockReturnValue(
+			mockExecFileSync.mockReturnValue(
 				JSON.stringify({
 					body: "![a shot of the screen](https://img/x.png) see https://example.com/a",
 				}),
@@ -97,7 +98,7 @@ describe("readTime", () => {
 		});
 
 		it("should handle a PR with an empty body", async () => {
-			mockExecSync.mockReturnValue(JSON.stringify({ body: null }));
+			mockExecFileSync.mockReturnValue(JSON.stringify({ body: null }));
 
 			await readTime("42");
 
@@ -107,12 +108,13 @@ describe("readTime", () => {
 
 	describe("when the target is a GitHub pull request URL", () => {
 		it("should read the PR from the URL's repo", async () => {
-			mockExecSync.mockReturnValue(JSON.stringify({ body: words(80) }));
+			mockExecFileSync.mockReturnValue(JSON.stringify({ body: words(80) }));
 
 			await readTime("https://github.com/other/project/pull/7");
 
-			expect(mockExecSync).toHaveBeenCalledWith(
-				"gh pr view 7 --json body -R other/project",
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				["pr", "view", "7", "--json", "body", "-R", "other/project"],
 				expect.anything(),
 			);
 			expect(logged).toEqual(["80 words · ~51s read"]);

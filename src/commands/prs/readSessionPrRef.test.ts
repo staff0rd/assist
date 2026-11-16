@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 
@@ -13,9 +13,10 @@ vi.mock("node:child_process", async () =>
 import { readSessionPrRef } from "./readSessionPrRef";
 
 const mockExecSync = vi.mocked(execSync);
+const mockExecFileSync = vi.mocked(execFileSync);
 
 function stubGit(responses: Record<string, string | Error>) {
-	mockExecSync.mockImplementation((cmd: string) => {
+	const run = (cmd: string) => {
 		for (const [fragment, value] of Object.entries(responses)) {
 			if (cmd.includes(fragment)) {
 				if (value instanceof Error) throw value;
@@ -23,7 +24,12 @@ function stubGit(responses: Record<string, string | Error>) {
 			}
 		}
 		throw new Error(`unexpected command: ${cmd}`);
-	});
+	};
+	mockExecSync.mockImplementation(run);
+	mockExecFileSync.mockImplementation(
+		(file: string, args?: readonly string[]) =>
+			run([file, ...(args ?? [])].join(" ")),
+	);
 }
 
 describe("readSessionPrRef", () => {
@@ -49,6 +55,11 @@ describe("readSessionPrRef", () => {
 			url: "https://github.com/acme/widgets/pull/42",
 			state: "OPEN",
 		});
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"gh",
+			["pr", "view", "feature", "--json", "number,title,url,state"],
+			expect.anything(),
+		);
 	});
 
 	it("returns null on a detached HEAD", () => {

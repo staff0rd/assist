@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { fetchThreadIds } from "../prs/fetchThreadIds";
 import { findCurrentPrNumber, getRepoInfo } from "../prs/shared";
 
@@ -30,8 +30,9 @@ function fetchRawComments(
 	repo: string,
 	prNumber: number,
 ): RawComment[] {
-	const out = execSync(
-		`gh api --paginate repos/${org}/${repo}/pulls/${prNumber}/comments`,
+	const out = execFileSync(
+		"gh",
+		["api", "--paginate", `repos/${org}/${repo}/pulls/${prNumber}/comments`],
 		{ encoding: "utf8", maxBuffer: 64 * 1024 * 1024 },
 	);
 	if (!out.trim()) return [];

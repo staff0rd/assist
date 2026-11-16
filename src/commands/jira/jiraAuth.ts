@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { loadJson, saveJson } from "../../shared/loadJson";
 import { promptInput, promptPassword } from "../../shared/promptInput";
 
@@ -39,11 +39,15 @@ export async function jiraAuth(): Promise<void> {
 			process.exit(1);
 		}
 
-		execSync(`acli jira auth login --site ${site} --email "${email}" --token`, {
-			encoding: "utf8",
-			input: token,
-			stdio: ["pipe", "inherit", "inherit"],
-		});
+		execFileSync(
+			"acli",
+			["jira", "auth", "login", "--site", site, "--email", email, "--token"],
+			{
+				encoding: "utf8",
+				input: token,
+				stdio: ["pipe", "inherit", "inherit"],
+			},
+		);
 
 		saveJson(CONFIG_FILE, { site, email });
 		console.log("Successfully authenticated with Jira.");

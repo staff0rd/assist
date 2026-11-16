@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { loadConfig } from "../../shared/loadConfig";
 import { pushCommit } from "../commit/pushCommit";
 import { azureDevopsRemote } from "../review/azureDevopsRemote";
@@ -8,7 +8,7 @@ import { getRepoInfo, isGhNotInstalled } from "./shared";
 
 function verifySha(sha: string): string {
 	try {
-		return execSync(`git rev-parse --verify ${sha}`, {
+		return execFileSync("git", ["rev-parse", "--verify", sha], {
 			encoding: "utf8",
 		}).trim();
 	} catch {

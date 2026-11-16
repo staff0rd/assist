@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 import { findConflictMarkers, findUnmergedPaths } from "./findConflictMarkers";
@@ -11,7 +11,7 @@ vi.mock("node:child_process", async () =>
 	).childProcessMock(),
 );
 
-const mockExecSync = vi.mocked(execSync);
+const mockExecFileSync = vi.mocked(execFileSync);
 
 function checkError(stdout: string): Error {
 	const error = new Error("git diff --check exited 2") as Error & {
@@ -27,21 +27,21 @@ describe("findConflictMarkers", () => {
 	});
 
 	it("returns files reported with leftover conflict markers", () => {
-		mockExecSync.mockImplementation((cmd) => {
-			if (cmd.startsWith("git diff --check")) {
+		mockExecFileSync.mockImplementation(((_file: string, args: string[]) => {
+			if (args[0] === "diff" && args[1] === "--check") {
 				throw checkError(
 					"src/Home.tsx:2: leftover conflict marker\n" +
 						"src/Home.tsx:4: leftover conflict marker\n",
 				);
 			}
 			return "";
-		});
+		}) as never);
 
 		expect(findConflictMarkers(["src/Home.tsx"])).toEqual(["src/Home.tsx"]);
 	});
 
 	it("ignores whitespace-only warnings", () => {
-		mockExecSync.mockImplementation(
+		mockExecFileSync.mockImplementation(
 			() => "src/Home.tsx:2: trailing whitespace\n",
 		);
 
@@ -49,34 +49,34 @@ describe("findConflictMarkers", () => {
 	});
 
 	it("checks only the staged index when no files are given", () => {
-		const calls: string[] = [];
-		mockExecSync.mockImplementation((cmd) => {
-			calls.push(cmd);
+		const calls: string[][] = [];
+		mockExecFileSync.mockImplementation(((file: string, args: string[]) => {
+			calls.push([file, ...args]);
 			return "";
-		});
+		}) as never);
 
 		findConflictMarkers([]);
 
-		expect(calls).toEqual(["git diff --cached --check"]);
+		expect(calls).toEqual([["git", "diff", "--cached", "--check"]]);
 	});
 
 	it("checks working tree and index scoped to the given files", () => {
-		const calls: string[] = [];
-		mockExecSync.mockImplementation((cmd) => {
-			calls.push(cmd);
+		const calls: string[][] = [];
+		mockExecFileSync.mockImplementation(((file: string, args: string[]) => {
+			calls.push([file, ...args]);
 			return "";
-		});
+		}) as never);
 
 		findConflictMarkers(["a.ts", "b.ts"]);
 
 		expect(calls).toEqual([
-			"git diff --check -- a.ts b.ts",
-			"git diff --cached --check -- a.ts b.ts",
+			["git", "diff", "--check", "--", "a.ts", "b.ts"],
+			["git", "diff", "--cached", "--check", "--", "a.ts", "b.ts"],
 		]);
 	});
 
 	it("returns an empty array when nothing conflicts", () => {
-		mockExecSync.mockImplementation(() => "");
+		mockExecFileSync.mockImplementation(() => "");
 		expect(findConflictMarkers(["a.ts"])).toEqual([]);
 	});
 });
@@ -87,7 +87,7 @@ describe("findUnmergedPaths", () => {
 	});
 
 	it("returns unique unmerged paths from ls-files -u", () => {
-		mockExecSync.mockImplementation(
+		mockExecFileSync.mockImplementation(
 			() =>
 				"100644 aaa 1\tfile.txt\n" +
 				"100644 bbb 2\tfile.txt\n" +
@@ -99,12 +99,12 @@ describe("findUnmergedPaths", () => {
 	});
 
 	it("returns an empty array when there are no unmerged paths", () => {
-		mockExecSync.mockImplementation(() => "");
+		mockExecFileSync.mockImplementation(() => "");
 		expect(findUnmergedPaths()).toEqual([]);
 	});
 
 	it("returns an empty array when git errors", () => {
-		mockExecSync.mockImplementation(() => {
+		mockExecFileSync.mockImplementation(() => {
 			throw new Error("not a git repository");
 		});
 		expect(findUnmergedPaths()).toEqual([]);
