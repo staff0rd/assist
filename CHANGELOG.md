@@ -1,3 +1,10 @@
+## [0.1209.1](https://github.com/staff0rd/assist/compare/v0.1209.0...v0.1209.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* label SDK badge by harness ([09e6199](https://github.com/staff0rd/assist/commit/09e6199e746f74118490e895083ee777d5543f00))
+
 # [0.1209.0](https://github.com/staff0rd/assist/compare/v0.1208.1...v0.1209.0) (2026-11-16)
 
 
