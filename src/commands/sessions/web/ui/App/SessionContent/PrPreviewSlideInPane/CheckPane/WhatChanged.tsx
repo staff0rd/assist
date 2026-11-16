@@ -8,6 +8,7 @@ export function WhatChanged({ changed }: { changed: string }) {
 	return (
 		<Box>
 			<ButtonBase
+				data-preview-skip
 				aria-expanded={open}
 				onClick={() => setOpen((value) => !value)}
 				sx={{ gap: 0.5, color: "text.secondary", borderRadius: 1 }}

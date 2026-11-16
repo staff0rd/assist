@@ -224,6 +224,40 @@ describe("CheckPane", () => {
 		);
 	});
 
+	it("expands What changed on click without opening the comment popover", () => {
+		render(
+			<CheckPane
+				preview={preview}
+				session={liveSession}
+				sendInput={vi.fn()}
+				onDecision={vi.fn()}
+			/>,
+		);
+		const toggle = screen.getByRole("button", { name: "What changed" });
+
+		selectPreviewText(document.body, "What changed");
+		fireEvent.click(toggle);
+
+		expect(toggle.getAttribute("aria-expanded")).toBe("true");
+		expect(screen.queryByPlaceholderText("Add a note…")).toBeNull();
+	});
+
+	it("still comments on text inside the expanded What changed body", () => {
+		render(
+			<CheckPane
+				preview={preview}
+				session={liveSession}
+				sendInput={vi.fn()}
+				onDecision={vi.fn()}
+			/>,
+		);
+		fireEvent.click(screen.getByRole("button", { name: "What changed" }));
+
+		selectPreviewText(document.body, "controlling node");
+
+		expect(screen.getByPlaceholderText("Add a note…")).toBeTruthy();
+	});
+
 	it("shows the unavailable reason when the session is not live", async () => {
 		const sendInput = vi.fn();
 		render(
