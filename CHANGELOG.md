@@ -1,3 +1,15 @@
+# [0.1201.0](https://github.com/staff0rd/assist/compare/v0.1200.0...v0.1201.0) (2026-11-16)
+
+
+### Bug Fixes
+
+* select session transferred here ([8a8567f](https://github.com/staff0rd/assist/commit/8a8567f2f00e5e9d7011a6115bd52a3619acbbe6))
+
+
+### Features
+
+* reopen high-level review from slices ([137ca25](https://github.com/staff0rd/assist/commit/137ca25dc8603a860f00e4b0c818d11b9c2ff791)), closes [hi#level](https://github.com/hi/issues/level)
+
 # [0.1200.0](https://github.com/staff0rd/assist/compare/v0.1199.1...v0.1200.0) (2026-11-16)
 
 
