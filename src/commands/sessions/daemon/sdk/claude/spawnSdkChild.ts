@@ -4,20 +4,18 @@ import type {
 	SpawnOptions,
 } from "@anthropic-ai/claude-agent-sdk";
 import { daemonLog } from "../../daemonLog";
-import type { DrivenSessionOpts } from "../../../../../shared/harnessAdapters/types";
-import { workflowQueryEnv } from "../workflowQueryEnv";
+import type { DrivenSessionContext } from "../DrivenSessionDriver";
 
 const MAX_STDERR_LINE = 300;
 
 export function spawnSdkChild(
 	options: SpawnOptions,
-	{ sessionId, launcherEnv }: DrivenSessionOpts,
+	{ label, childEnv }: DrivenSessionContext,
 	attach: (child: ChildProcess) => void,
 ): SpawnedProcess {
-	const label = `session ${sessionId ?? "?"}`;
 	const child = spawn(options.command, options.args, {
 		cwd: options.cwd,
-		env: workflowQueryEnv(options.env, sessionId, launcherEnv),
+		env: childEnv(options.env),
 		stdio: ["pipe", "pipe", "pipe"],
 		signal: options.signal,
 		/* why: its own process group, so a kill also reaches the shell commands

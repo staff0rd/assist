@@ -7,9 +7,9 @@ import { spawnShellCommand } from "./spawnShellCommand";
 import { trackShellCommand, untrackShellCommand } from "./stopShellCommand";
 import { watchShellChild } from "./watchShellChild";
 
-/* why: `!` commands from the SDK composer run beside the claude query, not
+/* why: `!` commands from the SDK composer run beside the agent's query, not
  * through it, so no turn starts; their output is held on the session until
- * the next message reaches Claude (takeHeldShellResults). */
+ * the next message reaches the agent (takeHeldShellResults). */
 export function runSdkShell(
 	session: Session,
 	command: string,

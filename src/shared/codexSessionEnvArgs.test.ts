@@ -8,6 +8,7 @@ describe("codexSessionEnvArgs", () => {
 				ASSIST_SESSION: "1",
 				ASSIST_SESSION_ID: "6",
 				ASSIST_BACKLOG_ITEM_ID: "667",
+				ASSIST_SDK_AGENT: "1",
 			}),
 		).toEqual([
 			"-c",
@@ -16,6 +17,8 @@ describe("codexSessionEnvArgs", () => {
 			'shell_environment_policy.set.ASSIST_SESSION_ID="6"',
 			"-c",
 			'shell_environment_policy.set.ASSIST_BACKLOG_ITEM_ID="667"',
+			"-c",
+			'shell_environment_policy.set.ASSIST_SDK_AGENT="1"',
 		]);
 	});
 
@@ -27,6 +30,8 @@ describe("codexSessionEnvArgs", () => {
 			'shell_environment_policy.set.ASSIST_SESSION_ID=""',
 			"-c",
 			'shell_environment_policy.set.ASSIST_BACKLOG_ITEM_ID=""',
+			"-c",
+			'shell_environment_policy.set.ASSIST_SDK_AGENT=""',
 		]);
 	});
 });

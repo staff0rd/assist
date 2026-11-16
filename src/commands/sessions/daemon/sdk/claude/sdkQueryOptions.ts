@@ -1,16 +1,14 @@
 import { readFileSync } from "node:fs";
 import type { Options } from "@anthropic-ai/claude-agent-sdk";
 import { ensureHooksSettings } from "../../ensureHooksSettings";
-import type { SdkSessionControl } from "../createSdkSessionProcess";
-import type { DrivenSessionOpts } from "../../../../../shared/harnessAdapters/types";
+import type { DrivenSessionContext } from "../DrivenSessionDriver";
 import { spawnSdkChild } from "./spawnSdkChild";
 
 export function sdkQueryOptions(
-	opts: DrivenSessionOpts,
+	context: DrivenSessionContext,
 	executable: string,
-	abort: AbortController,
-	control: SdkSessionControl,
 ): Options {
+	const { opts, abort, control } = context;
 	const append = opts.appendSystemPromptFile
 		? readFileSync(opts.appendSystemPromptFile, "utf8")
 		: undefined;
@@ -23,7 +21,7 @@ export function sdkQueryOptions(
 		settings: ensureHooksSettings(),
 		pathToClaudeCodeExecutable: executable,
 		spawnClaudeCodeProcess: (options) =>
-			spawnSdkChild(options, opts, control.attach),
+			spawnSdkChild(options, context, control.attach),
 		abortController: abort,
 		model: opts.model,
 		promptSuggestions: true,

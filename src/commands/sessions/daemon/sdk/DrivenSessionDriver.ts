@@ -15,6 +15,9 @@ export type DrivenSessionContext = {
 	abort: AbortController;
 	control: SdkSessionControl;
 	input: AsyncIterable<string>;
+	childEnv: (
+		base: Record<string, string | undefined>,
+	) => Record<string, string>;
 };
 
 export type DrivenSessionDriver = {

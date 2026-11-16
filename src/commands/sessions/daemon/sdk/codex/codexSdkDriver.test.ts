@@ -45,6 +45,7 @@ function start(resumeId?: string) {
 		abort,
 		control,
 		input: input.messages,
+		childEnv: (base) => base as Record<string, string>,
 	});
 	return { query, input };
 }

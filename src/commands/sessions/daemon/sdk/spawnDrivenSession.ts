@@ -9,6 +9,7 @@ import { createSdkSessionProcess } from "./createSdkSessionProcess";
 import { createSdkTurnTracker } from "./createSdkTurnTracker";
 import type { DrivenSessionDriver } from "./DrivenSessionDriver";
 import { startDrivenQuery } from "./startDrivenQuery";
+import { workflowQueryEnv } from "./workflowQueryEnv";
 
 export function spawnDrivenSession(
 	opts: DrivenSessionOpts,
@@ -28,7 +29,15 @@ export function spawnDrivenSession(
 	const turn = createSdkTurnTracker(label, control, input.push);
 	if (opts.prompt) turn.start(opts.prompt);
 	abort.signal.addEventListener("abort", input.close);
-	const context = { opts, label, abort, control, input: input.messages };
+	const context = {
+		opts,
+		label,
+		abort,
+		control,
+		input: input.messages,
+		childEnv: (base: Record<string, string | undefined>) =>
+			workflowQueryEnv(base, opts.sessionId, opts.launcherEnv),
+	};
 	startDrivenQuery(driver, context, turn, backgroundTasks);
 	return control.process;
 }

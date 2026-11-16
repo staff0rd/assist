@@ -10,9 +10,9 @@ import { withCodexTurnUsage } from "./withCodexTurnUsage";
 
 export const codexSdkDriver: DrivenSessionDriver = {
 	harness: "codex-sdk",
-	start: ({ opts, label, abort, control, input }) => {
+	start: ({ opts, label, abort, control, input, childEnv }) => {
 		prepareCodexLaunch(opts.cwd);
-		const options = codexSdkOptions(opts);
+		const options = codexSdkOptions(opts, childEnv);
 		daemonLog(
 			`${label} codex sdk thread starting: codex ${options.codex.codexPathOverride ?? "bundled"}, thread ${opts.resumeId ?? "new"}, sandbox ${options.thread.sandboxMode}, cwd ${opts.cwd ?? process.cwd()}`,
 		);

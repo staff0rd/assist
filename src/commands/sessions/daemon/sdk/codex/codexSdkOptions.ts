@@ -6,25 +6,25 @@ import { codexSessionEnvArgs } from "../../../../../shared/codexSessionEnvArgs";
 import type { DrivenSessionOpts } from "../../../../../shared/harnessAdapters/types";
 import { resolveCodexModel } from "../../../../../shared/resolveCodexModel";
 import { codexDeveloperInstructionsArgs } from "../../codexDeveloperInstructionsArgs";
-import { sessionChildEnv } from "../../sessionChildEnv";
+import type { DrivenSessionContext } from "../DrivenSessionDriver";
 import { codexSdkConfig } from "./codexSdkConfig";
 import { codexSdkExecutable } from "./codexSdkExecutable";
 
-export function codexSdkOptions(opts: DrivenSessionOpts): {
+export function codexSdkOptions(
+	opts: DrivenSessionOpts,
+	childEnv: DrivenSessionContext["childEnv"],
+): {
 	codex: CodexOptions;
 	thread: ThreadOptions;
 } {
+	const env = childEnv(process.env);
 	const model = resolveCodexModel(opts.model);
 	const override = model
 		? { args: ["-m", model], env: {} }
 		: buildHarnessCodexArgs();
 	const config = codexSdkConfig([
 		...override.args,
-		...codexSessionEnvArgs({
-			ASSIST_SESSION: "1",
-			ASSIST_SESSION_ID: opts.sessionId,
-			ASSIST_BACKLOG_ITEM_ID: process.env.ASSIST_BACKLOG_ITEM_ID,
-		}),
+		...codexSessionEnvArgs(env),
 		...codexSandboxArgs(),
 		...codexDeveloperInstructionsArgs(opts.appendSystemPromptFile),
 		// why: no one can answer an approval prompt in a driven session, so escalations go to Codex's automatic reviewer
@@ -35,10 +35,7 @@ export function codexSdkOptions(opts: DrivenSessionOpts): {
 		codex: {
 			codexPathOverride: codexSdkExecutable(),
 			configOverrides: config.configOverrides,
-			env: sessionChildEnv(process.env, opts.sessionId, {
-				...opts.launcherEnv,
-				...override.env,
-			}),
+			env: { ...env, ...override.env },
 		},
 		thread: {
 			model: config.model,

@@ -1,7 +1,10 @@
+import { sdkAgentEnv } from "./sdkAgentEnv";
+
 const SESSION_ENV_KEYS = [
 	"ASSIST_SESSION",
 	"ASSIST_SESSION_ID",
 	"ASSIST_BACKLOG_ITEM_ID",
+	sdkAgentEnv,
 ] as const;
 
 /* why: the Codex TUI hands its turns to a shared app-server daemon, which runs

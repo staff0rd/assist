@@ -9,14 +9,15 @@ import { sdkQueryOptions } from "./sdkQueryOptions";
 
 export const claudeSdkDriver: DrivenSessionDriver = {
 	harness: "claude-sdk",
-	start: ({ opts, label, abort, control, input }) => {
+	start: (context) => {
+		const { opts, label, control, input } = context;
 		const executable = resolveClaudeExecutable();
 		daemonLog(
 			`${label} sdk query starting: claude ${executable}, claude session ${opts.conversationId ?? "unassigned"}, permission mode auto, cwd ${opts.cwd ?? process.cwd()}`,
 		);
 		const messages = query({
 			prompt: claudeUserMessages(input),
-			options: sdkQueryOptions(opts, executable, abort, control),
+			options: sdkQueryOptions(context, executable),
 		});
 		if (opts.resumeId) awaitResume(label, messages, control);
 		return {

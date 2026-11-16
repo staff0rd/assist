@@ -37,7 +37,7 @@ export function sdkSessionHandle(label: string, backgroundTasks: boolean) {
 	return {
 		handle,
 		emit: events.emit,
-		/* why: held shell results join a message only as it reaches Claude, so a
+		/* why: held shell results join a message only as it reaches the agent, so a
 		 * message queued mid-turn still picks up output that finished after it. */
 		prefix: (text: string): string => {
 			const blocks = prefixer?.();

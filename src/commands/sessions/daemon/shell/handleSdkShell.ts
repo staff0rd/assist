@@ -11,7 +11,7 @@ export const handleSdkShell = routed((_client, m, d) => {
 	const session = m.session(id);
 	if (!session || !isSdkSession(session) || ENDED.has(session.status)) {
 		daemonLog(
-			`sdk-shell ignored: session ${id} ${session ? "is not a live Claude (SDK) session" : "was not found"}`,
+			`sdk-shell ignored: session ${id} ${session ? "is not a live driven session" : "was not found"}`,
 		);
 		return;
 	}
