@@ -1,3 +1,10 @@
+# [0.1197.0](https://github.com/staff0rd/assist/compare/v0.1196.0...v0.1197.0) (2026-11-16)
+
+
+### Features
+
+* show sign-off replies in transcript ([83adf4b](https://github.com/staff0rd/assist/commit/83adf4bf7f37f6f6ab87805afcbf6ab4fc060719))
+
 # [0.1196.0](https://github.com/staff0rd/assist/compare/v0.1195.0...v0.1196.0) (2026-11-16)
 
 
