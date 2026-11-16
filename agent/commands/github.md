@@ -83,13 +83,14 @@ Create a new issue from a free-form request (e.g. `create bug against owner/repo
 
 - **Milestone** — the milestone's title, passed as named; the command matches it against the repo's open milestones.
 - **Type** and **parent** — only if the request names them.
+- **Screenshots** — when you already have an image or video to include (e.g. a file the user pointed at on disk), pass it with `--screenshot '[Group/]Caption=path'`, once per file, rather than asking the user to drop it into the preview. It is attached under `## Screenshots` for you.
 
 If a named project, label or milestone doesn't match, list the available ones and ask the user which they meant (or whether to drop it). Never guess a near match or silently omit it. For a milestone, check `gh api repos/<owner>/<repo>/milestones --jq '.[].title'` before running, or relay the list the command prints when it rejects the name.
 
 Then run the command bare, as a background task, and do no other work until it returns — in a web session it blocks on the preview pane until the user approves or rejects:
 
 ```
-assist github issue create -R <owner>/<repo> --title "<title>" --body "<body>" [--label <name>]... [--project <number>] [--status <name>] [--milestone <name>] [--type <name>] [--parent <issue>] 2>&1
+assist github issue create -R <owner>/<repo> --title "<title>" --body "<body>" [--label <name>]... [--project <number>] [--status <name>] [--milestone <name>] [--type <name>] [--parent <issue>] [--screenshot '[Group/]Caption=path']... 2>&1
 ```
 
 Every option is resolved before the preview, so an unknown name creates nothing. Relay the outcome:
