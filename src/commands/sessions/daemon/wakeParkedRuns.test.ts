@@ -1,6 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
+import { holdingWakes } from "./holdingWakes";
 import { spawnAssistProcess } from "./spawnAssistProcess";
 import { wakeParkedRuns } from "./wakeParkedRuns";
 import { wirePtyEvents } from "./wirePtyEvents";
@@ -77,6 +78,17 @@ describe("wakeParkedRuns", () => {
 	it("ignores phases launched by another run", () => {
 		const run = parkedRun();
 		wake(run, phase("2", { status: "running", launchedFrom: "9" }));
+		expect(run.status).toBe("running");
+	});
+});
+
+describe("wakeParkedRuns while a restore holds wakes", () => {
+	it("leaves the run parked until the restore finishes", () => {
+		const run = parkedRun();
+		const sessions = new Map([[run.id, run]]);
+		holdingWakes(sessions, () => wakeParkedRuns(sessions, new Set(), vi.fn()));
+		expect(run.status).toBe("parked");
+		wakeParkedRuns(sessions, new Set(), vi.fn());
 		expect(run.status).toBe("running");
 	});
 });

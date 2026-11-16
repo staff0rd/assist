@@ -1,6 +1,7 @@
 import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
+import { wakesHeld } from "./holdingWakes";
 import { isRunPhaseSession } from "./isBacklogRunSession";
 import { refuseSpawn } from "./refuseSpawn";
 import { setStatus } from "./setStatus";
@@ -29,6 +30,7 @@ export function wakeParkedRuns(
 	clients: Set<SessionClient>,
 	onStatusChange: OnStatusChange,
 ): void {
+	if (wakesHeld(sessions)) return;
 	for (const run of sessions.values()) {
 		if (run.status !== "parked" || !run.assistArgs) continue;
 		if (livePhases(sessions, run).length > 0) continue;
