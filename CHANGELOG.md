@@ -1,3 +1,10 @@
+## [0.1209.2](https://github.com/staff0rd/assist/compare/v0.1209.1...v0.1209.2) (2026-11-16)
+
+
+### Bug Fixes
+
+* show driven sessions as SDK on start ([63bdd75](https://github.com/staff0rd/assist/commit/63bdd753a06eb1896cdc21e1cf59c813e89ad056))
+
 ## [0.1209.1](https://github.com/staff0rd/assist/compare/v0.1209.0...v0.1209.1) (2026-11-16)
 
 
