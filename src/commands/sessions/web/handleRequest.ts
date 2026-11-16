@@ -27,6 +27,7 @@ import { getConfig } from "./getConfig";
 import { getHtml } from "./getHtml";
 import { handleServerRuns } from "./handleServerRuns";
 import { getReviewSynthesis } from "./getReviewSynthesis";
+import { githubAttachment } from "./githubAttachment";
 import { githubFileContent } from "./githubFileContent";
 import { githubUrl } from "./githubUrl";
 import { gitStatus } from "./gitStatus";
@@ -127,6 +128,7 @@ const routes: Record<string, Handler> = {
 	"POST /api/self-update": selfUpdate,
 	"GET /api/github-url": githubUrl,
 	"GET /api/github-file": githubFileContent,
+	"GET /api/github-attachment": githubAttachment,
 	"GET /api/git-status": gitStatus,
 	"GET /api/diff": diff,
 	"GET /api/diff-scopes": diffScopes,
