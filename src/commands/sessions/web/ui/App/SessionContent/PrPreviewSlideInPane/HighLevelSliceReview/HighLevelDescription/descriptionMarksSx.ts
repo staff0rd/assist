@@ -17,4 +17,5 @@ export const descriptionMarksSx = (theme: Theme) => ({
 		bgcolor: theme.tokens.color.wash.accent,
 		outline: `1px solid ${alpha(theme.palette.primary.main, 0.35)}`,
 	},
+	"& img": { maxWidth: "100%", height: "auto" },
 });

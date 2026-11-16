@@ -19,6 +19,13 @@ describe("signedAttachmentUrl", () => {
 		expect(signedAttachmentUrl(`<img src="${url}">`, asset)).toBe(url);
 	});
 
+	it("prefers the signed URL over an earlier unsigned link to the asset", () => {
+		const signed = `https://private-user-images.githubusercontent.com/1/2-${asset}.png?jwt=a`;
+		const html = `<a href="https://github.com/user-attachments/assets/${asset}">x</a><img src="${signed}">`;
+
+		expect(signedAttachmentUrl(html, asset)).toBe(signed);
+	});
+
 	it("ignores URLs on other hosts and other assets", () => {
 		const html = `<img src="https://evil.example/${asset}.png"><img src="https://private-user-images.githubusercontent.com/1/2-other.png">`;
 
