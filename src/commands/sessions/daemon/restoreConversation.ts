@@ -32,7 +32,7 @@ export function restoreConversation(
 		: runningSession(base, persisted, pty);
 	if (!pty?.sdk) return session;
 	daemonLog(
-		`session ${id} sdk resuming claude session ${resumeId} after daemon restart: composer locked until the resume completes`,
+		`session ${id} sdk resuming ${adapter.label} conversation ${resumeId} after daemon restart: composer locked until the resume completes`,
 	);
 	return { ...session, sdkResuming: true };
 }

@@ -2,12 +2,13 @@ import { Codex } from "@openai/codex-sdk";
 import { daemonLog } from "../../daemonLog";
 import { prepareCodexLaunch } from "../../prepareCodexLaunch";
 import type { DrivenSessionDriver } from "../DrivenSessionDriver";
+import { awaitCodexResume } from "./awaitCodexResume";
 import { codexSdkOptions } from "./codexSdkOptions";
 import { codexTurnEvents } from "./codexTurnEvents";
 
 export const codexSdkDriver: DrivenSessionDriver = {
 	harness: "codex-sdk",
-	start: ({ opts, label, abort, input }) => {
+	start: ({ opts, label, abort, control, input }) => {
 		prepareCodexLaunch(opts.cwd);
 		const options = codexSdkOptions(opts);
 		daemonLog(
@@ -17,6 +18,7 @@ export const codexSdkDriver: DrivenSessionDriver = {
 		const thread = opts.resumeId
 			? codex.resumeThread(opts.resumeId, options.thread)
 			: codex.startThread(options.thread);
+		if (opts.resumeId) awaitCodexResume(label, opts.resumeId, control);
 		const turns = codexTurnEvents(
 			input,
 			async (text, signal) =>

@@ -1,8 +1,6 @@
-import type {
-	SdkSessionEvent,
-	SessionProcess,
-} from "../../../../shared/harnessAdapters/types";
+import type { SessionProcess } from "../../../../shared/harnessAdapters/types";
 import { daemonLog } from "../daemonLog";
+import { sdkEventListeners } from "./sdkEventListeners";
 
 export type SdkTurnControls = {
 	send: (text: string) => void;
@@ -12,13 +10,13 @@ export type SdkTurnControls = {
 };
 
 export function sdkSessionHandle(label: string, backgroundTasks: boolean) {
-	const listeners: ((event: SdkSessionEvent) => void)[] = [];
+	const events = sdkEventListeners();
 	let turn: SdkTurnControls | undefined;
 	let prefixer: (() => string) | undefined;
 	const unbound = (action: string) =>
 		daemonLog(`${label} sdk ${action} dropped: query not started`);
 	const handle: NonNullable<SessionProcess["sdk"]> = {
-		onEvent: (listener) => listeners.push(listener),
+		onEvent: events.onEvent,
 		send: (text) => (turn ? turn.send(text) : unbound("message")),
 		interrupt: () => (turn ? turn.interrupt() : unbound("interrupt")),
 		dequeue: (index, text) => {
@@ -38,9 +36,7 @@ export function sdkSessionHandle(label: string, backgroundTasks: boolean) {
 	};
 	return {
 		handle,
-		emit: (event: SdkSessionEvent) => {
-			for (const listener of listeners) listener(event);
-		},
+		emit: events.emit,
 		/* why: held shell results join a message only as it reaches Claude, so a
 		 * message queued mid-turn still picks up output that finished after it. */
 		prefix: (text: string): string => {
