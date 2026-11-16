@@ -47,16 +47,20 @@ jobs:
           ref: ${{ steps.tag.outputs.tag }}
           fetch-depth: 0
 
+      - name: Setup pnpm
+        if: github.event_name == 'schedule'
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         if: github.event_name == 'schedule'
         uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-          cache: "npm"
+          cache: "pnpm"
 
       - name: Install dependencies
         if: github.event_name == 'schedule'
-        run: npm ci
+        run: pnpm install --frozen-lockfile
 
       - name: Check for iOS changes since the last TestFlight upload
         id: changes
@@ -93,11 +97,14 @@ jobs:
         with:
           xcode-version: latest-stable
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-          cache: "npm"
+          cache: "pnpm"
 
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
@@ -108,7 +115,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          npm ci
+          pnpm install --frozen-lockfile
           npm run ios:install
 
       - name: Build web app and sync to iOS
