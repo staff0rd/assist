@@ -1,3 +1,10 @@
+## [0.1189.1](https://github.com/staff0rd/assist/compare/v0.1189.0...v0.1189.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* don't wake parked runs mid-restore ([43ae300](https://github.com/staff0rd/assist/commit/43ae30053e612cb5af88dfd091fe3b74d011e054))
+
 # [0.1189.0](https://github.com/staff0rd/assist/compare/v0.1188.0...v0.1189.0) (2026-11-16)
 
 
