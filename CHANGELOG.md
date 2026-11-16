@@ -1,3 +1,10 @@
+## [0.1190.1](https://github.com/staff0rd/assist/compare/v0.1190.0...v0.1190.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* reinstall deps on PR lockfile change ([8dc8c91](https://github.com/staff0rd/assist/commit/8dc8c9115d36d6d351e941ba70946d3626405604))
+
 # [0.1190.0](https://github.com/staff0rd/assist/compare/v0.1189.5...v0.1190.0) (2026-11-16)
 
 
