@@ -14,4 +14,13 @@ describe("previewPaneCapabilities", () => {
 			closeOnly: false,
 		});
 	});
+
+	it("gives an issue edit pane screenshots beside its editable body", () => {
+		expect(previewPaneCapabilities("github-issue-edit")).toEqual({
+			isPr: false,
+			screenshots: true,
+			editable: true,
+			closeOnly: false,
+		});
+	});
 });

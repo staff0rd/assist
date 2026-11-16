@@ -16,7 +16,7 @@ export function sdkComposerKeyDown(
 	{ slash, suggestion, running, send, stop, stopShell }: SdkComposerKeys,
 ): void {
 	if (slash.onKeyDown(e)) return;
-	if (e.key === "Tab" && suggestion && !e.shiftKey) {
+	if (suggestion && acceptsSuggestion(e)) {
 		e.preventDefault();
 		slash.replace({ text: suggestion, cursor: suggestion.length });
 	} else if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing) {
@@ -32,4 +32,15 @@ export function sdkComposerKeyDown(
 		e.preventDefault();
 		stop();
 	}
+}
+
+function acceptsSuggestion(e: KeyboardEvent): boolean {
+	if (e.key === "Tab") return !e.shiftKey;
+	return (
+		e.key === "ArrowRight" &&
+		!e.shiftKey &&
+		!e.ctrlKey &&
+		!e.altKey &&
+		!e.metaKey
+	);
 }

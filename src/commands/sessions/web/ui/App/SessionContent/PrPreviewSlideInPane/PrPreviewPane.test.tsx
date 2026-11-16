@@ -5,6 +5,7 @@ import {
 	fireEvent,
 	render,
 	screen,
+	waitFor,
 } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { PrPreview } from "../../../../../shared/SessionInfoBase";
@@ -1248,7 +1249,6 @@ describe("PrPreviewPane inline comments", () => {
 			"backlog-item",
 			"pr-comment",
 			"github-issue-comment",
-			"github-issue-edit",
 			"miro-board",
 			"slack-post",
 		] as const;
@@ -1285,6 +1285,46 @@ describe("PrPreviewPane inline comments", () => {
 
 		const collapse = () =>
 			fireEvent.click(screen.getByRole("button", { name: "Collapse" }));
+
+		it("shows a pre-staged screenshot beside the body and approves it with a pasted one", async () => {
+			vi.stubGlobal(
+				"fetch",
+				vi.fn().mockResolvedValue({
+					ok: true,
+					json: async () => ({ path: "/staged/u1/shot.png", alt: "shot" }),
+				}),
+			);
+			const onDecision = vi.fn();
+			render(
+				<PrPreviewPane
+					preview={{
+						...issueEdit,
+						requestId: "e-shots",
+						screenshots: [{ path: "/staged/crash.png", alt: "Crash" }],
+					}}
+					cwd="/repo"
+					onDecision={onDecision}
+				/>,
+			);
+			expect(screen.getByRole("heading", { name: "Screenshots" })).toBeTruthy();
+
+			pasteImage("shot.png");
+			await waitFor(() =>
+				expect(screen.getAllByAltText("screenshot")).toHaveLength(2),
+			);
+
+			fireEvent.click(screen.getByRole("button", { name: "Approve" }));
+			expect(onDecision).toHaveBeenLastCalledWith(
+				"approve",
+				expect.objectContaining({
+					body: issueEdit.body,
+					screenshots: [
+						{ path: "/staged/crash.png", alt: "Crash" },
+						{ path: "/staged/u1/shot.png", alt: "shot" },
+					],
+				}),
+			);
+		});
 
 		it("wraps the selection in a details block shown in the pane", () => {
 			const { container } = render(

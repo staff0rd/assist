@@ -48,14 +48,16 @@ Display the result to the user.
 Rework the issue's body in the assist web preview pane. This is what a bare issue reference runs. Run it and nothing else:
 
 ```
-assist github issue edit <number> -R <owner>/<repo> 2>&1
+assist github issue edit <number> -R <owner>/<repo> [--screenshot '[Group/]Caption=path']... 2>&1
 ```
 
 If you already know the body you want (e.g. the user asked for a specific rewrite), read the current body with `gh issue view`, compose the revision, and pass it with `--body -` on stdin so the first preview shows your proposal rather than the unchanged body.
 
+When you already have an image or video to add to the issue (e.g. a file the user pointed at on disk), pass it with `--screenshot '[Group/]Caption=path'`, once per file, rather than asking the user to drop it into the preview. It is attached under the body's `## Screenshots` section for you; never author that section yourself.
+
 For a targeted change to the current body (strike items out, tick a box), run `assist github issue edit <number> -R <owner>/<repo> --fetch` first: it writes the current body to the working file and prints its path without opening a preview. Edit that file in place, then run the command without `--fetch` so the first preview shows your revision. Never run it without `--fetch` just to get the body.
 
-Do not check for a web session yourself — the command already knows. In a web session it fetches the issue's current body, opens it in the preview pane, and pushes the pane's markdown back on approval; outside one it just prints the issue. Only the body is ever touched — the title, labels, assignees and state are left alone.
+Do not check for a web session yourself — the command already knows. In a web session it fetches the issue's current body, opens it in the preview pane, and pushes the pane's markdown back on approval; outside one it just prints the issue, or with `--screenshot` attaches the files to the current body directly. Only the body is ever touched — the title, labels, assignees and state are left alone.
 
 Display the output so the user can see what happened. If the command exits non-zero, relay what it reported and stop — nothing was pushed. Two cases to relay verbatim:
 
@@ -83,13 +85,14 @@ Create a new issue from a free-form request (e.g. `create bug against owner/repo
 
 - **Milestone** — the milestone's title, passed as named; the command matches it against the repo's open milestones.
 - **Type** and **parent** — only if the request names them.
+- **Screenshots** — when you already have an image or video to include (e.g. a file the user pointed at on disk), pass it with `--screenshot '[Group/]Caption=path'`, once per file, rather than asking the user to drop it into the preview. It is attached under `## Screenshots` for you.
 
 If a named project, label or milestone doesn't match, list the available ones and ask the user which they meant (or whether to drop it). Never guess a near match or silently omit it. For a milestone, check `gh api repos/<owner>/<repo>/milestones --jq '.[].title'` before running, or relay the list the command prints when it rejects the name.
 
 Then run the command bare, as a background task, and do no other work until it returns — in a web session it blocks on the preview pane until the user approves or rejects:
 
 ```
-assist github issue create -R <owner>/<repo> --title "<title>" --body "<body>" [--label <name>]... [--project <number>] [--status <name>] [--milestone <name>] [--type <name>] [--parent <issue>] 2>&1
+assist github issue create -R <owner>/<repo> --title "<title>" --body "<body>" [--label <name>]... [--project <number>] [--status <name>] [--milestone <name>] [--type <name>] [--parent <issue>] [--screenshot '[Group/]Caption=path']... 2>&1
 ```
 
 Every option is resolved before the preview, so an unknown name creates nothing. Relay the outcome:

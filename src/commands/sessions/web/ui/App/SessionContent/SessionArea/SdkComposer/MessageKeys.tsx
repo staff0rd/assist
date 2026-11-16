@@ -4,7 +4,7 @@ export function MessageKeys({ suggestion }: { suggestion: boolean }) {
 		<>
 			{suggestion && (
 				<span>
-					<HintKey label="Tab" /> use suggestion
+					<HintKey label="Tab" /> / <HintKey label="→" /> use suggestion
 				</span>
 			)}
 			<span>

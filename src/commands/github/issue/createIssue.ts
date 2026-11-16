@@ -1,13 +1,11 @@
 import { validateProposedContent } from "../../../shared/validateProposedContent";
 import { appendScreenshots } from "../../prs/appendScreenshots";
+import { parseScreenshotSpecs } from "../../prs/parseScreenshotSpecs";
 import { applyCreatedIssueMetadata } from "./applyCreatedIssueMetadata";
 import { issuePreviewMetadata } from "./issuePreviewMetadata";
-import {
-	type CreateIssueMetadata,
-	resolveCreateIssueMetadata,
-} from "./resolveCreateIssueMetadata";
 import { reviewProposedIssue } from "./reviewProposedIssue";
 import { runGhIssueCreate } from "./runGhIssueCreate";
+import { preflightCreateIssue } from "./preflightCreateIssue";
 
 type CreateIssueOptions = {
 	title?: string;
@@ -19,21 +17,11 @@ type CreateIssueOptions = {
 	status?: string;
 	label?: string[];
 	milestone?: string;
+	screenshot?: string[];
 };
 
 const USAGE =
-	"Usage: assist github issue create --title <title> --body <body> [-R <owner>/<repo>] [--type <name>] [--parent <issue>] [--project <number>] [--status <name>] [--label <name>] [--milestone <name>]";
-
-function preflight(
-	options: CreateIssueOptions,
-): CreateIssueMetadata | undefined {
-	try {
-		return resolveCreateIssueMetadata(options);
-	} catch (error) {
-		console.error(error instanceof Error ? error.message : String(error));
-		process.exit(1);
-	}
-}
+	"Usage: assist github issue create --title <title> --body <body> [-R <owner>/<repo>] [--type <name>] [--parent <issue>] [--project <number>] [--status <name>] [--label <name>] [--milestone <name>] [--screenshot '[Group/]Caption=path']";
 
 export async function createIssue(options: CreateIssueOptions): Promise<void> {
 	if (!options.title || !options.body) {
@@ -48,15 +36,17 @@ export async function createIssue(options: CreateIssueOptions): Promise<void> {
 		body,
 	);
 
-	const resolved = preflight(options);
+	const screenshots = parseScreenshotSpecs(options.screenshot);
+	const resolved = preflightCreateIssue(options);
 
 	const decision = await reviewProposedIssue(
 		title,
 		body,
 		issuePreviewMetadata(resolved),
+		screenshots,
 	);
 
-	const attachments = decision?.screenshots ?? [];
+	const attachments = decision ? (decision.screenshots ?? []) : screenshots;
 	const output = runGhIssueCreate(
 		title,
 		appendScreenshots(body, attachments),

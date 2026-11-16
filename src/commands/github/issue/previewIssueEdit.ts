@@ -1,4 +1,5 @@
 import { readBodyArgument } from "../../prs/readBodyArgument";
+import type { PreviewAttachment } from "../../sessions/shared/PreviewAttachment";
 import { prepareIssueEdit } from "./prepareIssueEdit";
 import { pushUnchangedIssue } from "./pushUnchangedIssue";
 import { reviewProposedIssueEdit } from "./reviewProposedIssueEdit";
@@ -9,6 +10,7 @@ export async function previewIssueEdit(
 	repo: string | undefined,
 	fresh: boolean | undefined,
 	body: string | undefined,
+	screenshots: PreviewAttachment[] = [],
 ): Promise<void> {
 	const proposed = body ? await readBodyArgument(body) : undefined;
 	const issue = prepareIssueEdit(number, repo, fresh, proposed);
@@ -16,8 +18,9 @@ export async function previewIssueEdit(
 		`Edit ${issue.target}: ${issue.title}`,
 		issue.body,
 		{ path: issue.bodyPath, save: issue.save },
+		screenshots,
 	);
-	validateIssueBody(issue.title, edited);
+	validateIssueBody(issue.title, edited.body);
 
 	pushUnchangedIssue(
 		number,
@@ -25,5 +28,6 @@ export async function previewIssueEdit(
 		issue.target,
 		issue.updatedAt,
 		issue.bodyPath,
+		edited.screenshots,
 	);
 }
