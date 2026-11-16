@@ -1,4 +1,4 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
@@ -110,7 +110,11 @@ describe("pullKeepingIndex", () => {
 			thrown = error as Error;
 		}
 
-		const [sha, subject] = sh("git stash list --format='%H %gs'", local)
+		const [sha, subject] = execFileSync(
+			"git",
+			["stash", "list", "--format=%H %gs"],
+			{ cwd: local, encoding: "utf8" },
+		)
 			.trim()
 			.split(" ");
 		expect(subject).toBe("autostash");
