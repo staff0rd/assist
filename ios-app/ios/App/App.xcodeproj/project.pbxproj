@@ -21,6 +21,7 @@
 		A1457B042FF0000100A14570 /* AssistShortcuts.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B032FF0000100A14570 /* AssistShortcuts.swift */; };
 		A1457B062FF0000100A14570 /* HomeNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B052FF0000100A14570 /* HomeNode.swift */; };
 		A1457B082FF0000100A14570 /* RepoEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B072FF0000100A14570 /* RepoEntity.swift */; };
+		A1457B0E2FF0000100A14570 /* RepoMatcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B0D2FF0000100A14570 /* RepoMatcher.swift */; };
 		A1457B0C2FF0000100A14570 /* AssistBridgeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1457B0B2FF0000100A14570 /* AssistBridgeViewController.swift */; };
 /* End PBXBuildFile section */
 
@@ -41,6 +42,7 @@
 		A1457B032FF0000100A14570 /* AssistShortcuts.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistShortcuts.swift; sourceTree = "<group>"; };
 		A1457B052FF0000100A14570 /* HomeNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNode.swift; sourceTree = "<group>"; };
 		A1457B072FF0000100A14570 /* RepoEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepoEntity.swift; sourceTree = "<group>"; };
+		A1457B0D2FF0000100A14570 /* RepoMatcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepoMatcher.swift; sourceTree = "<group>"; };
 		A1457B0B2FF0000100A14570 /* AssistBridgeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AssistBridgeViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -85,6 +87,7 @@
 				A1457B032FF0000100A14570 /* AssistShortcuts.swift */,
 				A1457B052FF0000100A14570 /* HomeNode.swift */,
 				A1457B072FF0000100A14570 /* RepoEntity.swift */,
+				A1457B0D2FF0000100A14570 /* RepoMatcher.swift */,
 				504EC30B1FED79650016851F /* Main.storyboard */,
 				504EC30E1FED79650016851F /* Assets.xcassets */,
 				504EC3101FED79650016851F /* LaunchScreen.storyboard */,
@@ -183,6 +186,7 @@
 				A1457B042FF0000100A14570 /* AssistShortcuts.swift in Sources */,
 				A1457B062FF0000100A14570 /* HomeNode.swift in Sources */,
 				A1457B082FF0000100A14570 /* RepoEntity.swift in Sources */,
+				A1457B0E2FF0000100A14570 /* RepoMatcher.swift in Sources */,
 				A1457B0C2FF0000100A14570 /* AssistBridgeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

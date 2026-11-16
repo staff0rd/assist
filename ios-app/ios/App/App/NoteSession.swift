@@ -11,13 +11,14 @@ enum NoteSession {
         action: String,
         ask: LocalizedStringResource,
         repo: IntentParameter<RepoEntity?>,
+        repoName: IntentParameter<String?>,
         text: IntentParameter<String?>,
         confirmed: IntentParameter<Bool>
     ) async throws -> some IntentResult & ProvidesDialog {
-        _ = try await RepoQuery.fetchRepos()
+        let repos = try await RepoQuery.fetchRepos()
         var chosen = repo.wrappedValue
         if chosen == nil {
-            chosen = try await repo.requestValue("Which repo?")
+            chosen = try await askForRepo(among: repos, repo: repo, repoName: repoName)
         }
         guard let chosen else {
             return .result(dialog: "Okay, I didn't start anything.")
@@ -39,6 +40,28 @@ enum NoteSession {
             }
         }
         return .result(dialog: "Okay, I didn't start anything.")
+    }
+
+    // Siri drops answers to an entity prompt that it reads as something else (e.g. "APM" heard as the time "8pm"),
+    // so ask for plain text and match it here.
+    private static func askForRepo(
+        among repos: [RepoEntity],
+        repo: IntentParameter<RepoEntity?>,
+        repoName: IntentParameter<String?>
+    ) async throws -> RepoEntity? {
+        var prompt: IntentDialog = "Which repo?"
+        for _ in 1...maxAttempts {
+            let spoken = try await repoName.requestValue(prompt)
+            let matches = RepoMatcher.match(spoken, in: repos) { $0.name }
+            if matches.count == 1 {
+                return matches[0]
+            }
+            if matches.count > 1 {
+                return try await repo.requestDisambiguation(among: matches, dialog: "Which one?")
+            }
+            prompt = "I couldn't find a repo called \(spoken). Which repo?"
+        }
+        return nil
     }
 
     private static func start(mode: String, note: String, repo: RepoEntity) async throws {

@@ -8,6 +8,9 @@ struct DraftNoteIntent: AppIntent {
     @Parameter(title: "Repo")
     var repo: RepoEntity?
 
+    @Parameter(title: "Repo name")
+    var repoName: String?
+
     @Parameter(title: "Note")
     var text: String?
 
@@ -17,7 +20,7 @@ struct DraftNoteIntent: AppIntent {
     func perform() async throws -> some IntentResult & ProvidesDialog {
         try await NoteSession.confirmAndStart(
             mode: "draft", action: "Start a draft", ask: "What's the idea?",
-            repo: $repo, text: $text, confirmed: $confirmed
+            repo: $repo, repoName: $repoName, text: $text, confirmed: $confirmed
         )
     }
 }
@@ -30,6 +33,9 @@ struct BugNoteIntent: AppIntent {
     @Parameter(title: "Repo")
     var repo: RepoEntity?
 
+    @Parameter(title: "Repo name")
+    var repoName: String?
+
     @Parameter(title: "Bug")
     var text: String?
 
@@ -39,7 +45,7 @@ struct BugNoteIntent: AppIntent {
     func perform() async throws -> some IntentResult & ProvidesDialog {
         try await NoteSession.confirmAndStart(
             mode: "bug", action: "File the bug", ask: "What's the bug?",
-            repo: $repo, text: $text, confirmed: $confirmed
+            repo: $repo, repoName: $repoName, text: $text, confirmed: $confirmed
         )
     }
 }
@@ -52,6 +58,9 @@ struct PromptNoteIntent: AppIntent {
     @Parameter(title: "Repo")
     var repo: RepoEntity?
 
+    @Parameter(title: "Repo name")
+    var repoName: String?
+
     @Parameter(title: "Prompt")
     var text: String?
 
@@ -61,7 +70,7 @@ struct PromptNoteIntent: AppIntent {
     func perform() async throws -> some IntentResult & ProvidesDialog {
         try await NoteSession.confirmAndStart(
             mode: "prompt", action: "Start a session", ask: "What's the prompt?",
-            repo: $repo, text: $text, confirmed: $confirmed
+            repo: $repo, repoName: $repoName, text: $text, confirmed: $confirmed
         )
     }
 }
