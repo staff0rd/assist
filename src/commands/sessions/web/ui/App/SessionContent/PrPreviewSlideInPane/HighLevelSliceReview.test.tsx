@@ -197,24 +197,24 @@ describe("HighLevelSliceReview", () => {
 		expect(screen.getByText("No description")).toBeTruthy();
 	});
 
-	it("shows the description beneath the Backend PR tick", () => {
+	it("shows the description beneath the Related PRs tick", () => {
 		render(
 			<HighLevelReviewPane
 				preview={preview({
-					body: "Pairs with backend change.",
+					body: "Pairs with web change.",
 					checks: [
 						...checks,
-						manual("backend-pr-linked", "The backend PR is linked"),
+						manual("related-prs-linked", "Related PRs are linked"),
 					],
 				})}
 				onDecision={vi.fn()}
 			/>,
 		);
 
-		fireEvent.click(area(/Backend PR/));
+		fireEvent.click(area(/Related PRs/));
 
-		expect(screen.getByLabelText("The backend PR is linked")).toBeTruthy();
-		expect(screen.getByText("Pairs with backend change.")).toBeTruthy();
+		expect(screen.getByLabelText("Related PRs are linked")).toBeTruthy();
+		expect(screen.getByText("Pairs with web change.")).toBeTruthy();
 	});
 
 	it("still shows the description when reopening a saved draft", () => {

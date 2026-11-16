@@ -49,7 +49,7 @@ describe("evaluateHighLevelChecks", () => {
 			"structure-sensible",
 			"critical-diffs-correct",
 			"tests-worth-having",
-			"backend-pr-linked",
+			"related-prs-linked",
 		]);
 		expect(manual.every((result) => result.status === "manual")).toBe(true);
 		expect(manual.every((result) => result.reason.length > 0)).toBe(true);

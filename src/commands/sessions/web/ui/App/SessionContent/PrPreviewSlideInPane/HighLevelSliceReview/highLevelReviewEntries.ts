@@ -23,7 +23,7 @@ function overview(payload: HighLevelPreviewPayload): HighLevelReviewEntry {
 		"checks",
 		...(has("manual") ? (["manual"] as const) : []),
 		"all",
-		...(has("backend") ? (["backend"] as const) : []),
+		...(has("related") ? (["related"] as const) : []),
 	];
 	return {
 		additions: payload.structure.additions,

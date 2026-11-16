@@ -5,7 +5,7 @@ export type HighLevelArea =
 	| "checks"
 	| "manual"
 	| "all"
-	| "backend"
+	| "related"
 	| "structure"
 	| "tests"
 	| "critical";
@@ -15,7 +15,7 @@ export const highLevelAreaLabels: Record<HighLevelArea, string> = {
 	checks: "Checks",
 	manual: "Manual testing",
 	all: "All files",
-	backend: "Backend PR",
+	related: "Related PRs",
 	structure: "Structure",
 	tests: "Tests",
 	critical: "Critical diffs",
@@ -23,7 +23,7 @@ export const highLevelAreaLabels: Record<HighLevelArea, string> = {
 
 const AREA_CHECKS: Partial<Record<HighLevelArea, HighLevelCheckId>> = {
 	manual: "manual-testing",
-	backend: "backend-pr-linked",
+	related: "related-prs-linked",
 	structure: "structure-sensible",
 	tests: "tests-worth-having",
 	critical: "critical-diffs-correct",

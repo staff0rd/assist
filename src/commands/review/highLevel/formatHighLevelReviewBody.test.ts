@@ -81,7 +81,7 @@ describe("formatHighLevelReviewBody", () => {
 
 	it("lists each slice's comments under that slice, after the PR-wide ones", () => {
 		const body = formatHighLevelReviewBody([
-			item({ title: "Backend PR", comment: "None needed" }),
+			item({ title: "Related PRs", comment: "None needed" }),
 			item({
 				title: "Structure",
 				comment: "Split this",
@@ -99,7 +99,7 @@ describe("formatHighLevelReviewBody", () => {
 
 		expect(body).toBe(
 			[
-				"- 💬 **Backend PR** — None needed",
+				"- 💬 **Related PRs** — None needed",
 				"",
 				"**Slice 2: Move helpers**",
 				"",

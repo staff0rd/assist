@@ -6,12 +6,12 @@ describe("toChecklist", () => {
 		expect(
 			toChecklist([
 				{ id: "structure-sensible", ticked: true, slice: 2, comment: "ok" },
-				{ id: "backend-pr-linked", ticked: false },
+				{ id: "related-prs-linked", ticked: false },
 				{ id: "tests-worth-having", ticked: true, slice: "1" },
 			]),
 		).toEqual([
 			{ id: "structure-sensible", ticked: true, comment: "ok", slice: 2 },
-			{ id: "backend-pr-linked", ticked: false },
+			{ id: "related-prs-linked", ticked: false },
 			{ id: "tests-worth-having", ticked: true },
 		]);
 	});

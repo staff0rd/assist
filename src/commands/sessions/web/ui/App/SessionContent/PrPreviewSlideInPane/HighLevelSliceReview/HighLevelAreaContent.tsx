@@ -29,7 +29,7 @@ export function HighLevelAreaContent({
 				comments={comments}
 			/>
 		);
-	if (area === "description" || area === "backend")
+	if (area === "description" || area === "related")
 		return (
 			<HighLevelDescription
 				body={payload.body}

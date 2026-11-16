@@ -10,7 +10,7 @@ type ManualCheckId =
 	| "critical-diffs-correct"
 	| "tests-worth-having"
 	| "manual-testing"
-	| "backend-pr-linked";
+	| "related-prs-linked";
 
 export type HighLevelCheckId = DeterministicCheckId | ManualCheckId;
 
@@ -95,10 +95,10 @@ export const highLevelChecklist: HighLevelCheck[] = [
 			"Setup and numbered action → expected steps written by the slicing agent",
 	},
 	{
-		id: "backend-pr-linked",
+		id: "related-prs-linked",
 		kind: "manual",
-		title: "The backend PR is linked, if the change needs backend work",
-		short: "Backend PR",
+		title: "Related PRs in other repos are linked, if the change spans repos",
+		short: "Related PRs",
 		backing: "The PR body",
 	},
 ];
