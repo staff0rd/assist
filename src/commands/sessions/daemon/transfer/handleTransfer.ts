@@ -1,6 +1,7 @@
 import { daemonLog } from "../daemonLog";
 import { routed } from "../routed";
 import { cancelQueuedTransfer } from "./cancelQueuedTransfer";
+import { dismissTransferError } from "./dismissTransferError";
 import { transferDepsFor } from "./transferDepsFor";
 import { transferSession } from "./transferSession";
 
@@ -17,4 +18,10 @@ export const handleCancelTransfer = routed((_client, m, d) => {
 	const id = d.sessionId as string;
 	daemonLog(`cancel-transfer received: id=${id}`);
 	m.update(() => cancelQueuedTransfer(m.session(id), id));
+});
+
+export const handleDismissTransferError = routed((_client, m, d) => {
+	const id = d.sessionId as string;
+	daemonLog(`dismiss-transfer-error received: id=${id}`);
+	m.update(() => dismissTransferError(m.session(id), id));
 });

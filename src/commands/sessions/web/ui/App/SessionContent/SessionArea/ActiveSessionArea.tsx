@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import { SessionSlashProviders } from "../../../slashSuggestions/SessionSlashProviders";
 import type { SessionListHandlers, Transcript } from "../../../types";
+import { TransferBanner } from "../../../transfer/TransferBanner";
 import { ApiNodeContext } from "../../../useApiNode";
 import type {
 	FetchSessionTranscript,
@@ -46,6 +47,7 @@ export function ActiveSessionArea({
 						sessions={column.sessions}
 						lifecycle={lifecycle}
 					/>
+					{activeSession && <TransferBanner session={activeSession} />}
 					{transferring ? (
 						<TransferPanel session={activeSession} />
 					) : (

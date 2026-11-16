@@ -74,7 +74,7 @@ export function interruptSessionAction(send: SendFn) {
 export type TransferSessionFn = (
 	id: string,
 	target: string,
-	cwd: string,
+	cwd?: string,
 ) => void;
 
 export function transferSessionAction(send: SendFn): TransferSessionFn {
@@ -84,6 +84,11 @@ export function transferSessionAction(send: SendFn): TransferSessionFn {
 
 export function cancelTransferAction(send: SendFn) {
 	return (id: string) => send({ type: "cancel-transfer", sessionId: id });
+}
+
+export function dismissTransferErrorAction(send: SendFn) {
+	return (id: string) =>
+		send({ type: "dismiss-transfer-error", sessionId: id });
 }
 
 export function createRunAction(send: SendFn) {

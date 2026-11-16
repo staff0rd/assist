@@ -6,12 +6,14 @@ type TransferActions = {
 	nodes: NodesState | null;
 	transfer: TransferSessionFn;
 	cancel: (id: string) => void;
+	dismissError: (id: string) => void;
 };
 
 export const TransferContext = createContext<TransferActions>({
 	nodes: null,
 	transfer: () => {},
 	cancel: () => {},
+	dismissError: () => {},
 });
 
 export function useTransferContext(): TransferActions {

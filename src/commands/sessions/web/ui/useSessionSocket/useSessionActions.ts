@@ -1,6 +1,5 @@
 import { type RefObject, useMemo } from "react";
 import {
-	cancelTransferAction,
 	createRunAction,
 	inputAction,
 	interruptSessionAction,
@@ -9,10 +8,10 @@ import {
 	setAutoApproveAction,
 	setStarredAction,
 	stopSessionAction,
-	transferSessionAction,
 } from "../resumeSessionAction";
 import { prDecisionAction } from "./useSessionActions/prDecisionAction";
 import { useLaunchActions } from "./useSessionActions/useLaunchActions";
+import { useTransferActions } from "./useSessionActions/useTransferActions";
 import { useLifecycleActions } from "./useSessionActions/useLifecycleActions";
 import { outputAction } from "./useSessionActions/outputAction";
 import { dequeueMessageAction } from "../dequeueMessageAction";
@@ -43,8 +42,7 @@ export function useSessionActions(
 		stopShellCommand: useMemo(() => stopShellCommandAction(send), [send]),
 		discardShellResult: useMemo(() => discardShellResultAction(send), [send]),
 		startRun: useMemo(() => createRunAction(send), [send]),
-		transferSession: useMemo(() => transferSessionAction(send), [send]),
-		cancelTransfer: useMemo(() => cancelTransferAction(send), [send]),
+		...useTransferActions(send),
 	};
 
 	const onOutput = useMemo(
