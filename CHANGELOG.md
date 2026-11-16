@@ -1,3 +1,10 @@
+## [0.1205.1](https://github.com/staff0rd/assist/compare/v0.1205.0...v0.1205.1) (2026-11-16)
+
+
+### Bug Fixes
+
+* auto-review codex-sdk approvals ([9d5fab2](https://github.com/staff0rd/assist/commit/9d5fab2dcad33c9ddbee98ff14d725588c1aa145))
+
 # [0.1205.0](https://github.com/staff0rd/assist/compare/v0.1204.0...v0.1205.0) (2026-11-16)
 
 
