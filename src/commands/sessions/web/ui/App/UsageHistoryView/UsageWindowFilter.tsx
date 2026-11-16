@@ -7,7 +7,7 @@ import { usagePeakWindow } from "./usagePeakWindow";
 export type UsageWindowFilterValue = UsagePeakWindow | "all";
 
 const claudeWindows: UsagePeakWindow[] = ["five_hour", "seven_day"];
-const codexWindows: UsagePeakWindow[] = ["codex:five_hour", "codex:seven_day"];
+const codexWindows: UsagePeakWindow[] = ["codex:seven_day"];
 
 function filterOptions(
 	exposeCodex: boolean,
