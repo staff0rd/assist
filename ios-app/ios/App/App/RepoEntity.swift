@@ -43,7 +43,7 @@ struct RepoQuery: EntityStringQuery {
     }
 
     static func fetchRepos() async throws -> [RepoEntity] {
-        let request = URLRequest(url: try HomeNode.url("api/note-repos"), timeoutInterval: HomeNode.timeout)
+        let request = URLRequest(url: try HomeNode.url("api/clone-base-repos"), timeoutInterval: HomeNode.timeout)
         let data = try await HomeNode.send(request, expecting: 200)
         guard let listed = try? JSONDecoder().decode(RepoList.self, from: data) else {
             throw HomeNodeError.rejected
