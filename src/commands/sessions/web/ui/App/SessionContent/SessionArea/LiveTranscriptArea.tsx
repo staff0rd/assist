@@ -26,6 +26,7 @@ export function LiveTranscriptArea({
 		lastUserMessage,
 		lastAssistantMessage,
 		lastEchoAt,
+		transcriptRevision,
 	} = session;
 	// why: the daemon broadcasts these as the transcript grows, so each change means new rows to fetch
 	useEffect(() => {
@@ -38,6 +39,7 @@ export function LiveTranscriptArea({
 		lastUserMessage,
 		lastAssistantMessage,
 		lastEchoAt,
+		transcriptRevision,
 	]);
 	return (
 		<TranscriptArea

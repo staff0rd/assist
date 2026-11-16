@@ -83,6 +83,7 @@ export type Session = SdkViewState & {
 	undurable?: { reason: string; removesTree?: boolean };
 	transcriptPath?: string;
 	transcriptFingerprint?: string;
+	transcriptRevision?: number;
 	lastUserMessage?: string;
 	lastAssistantMessage?: string;
 	lastEchoAt?: string;

@@ -1,12 +1,10 @@
 import { lookupConversation } from "../shared/conversationOf";
 import { readTranscriptTail } from "../shared/readTranscriptTail";
+import { applyTranscriptChange } from "./applyTranscriptChange";
 import type { Session } from "./createSession";
-import { clearSeenSdkPending } from "./clearSeenSdkPending";
 import { daemonLog } from "./daemonLog";
 import type { OnStatusChange } from "./types";
-import { reportUnrecognisedShapes } from "./reportUnrecognisedShapes";
 import { resolveTranscriptPath } from "./resolveTranscriptPath";
-import { updateLastMessages } from "./updateLastMessages";
 
 function isFinished(session: Session): boolean {
 	return (
@@ -32,12 +30,7 @@ export async function reconcileTranscriptStatus(
 	const fingerprint = reader.fingerprint(entries);
 	if (fingerprint !== null && fingerprint === session.transcriptFingerprint)
 		return;
-	session.transcriptFingerprint = fingerprint ?? undefined;
-
-	reportUnrecognisedShapes(session, reader, entries);
-	const events = reader.events(entries);
-	updateLastMessages(session, events, notify);
-	clearSeenSdkPending(session, events, notify);
+	applyTranscriptChange(session, reader, entries, fingerprint, notify);
 
 	if (isFinished(session)) return;
 

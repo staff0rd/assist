@@ -214,18 +214,15 @@ describe("reconcileTranscriptStatus last user message", () => {
 		expect(notify).toHaveBeenCalledTimes(1);
 	});
 
-	it("does not notify when the prompt is unchanged", async () => {
+	it("keeps the prompt when only the tool rows change", async () => {
 		readMock.mockResolvedValue(resolvedBash("u-result"));
-		const notify = vi.fn();
 		const s = makeSession({ transcriptPath, status: "waiting" });
 
-		await reconcileTranscriptStatus(s, vi.fn(), notify);
-		notify.mockClear();
+		await reconcileTranscriptStatus(s, vi.fn());
 		readMock.mockResolvedValue(resolvedBash("u-result-2"));
-		await reconcileTranscriptStatus(s, vi.fn(), notify);
+		await reconcileTranscriptStatus(s, vi.fn());
 
 		expect(s.lastUserMessage).toBe("run");
-		expect(notify).not.toHaveBeenCalled();
 	});
 
 	it("clears a pending message once the transcript's latest user row contains it", async () => {
@@ -260,5 +257,54 @@ describe("reconcileTranscriptStatus last user message", () => {
 		await reconcileTranscriptStatus(s, vi.fn());
 
 		expect(s.sdkPending).toEqual(["hi"]);
+	});
+});
+
+describe("reconcileTranscriptStatus transcript revision", () => {
+	beforeEach(() => vi.clearAllMocks());
+
+	it("bumps the revision and notifies on a tool_use-only append", async () => {
+		const prompt = {
+			type: "user",
+			uuid: "u-prompt",
+			message: { content: "run" },
+		};
+		readMock.mockResolvedValue([prompt]);
+		const notify = vi.fn();
+		const s = makeSession({ transcriptPath, status: "running" });
+		await reconcileTranscriptStatus(s, vi.fn(), notify);
+		const before = s.transcriptRevision;
+		notify.mockClear();
+
+		readMock.mockResolvedValue([
+			prompt,
+			{
+				type: "assistant",
+				uuid: "u-tool",
+				message: {
+					stop_reason: "tool_use",
+					content: [{ type: "tool_use", id: "t1", name: "Bash", input: {} }],
+				},
+			},
+		]);
+		await reconcileTranscriptStatus(s, vi.fn(), notify);
+
+		expect(s.lastUserMessage).toBe("run");
+		expect(s.transcriptRevision).toBe((before ?? 0) + 1);
+		expect(notify).toHaveBeenCalledTimes(1);
+	});
+
+	it("neither bumps nor notifies when the fingerprint is unchanged", async () => {
+		readMock.mockResolvedValue(resolvedBash("u-result"));
+		const notify = vi.fn();
+		const s = makeSession({ transcriptPath, status: "waiting" });
+		await reconcileTranscriptStatus(s, vi.fn(), notify);
+		const before = s.transcriptRevision;
+		notify.mockClear();
+
+		await reconcileTranscriptStatus(s, vi.fn(), notify);
+
+		expect(s.transcriptRevision).toBe(before);
+		expect(notify).not.toHaveBeenCalled();
 	});
 });

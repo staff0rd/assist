@@ -93,6 +93,7 @@ export type SessionInfoBase = SdkViewState & {
 	lastUserMessage?: string;
 	lastAssistantMessage?: string;
 	lastEchoAt?: string;
+	transcriptRevision?: number;
 	sdk?: boolean;
 	cols?: number;
 	rows?: number;
