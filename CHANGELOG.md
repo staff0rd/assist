@@ -1,3 +1,10 @@
+## [0.1209.12](https://github.com/staff0rd/assist/compare/v0.1209.11...v0.1209.12) (2026-11-17)
+
+
+### Bug Fixes
+
+* align PR menu harness columns ([0ab8288](https://github.com/staff0rd/assist/commit/0ab8288cb519e0fbb7708b36f9e6282b4342e372))
+
 ## [0.1209.11](https://github.com/staff0rd/assist/compare/v0.1209.10...v0.1209.11) (2026-11-17)
 
 
