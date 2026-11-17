@@ -1,3 +1,10 @@
+## [0.1209.10](https://github.com/staff0rd/assist/compare/v0.1209.9...v0.1209.10) (2026-11-17)
+
+
+### Bug Fixes
+
+* merge every per-head review draft ([c244550](https://github.com/staff0rd/assist/commit/c24455075e808ad2dba8e22b278ad54354a05a76))
+
 ## [0.1209.9](https://github.com/staff0rd/assist/compare/v0.1209.8...v0.1209.9) (2026-11-17)
 
 
