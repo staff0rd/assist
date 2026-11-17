@@ -1,3 +1,10 @@
+## [0.1217.3](https://github.com/staff0rd/assist/compare/v0.1217.2...v0.1217.3) (2026-11-17)
+
+
+### Bug Fixes
+
+* merge jittered usage cycles into one ([4c25e8a](https://github.com/staff0rd/assist/commit/4c25e8af61eb08aa3667e9ca1b27ef0026ed96f1))
+
 ## [0.1217.2](https://github.com/staff0rd/assist/compare/v0.1217.1...v0.1217.2) (2026-11-17)
 
 
