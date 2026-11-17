@@ -98,4 +98,31 @@ describe("parseSessionFile", () => {
 			await handle.close();
 		}
 	});
+
+	it("reads only the first head when the first prompt has no cwd", async () => {
+		const filePath = writeSession([
+			{
+				type: "user",
+				sessionId: "abc",
+				message: { role: "user", content: "no cwd here" },
+			},
+			{
+				type: "assistant",
+				sessionId: "abc",
+				message: { role: "assistant", content: "y".repeat(40_000) },
+			},
+		]);
+		const handle = await fs.promises.open(filePath, "r");
+		const read = vi.spyOn(handle, "read");
+
+		try {
+			const meta = await readSessionMeta(handle);
+
+			expect(meta.cwd).toBe("");
+			expect(meta.name).toBe("no cwd here");
+			expect(read).toHaveBeenCalledTimes(1);
+		} finally {
+			await handle.close();
+		}
+	});
 });

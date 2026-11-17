@@ -15,7 +15,7 @@ export async function readSessionMeta(
 		meta = extractSessionMeta(
 			buf.toString("utf8", 0, bytesRead).split("\n").filter(Boolean),
 		);
-		if (bytesRead < size || (meta.cwd && meta.reachedFirstPrompt)) break;
+		if (bytesRead < size || meta.reachedFirstPrompt) break;
 	}
 	return meta;
 }
