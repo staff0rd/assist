@@ -1,3 +1,10 @@
+# [0.1210.0](https://github.com/staff0rd/assist/compare/v0.1209.15...v0.1210.0) (2026-11-17)
+
+
+### Features
+
+* yolo mode answers Recommended forms ([e798fd9](https://github.com/staff0rd/assist/commit/e798fd96812d2b0d34df1d0beb48c1e1f47ff388))
+
 ## [0.1209.15](https://github.com/staff0rd/assist/compare/v0.1209.14...v0.1209.15) (2026-11-17)
 
 
