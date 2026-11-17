@@ -47,7 +47,11 @@ export function createSdkTurnTracker(
 			setStatus("running");
 		},
 		dequeue: queue.remove,
-		interrupt: (request: () => Promise<void>) =>
-			interrupt.request(busy, request),
+		interrupt: (request: () => Promise<void>) => {
+			/* why: the displayed status can claim a turn the query never started
+			 * (e.g. a late hook report), so Stop settles it back to waiting. */
+			if (!busy) emit.resyncStatus("waiting");
+			interrupt.request(busy, request);
+		},
 	};
 }

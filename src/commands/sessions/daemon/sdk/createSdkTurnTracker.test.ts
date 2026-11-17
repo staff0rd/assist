@@ -139,12 +139,22 @@ describe("createSdkTurnTracker", () => {
 		expect(events).toContainEqual({ kind: "interrupting", pending: false });
 	});
 
-	it("ignores an interrupt when no turn is running", () => {
+	it("resyncs the status to waiting on an interrupt when no turn is running", () => {
 		const { events, turn } = setup();
 		const request = vi.fn(() => Promise.resolve());
 		turn.interrupt(request);
 		expect(request).not.toHaveBeenCalled();
-		expect(events).toEqual([]);
+		expect(events).toEqual([{ kind: "status", status: "waiting" }]);
+	});
+
+	it("resyncs waiting on an idle interrupt even after the turn already reported waiting", () => {
+		const { events, turn } = setup();
+		turn.start("first");
+		turn.setStatus("running");
+		turn.setStatus("waiting");
+		events.length = 0;
+		turn.interrupt(vi.fn(() => Promise.resolve()));
+		expect(events).toEqual([{ kind: "status", status: "waiting" }]);
 	});
 
 	it("clears the pending interrupt when the request fails", async () => {

@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { makeSession } from "../../../test/mothers/makeSession";
 import { reconcileTranscriptStatus } from "./reconcileTranscriptStatus";
 import { readTranscriptTail } from "../shared/readTranscriptTail";
+import { createSdkSessionProcess } from "./sdk/createSdkSessionProcess";
 
 vi.mock("../shared/readTranscriptTail", () => ({
 	readTranscriptTail: vi.fn(),
@@ -71,6 +72,18 @@ describe("reconcileTranscriptStatus", () => {
 		await reconcileTranscriptStatus(s, onStatusChange);
 
 		expect(onStatusChange).toHaveBeenCalledWith(s, "waiting");
+	});
+
+	it("leaves a resumed SDK session waiting despite a mid-turn transcript tail", async () => {
+		readMock.mockResolvedValue(pendingBash());
+		const onStatusChange = vi.fn();
+		const pty = createSdkSessionProcess("1", new AbortController()).process;
+		const s = makeSession({ transcriptPath, status: "waiting", pty });
+
+		await reconcileTranscriptStatus(s, onStatusChange);
+
+		expect(onStatusChange).not.toHaveBeenCalled();
+		expect(s.status).toBe("waiting");
 	});
 
 	it("does not fire when the transcript already agrees with the current status", async () => {
