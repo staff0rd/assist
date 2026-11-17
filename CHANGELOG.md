@@ -1,3 +1,10 @@
+## [0.1209.5](https://github.com/staff0rd/assist/compare/v0.1209.4...v0.1209.5) (2026-11-17)
+
+
+### Bug Fixes
+
+* fail connector runs missing tools ([77734f7](https://github.com/staff0rd/assist/commit/77734f751b1a2075b714ad31ebb644a57e6c6235))
+
 ## [0.1209.4](https://github.com/staff0rd/assist/compare/v0.1209.3...v0.1209.4) (2026-11-17)
 
 
