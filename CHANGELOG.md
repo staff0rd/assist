@@ -1,3 +1,10 @@
+## [0.1209.15](https://github.com/staff0rd/assist/compare/v0.1209.14...v0.1209.15) (2026-11-17)
+
+
+### Bug Fixes
+
+* bind worktree before broadcast ([eb6583a](https://github.com/staff0rd/assist/commit/eb6583a701c7fa6964b7f8c6ee23db9152b028ed))
+
 ## [0.1209.14](https://github.com/staff0rd/assist/compare/v0.1209.13...v0.1209.14) (2026-11-17)
 
 
