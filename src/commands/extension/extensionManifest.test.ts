@@ -5,7 +5,8 @@ const manifest = JSON.parse(
 	readFileSync("extension/manifest.json", "utf8"),
 ) as {
 	description: string;
-	content_scripts: { js: string[] }[];
+	content_scripts: { js: string[]; matches: string[] }[];
+	host_permissions: string[];
 	content_security_policy?: { extension_pages?: string };
 	action?: { default_icon?: unknown; default_popup?: string };
 	options_ui?: { open_in_tab?: boolean };
@@ -29,6 +30,12 @@ describe("extension manifest", () => {
 
 	it("opens the options page in its own tab", () => {
 		expect(manifest.options_ui?.open_in_tab).toBe(true);
+	});
+
+	it("injects the docs script on any http host so tailnet docs previews get the feedback popover", () => {
+		const docs = manifest.content_scripts.find((s) => s.js.includes("docs.js"));
+		expect(docs?.matches).toEqual(["http://*/*"]);
+		expect(manifest.host_permissions).toContain("http://*/*");
 	});
 
 	it("bundles every content script it declares", () => {

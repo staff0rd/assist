@@ -6,7 +6,7 @@ import type { BrowserReply } from "./types";
 type Api = NonNullable<ReturnType<typeof browserApi>>;
 
 const ASSIST_HOSTS =
-	"github.com, dev.azure.com, *.visualstudio.com, localhost, 127.0.0.1";
+	"github.com, dev.azure.com, *.visualstudio.com, any http:// host";
 
 export async function resolveTargetTab(
 	api: Api,

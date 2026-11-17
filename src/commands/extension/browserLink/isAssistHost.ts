@@ -1,5 +1,3 @@
-const LOCAL_HOSTS = new Set(["localhost", "127.0.0.1"]);
-
 export function isAssistHost(url: string | undefined): boolean {
 	if (!url) return false;
 	let parsed: URL;
@@ -9,7 +7,7 @@ export function isAssistHost(url: string | undefined): boolean {
 		return false;
 	}
 	const { protocol, hostname } = parsed;
-	if (protocol === "http:") return LOCAL_HOSTS.has(hostname);
+	if (protocol === "http:") return true;
 	if (protocol !== "https:") return false;
 	return (
 		hostname === "github.com" ||
