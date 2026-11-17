@@ -4,10 +4,12 @@ import { readSlashCommands, type SlashCommand } from "./readSlashCommands";
 export function listSlashCommands(
 	claudeHome: string,
 	cwd: string,
+	projectCommands?: SlashCommand[] | null,
 ): SlashCommand[] {
 	const user = readSlashCommands(claudeHome, "user");
 	const userNames = new Set(user.map((command) => command.name));
-	const project = readSlashCommands(path.join(cwd, ".claude"), "project");
+	const project =
+		projectCommands ?? readSlashCommands(path.join(cwd, ".claude"), "project");
 	return [
 		...user,
 		...project.filter((command) => !userNames.has(command.name)),

@@ -22,6 +22,7 @@ export function NewSessionFields({
 		props.harness,
 		draft.cwd,
 		draft.node,
+		true,
 	);
 	return (
 		<NewSessionFieldsLayout

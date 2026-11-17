@@ -30,7 +30,12 @@ export function PhoneNewSessionPrompt({
 	placeholder: string;
 }) {
 	const node = form.nodes.length > 0 ? form.node : undefined;
-	const commands = useSuggestedSlashCommands(form.harness, form.cwd, node);
+	const commands = useSuggestedSlashCommands(
+		form.harness,
+		form.cwd,
+		node,
+		true,
+	);
 	const slash = useSlashSuggestions(commands, form.prompt, form.setPrompt);
 	return (
 		<>

@@ -1,12 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
 import { splitFrontmatter } from "../../../sync/splitFrontmatter";
+import {
+	mergeSlashCommands,
+	type SlashCommand,
+	type SlashEntry,
+} from "./mergeSlashCommands";
 
-export type SlashCommand = {
-	name: string;
-	description?: string;
-	scope: "user" | "project";
-};
+export type { SlashCommand } from "./mergeSlashCommands";
 
 function readEntries(dir: string): fs.Dirent[] {
 	try {
@@ -24,7 +25,7 @@ function describe(file: string): string | undefined {
 	}
 }
 
-function readSkills(dir: string): Omit<SlashCommand, "scope">[] {
+function readSkills(dir: string): SlashEntry[] {
 	return readEntries(dir)
 		.filter((entry) => entry.isDirectory() || entry.isSymbolicLink())
 		.map((entry) => path.join(dir, entry.name, "SKILL.md"))
@@ -35,7 +36,7 @@ function readSkills(dir: string): Omit<SlashCommand, "scope">[] {
 		}));
 }
 
-function readCommands(dir: string): Omit<SlashCommand, "scope">[] {
+function readCommands(dir: string): SlashEntry[] {
 	return readEntries(dir)
 		.filter((entry) => !entry.isDirectory() && entry.name.endsWith(".md"))
 		.map((entry) => ({
@@ -48,11 +49,9 @@ export function readSlashCommands(
 	home: string,
 	scope: SlashCommand["scope"],
 ): SlashCommand[] {
-	const byName = new Map<string, SlashCommand>();
-	for (const command of [
-		...readCommands(path.join(home, "commands")),
-		...readSkills(path.join(home, "skills")),
-	])
-		byName.set(command.name, { ...command, scope });
-	return [...byName.values()].sort((a, b) => a.name.localeCompare(b.name));
+	return mergeSlashCommands(
+		readCommands(path.join(home, "commands")),
+		readSkills(path.join(home, "skills")),
+		scope,
+	);
 }

@@ -7,6 +7,7 @@ import { withNode } from "../withNode";
 export function useSlashCommands(
 	cwd: string | undefined,
 	node: string | undefined,
+	startPoint = false,
 ): SlashCommand[] {
 	const [commands, setCommands] = useState<SlashCommand[]>([]);
 
@@ -14,9 +15,8 @@ export function useSlashCommands(
 		setCommands([]);
 		if (!cwd) return;
 		let cancelled = false;
-		apiFetch(
-			withNode(`/api/slash-commands?cwd=${encodeURIComponent(cwd)}`, node),
-		)
+		const query = `cwd=${encodeURIComponent(cwd)}${startPoint ? "&startPoint=1" : ""}`;
+		apiFetch(withNode(`/api/slash-commands?${query}`, node))
 			.then((res) => res.json())
 			.then((body: { commands?: SlashCommand[] }) => {
 				if (!cancelled && Array.isArray(body.commands))
@@ -26,7 +26,7 @@ export function useSlashCommands(
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd, node]);
+	}, [cwd, node, startPoint]);
 
 	return commands;
 }

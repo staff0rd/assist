@@ -51,3 +51,19 @@ describe("listSlashCommands", () => {
 		]);
 	});
 });
+
+describe("listSlashCommands with given project commands", () => {
+	it("uses them instead of the cwd's working tree", () => {
+		write("repo/.claude/commands/stale.md");
+		write("home/.claude/commands/helm.md");
+		expect(
+			listSlashCommands(home, cwd, [
+				{ name: "helm", scope: "project" },
+				{ name: "fresh", description: "F", scope: "project" },
+			]),
+		).toEqual([
+			{ name: "helm", description: undefined, scope: "user" },
+			{ name: "fresh", description: "F", scope: "project" },
+		]);
+	});
+});
