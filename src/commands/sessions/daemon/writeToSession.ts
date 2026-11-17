@@ -17,7 +17,10 @@ export function writeToSession(
 ): void {
 	const s = sessions.get(id);
 	if (!s || s.status === "done") return;
-	if (isSdkSession(s)) return writeToSdkSession(s, data);
+	if (isSdkSession(s)) {
+		claimViewer(s, viewer, "input");
+		return writeToSdkSession(s, data);
+	}
 	const response = isTerminalResponse(data);
 	if (dropsInactiveViewerResponse(s, response, viewer)) return;
 	s.pty?.write(data);

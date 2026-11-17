@@ -68,11 +68,34 @@ describe("active viewer", () => {
 	it("claims the session on input", () => {
 		const { pty, session, sessions } = liveSession({ activeViewer: "a" });
 
-		writeToSession(sessions, "1", "x", vi.fn(), { viewerId: "b", onClaim });
+		writeToSession(sessions, "1", "x", vi.fn(), {
+			viewerId: "b",
+			viewerNode: "node-b",
+			onClaim,
+		});
 
 		expect(onClaim).toHaveBeenCalledOnce();
 		expect(session.activeViewer).toBe("b");
+		expect(session.activeViewerNode).toBe("node-b");
 		expect(pty.write).toHaveBeenCalledWith("x");
+	});
+
+	it("records the viewer and its node on SDK input", () => {
+		const { pty, session, sessions } = liveSession({ activeViewer: "a" });
+		const send = vi.fn();
+		Object.assign(pty, { sdk: { send } });
+
+		writeToSession(sessions, "1", "\x1b[200~hi\x1b[201~", vi.fn(), {
+			viewerId: "b",
+			viewerNode: "node-b",
+			onClaim,
+		});
+
+		expect(onClaim).toHaveBeenCalledOnce();
+		expect(session.activeViewer).toBe("b");
+		expect(session.activeViewerNode).toBe("node-b");
+		expect(send).toHaveBeenCalledWith("hi");
+		expect(pty.write).not.toHaveBeenCalled();
 	});
 
 	it("drops automatic terminal responses from an inactive viewer", () => {
