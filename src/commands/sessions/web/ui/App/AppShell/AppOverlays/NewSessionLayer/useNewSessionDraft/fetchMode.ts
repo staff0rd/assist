@@ -1,5 +1,6 @@
 import { apiFetch } from "../../../../../apiFetch";
 import { reportCaughtError } from "../../../../../clientFailures/reportCaughtError";
+import { withNode } from "../../../../../withNode";
 import { type NewSessionMode, newSessionModes } from "../newSessionModes";
 import { type ModeHarnesses, parseModeHarnesses } from "./parseModeHarnesses";
 import { type ModeModels, parseModeModels } from "./parseModeModels";
@@ -14,10 +15,12 @@ async function failureMessage(res: Response): Promise<string> {
 	return typeof body?.error === "string" ? `${status}: ${body.error}` : status;
 }
 
-export async function fetchMode(cwd: string): Promise<Outcome> {
+export async function fetchMode(cwd: string, node?: string): Promise<Outcome> {
 	try {
 		const query = cwd ? `?cwd=${encodeURIComponent(cwd)}` : "";
-		const res = await apiFetch(`/api/new-session-defaults${query}`);
+		const res = await apiFetch(
+			withNode(`/api/new-session-defaults${query}`, node),
+		);
 		if (!res.ok) return { error: await failureMessage(res) };
 		const body = await res.json();
 		if (Object.hasOwn(newSessionModes, body?.mode))

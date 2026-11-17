@@ -123,3 +123,36 @@ it("reports an unreadable response body", async () => {
 	expect(result.current?.error).toBeDefined();
 	expect(getClientFailures()[0]).toMatchObject({ kind: "caught" });
 });
+
+it("fetches the defaults from the selected node", async () => {
+	const fetch = stubMode("prompt");
+	renderHook(() => useDefaultNewSessionMode("/Users/me/git/db", 0, "mac"));
+	await act(async () => {});
+
+	expect(fetch).toHaveBeenCalledWith(
+		"/api/new-session-defaults?cwd=%2FUsers%2Fme%2Fgit%2Fdb&node=mac",
+		expect.anything(),
+	);
+});
+
+it("refetches the defaults when the selected node changes", async () => {
+	stubMode("draft");
+	const { result, rerender } = renderHook(
+		({ node }: { node?: string }) =>
+			useDefaultNewSessionMode("/git/db", 0, node),
+		{ initialProps: {} },
+	);
+	await act(async () => {});
+	expect(result.current?.mode).toBe("draft");
+
+	const fetch = stubMode("prompt");
+	rerender({ node: "mac" });
+	expect(result.current?.pending).toBe(true);
+
+	await act(async () => {});
+	expect(result.current).toMatchObject({ mode: "prompt", pending: false });
+	expect(fetch).toHaveBeenCalledWith(
+		"/api/new-session-defaults?cwd=%2Fgit%2Fdb&node=mac",
+		expect.anything(),
+	);
+});

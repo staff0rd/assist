@@ -13,11 +13,18 @@ export type LoadedDefaultMode = {
 	retry?: () => void;
 };
 
-type Loaded = { cwd: string; opens: number; attempt: number; outcome: Outcome };
+type Loaded = {
+	cwd: string;
+	node: string | undefined;
+	opens: number;
+	attempt: number;
+	outcome: Outcome;
+};
 
 export function useDefaultNewSessionMode(
 	cwd: string,
 	opens = 0,
+	node?: string,
 ): LoadedDefaultMode | null {
 	const [attempt, setAttempt] = useState(0);
 	const [loaded, setLoaded] = useState<Loaded | null>(null);
@@ -25,13 +32,13 @@ export function useDefaultNewSessionMode(
 
 	useEffect(() => {
 		let cancelled = false;
-		void fetchMode(cwd).then((outcome) => {
-			if (!cancelled) setLoaded({ cwd, opens, attempt, outcome });
+		void fetchMode(cwd, node).then((outcome) => {
+			if (!cancelled) setLoaded({ cwd, node, opens, attempt, outcome });
 		});
 		return () => {
 			cancelled = true;
 		};
-	}, [cwd, opens, attempt]);
+	}, [cwd, node, opens, attempt]);
 
 	if (!loaded) return null;
 	const { outcome } = loaded;
@@ -41,6 +48,7 @@ export function useDefaultNewSessionMode(
 		models: "models" in outcome ? outcome.models : {},
 		pending:
 			loaded.cwd !== cwd ||
+			loaded.node !== node ||
 			loaded.opens !== opens ||
 			loaded.attempt !== attempt,
 		error: "error" in outcome ? outcome.error : undefined,

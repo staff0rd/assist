@@ -39,13 +39,15 @@ export function useNewSessionDraft(
 	useDefaultMode: (
 		cwd: string,
 		opens: number,
+		node?: string,
 	) => LoadedDefaultMode | null = useDefaultNewSessionMode,
 ): NewSessionDraft | null {
 	const { selectedCwd } = useRepoSelectionContext();
 	const { visible, selected, select } = useNodeSelectionContext();
 	const state = useDraftState();
 	const cwd = state.cwd ?? selectedCwd;
-	const defaultMode = useDefaultMode(cwd, opens);
+	const node = visible ? selected : undefined;
+	const defaultMode = useDefaultMode(cwd, opens, node);
 
 	if (!defaultMode) return null;
 	const mode = state.mode ?? defaultMode.mode;
@@ -58,7 +60,7 @@ export function useNewSessionDraft(
 		modePending: state.mode === undefined && defaultMode.pending,
 		modeError: defaultModeError(state.mode, defaultMode),
 		retryMode: defaultMode.retry,
-		node: visible ? selected : undefined,
+		node,
 		setNode: select,
 	};
 }

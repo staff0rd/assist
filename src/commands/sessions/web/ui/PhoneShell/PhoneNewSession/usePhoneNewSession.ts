@@ -10,10 +10,11 @@ export function usePhoneNewSession(socket: SessionSocket, opens: number) {
 	const draft = usePhoneDraftState();
 	const { names, visible } = socket.nodeSelection;
 	const target = useNodeRepoTarget(socket, draft.node, draft.cwd);
-	const defaultMode = useDefaultNewSessionMode(target.cwd, opens);
+	const node = visible ? target.node : undefined;
+	const defaultMode = useDefaultNewSessionMode(target.cwd, opens, node);
 	const mode = draft.mode ?? defaultMode?.mode ?? "prompt";
 	const { harness, harnesses, model } = usePhoneModeHarness(
-		visible ? target.node : undefined,
+		node,
 		draft,
 		defaultMode,
 		mode,
@@ -39,7 +40,7 @@ export function usePhoneNewSession(socket: SessionSocket, opens: number) {
 				harness,
 				model: model?.model,
 				cwd: target.cwd,
-				node: visible ? target.node : undefined,
+				node,
 			}),
 	};
 }
