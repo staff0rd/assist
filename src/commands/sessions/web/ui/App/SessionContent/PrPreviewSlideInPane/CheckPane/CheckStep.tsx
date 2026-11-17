@@ -2,9 +2,9 @@ import { Box, type Theme } from "@mui/material";
 import { useMemo } from "react";
 import { MarkdownHtml } from "../../../../../../../backlog/web/ui/components/MarkdownHtml";
 import { renderMarkdownInline } from "../../../../../../../backlog/web/ui/components/renderMarkdown";
-import { addCopyButtons } from "../../ShowPane/addCopyButtons";
-import { copyCodeButtonSx } from "../../ShowPane/copyCodeButtonSx";
-import { copyCodeOnClick } from "../../ShowPane/copyCodeOnClick";
+import { addCopyButtons } from "../../copyCode/addCopyButtons";
+import { copyCodeButtonSx } from "../../copyCode/copyCodeButtonSx";
+import { copyCodeOnClick } from "../../copyCode/copyCodeOnClick";
 import { inlineMarkdownSx } from "./InlineMarkdown";
 
 const checkStepSx = (theme: Theme) => ({

@@ -8,8 +8,8 @@ import { CommentSentSnackbar } from "../CommentSentSnackbar";
 import { PrPreviewHeader } from "./PrPreviewHeader";
 import { useHighLevelDiffComments } from "./PrPreviewSlideInPane/HighLevelReviewPane/useHighLevelReviewPane/useHighLevelDiffComments";
 import { prPreviewPaneSx } from "./prPreviewPaneSx";
-import { addCopyButtons } from "./ShowPane/addCopyButtons";
-import { copyCodeOnClick } from "./ShowPane/copyCodeOnClick";
+import { addCopyButtons } from "./copyCode/addCopyButtons";
+import { copyCodeOnClick } from "./copyCode/copyCodeOnClick";
 import { ShowCommentLayer } from "./ShowPane/ShowCommentLayer";
 import { showBodySx } from "./ShowPane/showBodySx";
 
