@@ -1,3 +1,11 @@
+## [0.1214.1](https://github.com/staff0rd/assist/compare/v0.1214.0...v0.1214.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* rebind SDK sessions after /clear ([9e3070b](https://github.com/staff0rd/assist/commit/9e3070bcce5950b7e218b718488faf5d61a52e8a))
+* sync reused PR checkouts to PR head ([a7dc219](https://github.com/staff0rd/assist/commit/a7dc21938c33c80d3262da0b20809dc42f732c9b))
+
 # [0.1214.0](https://github.com/staff0rd/assist/compare/v0.1213.3...v0.1214.0) (2026-11-17)
 
 
