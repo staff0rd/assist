@@ -1,3 +1,10 @@
+# [0.1214.0](https://github.com/staff0rd/assist/compare/v0.1213.3...v0.1214.0) (2026-11-17)
+
+
+### Features
+
+* suggest built-in /clear in SDK composer ([ce1ff44](https://github.com/staff0rd/assist/commit/ce1ff44aeced18c769b75ddcdc8233f261fc92ad))
+
 ## [0.1213.3](https://github.com/staff0rd/assist/compare/v0.1213.2...v0.1213.3) (2026-11-17)
 
 
