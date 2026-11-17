@@ -66,6 +66,15 @@ describe("readSlashCommandsAtRef", () => {
 		]);
 	});
 
+	it("reads another harness's project dir when named", async () => {
+		write(".agents/skills/commit/SKILL.md", "---\ndescription: Commit\n---\n");
+		write(".claude/skills/helm/SKILL.md");
+		commitAll("add codex skill");
+		expect(
+			await readSlashCommandsAtRef(repo, "main", "project", ".agents"),
+		).toEqual([{ name: "commit", description: "Commit", scope: "project" }]);
+	});
+
 	it("returns an empty list when the ref has no .claude folder", async () => {
 		expect(await readSlashCommandsAtRef(repo, "base", "project")).toEqual([]);
 	});

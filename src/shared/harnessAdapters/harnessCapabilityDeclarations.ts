@@ -97,10 +97,7 @@ const codex: CapabilityDeclarations = {
 	),
 	// codex-cli 0.167.1 reports request_user_input and selectable request_user_input_async via PreToolUse; captured in question fixtures and replayed through codexHook.
 	"intercept.question": supported,
-	"slashCommands.suggest": unsupported(
-		"assist reads skills and commands only from Claude's home and project dirs",
-		"type the Codex skill name in full in the phone reply bar",
-	),
+	"slashCommands.suggest": supported,
 	"session.driven": unsupported(
 		"Codex runs in a terminal the daemon mirrors rather than a session the daemon drives",
 		"pick Codex (SDK) for a session driven through the Codex SDK",
@@ -211,7 +208,7 @@ export const harnessCapabilityDeclarations: Record<
 		),
 		"intercept.question": supported,
 		"slashCommands.suggest": unsupported(
-			"assist reads skills and commands only from Claude's home and project dirs",
+			"assist reads skills and commands only from Claude's and Codex's skill dirs, not pi's prompts dir",
 			"type the pi prompt name in full in the phone reply bar",
 		),
 		"session.driven": unsupported(

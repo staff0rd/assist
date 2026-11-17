@@ -182,17 +182,14 @@ describe("PhoneNewSessionSheet", () => {
 		expect(screen.queryByRole("listbox")).toBeNull();
 	});
 
-	it("suggests no skills for a harness without slash suggestions", async () => {
+	it("asks for the picked Codex harness's skills", async () => {
 		configured.harnesses = { draft: "codex" };
 		renderSheet();
 		fireEvent.click(screen.getByRole("radio", { name: "Draft" }));
-		await waitFor(() => expect(apiFetch).toHaveBeenCalled());
-		const prompt = screen.getByRole("textbox", { name: "Prompt" });
-
-		fireEvent.change(prompt, { target: { value: "/dr" } });
-		fireEvent.select(prompt, { target: { selectionEnd: 3 } });
-
-		await new Promise((resolve) => setTimeout(resolve, 0));
-		expect(screen.queryByRole("listbox")).toBeNull();
+		await waitFor(() =>
+			expect(apiFetch).toHaveBeenCalledWith(
+				expect.stringContaining("harness=codex"),
+			),
+		);
 	});
 });

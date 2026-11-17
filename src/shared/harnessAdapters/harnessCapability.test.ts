@@ -9,6 +9,15 @@ describe("harnessCapability", () => {
 		);
 	});
 
+	it.each(["codex", "codex-sdk"] as const)(
+		"suggests slash commands for %s",
+		(harness) => {
+			expect(
+				harnessCapability(harness, "slashCommands.suggest").supported,
+			).toBe(true);
+		},
+	);
+
 	it("reports an unknown harness kind as unsupported instead of throwing", () => {
 		const status = harnessCapability(
 			"future-harness" as HarnessKind,

@@ -10,8 +10,14 @@ vi.mock("../../../../shared/web", () => ({
 }));
 
 vi.mock("../../../../shared/harnesses", () => ({
-	harnesses: { claude: { homeDir: "/home/me/.claude" } },
+	harnesses: {
+		claude: { slashCommandSources: { projectDirs: [".claude"] } },
+		"codex-sdk": { slashCommandSources: { projectDirs: [".agents"] } },
+	},
 }));
+
+const claude = { projectDirs: [".claude"] };
+const codex = { projectDirs: [".agents"] };
 
 vi.mock("./listSlashCommands", () => ({
 	listSlashCommands: (...args: unknown[]) => mockRead(...args),
@@ -42,7 +48,7 @@ describe("slashCommands", () => {
 			200,
 			{ commands: [{ name: "draft", scope: "user" }] },
 		]);
-		expect(mockRead).toHaveBeenCalledWith("/home/me/.claude", "/repo", null);
+		expect(mockRead).toHaveBeenCalledWith(claude, "/repo", null);
 		expect(mockStartPoint).not.toHaveBeenCalled();
 	});
 
@@ -50,14 +56,24 @@ describe("slashCommands", () => {
 		const project = [{ name: "helm", scope: "project" }];
 		mockStartPoint.mockResolvedValue(project);
 		await request("cwd=/repo&startPoint=1");
-		expect(mockStartPoint).toHaveBeenCalledWith("/repo");
-		expect(mockRead).toHaveBeenCalledWith("/home/me/.claude", "/repo", project);
+		expect(mockStartPoint).toHaveBeenCalledWith("/repo", [".claude"]);
+		expect(mockRead).toHaveBeenCalledWith(claude, "/repo", project);
 	});
 
 	it("falls back to the working tree when the start point does not resolve", async () => {
 		mockStartPoint.mockResolvedValue(null);
 		await request("cwd=/repo&startPoint=1");
-		expect(mockRead).toHaveBeenCalledWith("/home/me/.claude", "/repo", null);
+		expect(mockRead).toHaveBeenCalledWith(claude, "/repo", null);
+	});
+
+	it("reads the requested harness's sources", async () => {
+		await request("cwd=/repo&harness=codex-sdk");
+		expect(mockRead).toHaveBeenCalledWith(codex, "/repo", null);
+	});
+
+	it("ignores an unknown harness", async () => {
+		await request("cwd=/repo&harness=nope");
+		expect(mockRead).toHaveBeenCalledWith(claude, "/repo", null);
 	});
 
 	it("rejects a request without cwd", async () => {

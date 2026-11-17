@@ -9,5 +9,5 @@ export function useSuggestedSlashCommands(
 	startPoint = false,
 ) {
 	const suggest = harnessCapability(harness, "slashCommands.suggest").supported;
-	return useSlashCommands(suggest ? cwd : undefined, node, startPoint);
+	return useSlashCommands(suggest ? cwd : undefined, node, harness, startPoint);
 }

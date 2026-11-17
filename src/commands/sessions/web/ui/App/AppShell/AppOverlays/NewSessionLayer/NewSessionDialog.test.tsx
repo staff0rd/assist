@@ -1221,11 +1221,11 @@ describe("NewSessionDialog prompt slash suggestions", () => {
 		expect(onClose).toHaveBeenCalled();
 	});
 
-	it("offers nothing once a harness without slash suggestions is picked", async () => {
+	it("keeps suggesting once Codex is picked", async () => {
 		await renderWithHarnesses();
 		fireEvent.click(promptSegment());
 		fireEvent.click(harnessItem("Codex"));
 		typePrompt("/dr");
-		expect(screen.queryByRole("listbox")).toBeNull();
+		expect(screen.getAllByRole("option")).toHaveLength(2);
 	});
 });

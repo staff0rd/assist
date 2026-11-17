@@ -3,9 +3,10 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { listSlashCommands } from "./listSlashCommands";
+import type { SlashCommandSources } from "../../../../shared/harnesses";
 
 let root: string;
-let home: string;
+let home: SlashCommandSources;
 let cwd: string;
 
 function write(relative: string, content = "") {
@@ -16,7 +17,10 @@ function write(relative: string, content = "") {
 
 beforeEach(() => {
 	root = fs.mkdtempSync(path.join(os.tmpdir(), "list-slash-commands-"));
-	home = path.join(root, "home/.claude");
+	home = {
+		userHomes: [path.join(root, "home/.claude")],
+		projectDirs: [".claude"],
+	};
 	cwd = path.join(root, "repo");
 });
 
@@ -64,6 +68,31 @@ describe("listSlashCommands with given project commands", () => {
 		).toEqual([
 			{ name: "helm", description: undefined, scope: "user" },
 			{ name: "fresh", description: "F", scope: "project" },
+		]);
+	});
+});
+
+describe("listSlashCommands with Codex sources", () => {
+	const codex = () => ({
+		userHomes: [
+			path.join(root, "home/.codex"),
+			path.join(root, "home/.agents"),
+		],
+		projectDirs: [".agents", ".codex"],
+	});
+
+	it("merges every user home and project dir, first source winning", () => {
+		write("home/.codex/skills/commit/SKILL.md", "---\ndescription: C\n---\n");
+		write("home/.agents/skills/commit/SKILL.md", "---\ndescription: A\n---\n");
+		write("home/.agents/skills/bug/SKILL.md");
+		write("repo/.agents/skills/deploy/SKILL.md");
+		write("repo/.codex/skills/cook/SKILL.md");
+		write("repo/.claude/skills/claude-only/SKILL.md");
+		expect(listSlashCommands(codex(), cwd)).toEqual([
+			{ name: "bug", description: undefined, scope: "user" },
+			{ name: "commit", description: "C", scope: "user" },
+			{ name: "cook", description: undefined, scope: "project" },
+			{ name: "deploy", description: undefined, scope: "project" },
 		]);
 	});
 });

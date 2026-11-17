@@ -29,6 +29,29 @@ describe("harnesses registry", () => {
 		);
 	});
 
+	it.each(["codex", "codex-sdk"] as const)(
+		"discovers %s slash commands in the Codex home, ~/.agents and the project's .agents and .codex",
+		(kind) => {
+			expect(harnesses[kind].slashCommandSources).toEqual({
+				userHomes: [
+					path.join(os.homedir(), ".codex"),
+					path.join(os.homedir(), ".agents"),
+				],
+				projectDirs: [".agents", ".codex"],
+			});
+		},
+	);
+
+	it.each(["claude", "claude-sdk"] as const)(
+		"discovers %s slash commands in ~/.claude and the project's .claude",
+		(kind) => {
+			expect(harnesses[kind].slashCommandSources).toEqual({
+				userHomes: [path.join(os.homedir(), ".claude")],
+				projectDirs: [".claude"],
+			});
+		},
+	);
+
 	it("maps codex to ~/.codex with skills/<name>/SKILL.md", () => {
 		const codex = harnesses.codex;
 		expect(codex.command).toBe("codex");

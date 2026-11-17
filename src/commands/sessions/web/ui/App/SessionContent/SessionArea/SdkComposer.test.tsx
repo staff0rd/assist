@@ -256,7 +256,7 @@ describe("SdkComposer", () => {
 		});
 
 		it("offers nothing for a harness without slash suggestions", () => {
-			setup({ status: "waiting", harness: "codex" }, "/dr");
+			setup({ status: "waiting", harness: "pi" }, "/dr");
 			expect(screen.queryByRole("listbox")).toBeNull();
 		});
 

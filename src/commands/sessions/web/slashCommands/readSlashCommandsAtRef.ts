@@ -3,9 +3,6 @@ import { gitOrNull } from "../../daemon/worktree/git";
 import { mergeSlashCommands, type SlashEntry } from "./mergeSlashCommands";
 import type { SlashCommand } from "./readSlashCommands";
 
-const COMMAND = /^\.claude\/commands\/([^/]+)\.md$/;
-const SKILL = /^\.claude\/skills\/([^/]+)\/SKILL\.md$/;
-
 async function describeAt(
 	repo: string,
 	ref: string,
@@ -37,6 +34,7 @@ export async function readSlashCommandsAtRef(
 	repo: string,
 	ref: string,
 	scope: SlashCommand["scope"],
+	projectDir = ".claude",
 ): Promise<SlashCommand[] | null> {
 	if (!(await gitOrNull(repo, ["rev-parse", "--verify", "--quiet", ref])))
 		return null;
@@ -47,13 +45,16 @@ export async function readSlashCommandsAtRef(
 		"--name-only",
 		ref,
 		"--",
-		".claude/commands",
-		".claude/skills",
+		`${projectDir}/commands`,
+		`${projectDir}/skills`,
 	]);
 	const files = listing ? listing.split("\n") : [];
+	const dir = projectDir.replaceAll(".", String.raw`\.`);
+	const command = new RegExp(`^${dir}/commands/([^/]+)\\.md$`);
+	const skill = new RegExp(`^${dir}/skills/([^/]+)/SKILL\\.md$`);
 	return mergeSlashCommands(
-		await entriesMatching(repo, ref, files, COMMAND),
-		await entriesMatching(repo, ref, files, SKILL),
+		await entriesMatching(repo, ref, files, command),
+		await entriesMatching(repo, ref, files, skill),
 		scope,
 	);
 }
