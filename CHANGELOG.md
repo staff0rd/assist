@@ -1,3 +1,10 @@
+## [0.1217.4](https://github.com/staff0rd/assist/compare/v0.1217.3...v0.1217.4) (2026-11-17)
+
+
+### Bug Fixes
+
+* apply released migrations on update ([4267645](https://github.com/staff0rd/assist/commit/426764545c105b11490e64e986f088629947e6b8))
+
 ## [0.1217.3](https://github.com/staff0rd/assist/compare/v0.1217.2...v0.1217.3) (2026-11-17)
 
 
