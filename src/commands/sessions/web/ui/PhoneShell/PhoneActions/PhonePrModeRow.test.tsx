@@ -19,6 +19,7 @@ describe("PhonePrModeRow", () => {
 							args: ["review", "--refine", "--harness", "codex"],
 						},
 					],
+					columns: ["codex"],
 				}}
 				onLaunch={onLaunch}
 			/>,
@@ -38,7 +39,12 @@ describe("PhonePrModeRow", () => {
 	it("shows no harness tap target without alternates", () => {
 		render(
 			<PhonePrModeRow
-				entry={{ label: "Review", args: ["review"], alternates: [] }}
+				entry={{
+					label: "Review",
+					args: ["review"],
+					alternates: [],
+					columns: [],
+				}}
 				onLaunch={vi.fn()}
 			/>,
 		);

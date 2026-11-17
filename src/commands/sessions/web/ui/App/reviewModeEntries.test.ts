@@ -69,6 +69,12 @@ describe("reviewModeEntries", () => {
 		});
 	});
 
+	it("gives every entry the same harness columns in first-seen order", () => {
+		const entries = reviewModeEntries(caps);
+
+		for (const entry of entries) expect(entry.columns).toEqual(["codex", "pi"]);
+	});
+
 	it("offers no alternates when only the engine resolves", () => {
 		const entries = reviewModeEntries(
 			capabilities({

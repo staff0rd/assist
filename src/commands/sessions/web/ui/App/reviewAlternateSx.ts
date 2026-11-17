@@ -4,9 +4,21 @@ export const reviewAlternateSx = {
 	row: { gap: 0.75 },
 	rowWithAlternates: { gap: 0.75, pr: 0.5 },
 	label: { flex: 1, minWidth: 0, display: "flex", flexDirection: "column" },
-	caption: { fontSize: 12, color: "text.secondary" },
+	labelText: {
+		overflow: "hidden",
+		textOverflow: "ellipsis",
+		whiteSpace: "nowrap",
+	},
+	caption: {
+		fontSize: 12,
+		color: "text.secondary",
+		overflow: "hidden",
+		textOverflow: "ellipsis",
+		whiteSpace: "nowrap",
+	},
 	group: {
 		display: "flex",
+		flexShrink: 0,
 		gap: 0.25,
 		opacity: 0.72,
 		transition: "opacity .2s ease",
@@ -30,4 +42,5 @@ export const reviewAlternateSx = {
 			bgcolor: "background.paper",
 		},
 	}),
+	slot: { visibility: "hidden" },
 } as const;

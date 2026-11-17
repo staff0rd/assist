@@ -2,7 +2,9 @@ import type { KeyboardEvent } from "react";
 
 export function reviewRowKeyDown(e: KeyboardEvent<HTMLElement>) {
 	const row = e.currentTarget;
-	const buttons = [...row.querySelectorAll<HTMLElement>("button")];
+	const buttons = [
+		...row.querySelectorAll<HTMLElement>("button:not(:disabled)"),
+	];
 	const at = buttons.indexOf(e.target as HTMLElement);
 	const next =
 		e.key === "ArrowRight"

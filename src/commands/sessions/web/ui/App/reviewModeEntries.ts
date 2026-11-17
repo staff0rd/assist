@@ -12,13 +12,14 @@ export type ReviewModeEntry = {
 	label: string;
 	args: string[];
 	alternates: HarnessAlternate[];
+	columns: HarnessKind[];
 };
 
 export function reviewModeEntries(
 	capabilities: HarnessCapabilities,
 	modes: ReviewButtonMode[] = reviewButtonModes,
 ): ReviewModeEntry[] {
-	return modes.map((mode) => ({
+	const rows = modes.map((mode) => ({
 		label: mode.label,
 		args: mode.args,
 		alternates: reviewHarnessChoices(capabilities, [mode])
@@ -28,4 +29,8 @@ export function reviewModeEntries(
 				args: [...mode.args, "--harness", harness],
 			})),
 	}));
+	const columns = [
+		...new Set(rows.flatMap((row) => row.alternates.map((a) => a.harness))),
+	];
+	return rows.map((row) => ({ ...row, columns }));
 }
