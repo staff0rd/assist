@@ -6,4 +6,5 @@ export type AdviceContext = {
 	assistSession: boolean;
 	previewAnswerWait: boolean;
 	deferredPreview: boolean;
+	sdkSession: boolean;
 };

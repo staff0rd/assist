@@ -1,6 +1,7 @@
 import { findConfigUp, loadConfigFrom } from "../../shared/loadConfigFrom";
 import { previewAnswerWaitBlocker } from "../askQuestion/previewAnswerWaitBlocker";
 import { defersPreviewWait } from "../sessions/shared/defersPreviewWait";
+import { sdkAgentEnv } from "../../shared/sdkAgentEnv";
 import type { AdviceContext } from "./AdviceContext";
 
 export function adviceContextFor(
@@ -13,5 +14,6 @@ export function adviceContextFor(
 		assistSession: env.ASSIST_SESSION === "1",
 		previewAnswerWait: previewAnswerWaitBlocker() === undefined,
 		deferredPreview: defersPreviewWait(env),
+		sdkSession: env[sdkAgentEnv] === "1",
 	};
 }

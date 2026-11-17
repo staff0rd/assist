@@ -11,6 +11,7 @@ function contextWith(raw: Record<string, unknown>): AdviceContext {
 		assistSession: false,
 		previewAnswerWait: true,
 		deferredPreview: false,
+		sdkSession: false,
 	};
 }
 

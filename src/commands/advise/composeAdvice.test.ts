@@ -23,6 +23,7 @@ function contextWith(
 		assistSession,
 		previewAnswerWait,
 		deferredPreview: false,
+		sdkSession: false,
 	};
 }
 
@@ -55,6 +56,18 @@ describe("composeAdvice", () => {
 
 	it("includes every always-on fragment with no config at all", () => {
 		expect(includedNames(contextWith({}))).toEqual(alwaysNames);
+	});
+
+	it("omits the show-links fragment in an SDK session", () => {
+		const sdk = { ...contextWith({}), sdkSession: true };
+
+		expect(includedNames(sdk)).not.toContain("show-links");
+		expect(composeAdvice(sdk, fragments)).not.toContain(
+			"Showing long links, paths and snippets",
+		);
+		expect(composeAdvice(contextWith({}), fragments)).toContain(
+			"Showing long links, paths and snippets",
+		);
 	});
 
 	it("adds the jira fragments only when jira is configured", () => {
@@ -170,6 +183,7 @@ describe("composeAdvice", () => {
 			assistSession: false,
 			previewAnswerWait: true,
 			deferredPreview: false,
+			sdkSession: false,
 		});
 
 		expect(bare).not.toContain("refactor");

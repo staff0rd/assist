@@ -22,6 +22,13 @@ describe("adviceContextFor", () => {
 		expect(adviceContextFor(makeRepo(), {}).assistSession).toBe(false);
 	});
 
+	it("marks the session SDK-driven only when ASSIST_SDK_AGENT is 1", () => {
+		expect(
+			adviceContextFor(makeRepo(), { ASSIST_SDK_AGENT: "1" }).sdkSession,
+		).toBe(true);
+		expect(adviceContextFor(makeRepo(), {}).sdkSession).toBe(false);
+	});
+
 	it("gives a daemon-hosted Codex session the returns-at-once preview wait", () => {
 		markActiveHarness("codex");
 		const context = adviceContextFor(makeRepo(), {

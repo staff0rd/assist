@@ -34,6 +34,11 @@ export const adviceConditions: Record<string, AdviceCondition> = {
 		whenUnmet: "the session was not launched by assist",
 		matches: ({ assistSession }) => assistSession,
 	},
+	notSdk: {
+		whenMet: "the session is not driven through the SDK",
+		whenUnmet: "the session is driven through the SDK",
+		matches: ({ sdkSession }) => !sdkSession,
+	},
 	askQuestion: {
 		whenMet:
 			"sessions.askQuestion is on in an assist-launched session whose harness wakes the agent when the answer arrives",

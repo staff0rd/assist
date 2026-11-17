@@ -12,6 +12,7 @@ const lines = explainAdvice(
 		assistSession: false,
 		previewAnswerWait: true,
 		deferredPreview: false,
+		sdkSession: false,
 	},
 	fragments,
 ).split("\n");
@@ -24,7 +25,7 @@ describe("explainAdvice", () => {
 	});
 
 	it("marks an always-on fragment included and gives the reason", () => {
-		const line = lines.find((entry) => entry.includes("show-links")) ?? "";
+		const line = lines.find((entry) => entry.includes("markdown")) ?? "";
 
 		expect(line).toContain("✓");
 		expect(line).toContain("always included");

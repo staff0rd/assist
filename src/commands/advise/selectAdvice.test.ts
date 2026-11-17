@@ -9,6 +9,7 @@ const context = {
 	assistSession: false,
 	previewAnswerWait: true,
 	deferredPreview: false,
+	sdkSession: false,
 };
 
 function fragment(name: string, when: string): AdviceFragment {
