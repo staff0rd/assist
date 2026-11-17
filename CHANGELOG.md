@@ -1,3 +1,10 @@
+# [0.1211.0](https://github.com/staff0rd/assist/compare/v0.1210.0...v0.1211.0) (2026-11-17)
+
+
+### Features
+
+* yolo marks mid-plan checks Works ([aabb759](https://github.com/staff0rd/assist/commit/aabb759d8505a56d4b3dbda7068280f05e697309))
+
 # [0.1210.0](https://github.com/staff0rd/assist/compare/v0.1209.15...v0.1210.0) (2026-11-17)
 
 
