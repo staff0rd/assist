@@ -1,3 +1,10 @@
+## [0.1209.14](https://github.com/staff0rd/assist/compare/v0.1209.13...v0.1209.14) (2026-11-17)
+
+
+### Bug Fixes
+
+* group seeding worktrees under clone ([dd0cd05](https://github.com/staff0rd/assist/commit/dd0cd05ca26475d338a13f77be348717cf0088b4))
+
 ## [0.1209.13](https://github.com/staff0rd/assist/compare/v0.1209.12...v0.1209.13) (2026-11-17)
 
 
