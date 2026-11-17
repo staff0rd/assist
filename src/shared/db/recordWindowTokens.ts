@@ -1,6 +1,7 @@
 import { and, eq, sql } from "drizzle-orm";
 import type { UsageWindowKey } from "../usageWindowKey";
 import type { Db } from "./Db";
+import { resolveCycleResetsAt } from "./resolveCycleResetsAt";
 import { usagePeaks } from "./schema";
 
 export async function recordWindowTokens(
@@ -11,6 +12,7 @@ export async function recordWindowTokens(
 	tokensDown: number,
 ): Promise<void> {
 	if (tokensUp <= 0 && tokensDown <= 0) return;
+	const cycleResetsAt = await resolveCycleResetsAt(db, window, resetsAt);
 	await db
 		.update(usagePeaks)
 		.set({
@@ -20,7 +22,7 @@ export async function recordWindowTokens(
 		.where(
 			and(
 				eq(usagePeaks.window, window),
-				eq(usagePeaks.resetsAt, resetsAt),
+				eq(usagePeaks.resetsAt, cycleResetsAt),
 				eq(usagePeaks.segment, 0),
 			),
 		);

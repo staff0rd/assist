@@ -3,7 +3,7 @@ import type { BacklogDatabase } from "./Db";
 import type { UsageWindowKey } from "../usageWindowKey";
 import { usagePeaks } from "./schema";
 
-export type Cycle = {
+type Cycle = {
 	tx: BacklogDatabase;
 	window: UsageWindowKey;
 	resetsAt: number;

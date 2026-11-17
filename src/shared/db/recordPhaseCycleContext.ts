@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import type { Db } from "./Db";
 import type { UsageWindowKey } from "../usageWindowKey";
+import { resolveCycleResetsAt } from "./resolveCycleResetsAt";
 import { phaseCycleContext } from "./schema";
 
 export async function recordPhaseCycleContext(
@@ -12,9 +13,16 @@ export async function recordPhaseCycleContext(
 	pct: number,
 ): Promise<void> {
 	if (pct <= 0) return;
+	const cycleResetsAt = await resolveCycleResetsAt(db, window, resetsAt);
 	await db
 		.insert(phaseCycleContext)
-		.values({ itemId, phaseIdx, window, resetsAt, peakContextPct: pct })
+		.values({
+			itemId,
+			phaseIdx,
+			window,
+			resetsAt: cycleResetsAt,
+			peakContextPct: pct,
+		})
 		.onConflictDoUpdate({
 			target: [
 				phaseCycleContext.itemId,

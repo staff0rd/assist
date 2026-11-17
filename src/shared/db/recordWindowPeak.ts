@@ -1,12 +1,13 @@
 import { sql } from "drizzle-orm";
 import type { UsageWindowKey } from "../usageWindowKey";
-import type { Db } from "./Db";
-import { applyReading, type Cycle } from "./applyReading";
+import { applyReading } from "./applyReading";
+import type { BacklogDatabase, Db } from "./Db";
+import { resolveCycleResetsAt } from "./resolveCycleResetsAt";
 
-// why: serialise every caller for this cycle so the read-compare-write stays atomic across concurrent fire-and-forget agent reports; the lock releases on commit.
-const lock = ({ tx, window, resetsAt }: Cycle) =>
+// why: serialise every caller for this window so cycle resolution and the read-compare-write stay atomic across concurrent fire-and-forget agent reports; the lock releases on commit.
+const lock = (tx: BacklogDatabase, window: UsageWindowKey) =>
 	tx.execute(
-		sql`SELECT pg_advisory_xact_lock(hashtextextended(${`${window}:${resetsAt}`}, 0))`,
+		sql`SELECT pg_advisory_xact_lock(hashtextextended(${`usage-peak:${window}`}, 0))`,
 	);
 
 /**
@@ -15,8 +16,10 @@ const lock = ({ tx, window, resetsAt }: Cycle) =>
  * rests on a non-obvious invariant — a cycle's segment peaks stay strictly
  * decreasing, letting a reading that climbs back to a recorded peak expose the
  * segments below it as stale noise (which {@link reconcile} collapses) rather
- * than resets. The read-compare-write runs under a cycle-scoped advisory
- * {@link lock} so concurrent callers serialise instead of racing.
+ * than resets. The read-compare-write runs under a window-scoped advisory
+ * {@link lock} so concurrent callers serialise instead of racing, and a
+ * jittered `resetsAt` lands on its already-recorded cycle via
+ * {@link resolveCycleResetsAt}.
  *
  * A reading landing at or after `resetsAt` belongs to the next cycle (which
  * reports a fresh `resets_at`), so it is dropped: recording it would stamp a
@@ -33,9 +36,9 @@ export async function recordWindowPeak(
 ): Promise<void> {
 	if (now >= resetsAt) return;
 	await db.transaction(async (tx) => {
-		const c: Cycle = { tx, window, resetsAt };
-		await lock(c);
-		await applyReading(c, usedPercentage);
+		await lock(tx, window);
+		const cycleResetsAt = await resolveCycleResetsAt(tx, window, resetsAt);
+		await applyReading({ tx, window, resetsAt: cycleResetsAt }, usedPercentage);
 	});
 }
 
