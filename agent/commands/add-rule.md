@@ -1,6 +1,6 @@
 ---
 description: Capture a new CLAUDE.md rule from a review comment
-allowed_args: "[quoted text, file and note from the comment pane] [--repo [name] | --user | --node]"
+allowed_args: "[quoted text, file and note from the comment pane] [--repo [name] | --user | --node | --scope <path>]"
 ---
 
 You are turning a review comment into a written rule in a `CLAUDE.md` file, so the same mistake is caught next time. `$ARGUMENTS` carries what the comment pane sent: an optional `File:` line, the quoted text in a fenced block, and the reviewer's note. A request from the Rules page's Add rule box carries only a scope flag and a note, with no quote.
@@ -12,7 +12,7 @@ Pull these out of `$ARGUMENTS`:
 - **File** — the path the selection came from, if a `File:` line is present. The document preview pane has no path, so it may be missing.
 - **Quote** — the selected text, the concrete example of the rule being broken. Absent when only a note was sent.
 - **Note** — the reviewer's words, the substance of the rule.
-- **Scope flag** — a `--repo` (optionally followed by a repo name), `--user` or `--node` in the arguments. It is an instruction about where the rule goes, not part of the note: strip it from the note before wording the rule.
+- **Scope flag** — a `--repo` (optionally followed by a repo name), `--user`, `--node` or `--scope <path>` (a repo-relative `CLAUDE.md` path) in the arguments. It is an instruction about where the rule goes, not part of the note: strip it from the note before wording the rule.
 
 If `$ARGUMENTS` is empty, ask the user what rule they want to add and skip to Step 3.
 
@@ -28,7 +28,7 @@ Ask the user a clarifying question only when the note is genuinely too vague to 
 
 The scope is the directory whose `CLAUDE.md` gets the rule, or `advice.rules` in `repo (db)`, `user (db)` or `user (node)`.
 
-If Step 1 found a scope flag, it fixes the scope: `--repo [name]` is `repo (db)` (for the named repo when one follows), `--user` is `user (db)`, `--node` is `user (node)`. Use it as given — do not infer a different scope or second-guess it — and go to Step 4.
+If Step 1 found a scope flag, it fixes the scope: `--repo [name]` is `repo (db)` (for the named repo when one follows), `--user` is `user (db)`, `--node` is `user (node)`, `--scope <path>` is that `CLAUDE.md`, with the path relative to the repo root. Use it as given — do not infer a different scope or second-guess it — and go to Step 4.
 
 Otherwise infer it — do not ask by default:
 
@@ -47,7 +47,7 @@ Ask the user only when two scopes are genuinely defensible and the choice change
 assist rules add '<rule text>' --title '<title>' --scope <path> 2>&1
 ```
 
-`--scope` takes a file, a directory, or a `CLAUDE.md` path directly. A file or directory resolves to the nearest existing `CLAUDE.md` at or above it; a `CLAUDE.md` path is written to as given, created if absent. The command allocates the next repo-wide code, creates the `## Rules` section when the file has none, and records the directories that carry their own `## Rules` in the root `CLAUDE.md`.
+`--scope` takes a file, a directory, or a `CLAUDE.md` path directly. A file or directory resolves to the nearest existing `CLAUDE.md` at or above it; a `CLAUDE.md` path is written to as given, created if absent. When the scope came from a `--scope <path>` flag, pass that path to `--scope` unchanged (run from the repo root, or prefix it with the repo root). The command allocates the next repo-wide code, creates the `## Rules` section when the file has none, and records the directories that carry their own `## Rules` in the root `CLAUDE.md`.
 
 For a `user (db)` rule, pass `--user` instead of `--scope` (the two can't be combined); `--title` is required:
 

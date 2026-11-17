@@ -19,9 +19,9 @@ export function RuleScopeTop({ scope, comments }: Props) {
 			<RuleScopeHeader
 				scope={scope}
 				adding={adding}
-				onAdd={flag ? () => setAddingTo(scope.id) : undefined}
+				onAdd={() => setAddingTo(scope.id)}
 			/>
-			{adding && flag && (
+			{adding && (
 				<RuleAddComposer
 					scope={scope}
 					sessionName={sessionName}

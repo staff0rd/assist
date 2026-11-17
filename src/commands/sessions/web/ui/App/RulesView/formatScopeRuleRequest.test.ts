@@ -3,20 +3,15 @@ import type { RuleScope } from "../../../../../rules/types";
 import { addRuleFlag } from "./addRuleFlag";
 import { formatScopeRuleRequest } from "./formatScopeRuleRequest";
 
-function scope(kind: RuleScope["kind"], label?: string): RuleScope {
-	return {
-		id: kind,
-		kind,
-		name: kind,
-		depth: 0,
-		rules: [],
-		...(label ? { label } : {}),
-	};
+function scope(
+	kind: RuleScope["kind"],
+	extra: Partial<RuleScope> = {},
+): RuleScope {
+	return { id: kind, kind, name: kind, depth: 0, rules: [], ...extra };
 }
 
 function request(target: RuleScope, note: string) {
-	const flag = addRuleFlag(target);
-	return flag && formatScopeRuleRequest(flag, note);
+	return formatScopeRuleRequest(addRuleFlag(target), note);
 }
 
 describe("formatScopeRuleRequest", () => {
@@ -33,9 +28,9 @@ describe("formatScopeRuleRequest", () => {
 	});
 
 	it("names the repo for Repo (db)", () => {
-		expect(request(scope("repo-db", "github.com/org/assist"), "a rule")).toBe(
-			"/add-rule --repo github.com/org/assist\n\na rule",
-		);
+		expect(
+			request(scope("repo-db", { label: "github.com/org/assist" }), "a rule"),
+		).toBe("/add-rule --repo github.com/org/assist\n\na rule");
 	});
 
 	it("falls back to the current repo when Repo (db) has no label", () => {
@@ -44,7 +39,15 @@ describe("formatScopeRuleRequest", () => {
 		);
 	});
 
-	it("has no flag for a CLAUDE.md scope yet", () => {
-		expect(addRuleFlag(scope("claude-md"))).toBeUndefined();
+	it("points a nested CLAUDE.md scope at its file with --scope", () => {
+		expect(request(scope("claude-md", { dir: "docs/" }), "a rule")).toBe(
+			"/add-rule --scope docs/CLAUDE.md\n\na rule",
+		);
+	});
+
+	it("points the root CLAUDE.md scope at CLAUDE.md", () => {
+		expect(request(scope("claude-md", { dir: "" }), "a rule")).toBe(
+			"/add-rule --scope CLAUDE.md\n\na rule",
+		);
 	});
 });

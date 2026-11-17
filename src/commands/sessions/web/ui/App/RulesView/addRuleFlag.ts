@@ -1,9 +1,14 @@
 import type { RuleScope } from "../../../../../rules/types";
 
-export function addRuleFlag(scope: RuleScope): string | undefined {
-	if (scope.kind === "user-db") return "--user";
-	if (scope.kind === "user-node") return "--node";
-	if (scope.kind === "repo-db")
-		return scope.label ? `--repo ${scope.label}` : "--repo";
-	return undefined;
+export function addRuleFlag(scope: RuleScope): string {
+	switch (scope.kind) {
+		case "user-db":
+			return "--user";
+		case "user-node":
+			return "--node";
+		case "repo-db":
+			return scope.label ? `--repo ${scope.label}` : "--repo";
+		case "claude-md":
+			return `--scope ${scope.dir ?? ""}CLAUDE.md`;
+	}
 }

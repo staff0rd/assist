@@ -7,7 +7,7 @@ import { scopeReach } from "./scopeReach";
 type Props = {
 	scope: RuleScope;
 	adding: boolean;
-	onAdd: (() => void) | undefined;
+	onAdd: () => void;
 };
 
 export function RuleScopeHeader({ scope, adding, onAdd }: Props) {
@@ -32,16 +32,14 @@ export function RuleScopeHeader({ scope, adding, onAdd }: Props) {
 					{scopeReach(scope)}
 				</Typography>
 			</Box>
-			{onAdd && (
-				<Button
-					size="small"
-					disabled={adding}
-					onClick={onAdd}
-					sx={{ flexShrink: 0 }}
-				>
-					+ Add rule
-				</Button>
-			)}
+			<Button
+				size="small"
+				disabled={adding}
+				onClick={onAdd}
+				sx={{ flexShrink: 0 }}
+			>
+				+ Add rule
+			</Button>
 		</Box>
 	);
 }
