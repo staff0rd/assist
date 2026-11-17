@@ -1,3 +1,10 @@
+# [0.1217.0](https://github.com/staff0rd/assist/compare/v0.1216.0...v0.1217.0) (2026-11-17)
+
+
+### Features
+
+* drop show-links advice in SDK sessions ([4232016](https://github.com/staff0rd/assist/commit/4232016b798a7a90b13871cd7a7c174ad0459da8))
+
 # [0.1216.0](https://github.com/staff0rd/assist/compare/v0.1215.2...v0.1216.0) (2026-11-17)
 
 
