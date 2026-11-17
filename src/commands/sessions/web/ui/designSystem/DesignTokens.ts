@@ -101,6 +101,7 @@ type DensityTokens = {
 	suggestionListMaxHeight: number;
 	reviewDialog: { title: number; item: number; option: number };
 	newSessionDialogWidth: number;
+	configSourceColumnWidth: number;
 	chip: { height: number; dot: number };
 	tabBar: {
 		height: number;

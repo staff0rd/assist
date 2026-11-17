@@ -16,7 +16,12 @@ export function ConfigKeyCell({ entry, readOnly }: Props) {
 			{entry.note && (
 				<Typography
 					variant="caption"
-					sx={{ display: "block", mt: 0.25, color: "text.secondary" }}
+					sx={{
+						display: "block",
+						mt: 0.25,
+						color: "text.secondary",
+						overflowWrap: "anywhere",
+					}}
 				>
 					{entry.note}
 				</Typography>
@@ -29,6 +34,7 @@ export function ConfigKeyCell({ entry, readOnly }: Props) {
 						mt: 0.25,
 						color: "text.secondary",
 						fontFamily: "fontFamilyMono",
+						overflowWrap: "anywhere",
 					}}
 				>
 					{entry.setter}

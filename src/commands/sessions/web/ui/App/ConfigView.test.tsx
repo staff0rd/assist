@@ -7,6 +7,7 @@ import {
 	waitFor,
 	within,
 } from "@testing-library/react";
+import { ThemeProvider } from "@mui/material/styles";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { describeConfigNode } from "../../../../../shared/describeConfigNode";
@@ -17,6 +18,7 @@ import type { ConfigEntry } from "../../../../config/readConfigEntries";
 import { ConfigView } from "./ConfigView";
 import { maskedSecretText } from "./ConfigView/ConfigRowValueCell/maskedSecretText";
 import { RepoSelectionContext } from "../useRepoSelectionContext";
+import { createDesignTheme } from "../designSystem/createDesignTheme";
 
 const schema = describeConfigNode(assistConfigSchema);
 
@@ -158,20 +160,22 @@ function keyFilter() {
 
 function renderView(selectedCwd = "/repo", path = "/config") {
 	render(
-		<MemoryRouter initialEntries={[path]}>
-			<RepoSelectionContext.Provider
-				value={{
-					repos: [],
-					selectedCwd,
-					worktreeCwd: selectedCwd,
-					setSelectedCwd: vi.fn(),
-					cloneOn: (cwd) => cwd,
-					originOf: () => undefined,
-				}}
-			>
-				<ConfigView />
-			</RepoSelectionContext.Provider>
-		</MemoryRouter>,
+		<ThemeProvider theme={createDesignTheme("dark")}>
+			<MemoryRouter initialEntries={[path]}>
+				<RepoSelectionContext.Provider
+					value={{
+						repos: [],
+						selectedCwd,
+						worktreeCwd: selectedCwd,
+						setSelectedCwd: vi.fn(),
+						cloneOn: (cwd) => cwd,
+						originOf: () => undefined,
+					}}
+				>
+					<ConfigView />
+				</RepoSelectionContext.Provider>
+			</MemoryRouter>
+		</ThemeProvider>,
 	);
 }
 

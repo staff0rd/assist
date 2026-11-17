@@ -20,7 +20,7 @@ export function ConfigGroupCard({ group, cwd, onSaved, onError }: Props) {
 				{group.name}
 			</Typography>
 			<Paper variant="outlined">
-				<Table size="small">
+				<Table size="small" sx={{ tableLayout: "fixed" }}>
 					<TableBody>
 						{group.entries.map((entry) => (
 							<ConfigRow

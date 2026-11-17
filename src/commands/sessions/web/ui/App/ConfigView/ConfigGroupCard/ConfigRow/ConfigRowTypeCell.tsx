@@ -16,7 +16,13 @@ type Props = {
 
 export function ConfigRowTypeCell({ entry, readOnly, canEdit, onEdit }: Props) {
 	return (
-		<TableCell align="right" sx={{ verticalAlign: "top" }}>
+		<TableCell
+			align="right"
+			sx={{
+				verticalAlign: "top",
+				width: (theme) => theme.tokens.density.configSourceColumnWidth,
+			}}
+		>
 			<Stack
 				direction="row"
 				spacing={0.5}
