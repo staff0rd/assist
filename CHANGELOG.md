@@ -1,3 +1,10 @@
+## [0.1213.3](https://github.com/staff0rd/assist/compare/v0.1213.2...v0.1213.3) (2026-11-17)
+
+
+### Bug Fixes
+
+* split batched codex exec calls ([8d170a1](https://github.com/staff0rd/assist/commit/8d170a15d74564ece166414458318949abe9b973))
+
 ## [0.1213.2](https://github.com/staff0rd/assist/compare/v0.1213.1...v0.1213.2) (2026-11-17)
 
 
