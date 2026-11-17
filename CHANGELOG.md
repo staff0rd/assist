@@ -1,3 +1,10 @@
+## [0.1209.6](https://github.com/staff0rd/assist/compare/v0.1209.5...v0.1209.6) (2026-11-17)
+
+
+### Bug Fixes
+
+* wait for inbox connectors to load ([ac07779](https://github.com/staff0rd/assist/commit/ac07779506538a090228c2af305c7b0ef199a8d5))
+
 ## [0.1209.5](https://github.com/staff0rd/assist/compare/v0.1209.4...v0.1209.5) (2026-11-17)
 
 
