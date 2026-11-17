@@ -1,3 +1,10 @@
+## [0.1209.11](https://github.com/staff0rd/assist/compare/v0.1209.10...v0.1209.11) (2026-11-17)
+
+
+### Bug Fixes
+
+* find session cwd past large hook lines ([#17](https://github.com/staff0rd/assist/issues/17)) ([e01be4a](https://github.com/staff0rd/assist/commit/e01be4a35cdbcf1113a805d59ff8984acd6259bf))
+
 ## [0.1209.10](https://github.com/staff0rd/assist/compare/v0.1209.9...v0.1209.10) (2026-11-17)
 
 
