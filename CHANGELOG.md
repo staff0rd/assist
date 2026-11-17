@@ -1,3 +1,10 @@
+## [0.1213.1](https://github.com/staff0rd/assist/compare/v0.1213.0...v0.1213.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* follow rebound codex transcripts ([73f620e](https://github.com/staff0rd/assist/commit/73f620efdb02832653815149f403033886cf4f73))
+
 # [0.1213.0](https://github.com/staff0rd/assist/compare/v0.1212.0...v0.1213.0) (2026-11-17)
 
 
