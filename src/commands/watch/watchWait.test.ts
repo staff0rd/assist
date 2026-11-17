@@ -20,6 +20,11 @@ const mockRunWatchBuild = vi.fn<(...args: unknown[]) => Promise<unknown>>();
 const mockRunPostBuildSync = vi.fn<() => Promise<unknown>>();
 const mockChangedPaths = vi.fn<(...args: unknown[]) => string[]>();
 const mockEmitWatchState = vi.fn();
+const mockMigrateAfterUpdate = vi.fn();
+
+vi.mock("../migrateAfterUpdate", () => ({
+	migrateAfterUpdate: () => mockMigrateAfterUpdate(),
+}));
 
 vi.mock("./waitForUpstream", () => ({
 	waitForUpstream: (...args: unknown[]) => mockWaitForUpstream(...args),
@@ -240,6 +245,20 @@ describe("watchWait --build sync", () => {
 		mockRunWatchBuild.mockResolvedValue({ kind: "built" });
 	});
 
+	it("applies released migrations after the build, before syncing", async () => {
+		mockChangedPaths.mockReturnValue(["agent/commands/watch.md"]);
+
+		await run({ build: true });
+
+		expect(mockMigrateAfterUpdate).toHaveBeenCalledOnce();
+		expect(mockRunWatchBuild.mock.invocationCallOrder[0]).toBeLessThan(
+			mockMigrateAfterUpdate.mock.invocationCallOrder[0],
+		);
+		expect(mockMigrateAfterUpdate.mock.invocationCallOrder[0]).toBeLessThan(
+			mockRunPostBuildSync.mock.invocationCallOrder[0],
+		);
+	});
+
 	it("does not sync when the pulled range touched no synced files", async () => {
 		await run({ build: true });
 
@@ -368,6 +387,7 @@ describe("watchWait interrupted build", () => {
 		);
 		expect(existsSync(buildMarker)).toBe(false);
 		expect(logged.join("\n")).toContain('built with "auto-build"');
+		expect(mockMigrateAfterUpdate).toHaveBeenCalledOnce();
 	});
 
 	it("rebuilds on start when dist is behind package.json even without a marker", async () => {

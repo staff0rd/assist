@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process";
 import * as path from "node:path";
 import { getInstallDir, isGitRepo } from "../shared/getInstallDir";
+import { migrateAfterUpdate } from "./migrateAfterUpdate";
 import { restartDaemonAfterUpdate } from "./restartDaemonAfterUpdate";
 
 function isGlobalNpmInstall(dir: string): boolean {
@@ -37,12 +38,14 @@ export async function update(): Promise<void> {
 
 		console.log("Building...");
 		execSync("npm run build", { cwd: installDir, stdio: "inherit" });
+		migrateAfterUpdate();
 
 		console.log("Syncing commands...");
 		execSync("assist sync", { stdio: "inherit" });
 	} else if (isGlobalNpmInstall(installDir)) {
 		console.log("Detected global npm installation, updating...");
 		execSync("npm i -g @staff0rd/assist@latest", { stdio: "inherit" });
+		migrateAfterUpdate();
 
 		console.log("Syncing commands...");
 		execSync("assist sync", { stdio: "inherit" });

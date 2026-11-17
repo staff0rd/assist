@@ -1,3 +1,4 @@
+import { migrateAfterUpdate } from "../migrateAfterUpdate";
 import { clearBuildPending } from "./clearBuildPending";
 import { emitWatchState } from "./emitWatchState";
 import { isBuildPending } from "./isBuildPending";
@@ -20,5 +21,6 @@ export async function finishPendingBuild(entry: string): Promise<void> {
 	}
 	clearBuildPending();
 	console.log(`built with "${entry}"`);
+	migrateAfterUpdate();
 	if (isSyncPending()) await reportSyncOrExit();
 }

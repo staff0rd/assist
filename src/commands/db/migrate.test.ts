@@ -153,6 +153,27 @@ describe("migrate schema lock", () => {
 	});
 });
 
+describe("migrate after update", () => {
+	it("applies released migrations despite the schema lock", async () => {
+		await migrate({ afterUpdate: true });
+		expect(appliedSql()).toEqual([latest.sql]);
+	});
+
+	it("applies nothing when already in sync", async () => {
+		applied = allIds;
+
+		await migrate({ afterUpdate: true });
+		expect(appliedSql()).toEqual([]);
+	});
+
+	it("still refuses unreleased migrations", async () => {
+		released = new Set(allIds.slice(0, -1));
+
+		await expect(migrate({ afterUpdate: true })).rejects.toThrow("exit 1");
+		expect(appliedSql()).toEqual([]);
+	});
+});
+
 describe("migrate unreleased migrations", () => {
 	beforeEach(() => {
 		vi.stubEnv("CLAUDECODE", undefined);

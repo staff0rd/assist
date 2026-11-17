@@ -1,4 +1,4 @@
-import type { Command } from "commander";
+import { type Command, Option } from "commander";
 import { latestMigrationId } from "../shared/db/migrations";
 import { lazyAction } from "../shared/lazyAction";
 
@@ -10,6 +10,12 @@ export function registerDb(program: Command): void {
 	db.command("migrate")
 		.description(
 			`Apply pending migrations in order (build ships up to migration ${latestMigrationId})`,
+		)
+		.addOption(
+			new Option(
+				"--after-update",
+				"Skip the schema lock when applying released migrations after an update",
+			).hideHelp(),
 		)
 		.action(lazyAction(() => import("./db/migrate"), "migrate"));
 

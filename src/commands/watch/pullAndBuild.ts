@@ -1,3 +1,4 @@
+import { migrateAfterUpdate } from "../migrateAfterUpdate";
 import { buildWatchReport } from "./buildWatchReport";
 import { clearBuildPending } from "./clearBuildPending";
 import { describePull } from "./describePull";
@@ -30,6 +31,7 @@ export async function pullAndBuild(
 		const syncNeeded = markSyncPending(from);
 		await reportBuildOrExit(watchBuildEntry(build));
 		clearBuildPending();
+		migrateAfterUpdate();
 
 		if (syncNeeded) await reportSyncOrExit();
 	}

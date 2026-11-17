@@ -628,18 +628,18 @@ Usage: assist db [options] [command]
 Inspect and apply the backlog database migrations
 
 Options:
-  -h, --help      display help for command
+  -h, --help         display help for command
 
 Commands:
-  migrate         Apply pending migrations in order (build ships up to migration 13)
-  status          Report whether the database is in sync, behind, or ahead of this build
-  drop-retired    Drop retired tables left by removed features, after confirming each
-  help [command]  display help for command
+  migrate [options]  Apply pending migrations in order (build ships up to migration 14)
+  status             Report whether the database is in sync, behind, or ahead of this build
+  drop-retired       Drop retired tables left by removed features, after confirming each
+  help [command]     display help for command
 
 === assist db migrate --help
 Usage: assist db migrate [options]
 
-Apply pending migrations in order (build ships up to migration 13)
+Apply pending migrations in order (build ships up to migration 14)
 
 Options:
   -h, --help  display help for command

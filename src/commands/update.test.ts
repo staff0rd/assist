@@ -1,8 +1,10 @@
-import { execSync } from "node:child_process";
+import { execFileSync, execSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../test/mocks/childProcessMock";
 
 const mockExecSync = vi.mocked(execSync);
+const mockExecFileSync = vi.mocked(execFileSync);
+const mockIsDatabaseConfigured = vi.fn();
 const mockGetInstallDir = vi.fn();
 const mockIsGitRepo = vi.fn();
 const mockIsDaemonRunning = vi.fn();
@@ -21,6 +23,10 @@ vi.mock("../shared/getInstallDir", () => ({
 	isGitRepo: (dir: string) => mockIsGitRepo(dir),
 }));
 
+vi.mock("./db/isDatabaseConfigured", () => ({
+	isDatabaseConfigured: () => mockIsDatabaseConfigured(),
+}));
+
 vi.mock("./sessions/daemon/connectToDaemon", () => ({
 	isDaemonRunning: () => mockIsDaemonRunning(),
 }));
@@ -37,6 +43,7 @@ describe("update", () => {
 		mockGetInstallDir.mockReturnValue("/some/dir");
 		mockIsDaemonRunning.mockResolvedValue(false);
 		mockRestartDaemon.mockResolvedValue(undefined);
+		mockIsDatabaseConfigured.mockReturnValue(false);
 	});
 
 	it("should call assist sync without --yes for git repo install", async () => {
@@ -102,6 +109,77 @@ describe("update", () => {
 			expect(exitSpy).toHaveBeenCalledWith(1);
 
 			exitSpy.mockRestore();
+		});
+	});
+
+	describe("migrations", () => {
+		const migrateCalls = () =>
+			mockExecFileSync.mock.calls.filter(
+				(call) =>
+					Array.isArray(call[1]) && call[1].join(" ").includes("db migrate"),
+			);
+		const syncIndex = () =>
+			mockExecSync.mock.calls.findIndex((call) => call[0] === "assist sync");
+
+		beforeEach(() => {
+			mockIsGitRepo.mockReturnValue(true);
+			vi.spyOn(console, "log").mockImplementation(() => {});
+			vi.spyOn(console, "error").mockImplementation(() => {});
+		});
+
+		it("applies pending migrations with the freshly built entry script, skipping the schema lock", async () => {
+			mockIsDatabaseConfigured.mockReturnValue(true);
+			const order: string[] = [];
+			mockExecFileSync.mockImplementation(() => {
+				order.push("migrate");
+				return Buffer.from("");
+			});
+			mockExecSync.mockImplementation((cmd) => {
+				order.push(String(cmd));
+				return undefined as never;
+			});
+
+			await update();
+
+			expect(migrateCalls()).toEqual([
+				[
+					process.execPath,
+					[process.argv[1], "db", "migrate", "--after-update"],
+					{ stdio: "inherit" },
+				],
+			]);
+			expect(order.indexOf("migrate")).toBeGreaterThan(
+				order.indexOf("npm run build"),
+			);
+			expect(order.indexOf("migrate")).toBeLessThan(
+				order.indexOf("assist sync"),
+			);
+		});
+
+		it("skips migrating when no database is configured", async () => {
+			await update();
+
+			expect(migrateCalls()).toEqual([]);
+			expect(syncIndex()).toBeGreaterThanOrEqual(0);
+		});
+
+		it("reports a failed migrate, points to assist db migrate, and still syncs and restarts the daemon", async () => {
+			mockIsDatabaseConfigured.mockReturnValue(true);
+			mockIsDaemonRunning.mockResolvedValue(true);
+			mockExecFileSync.mockImplementation(() => {
+				throw new Error("connection refused");
+			});
+
+			await update();
+
+			const errors = vi
+				.mocked(console.error)
+				.mock.calls.map((call) => String(call[0]))
+				.join("\n");
+			expect(errors).toContain("connection refused");
+			expect(errors).toContain("assist db migrate");
+			expect(syncIndex()).toBeGreaterThanOrEqual(0);
+			expect(mockRestartDaemon).toHaveBeenCalledOnce();
 		});
 	});
 });
