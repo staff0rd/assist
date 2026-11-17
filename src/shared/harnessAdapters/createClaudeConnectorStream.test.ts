@@ -8,7 +8,13 @@ function assistant(content: unknown[], id?: string, usage?: object): string {
 
 function collect() {
 	const events: ConnectorRunEvent[] = [];
-	return { events, stream: createClaudeConnectorStream((e) => events.push(e)) };
+	return {
+		events,
+		stream: createClaudeConnectorStream(
+			(e) => events.push(e),
+			["gmail.searchThreads", "slack.search"],
+		),
+	};
 }
 
 describe("createClaudeConnectorStream", () => {
@@ -156,5 +162,63 @@ describe("createClaudeConnectorStream", () => {
 		expect(() => stream.finish("claude exited 1: not logged in")).toThrow(
 			"claude exited 1: not logged in",
 		);
+	});
+
+	it("fails naming the connectors whose requested tools were missing from init", () => {
+		const { stream } = collect();
+		stream.onLine(
+			JSON.stringify({
+				type: "system",
+				subtype: "init",
+				model: "sonnet-x",
+				tools: ["mcp__makerdoc__read_deck", "StructuredOutput"],
+				mcp_servers: [{ name: "makerdoc", status: "connected" }],
+			}),
+		);
+		stream.onLine(
+			JSON.stringify({
+				type: "result",
+				is_error: false,
+				structured_output: { messages: [] },
+			}),
+		);
+		expect(() => stream.finish("claude exited 0")).toThrow(
+			"claude.ai Gmail and Slack connectors unavailable to the claude run: missing Gmail search_threads, Slack search_public_and_private. MCP servers at start: makerdoc (connected)",
+		);
+	});
+
+	it("names only the connector that is missing", () => {
+		const { stream } = collect();
+		stream.onLine(
+			JSON.stringify({
+				type: "system",
+				subtype: "init",
+				model: "sonnet-x",
+				tools: ["mcp__claude_ai_Slack__slack_search_public_and_private"],
+				mcp_servers: [],
+			}),
+		);
+		expect(() => stream.finish("claude exited 0")).toThrow(
+			/^claude\.ai Gmail connector unavailable.*MCP servers at start: none$/,
+		);
+	});
+
+	it("returns the output when init held every requested tool", () => {
+		const { stream } = collect();
+		stream.onLine(
+			JSON.stringify({
+				type: "system",
+				subtype: "init",
+				model: "sonnet-x",
+				tools: [
+					"mcp__claude_ai_Gmail__search_threads",
+					"mcp__claude_ai_Slack__slack_search_public_and_private",
+				],
+			}),
+		);
+		stream.onLine(
+			JSON.stringify({ type: "result", structured_output: { messages: [] } }),
+		);
+		expect(stream.finish("claude exited 0").output).toEqual({ messages: [] });
 	});
 });

@@ -18,7 +18,7 @@ export async function claudeConnectorRun(
 		windowsHide: true,
 		timeout: run.timeoutMs,
 	});
-	const stream = createClaudeConnectorStream(run.onEvent);
+	const stream = createClaudeConnectorStream(run.onEvent, run.tools);
 	const flush = attachLineParser(child, stream.onLine);
 	const stderr = attachStderrCollector(child);
 	const exit = await new Promise<string>((resolve, reject) => {
