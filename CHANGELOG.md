@@ -1,3 +1,10 @@
+## [0.1217.1](https://github.com/staff0rd/assist/compare/v0.1217.0...v0.1217.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* record active viewer on SDK input ([78c0e25](https://github.com/staff0rd/assist/commit/78c0e25972e0a36b1241485906f79747e05be87e))
+
 # [0.1217.0](https://github.com/staff0rd/assist/compare/v0.1216.0...v0.1217.0) (2026-11-17)
 
 
