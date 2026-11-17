@@ -1,4 +1,4 @@
-import { backlogRunMarkers } from "./backlogRunMarkers";
+import { parseFirstUserEntry } from "./parseFirstUserEntry";
 
 type SessionMeta = {
 	sessionId: string;
@@ -7,9 +7,11 @@ type SessionMeta = {
 	name: string;
 	commandName: string;
 	commandArgs: string;
+	reachedFirstPrompt: boolean;
 };
 
 export function extractSessionMeta(lines: string[]): SessionMeta {
+	let reachedFirstPrompt = false;
 	let sessionId = "";
 	let cwd = "";
 	let timestamp = "";
@@ -27,24 +29,20 @@ export function extractSessionMeta(lines: string[]): SessionMeta {
 
 		if (entry.type === "user" && !entry.isMeta) {
 			({ name, commandName, commandArgs } = parseFirstUserEntry(entry));
+			reachedFirstPrompt = true;
 			break;
 		}
 	}
 
-	return { sessionId, cwd, timestamp, name, commandName, commandArgs };
-}
-
-function parseFirstUserEntry(entry: Record<string, unknown>): {
-	name: string;
-	commandName: string;
-	commandArgs: string;
-} {
-	const raw = messageText(entry);
-	const commandName = matchMarker(raw, "command-name").replace(/^\//, "");
-	const commandArgs = matchMarker(raw, "command-args");
-	const name = stripMarkers(raw);
-	if (commandName) return { name, commandName, commandArgs };
-	return { name, ...backlogRunMarkers(raw) };
+	return {
+		sessionId,
+		cwd,
+		timestamp,
+		name,
+		commandName,
+		commandArgs,
+		reachedFirstPrompt,
+	};
 }
 
 function strField(entry: Record<string, unknown>, key: string): string {
@@ -58,26 +56,4 @@ function safeParse(line: string): Record<string, unknown> | null {
 	} catch {
 		return null;
 	}
-}
-
-function messageText(entry: Record<string, unknown>): string {
-	const msg = entry.message as { content?: unknown } | undefined;
-	const content = msg?.content;
-	return typeof content === "string"
-		? content
-		: Array.isArray(content)
-			? (content.find((c: { type?: string }) => c.type === "text")?.text ?? "")
-			: "";
-}
-
-function stripMarkers(text: string): string {
-	return text
-		.replace(/<command-[^>]*>[^<]*<\/command-[^>]*>/g, "")
-		.trim()
-		.slice(0, 80);
-}
-
-function matchMarker(text: string, tag: string): string {
-	const match = text.match(new RegExp(`<${tag}>([\\s\\S]*?)</${tag}>`));
-	return match ? match[1].trim() : "";
 }

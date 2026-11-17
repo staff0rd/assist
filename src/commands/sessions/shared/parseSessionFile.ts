@@ -1,8 +1,8 @@
 import * as fs from "node:fs";
 import type { HarnessKind } from "../../../shared/harnesses";
 import { deriveHistoryFields, type SessionType } from "./deriveHistoryFields";
-import { extractSessionMeta } from "./extractSessionMeta";
 import { deriveProject } from "./deriveProject";
+import { readSessionMeta } from "./readSessionMeta";
 import type { SessionOrigin } from "./SessionOrigin";
 
 export type { SessionOrigin } from "./SessionOrigin";
@@ -30,7 +30,7 @@ export async function parseSessionFile(
 	let handle: fs.promises.FileHandle | undefined;
 	try {
 		handle = await fs.promises.open(filePath, "r");
-		const meta = extractSessionMeta(await readHeadLines(handle));
+		const meta = await readSessionMeta(handle);
 		if (!meta.sessionId) return null;
 
 		const lastActivity = (await fs.promises.stat(filePath)).mtime.toISOString();
@@ -50,12 +50,4 @@ export async function parseSessionFile(
 	} finally {
 		await handle?.close();
 	}
-}
-
-async function readHeadLines(
-	handle: fs.promises.FileHandle,
-): Promise<string[]> {
-	const buf = Buffer.alloc(16_384);
-	const { bytesRead } = await handle.read(buf, 0, buf.length, 0);
-	return buf.toString("utf8", 0, bytesRead).split("\n").filter(Boolean);
 }
