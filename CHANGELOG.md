@@ -1,3 +1,10 @@
+## [0.1213.2](https://github.com/staff0rd/assist/compare/v0.1213.1...v0.1213.2) (2026-11-17)
+
+
+### Bug Fixes
+
+* show inner codex exec calls ([6513aeb](https://github.com/staff0rd/assist/commit/6513aebd4e071569583ff88a8e3b97d862d436bf))
+
 ## [0.1213.1](https://github.com/staff0rd/assist/compare/v0.1213.0...v0.1213.1) (2026-11-17)
 
 
