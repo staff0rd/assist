@@ -48,6 +48,6 @@ export async function askCheck(options: {
 	console.log(
 		bump && answers[CHECK_RESULT_KEY] === "later"
 			? await applyCheckBump(bump, check.title, answers)
-			: formatAskCheckAnswer(check.title, answers),
+			: formatAskCheckAnswer(check.title, answers, decision.yolo === true),
 	);
 }

@@ -106,4 +106,51 @@ describe("yoloAnswerPreview", () => {
 		expect(session.pendingPrPreview?.requestId).toBe("r1");
 		expect(waiter.sent).toEqual([]);
 	});
+
+	describe("checks", () => {
+		function check(laterPhases?: unknown[]) {
+			return {
+				...preview([], "check"),
+				title: "Check",
+				body: JSON.stringify({
+					title: "It works",
+					steps: ["Do it"],
+					...(laterPhases ? { laterPhases } : {}),
+				}),
+			};
+		}
+
+		it("marks a mid-plan check Works", () => {
+			const { session, waiter } = run(check([{ number: 3, name: "Review" }]));
+			expect(session.pendingPrPreview).toBeUndefined();
+			expect(waiter.sent).toEqual([
+				expect.objectContaining({
+					type: "pr-decision",
+					requestId: "r1",
+					decision: "approve",
+					yolo: true,
+					answers: { result: "works" },
+				}),
+			]);
+		});
+
+		it("leaves a Review-phase check with no later phases for the user", () => {
+			const { session, waiter } = run(check([]));
+			expect(session.pendingPrPreview?.requestId).toBe("r1");
+			expect(waiter.sent).toEqual([]);
+		});
+
+		it("leaves an ad-hoc check for the user", () => {
+			const { session, waiter } = run(check());
+			expect(session.pendingPrPreview?.requestId).toBe("r1");
+			expect(waiter.sent).toEqual([]);
+		});
+
+		it("leaves a mid-plan check for the user when yolo is off", () => {
+			yolo.on = false;
+			const { session, waiter } = run(check([{ number: 3, name: "Review" }]));
+			expect(session.pendingPrPreview?.requestId).toBe("r1");
+			expect(waiter.sent).toEqual([]);
+		});
+	});
 });
