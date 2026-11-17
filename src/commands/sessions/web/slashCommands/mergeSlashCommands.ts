@@ -1,7 +1,7 @@
 export type SlashCommand = {
 	name: string;
 	description?: string;
-	scope: "user" | "project";
+	scope: "user" | "project" | "built-in";
 };
 
 export type SlashEntry = Omit<SlashCommand, "scope">;

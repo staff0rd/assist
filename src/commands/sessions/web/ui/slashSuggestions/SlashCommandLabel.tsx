@@ -17,9 +17,9 @@ export function SlashCommandLabel({
 					{command.name.slice(0, query.length)}
 				</Box>
 				{command.name.slice(query.length)}
-				{command.scope === "project" && (
+				{command.scope !== "user" && (
 					<Box component="span" sx={sx.scope}>
-						project
+						{command.scope}
 					</Box>
 				)}
 			</Box>

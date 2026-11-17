@@ -1,5 +1,7 @@
+import { useMemo } from "react";
 import type { SlashCommand } from "../../../../../slashCommands/readSlashCommands";
 import { useSuggestedSlashCommands } from "../../../../slashSuggestions/useSuggestedSlashCommands";
+import { withBuiltInSlashCommands } from "../../../../slashSuggestions/withBuiltInSlashCommands";
 import type { SessionInfo } from "../../../../types";
 
 const NO_COMMANDS: SlashCommand[] = [];
@@ -13,5 +15,9 @@ export function useComposerCommands(
 		session.cwd,
 		session.node,
 	);
-	return shell ? NO_COMMANDS : suggested;
+	const commands = useMemo(
+		() => withBuiltInSlashCommands(session.harness, suggested),
+		[session.harness, suggested],
+	);
+	return shell ? NO_COMMANDS : commands;
 }

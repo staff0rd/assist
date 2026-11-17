@@ -1,6 +1,6 @@
 import type { SlashCommand } from "../../slashCommands/readSlashCommands";
 
-const scopeOrder = { user: 0, project: 1 } as const;
+const scopeOrder = { user: 0, project: 1, "built-in": 2 } as const;
 
 export function matchSlashCommands(
 	commands: SlashCommand[],
