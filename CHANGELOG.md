@@ -1,3 +1,10 @@
+## [0.1209.8](https://github.com/staff0rd/assist/compare/v0.1209.7...v0.1209.8) (2026-11-17)
+
+
+### Bug Fixes
+
+* suggest skills from worktree start ([83e888d](https://github.com/staff0rd/assist/commit/83e888dad33d944620691b3e671e3b117a4fe82c))
+
 ## [0.1209.7](https://github.com/staff0rd/assist/compare/v0.1209.6...v0.1209.7) (2026-11-17)
 
 
