@@ -1,3 +1,10 @@
+# [0.1213.0](https://github.com/staff0rd/assist/compare/v0.1212.0...v0.1213.0) (2026-11-17)
+
+
+### Features
+
+* suggest skills in Codex composers ([f044e3b](https://github.com/staff0rd/assist/commit/f044e3b88d49ba68823277745845d5c2b7d57ae7))
+
 # [0.1212.0](https://github.com/staff0rd/assist/compare/v0.1211.0...v0.1212.0) (2026-11-17)
 
 
