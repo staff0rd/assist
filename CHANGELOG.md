@@ -1,3 +1,15 @@
+# [0.1212.0](https://github.com/staff0rd/assist/compare/v0.1211.0...v0.1212.0) (2026-11-17)
+
+
+### Bug Fixes
+
+* yolo help note covers mid-plan checks ([93f791c](https://github.com/staff0rd/assist/commit/93f791c27e7da0e313dffffbe2c774b79652438a))
+
+
+### Features
+
+* add advice-scope rules from the Rules page ([f1a752c](https://github.com/staff0rd/assist/commit/f1a752cd4c13c8117f0e55f35d6513eefd7d4d48))
+
 # [0.1211.0](https://github.com/staff0rd/assist/compare/v0.1210.0...v0.1211.0) (2026-11-17)
 
 
