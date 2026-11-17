@@ -3,6 +3,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as fsMockModule from "../../../test/mocks/fsMock";
 import { makeSession } from "../../../test/mothers/makeSession";
 import type { Session } from "./createSession";
+import { repoGroupForCwd } from "./repoGroupForCwd";
 import { toSessionInfo } from "./toSessionInfo";
 
 vi.mock("node:fs", async () =>
@@ -11,7 +12,10 @@ vi.mock("node:fs", async () =>
 	).fsMock(),
 );
 
+vi.mock("./repoGroupForCwd", () => ({ repoGroupForCwd: vi.fn() }));
+
 const exists = vi.mocked(existsSync);
+const group = vi.mocked(repoGroupForCwd);
 
 const finished = {
 	commandType: "assist",
@@ -23,6 +27,7 @@ const finished = {
 beforeEach(() => {
 	exists.mockReset();
 	exists.mockReturnValue(true);
+	group.mockReset();
 });
 
 describe("toSessionInfo promptIssue", () => {
@@ -75,5 +80,18 @@ describe("toSessionInfo sdk", () => {
 		const info = toSessionInfo(makeSession({ pty: null, drivenStart: true }));
 
 		expect(info.sdk).toBeUndefined();
+	});
+});
+
+describe("toSessionInfo repoGroup", () => {
+	it("falls back to the bound clone's group while the worktree is not on disk yet", () => {
+		const cloneGroup = { origin: "github.com/o/repo", clone: "/git/repo" };
+		group.mockImplementation((cwd) =>
+			cwd === "/git/repo" ? cloneGroup : undefined,
+		);
+
+		const info = toSessionInfo(makeSession(finished));
+
+		expect(info.repoGroup).toEqual(cloneGroup);
 	});
 });

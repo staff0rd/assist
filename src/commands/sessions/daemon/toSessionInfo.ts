@@ -2,7 +2,7 @@ import { promptIssueRef } from "../shared/promptIssueRef";
 import { promptPrNumber } from "../shared/promptPrNumber";
 import { promptSessionType } from "../shared/promptSessionType";
 import type { Session, SessionInfo } from "./createSession";
-import { repoGroupForCwd } from "./repoGroupForCwd";
+import { sessionRepoGroup } from "./sessionRepoGroup";
 import { toSessionRunInfo } from "./toSessionRunInfo";
 import { toSessionViewInfo } from "./toSessionViewInfo";
 import { joinRefusal } from "./worktree/joinRefusal";
@@ -47,7 +47,7 @@ export function toSessionInfo(session: Session): SessionInfo {
 		launchedFrom,
 		claudeSessionId,
 		harnessSessionId,
-		repoGroup: repoGroupForCwd(cwd),
+		repoGroup: sessionRepoGroup(session),
 		restored,
 		autoAdvance,
 		autoApprove,
