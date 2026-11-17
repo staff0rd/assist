@@ -6,6 +6,8 @@ import { buildClaudeConnectorArgs } from "./buildClaudeConnectorArgs";
 import { createClaudeConnectorStream } from "./createClaudeConnectorStream";
 import type { ConnectorRun, ConnectorRunResult } from "./types";
 
+const waitForClaudeAiConnectors = { MCP_CONNECTION_NONBLOCKING: "false" };
+
 function describeExit(code: number | null, signal: string | null): string {
 	return signal ? `claude was killed (${signal})` : `claude exited ${code}`;
 }
@@ -17,6 +19,7 @@ export async function claudeConnectorRun(
 		stdio: ["ignore", "pipe", "pipe"],
 		windowsHide: true,
 		timeout: run.timeoutMs,
+		env: { ...process.env, ...waitForClaudeAiConnectors },
 	});
 	const stream = createClaudeConnectorStream(run.onEvent, run.tools);
 	const flush = attachLineParser(child, stream.onLine);
