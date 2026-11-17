@@ -119,6 +119,20 @@ describe("claudeTurnEvents through runDrivenQuery", () => {
 		expect(events).toContainEqual({ kind: "suggestion", text: "commit this" });
 	});
 
+	it("reports each init's claude session as the conversation, including the one /clear starts", async () => {
+		const init = (session_id: string) =>
+			({
+				type: "system",
+				subtype: "init",
+				session_id,
+			}) as unknown as SDKMessage;
+		const { events } = await run(stream([init("before"), init("after")]));
+		expect(events.filter((event) => event.kind === "conversation")).toEqual([
+			{ kind: "conversation", id: "before" },
+			{ kind: "conversation", id: "after" },
+		]);
+	});
+
 	it("ignores subagent messages", async () => {
 		const { events } = await run(
 			stream([assistant([{ type: "tool_use", name: "Read" }], "toolu_1")]),

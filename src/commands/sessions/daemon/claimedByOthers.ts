@@ -1,3 +1,4 @@
+import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
 import type { Session } from "./createSession";
 import { forgetTranscriptPath } from "./forgetTranscriptPath";
 
@@ -17,8 +18,11 @@ export function claimConversation(
 	session: Session,
 	conversationId: string,
 ): void {
-	if (session.harnessSessionId !== conversationId)
+	const conversation = harnessAdapter(session.harness).conversation;
+	if (conversation.boundId(session) !== conversationId)
 		forgetTranscriptPath(session);
+	const { claudeSessionId } = conversation.toRef(conversationId);
+	if (claudeSessionId) session.claudeSessionId = claudeSessionId;
 	session.harnessSessionId = conversationId;
 	boundBy.set(conversationId, session);
 }

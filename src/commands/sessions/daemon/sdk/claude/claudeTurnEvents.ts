@@ -19,6 +19,8 @@ export async function* claudeTurnEvents(
 	for await (const message of messages) {
 		logSdkMessage(label, message);
 		observeUsage(message);
+		if (message.type === "system" && message.subtype === "init")
+			yield { kind: "conversation", id: message.session_id };
 		const status = sdkTurnStatus(message);
 		if (status) yield { kind: "status", status };
 		const background = backgroundTasks(message);
