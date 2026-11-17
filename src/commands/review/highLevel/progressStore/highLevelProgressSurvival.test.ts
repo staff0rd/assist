@@ -18,6 +18,7 @@ import { openHighLevelOverlay } from "../openHighLevelOverlay";
 import type { HighLevelReviewDraft } from "../types";
 import { writeJsonFile } from "../writeJsonFile";
 import { highLevelProgressApiPath } from "./highLevelProgressApiPath";
+import { highLevelProgressPath } from "./highLevelProgressPath";
 import type { HighLevelPaneProgress } from "./StoredHighLevelProgress";
 
 const mockAwaitPreviewApproval =
@@ -298,7 +299,7 @@ describe("migrating per-head drafts", () => {
 		reviewComments: [{ ...lineComment, note }],
 	});
 
-	it("restores the newest draft's comments at a later head and removes the drafts", () => {
+	it("restores every draft's comments at a later head and removes the drafts", () => {
 		writeJsonFile(
 			draftPath("0ld0000"),
 			draft("0ld0000", "2026-11-01T00:00:00Z", "old"),
@@ -312,8 +313,50 @@ describe("migrating per-head drafts", () => {
 
 		expect(reopened?.reviewComments).toEqual([
 			{ ...lineComment, note: "newest", headSha: HEAD },
+			{ ...lineComment, note: "old", headSha: "0ld0000" },
 		]);
 		expect(existsSync(draftPath(HEAD))).toBe(false);
 		expect(existsSync(draftPath("0ld0000"))).toBe(false);
+	});
+
+	it("keeps an older draft's comments when a newer draft at a moved head has none", () => {
+		writeJsonFile(draftPath(HEAD), {
+			...draft(HEAD, "2026-11-17T00:06:00Z", "keep me"),
+			items: [{ id: "structure-sensible", ticked: true, comment: "split it" }],
+		});
+		writeJsonFile(draftPath(MOVED_HEAD), {
+			...draft(MOVED_HEAD, "2026-11-17T01:42:00Z", "unused"),
+			items: [{ id: "structure-sensible", ticked: true }],
+			reviewComments: [],
+		});
+
+		const reopened = cliOpens(MOVED_HEAD, true);
+
+		expect(reopened?.reviewComments).toEqual([
+			{ ...lineComment, note: "keep me", headSha: HEAD },
+		]);
+		expect(reopened?.items).toEqual([
+			{ id: "structure-sensible", ticked: true, comment: "split it" },
+		]);
+	});
+
+	it("merges drafts into progress already in the store", () => {
+		const base = { ...lineComment, note: "stored", headSha: MOVED_HEAD };
+		writeJsonFile(highLevelProgressPath(REPO, PR), {
+			repo: REPO,
+			prNumber: PR,
+			updatedAt: "2026-11-17T02:00:00Z",
+			items: [],
+			reviewComments: [base],
+		});
+		writeJsonFile(
+			draftPath(HEAD),
+			draft(HEAD, "2026-11-17T00:00:00Z", "from draft"),
+		);
+
+		expect(cliOpens(MOVED_HEAD, true)?.reviewComments).toEqual([
+			base,
+			{ ...lineComment, note: "from draft", headSha: HEAD },
+		]);
 	});
 });
