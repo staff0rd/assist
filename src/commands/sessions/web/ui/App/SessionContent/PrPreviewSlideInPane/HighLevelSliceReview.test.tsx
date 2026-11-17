@@ -120,7 +120,6 @@ function area(name: RegExp) {
 
 afterEach(() => {
 	cleanup();
-	localStorage.clear();
 });
 
 describe("HighLevelSliceReview", () => {
@@ -217,19 +216,12 @@ describe("HighLevelSliceReview", () => {
 		expect(screen.getByText("Pairs with web change.")).toBeTruthy();
 	});
 
-	it("still shows the description when reopening a saved draft", () => {
+	it("still shows the description when reopening saved progress", () => {
 		render(
 			<HighLevelReviewPane
 				preview={preview({
 					body: "Drafted body.",
-					draft: {
-						repo: "org/repo",
-						prNumber: 7,
-						headRef: "feat",
-						headSha: "abc1234",
-						savedAt: "now",
-						items: [],
-					},
+					progress: { updatedAt: "now", items: [] },
 				})}
 				onDecision={vi.fn()}
 			/>,
@@ -328,27 +320,18 @@ describe("HighLevelSliceReview", () => {
 		);
 	});
 
-	it("restores a slice's tick and comment from the saved draft", () => {
+	it("restores a slice's tick and comment from saved progress", () => {
 		render(
 			<HighLevelReviewPane
 				preview={preview({
-					draft: {
-						repo: "org/repo",
-						prNumber: 7,
-						headRef: "feat",
-						headSha: "abc1234",
-						savedAt: "now",
+					progress: {
+						updatedAt: "now",
 						items: [
 							{
 								id: "structure-sensible",
-								kind: "manual",
-								title: "The structure of the change is sensible",
-								status: "manual",
-								reason: "",
 								ticked: true,
 								comment: "split it",
 								slice: 2,
-								sliceTitle: "Change schema",
 							},
 						],
 					},

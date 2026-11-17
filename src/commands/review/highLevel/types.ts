@@ -1,5 +1,6 @@
 import type { PreviewReviewComment } from "../../sessions/shared/PreviewDecision";
 import type { HighLevelCheck, HighLevelCheckId } from "./highLevelChecklist";
+import type { HighLevelPaneProgress } from "./progressStore/StoredHighLevelProgress";
 import type { HighLevelConfig } from "./resolveHighLevelConfig";
 
 type HighLevelCheckStatus = "pass" | "fail" | "manual";
@@ -186,5 +187,5 @@ export type HighLevelPreviewPayload = {
 	slices?: HighLevelSlice[];
 	manualTesting?: HighLevelManualTesting;
 	saved?: HighLevelReviewRecord;
-	draft?: HighLevelReviewDraft;
+	progress?: HighLevelPaneProgress;
 };

@@ -6,7 +6,8 @@
 		"./oxlint-rules/noRawStyleValues.ts",
 		"./oxlint-rules/requireShiftSkipConfirm.ts",
 		"./oxlint-rules/noHarnessBranches.ts",
-		"./oxlint-rules/preferExecFileSync.ts"
+		"./oxlint-rules/preferExecFileSync.ts",
+		"./oxlint-rules/noHighLevelSideStore.ts"
 	],
 	"categories": {
 		"correctness": "error",
@@ -78,6 +79,15 @@
 		{
 			"files": ["src/**/*.ts", "src/**/*.tsx"],
 			"rules": {
+				"high-level-review/no-side-store": [
+					"error",
+					{
+						"paneDirs": [
+							"src/commands/sessions/web/ui/App/SessionContent/PrPreviewSlideInPane/HighLevelReviewPane"
+						],
+						"storeDirs": ["src/commands/review/highLevel/progressStore"]
+					}
+				],
 				"harness/no-harness-branches": [
 					"error",
 					{
@@ -98,7 +108,8 @@
 			"files": ["**/*.test.ts", "**/*.test.tsx", "**/*.d.ts", "src/index.ts"],
 			"rules": {
 				"local/filename-convention": "off",
-				"harness/no-harness-branches": "off"
+				"harness/no-harness-branches": "off",
+				"high-level-review/no-side-store": "off"
 			}
 		},
 		{

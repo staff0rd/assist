@@ -1,12 +1,17 @@
 import { rmSync } from "node:fs";
-import { clearHighLevelDraft } from "./clearHighLevelDraft";
 import { highLevelReviewPath } from "./highLevelReviewPath";
+import type { HighLevelOverlaySubject } from "./HighLevelOverlaySubject";
+import { clearHighLevelProgress } from "./progressStore/clearHighLevelProgress";
 
 export function discardHighLevelProgress(
-	repo: string,
-	headRef: string,
-	headSha: string,
+	subject: Pick<
+		HighLevelOverlaySubject,
+		"repo" | "prNumber" | "headRef" | "headSha"
+	>,
+	requestId?: string,
 ): void {
-	clearHighLevelDraft(repo, headRef, headSha);
-	rmSync(highLevelReviewPath(repo, headRef, headSha), { force: true });
+	clearHighLevelProgress(subject.repo, subject.prNumber, "restart", requestId);
+	rmSync(highLevelReviewPath(subject.repo, subject.headRef, subject.headSha), {
+		force: true,
+	});
 }

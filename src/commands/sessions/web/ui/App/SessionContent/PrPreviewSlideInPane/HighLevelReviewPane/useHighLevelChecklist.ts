@@ -11,7 +11,7 @@ import {
 	highLevelLockedKeys,
 	highLevelOutstanding,
 } from "./useHighLevelChecklist/highLevelOutstanding";
-import type { HighLevelPaneProgress } from "./useHighLevelReviewPane/loadPersistedHighLevelProgress";
+import type { HighLevelPaneProgress } from "../../../../../../../review/highLevel/progressStore/StoredHighLevelProgress";
 
 export function useHighLevelChecklist(
 	checks: HighLevelCheckResult[],

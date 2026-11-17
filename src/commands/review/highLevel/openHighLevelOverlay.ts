@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
 import { awaitPreviewApproval } from "../../sessions/shared/awaitPreviewApproval";
-import { buildHighLevelDraft } from "./buildHighLevelDraft";
 import { buildHighLevelRecord } from "./buildHighLevelRecord";
-import { clearHighLevelDraft } from "./clearHighLevelDraft";
 import { discardHighLevelProgress } from "./discardHighLevelProgress";
-import { saveHighLevelDraft } from "./saveHighLevelDraft";
 import { highLevelPreviewMetadata } from "./highLevelPreviewMetadata";
+import { highLevelProgress } from "./highLevelProgress";
+import { clearHighLevelProgress } from "./progressStore/clearHighLevelProgress";
+import { saveHighLevelProgress } from "./progressStore/saveHighLevelProgress";
 import { highLevelPreviewPayload } from "./highLevelPreviewPayload";
 import type { HighLevelOverlaySubject } from "./HighLevelOverlaySubject";
 import { saveHighLevelReview } from "./saveHighLevelReview";
@@ -17,11 +17,12 @@ export async function openHighLevelOverlay(
 	subject: HighLevelOverlaySubject,
 	onRestart: () => Promise<void> = async () => {},
 ): Promise<HighLevelReviewRecord | undefined> {
+	const requestId = randomUUID();
 	const decision = await awaitPreviewApproval(
 		"High-level review",
 		{
 			sessionId,
-			requestId: randomUUID(),
+			requestId,
 			title: `${subject.repo}#${subject.prNumber} — ${subject.title}`,
 			body: JSON.stringify(highLevelPreviewPayload(subject)),
 			prNumber: subject.prNumber,
@@ -31,12 +32,16 @@ export async function openHighLevelOverlay(
 		{ rejectIsOutcome: true },
 	);
 	if (decision.restart) {
-		discardHighLevelProgress(subject.repo, subject.headRef, subject.headSha);
+		discardHighLevelProgress(subject, requestId);
 		await onRestart();
 		return undefined;
 	}
 	if (decision.dismissed) {
-		saveHighLevelDraft(buildHighLevelDraft(subject, decision));
+		if (decision.checklist)
+			saveHighLevelProgress(
+				subject,
+				highLevelProgress(subject.checks, decision, subject.slices),
+			);
 		console.log(
 			"Review closed without a verdict. Your progress is kept for when you reopen it; nothing was posted.",
 		);
@@ -44,7 +49,7 @@ export async function openHighLevelOverlay(
 	}
 	const record = buildHighLevelRecord(subject, decision);
 	saveHighLevelReview(record);
-	clearHighLevelDraft(record.repo, record.headRef, record.headSha);
+	clearHighLevelProgress(record.repo, record.prNumber, "verdict", requestId);
 	console.log(`Verdict: ${record.verdict}`);
 	submitHighLevelReview(record);
 	return record;

@@ -59,6 +59,9 @@ import { openInCode } from "./openInCode";
 import { prList } from "./prList";
 import { previewImage } from "./previewImage";
 import { prStatus } from "./prStatus";
+import { highLevelProgressApiPath } from "../../review/highLevel/progressStore/highLevelProgressApiPath";
+import { getHighLevelProgress } from "./highLevelProgress/getHighLevelProgress";
+import { postHighLevelProgress } from "./highLevelProgress/postHighLevelProgress";
 import { reopenHighLevelReview } from "./reopenHighLevelReview";
 import { releasesCompare } from "./releases/releasesCompare";
 import { releasesConfigured } from "./releases/releasesConfigured";
@@ -114,6 +117,8 @@ const routes: Record<string, Handler> = {
 	"OPTIONS /api/sessions/review-from-github": sessionFromGithubPreflight,
 	"POST /api/sessions/docs-feedback": docsFeedback,
 	"POST /api/sessions/reopen-high-level-review": reopenHighLevelReview,
+	[`GET ${highLevelProgressApiPath}`]: getHighLevelProgress,
+	[`POST ${highLevelProgressApiPath}`]: postHighLevelProgress,
 	"OPTIONS /api/sessions/docs-feedback": sessionFromGithubPreflight,
 	"POST /api/link-status": linkStatus,
 	"OPTIONS /api/link-status": sessionFromGithubPreflight,

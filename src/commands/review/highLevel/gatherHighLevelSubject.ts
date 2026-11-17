@@ -48,6 +48,6 @@ export function gatherHighLevelSubject(
 		testPaths: config.testPaths,
 		collapsedPaths: config.collapsedPaths,
 		...sliced,
-		...(force ? {} : loadReopenedReview(slug, pr.headRef, pr.headSha)),
+		...loadReopenedReview({ ...head, prNumber }, force),
 	};
 }

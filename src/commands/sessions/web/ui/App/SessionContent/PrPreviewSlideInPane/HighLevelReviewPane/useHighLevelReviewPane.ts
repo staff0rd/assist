@@ -8,14 +8,17 @@ import { useHighLevelChecklist } from "./useHighLevelChecklist";
 import { useHighLevelDiffComments } from "./useHighLevelReviewPane/useHighLevelDiffComments";
 import { useHighLevelPanePayload } from "./useHighLevelReviewPane/useHighLevelPanePayload";
 import { useHighLevelReviewQueue } from "./useHighLevelReviewPane/useHighLevelReviewQueue";
-import { usePersistHighLevelProgress } from "./useHighLevelReviewPane/usePersistHighLevelProgress";
+import type { HighLevelStoredProgress } from "./highLevelStoredProgress/useHighLevelStoredProgress";
+import { useWriteHighLevelProgress } from "./useHighLevelReviewPane/useWriteHighLevelProgress";
 
 export function useHighLevelReviewPane(
 	preview: PrPreview,
 	session: SessionInfo | undefined,
 	sendInput: ((sessionId: string, data: string) => void) | undefined,
+	stored: Pick<HighLevelStoredProgress, "progress" | "onChange">,
 ) {
-	const { payload, sliced, progress, head } = useHighLevelPanePayload(preview);
+	const { payload, sliced } = useHighLevelPanePayload(preview);
+	const { progress } = stored;
 	const checklist = useHighLevelChecklist(
 		payload.checks,
 		progress,
@@ -28,12 +31,7 @@ export function useHighLevelReviewPane(
 		sendInput,
 	);
 	const diffComments = { ...comments, onQueue: queue.onQueue };
-	usePersistHighLevelProgress(
-		preview.requestId,
-		head,
-		checklist.items,
-		queue.queued,
-	);
+	useWriteHighLevelProgress(checklist.items, queue.queued, stored.onChange);
 	const counts = useMemo(() => highLevelJumpCounts(payload), [payload]);
 
 	return {
@@ -47,6 +45,5 @@ export function useHighLevelReviewPane(
 		sliced,
 		nav,
 		diffComments,
-		head,
 	};
 }

@@ -1,4 +1,4 @@
-import type { HighLevelPaneProgress } from "../useHighLevelReviewPane/loadPersistedHighLevelProgress";
+import type { HighLevelPaneProgress } from "../../../../../../../../review/highLevel/progressStore/StoredHighLevelProgress";
 import type { HighLevelChecklistTarget } from "./highLevelChecklistTargets";
 
 export type HighLevelItemState = {

@@ -19,7 +19,7 @@ export function highLevelPreviewPayload(
 		slices,
 		manualTesting,
 		saved,
-		draft,
+		progress,
 	} = subject;
 	return {
 		repo,
@@ -36,6 +36,6 @@ export function highLevelPreviewPayload(
 		...(slices ? { slices } : {}),
 		...(manualTesting ? { manualTesting } : {}),
 		...(saved ? { saved } : {}),
-		...(draft ? { draft } : {}),
+		...(progress ? { progress } : {}),
 	};
 }

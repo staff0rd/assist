@@ -2,7 +2,7 @@ import type { PreviewMetadata } from "../../sessions/shared/SessionInfoBase";
 import type { HighLevelOverlaySubject } from "./HighLevelOverlaySubject";
 
 function reopenedFrom(subject: HighLevelOverlaySubject): PreviewMetadata[] {
-	const at = subject.draft?.savedAt ?? subject.saved?.reviewedAt;
+	const at = subject.progress?.updatedAt ?? subject.saved?.reviewedAt;
 	return at ? [{ label: "Reopened from", value: at }] : [];
 }
 

@@ -25,6 +25,7 @@ export type PreviewReviewComment = {
 	note: string;
 	startSide?: PreviewReviewSide;
 	side?: PreviewReviewSide;
+	headSha?: string;
 };
 
 export type PreviewStartTarget = {

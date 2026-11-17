@@ -6,6 +6,7 @@
 		"oxlint-rules/requireShiftSkipConfirm.ts",
 		"oxlint-rules/noHarnessBranches.ts",
 		"oxlint-rules/preferExecFileSync.ts",
+		"oxlint-rules/noHighLevelSideStore.ts",
 		"src/commands/sessions/web/ui/App.tsx",
 		"src/commands/sessions/web/ui/installMonacoGlobal.ts",
 		"src/commands/sessions/web/ios/buildIosWeb.ts",

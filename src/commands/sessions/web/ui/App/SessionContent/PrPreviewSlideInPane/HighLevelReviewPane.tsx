@@ -1,15 +1,8 @@
-import { Box, Divider } from "@mui/material";
 import type { PrPreview } from "../../../../../shared/SessionInfoBase";
-import { CommentSentSnackbar } from "../../CommentSentSnackbar";
-import { HighLevelReviewBody } from "./HighLevelReviewPane/HighLevelReviewBody";
-import { HighLevelReviewFooter } from "./HighLevelReviewPane/HighLevelReviewFooter";
 import type { PrDecisionDetails } from "../../../PrDecisionDetails";
-import { PreviewMetadataList } from "./PreviewMetadataList";
-import { PrPreviewHeader } from "../PrPreviewHeader";
-import { prPreviewPaneSx } from "../prPreviewPaneSx";
 import type { SessionInfo } from "../../../types";
-import { useHighLevelReviewPane } from "./HighLevelReviewPane/useHighLevelReviewPane";
-import { clearPersistedHighLevelProgress } from "./HighLevelReviewPane/useHighLevelReviewPane/loadPersistedHighLevelProgress";
+import { HighLevelReviewPaneView } from "./HighLevelReviewPane/HighLevelReviewPaneView";
+import { useHighLevelStoredProgress } from "./HighLevelReviewPane/highLevelStoredProgress/useHighLevelStoredProgress";
 
 export function HighLevelReviewPane({
 	preview,
@@ -25,31 +18,15 @@ export function HighLevelReviewPane({
 		details: PrDecisionDetails,
 	) => void;
 }) {
-	const pane = useHighLevelReviewPane(preview, session, sendInput);
-
+	const stored = useHighLevelStoredProgress(preview, session?.node);
 	return (
-		<Box sx={prPreviewPaneSx}>
-			<PrPreviewHeader preview={preview} draft={false} />
-			<PreviewMetadataList items={preview.metadata ?? []} />
-			<Divider />
-			<HighLevelReviewBody
-				payload={pane.payload}
-				checklist={pane.checklist}
-				details={pane.details}
-				counts={pane.counts}
-				sliced={pane.sliced}
-				nav={pane.nav}
-				comments={pane.diffComments}
-			/>
-			<Divider />
-			<HighLevelReviewFooter
-				pane={pane}
-				onDecision={(decision, details) => {
-					clearPersistedHighLevelProgress(preview.requestId, pane.head);
-					onDecision(decision, details);
-				}}
-			/>
-			<CommentSentSnackbar sessionName={pane.sentTo} onClose={pane.clearSent} />
-		</Box>
+		<HighLevelReviewPaneView
+			key={stored.version}
+			preview={preview}
+			session={session}
+			sendInput={sendInput}
+			stored={stored}
+			onDecision={onDecision}
+		/>
 	);
 }

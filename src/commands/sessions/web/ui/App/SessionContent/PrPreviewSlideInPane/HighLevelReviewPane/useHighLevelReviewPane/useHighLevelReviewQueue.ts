@@ -1,6 +1,6 @@
 import { useState } from "react";
 import type { PreviewReviewComment } from "../../../../../../../shared/PreviewDecision";
-import type { HighLevelPaneProgress } from "./loadPersistedHighLevelProgress";
+import type { HighLevelPaneProgress } from "../../../../../../../../review/highLevel/progressStore/StoredHighLevelProgress";
 
 export function useHighLevelReviewQueue(saved?: HighLevelPaneProgress) {
 	const [queued, setQueued] = useState<PreviewReviewComment[]>(

@@ -1,5 +1,9 @@
 // @vitest-environment jsdom
+import { mkdtempSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import {
+	act,
 	cleanup,
 	fireEvent,
 	render,
@@ -7,10 +11,12 @@ import {
 	waitFor,
 } from "@testing-library/react";
 import { useState } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { clearHighLevelProgress } from "../../../review/highLevel/progressStore/clearHighLevelProgress";
+import { loadHighLevelProgress } from "../../../review/highLevel/progressStore/loadHighLevelProgress";
+import { saveHighLevelProgress } from "../../../review/highLevel/progressStore/saveHighLevelProgress";
 import type {
 	HighLevelPreviewPayload,
-	HighLevelReviewDraft,
 	HighLevelReviewRecord,
 } from "../../../review/highLevel/types";
 import { makeSessionInfo } from "../../../../test/mothers/makeSessionInfo";
@@ -111,33 +117,73 @@ const liveSession = makeSessionInfo({
 
 type Reopened = {
 	saved?: HighLevelReviewRecord;
-	draft?: HighLevelReviewDraft;
+	progress?: HighLevelPreviewPayload["progress"];
 };
 
-function preview({ saved, draft }: Reopened): PrPreview {
+function preview({ saved, progress }: Reopened): PrPreview {
 	return {
 		requestId: "req-1",
 		title: "org/repo#42 — A change",
 		body: JSON.stringify({
 			...payload,
 			...(saved ? { saved } : {}),
-			...(draft ? { draft } : {}),
+			...(progress ? { progress } : {}),
 		}),
 		prNumber: 42,
 		kind: "high-level-review",
 	};
 }
 
+function jsonResponse(body: unknown) {
+	return Response.json(body);
+}
+
+function stubProgressApi(input: RequestInfo | URL, init?: RequestInit) {
+	const url = new URL(String(input), "http://localhost");
+	if (init?.method === "POST") {
+		const { repo, prNumber, headSha, requestId, ...progress } = JSON.parse(
+			String(init.body),
+		);
+		const ok = saveHighLevelProgress(
+			{ repo, prNumber, headSha, requestId },
+			progress,
+		);
+		return Promise.resolve(jsonResponse({ ok }));
+	}
+	const params = url.searchParams;
+	return Promise.resolve(
+		jsonResponse({
+			progress:
+				loadHighLevelProgress(
+					params.get("repo") ?? "",
+					Number(params.get("prNumber")),
+					params.get("headSha") ?? "",
+				) ?? null,
+		}),
+	);
+}
+
+const originalStore = process.env.ASSIST_STORE_DIR;
+
+beforeEach(() => {
+	process.env.ASSIST_STORE_DIR = mkdtempSync(join(tmpdir(), "hl-queue-"));
+	vi.stubGlobal("fetch", vi.fn(stubProgressApi));
+});
+
+async function settle() {
+	await act(() => new Promise((resolve) => setTimeout(resolve, 0)));
+}
+
 function renderPane({
 	saved,
-	draft,
+	progress,
 	session = liveSession,
 }: Reopened & { session?: SessionInfo } = {}) {
 	const onDecision = vi.fn();
 	const sendInput = vi.fn();
 	render(
 		<HighLevelReviewPane
-			preview={preview({ saved, draft })}
+			preview={preview({ saved, progress })}
 			session={session}
 			sendInput={sendInput}
 			onDecision={onDecision}
@@ -160,7 +206,9 @@ function lastDecision(onDecision: ReturnType<typeof vi.fn>) {
 
 afterEach(() => {
 	cleanup();
-	localStorage.clear();
+	vi.unstubAllGlobals();
+	if (originalStore === undefined) delete process.env.ASSIST_STORE_DIR;
+	else process.env.ASSIST_STORE_DIR = originalStore;
 });
 
 describe("high-level review queue", () => {
@@ -316,13 +364,17 @@ describe("high-level review queue", () => {
 			).toBe(true);
 		});
 
-		it("keeps an edited note across a reload", () => {
+		it("keeps an edited note across a reload", async () => {
+			await settle();
 			queueAndEdit();
+			await settle();
 			fireEvent.change(noteBox(), { target: { value: "reworded" } });
 			fireEvent.click(screen.getByRole("button", { name: "Save" }));
+			await settle();
 			cleanup();
 
 			const { onDecision } = renderPane();
+			await settle();
 
 			expect(lastDecision(onDecision)).toMatchObject({
 				reviewComments: [{ ...queued, note: "reworded" }],
@@ -330,8 +382,9 @@ describe("high-level review queue", () => {
 		});
 	});
 
-	it("keeps a queued comment, ticks and check comments across a reload", () => {
+	it("keeps a queued comment, ticks and check comments across a reload", async () => {
 		renderPane();
+		await settle();
 		writeTestComment("asserts nothing useful");
 		fireEvent.click(screen.getByRole("button", { name: "Add to review" }));
 		fireEvent.click(screen.getByLabelText("The tests are worth having"));
@@ -339,9 +392,11 @@ describe("high-level review queue", () => {
 			screen.getByLabelText("Comment on The tests are worth having"),
 			{ target: { value: "mostly fine" } },
 		);
+		await settle();
 		cleanup();
 
 		const { onDecision } = renderPane();
+		await settle();
 
 		expect(screen.getByText("Queued for review (1)")).toBeTruthy();
 		expect(lastDecision(onDecision)).toMatchObject({
@@ -352,29 +407,44 @@ describe("high-level review queue", () => {
 		});
 	});
 
-	it("keeps a removed queued comment removed across a reload", () => {
+	it("keeps a removed queued comment removed across a reload", async () => {
 		renderPane();
+		await settle();
 		writeTestComment("asserts nothing useful");
 		fireEvent.click(screen.getByRole("button", { name: "Add to review" }));
 		fireEvent.click(
 			screen.getByLabelText("Remove the queued comment on src/app.test.ts:4"),
 		);
+		await settle();
 		cleanup();
 
 		const { onDecision } = renderPane();
+		await settle();
 
 		expect(screen.queryByText(/Queued for review/)).toBeNull();
 		expect(lastDecision(onDecision)).toMatchObject({ reviewComments: [] });
 	});
 
-	it("forgets the reload state once a verdict is given", () => {
+	it("forgets the reload state once the verdict clears the store, even if a write lands late", async () => {
 		const first = renderPane();
+		await settle();
 		writeTestComment("asserts nothing useful");
 		fireEvent.click(screen.getByRole("button", { name: "Add to review" }));
-		lastDecision(first.onDecision);
+		const details = lastDecision(first.onDecision);
+		clearHighLevelProgress("org/repo", 42, "verdict", "req-1");
+		saveHighLevelProgress(
+			{
+				repo: "org/repo",
+				prNumber: 42,
+				headSha: "abc1234",
+				requestId: "req-1",
+			},
+			details,
+		);
 		cleanup();
 
 		renderPane();
+		await settle();
 
 		expect(screen.queryByText(/Queued for review/)).toBeNull();
 	});
@@ -410,19 +480,11 @@ describe("high-level review queue", () => {
 				reviewedAt: "2026-01-01T00:00:00.000Z",
 				items: [],
 			},
-			draft: {
-				repo: "org/repo",
-				prNumber: 42,
-				headRef: "feat/thing",
-				headSha: "abc123",
-				savedAt: "2026-01-02T00:00:00.000Z",
+			progress: {
+				updatedAt: "2026-01-02T00:00:00.000Z",
 				items: [
 					{
 						id: "tests-worth-having",
-						kind: "manual",
-						title: "The tests are worth having",
-						status: "manual",
-						reason: "The describe/it hierarchy of changed tests",
 						ticked: true,
 						comment: "mostly fine",
 					},

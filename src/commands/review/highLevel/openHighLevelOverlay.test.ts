@@ -30,15 +30,17 @@ vi.mock("./saveHighLevelReview", () => ({
 		mockSaveHighLevelReview(...(args as [])),
 }));
 
-const mockSaveHighLevelDraft = vi.fn();
-const mockClearHighLevelDraft = vi.fn();
+const mockSaveHighLevelProgress = vi.fn();
+const mockClearHighLevelProgress = vi.fn();
 
-vi.mock("./saveHighLevelDraft", () => ({
-	saveHighLevelDraft: (...args: unknown[]) => mockSaveHighLevelDraft(...args),
+vi.mock("./progressStore/saveHighLevelProgress", () => ({
+	saveHighLevelProgress: (...args: unknown[]) =>
+		mockSaveHighLevelProgress(...args),
 }));
 
-vi.mock("./clearHighLevelDraft", () => ({
-	clearHighLevelDraft: (...args: unknown[]) => mockClearHighLevelDraft(...args),
+vi.mock("./progressStore/clearHighLevelProgress", () => ({
+	clearHighLevelProgress: (...args: unknown[]) =>
+		mockClearHighLevelProgress(...args),
 }));
 
 const mockDiscardHighLevelProgress = vi.fn();
@@ -145,8 +147,9 @@ let exit: ReturnType<typeof vi.spyOn>;
 beforeEach(() => {
 	mockAwaitPreviewApproval.mockReset();
 	mockSaveHighLevelReview.mockClear();
-	mockSaveHighLevelDraft.mockClear();
-	mockClearHighLevelDraft.mockClear();
+	mockSaveHighLevelProgress.mockClear();
+	mockClearHighLevelProgress.mockClear();
+	mockDiscardHighLevelProgress.mockClear();
 	mockExecFileSync.mockReset();
 	mockFetchHighLevelFiles.mockReset().mockReturnValue([]);
 	log = vi.spyOn(console, "log").mockImplementation(() => {});
@@ -163,7 +166,7 @@ afterEach(() => {
 });
 
 describe("openHighLevelOverlay", () => {
-	it("keeps the progress as a draft and posts nothing when the review is closed without a verdict", async () => {
+	it("keeps the progress in the PR's store and posts nothing when the review is closed without a verdict", async () => {
 		mockAwaitPreviewApproval.mockResolvedValue({
 			...queuedDecision("reject", undefined),
 			dismissed: true,
@@ -173,13 +176,15 @@ describe("openHighLevelOverlay", () => {
 
 		expect(record).toBeUndefined();
 		expect(mockSaveHighLevelReview).not.toHaveBeenCalled();
-		expect(mockClearHighLevelDraft).not.toHaveBeenCalled();
+		expect(mockClearHighLevelProgress).not.toHaveBeenCalled();
 		expect(mockExecFileSync).not.toHaveBeenCalled();
-		expect(mockSaveHighLevelDraft).toHaveBeenCalledWith(
+		expect(mockSaveHighLevelProgress).toHaveBeenCalledWith(
 			expect.objectContaining({
 				repo: "org/repo",
-				headRef: "feat/thing",
+				prNumber: 42,
 				headSha: "abc123",
+			}),
+			expect.objectContaining({
 				items: [
 					expect.objectContaining({
 						id: "structure-sensible",
@@ -206,16 +211,15 @@ describe("openHighLevelOverlay", () => {
 		expect(record).toBeUndefined();
 		expect(onRestart).toHaveBeenCalledOnce();
 		expect(mockDiscardHighLevelProgress).toHaveBeenCalledWith(
-			"org/repo",
-			"feat/thing",
-			"abc123",
+			subject,
+			expect.any(String),
 		);
-		expect(mockSaveHighLevelDraft).not.toHaveBeenCalled();
+		expect(mockSaveHighLevelProgress).not.toHaveBeenCalled();
 		expect(mockSaveHighLevelReview).not.toHaveBeenCalled();
 		expect(mockExecFileSync).not.toHaveBeenCalled();
 	});
 
-	it("clears the draft once a verdict is saved", async () => {
+	it("clears the PR's progress once a verdict is saved", async () => {
 		mockAwaitPreviewApproval.mockResolvedValue({
 			decision: "approve",
 			checklist: [],
@@ -223,10 +227,11 @@ describe("openHighLevelOverlay", () => {
 
 		await openHighLevelOverlay("s1", subject);
 
-		expect(mockClearHighLevelDraft).toHaveBeenCalledWith(
+		expect(mockClearHighLevelProgress).toHaveBeenCalledWith(
 			"org/repo",
-			"feat/thing",
-			"abc123",
+			42,
+			"verdict",
+			mockAwaitPreviewApproval.mock.calls[0]?.[1].requestId,
 		);
 	});
 

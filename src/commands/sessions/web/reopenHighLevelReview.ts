@@ -2,7 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { z } from "zod";
 import { respondJson } from "../../../shared/web";
 import { requestDaemonReply } from "../daemon/requestDaemonReply";
-import { readJsonBody } from "./readJsonBody";
+import { parseJsonBody } from "./parseJsonBody";
 
 const bodySchema = z.object({
 	sessionId: z.string().min(1),
@@ -19,15 +19,13 @@ export async function reopenHighLevelReview(
 	req: IncomingMessage,
 	res: ServerResponse,
 ): Promise<void> {
-	const parsed = bodySchema.safeParse(
-		await readJsonBody(req).catch(() => undefined),
-	);
-	if (!parsed.success) {
+	const body = await parseJsonBody(req, bodySchema);
+	if (!body) {
 		respondJson(res, 400, { error: "Invalid reopen request" });
 		return;
 	}
 	const reply = await requestDaemonReply<Reply>(
-		{ type: "reopen-high-level-review", ...parsed.data },
+		{ type: "reopen-high-level-review", ...body },
 		"reopen-high-level-review-result",
 		REOPEN_TIMEOUT_MS,
 	);
