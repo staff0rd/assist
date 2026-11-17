@@ -1,3 +1,10 @@
+# [0.1215.0](https://github.com/staff0rd/assist/compare/v0.1214.1...v0.1215.0) (2026-11-17)
+
+
+### Features
+
+* add rules to file scopes ([28c5343](https://github.com/staff0rd/assist/commit/28c5343551b69088fef211de30e0e9b87463de9d))
+
 ## [0.1214.1](https://github.com/staff0rd/assist/compare/v0.1214.0...v0.1214.1) (2026-11-17)
 
 
