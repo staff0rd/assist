@@ -1,7 +1,7 @@
 import { watch } from "node:fs";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
-import { ensureProjectDirExists } from "./ensureProjectDirExists";
+import { locateWatchTarget } from "./locateWatchTarget";
 import { reconcileTranscriptStatus } from "./reconcileTranscriptStatus";
 import { startTranscriptTitleGeneration } from "./startTranscriptTitleGeneration";
 import type { OnStatusChange } from "./types";
@@ -19,8 +19,10 @@ export function watchTranscript(
 	const conversation = watchedConversation(session);
 	if (!conversation || session.watchedTranscriptId === conversation.key) return;
 
-	const target = conversation.reader.watchTarget(conversation.ref);
-	if (!target || !ensureProjectDirExists(target.dir, session.id)) return;
+	const target = locateWatchTarget(session, conversation, () =>
+		watchTranscript(session, notify, onStatusChange),
+	);
+	if (!target) return;
 
 	unwatchTranscript(session);
 

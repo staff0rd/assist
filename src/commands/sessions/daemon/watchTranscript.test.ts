@@ -157,6 +157,49 @@ describe("watchTranscript", () => {
 			expect(reconcileMock).toHaveBeenCalledTimes(2);
 		});
 
+		it("starts watching once a rollout missing at bind time appears", () => {
+			vi.useFakeTimers();
+			rolloutMock.mockReturnValue(null);
+			const s = makeSession({
+				cwd: "/home/me/repo",
+				harness: "codex-sdk",
+				harnessSessionId: "conv-1",
+			});
+
+			watchTranscript(s, vi.fn(), vi.fn());
+			vi.advanceTimersByTime(3000);
+			expect(watchMock).not.toHaveBeenCalled();
+
+			rolloutMock.mockReturnValue(rollout);
+			vi.advanceTimersByTime(1000);
+			vi.useRealTimers();
+
+			expect(watchMock.mock.calls[0][0]).toBe("/codex/2026/11/10");
+			expect(s.watchedTranscriptId).toBe("codex-sdk:conv-1");
+			expect(reconcileMock).toHaveBeenCalledTimes(1);
+		});
+
+		it("stops retrying once the rollout never appears", () => {
+			vi.useFakeTimers();
+			rolloutMock.mockReturnValue(null);
+			const s = makeSession({
+				cwd: "/home/me/repo",
+				harness: "codex-sdk",
+				harnessSessionId: "conv-1",
+			});
+
+			watchTranscript(s, vi.fn(), vi.fn());
+			vi.advanceTimersByTime(200_000);
+			const lookups = rolloutMock.mock.calls.length;
+			vi.advanceTimersByTime(10_000);
+			vi.useRealTimers();
+
+			expect(rolloutMock.mock.calls.length).toBe(lookups);
+			expect(vi.mocked(daemonLog)).toHaveBeenCalledWith(
+				"session 1 transcript for codex-sdk:conv-1 never appeared; not watching",
+			);
+		});
+
 		it("drops the watcher when a fresh launch unbinds the conversation, then rebinds", () => {
 			rolloutMock.mockReturnValue(rollout);
 			const close = vi.fn();

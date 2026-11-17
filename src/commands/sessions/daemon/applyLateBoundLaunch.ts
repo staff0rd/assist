@@ -3,6 +3,7 @@ import { harnessAdapter } from "../../../shared/harnessAdapters/harnessAdapter";
 import { bindConversation } from "./bindConversation";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
+import { forgetTranscriptPath } from "./forgetTranscriptPath";
 
 export function applyLateBoundLaunch(
 	session: Session,
@@ -14,6 +15,7 @@ export function applyLateBoundLaunch(
 	if (activity.harnessSessionId) {
 		if (session.harnessSessionId === activity.harnessSessionId) return;
 		session.harnessSessionId = activity.harnessSessionId;
+		forgetTranscriptPath(session);
 		daemonLog(
 			`session ${session.id} resumed ${label} conversation ${activity.harnessSessionId}`,
 		);
@@ -26,6 +28,7 @@ export function applyLateBoundLaunch(
 			`session ${session.id} started a fresh ${label} conversation; unbinding ${session.harnessSessionId}`,
 		);
 	session.harnessSessionId = undefined;
+	forgetTranscriptPath(session);
 	onBound?.(session);
 	bindConversation(session, notify, activity.startedAt, onBound);
 }

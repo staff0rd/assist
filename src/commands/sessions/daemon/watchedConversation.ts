@@ -4,6 +4,7 @@ import {
 } from "../shared/conversationOf";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
+import { forgetTranscriptPath } from "./forgetTranscriptPath";
 import { unwatchTranscript } from "./unwatchTranscript";
 
 const reportedUnreadable = new WeakSet<Session>();
@@ -18,7 +19,9 @@ export function watchedConversation(
 		reportedUnreadable.add(session);
 		return undefined;
 	}
-	if (!lookup.conversation && session.watchedTranscriptId)
-		unwatchTranscript(session);
+	if (!lookup.conversation) {
+		if (session.watchedTranscriptId) unwatchTranscript(session);
+		else forgetTranscriptPath(session);
+	}
 	return lookup.conversation;
 }

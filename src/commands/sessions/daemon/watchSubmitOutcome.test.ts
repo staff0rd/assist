@@ -23,7 +23,9 @@ function restoredWaiting(): Session {
 	return makeSession({
 		status: "waiting",
 		restored: true,
+		claudeSessionId: "abc",
 		transcriptPath: "/path/abc.jsonl",
+		transcriptPathKey: "claude:abc",
 		transcriptFingerprint: "last-turn",
 	});
 }

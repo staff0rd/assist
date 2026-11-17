@@ -4,6 +4,7 @@ import { readConversationHead } from "../shared/readConversationHead";
 import { sessionTitlePrompt } from "../shared/sessionTitlePrompt";
 import { contextAfterReference } from "../summarise/contextAfterReference";
 import { firstUserMessage } from "../summarise/firstUserMessage";
+import { cachedTranscriptPath } from "./cachedTranscriptPath";
 import { daemonLog } from "./daemonLog";
 import { runSessionTitleGeneration } from "./runSessionTitleGeneration";
 import type { Session } from "./types";
@@ -22,7 +23,8 @@ export function startTranscriptTitleGeneration(
 	const conversation = conversationOf(session);
 	if (!conversation) return;
 	const filePath =
-		session.transcriptPath ?? conversation.reader.locate(conversation.ref);
+		cachedTranscriptPath(session, conversation.key) ??
+		conversation.reader.locate(conversation.ref);
 	if (!filePath) return;
 
 	const events = readConversationHead(conversation.reader, filePath);

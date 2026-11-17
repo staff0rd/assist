@@ -82,6 +82,7 @@ export type Session = SdkViewState & {
 	releasedFromClone?: string;
 	undurable?: { reason: string; removesTree?: boolean };
 	transcriptPath?: string;
+	transcriptPathKey?: string;
 	transcriptFingerprint?: string;
 	transcriptRevision?: number;
 	lastUserMessage?: string;

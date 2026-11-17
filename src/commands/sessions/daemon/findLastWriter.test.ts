@@ -78,12 +78,14 @@ describe("findLastWriter", () => {
 				id: "c",
 				claudeSessionId: "c-1",
 				transcriptPath: "/t/claude.jsonl",
+				transcriptPathKey: "claude:c-1",
 			}),
 			live({
 				id: "x",
 				harness: "codex",
 				harnessSessionId: "x-1",
 				transcriptPath: "/t/codex.jsonl",
+				transcriptPathKey: "codex:x-1",
 			}),
 			live({ id: "f", harness: FAKE, harnessSessionId: "f-1" }),
 		];
@@ -103,6 +105,7 @@ describe("findLastWriter", () => {
 				id: "c",
 				claudeSessionId: "c-1",
 				transcriptPath: "/t/claude.jsonl",
+				transcriptPathKey: "claude:c-1",
 			}),
 			live({ id: "x", harness: "codex" }),
 			live({ id: "p", harness: "pi", harnessSessionId: "p-1" }),
@@ -113,7 +116,12 @@ describe("findLastWriter", () => {
 
 	it("finds no writer when no live session wrote the target", async () => {
 		const sessions = [
-			live({ id: "c", claudeSessionId: "c-1", transcriptPath: "/t/none" }),
+			live({
+				id: "c",
+				claudeSessionId: "c-1",
+				transcriptPath: "/t/none",
+				transcriptPathKey: "claude:c-1",
+			}),
 		];
 
 		expect(await findLastWriter(sessions, target)).toBeUndefined();

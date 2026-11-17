@@ -1,4 +1,5 @@
 import type { Session } from "./createSession";
+import { forgetTranscriptPath } from "./forgetTranscriptPath";
 
 const boundBy = new Map<string, Session>();
 
@@ -16,6 +17,8 @@ export function claimConversation(
 	session: Session,
 	conversationId: string,
 ): void {
+	if (session.harnessSessionId !== conversationId)
+		forgetTranscriptPath(session);
 	session.harnessSessionId = conversationId;
 	boundBy.set(conversationId, session);
 }

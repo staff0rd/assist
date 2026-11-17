@@ -13,8 +13,8 @@ import { resolveTranscriptPath } from "./resolveTranscriptPath";
 import type { SessionManager } from "./SessionManager";
 
 async function readMessages(session: Session): Promise<TranscriptMessage[]> {
+	const filePath = await resolveTranscriptPath(session);
 	const conversation = conversationOf(session);
-	const filePath = conversation ? await resolveTranscriptPath(session) : null;
 	if (!conversation || !filePath) return [];
 	try {
 		return transcriptMessages(
