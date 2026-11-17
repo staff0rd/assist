@@ -1,3 +1,10 @@
+## [0.1209.7](https://github.com/staff0rd/assist/compare/v0.1209.6...v0.1209.7) (2026-11-17)
+
+
+### Bug Fixes
+
+* settle resumed SDK sessions on Stop ([0f4d191](https://github.com/staff0rd/assist/commit/0f4d1910b76de1e6cc7a95f52601bf2a56557eda))
+
 ## [0.1209.6](https://github.com/staff0rd/assist/compare/v0.1209.5...v0.1209.6) (2026-11-17)
 
 
