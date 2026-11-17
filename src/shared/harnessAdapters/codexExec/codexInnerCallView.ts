@@ -1,7 +1,7 @@
 import type { ConversationEvent, ToolInputField } from "../types";
 import { toolInputFields } from "../toolInputFields";
 import { condensePreview } from "./condensePreview";
-import type { CodexInnerCall } from "./parseCodexExecWrapper";
+import type { CodexInnerCall } from "./CodexInnerCall";
 
 type ToolEvent = Extract<ConversationEvent, { kind: "tool" }>;
 type InnerCallView = Pick<ToolEvent, "target" | "label" | "fields">;

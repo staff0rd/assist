@@ -50,6 +50,7 @@ describe("codexConversationReader", () => {
 			"message",
 			"tool",
 			"tool",
+			"tool",
 			"toolResult",
 			"toolResult",
 			"message",
@@ -61,7 +62,15 @@ describe("codexConversationReader", () => {
 			at: "2026-11-09T12:56:43.668Z",
 		});
 		expect(events[1]).toMatchObject({ role: "assistant" });
+		expect(events[2]).toMatchObject({
+			tool: "exec",
+			target: expect.stringMatching(/^text\(await tools\.apply_patch\(/),
+		});
 		expect(events[3]).toMatchObject({
+			tool: "exec_command",
+			label: "echo done && ls",
+		});
+		expect(events[4]).toMatchObject({
 			tool: "apply_patch",
 			operations: [
 				{
@@ -71,10 +80,10 @@ describe("codexConversationReader", () => {
 				},
 			],
 		});
-		expect(events[4]).toMatchObject({
+		expect(events[5]).toMatchObject({
 			text: expect.stringMatching(/^done\n/),
 		});
-		expect(events[6]).toMatchObject({
+		expect(events[7]).toMatchObject({
 			role: "assistant",
 			text: expect.stringMatching(/^Created \[hello\.txt\]/),
 		});

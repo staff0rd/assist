@@ -3,6 +3,12 @@ import { parseCodexExecWrapper } from "./parseCodexExecWrapper";
 
 const exec = (args: string) => `tools.exec_command(${args})`;
 
+function callAt(input: string, index: number) {
+	const part = parseCodexExecWrapper(input)?.[index];
+	if (part?.kind !== "call") throw new Error("expected a call");
+	return part.call;
+}
+
 describe("parseCodexExecWrapper", () => {
 	it.each([
 		["text(await)", "text(await CALL);"],
@@ -18,14 +24,20 @@ describe("parseCodexExecWrapper", () => {
 			exec('{cmd:"ls -la", "max_output_tokens":10}'),
 		);
 		expect(parseCodexExecWrapper(input)).toEqual([
-			{ tool: "exec_command", args: { cmd: "ls -la", max_output_tokens: 10 } },
+			{
+				kind: "call",
+				call: {
+					tool: "exec_command",
+					args: { cmd: "ls -la", max_output_tokens: 10 },
+				},
+			},
 		]);
 	});
 
 	it("decodes quotes, escapes and multiline template literals exactly", () => {
 		const input =
 			"text(await tools.exec_command({'cmd': `python3 - <<'PY'\nprint(\"a\\tb\")\nPY`, extra: [1, -2.5, true, null, {k: '\\u0041\\x42\\''}],}));";
-		expect(parseCodexExecWrapper(input)?.[0].args).toEqual({
+		expect(callAt(input, 0).args).toEqual({
 			cmd: "python3 - <<'PY'\nprint(\"a\tb\")\nPY",
 			extra: [1, -2.5, true, null, { k: "AB'" }],
 		});
@@ -37,7 +49,13 @@ describe("parseCodexExecWrapper", () => {
 				String.raw`text(await tools.write_stdin({session_id:5586,chars:"y\n\u0003"}));`,
 			),
 		).toEqual([
-			{ tool: "write_stdin", args: { session_id: 5586, chars: "y\n\u0003" } },
+			{
+				kind: "call",
+				call: {
+					tool: "write_stdin",
+					args: { session_id: 5586, chars: "y\n\u0003" },
+				},
+			},
 		]);
 	});
 
@@ -52,18 +70,13 @@ describe("parseCodexExecWrapper", () => {
 			"interpolation",
 			"text(await tools.exec_command({cmd: `ls $" + "{dir}`}));",
 		],
-		[
-			"extra code",
-			"text(await tools.exec_command({cmd: 'ls'})); store('x', 1);",
-		],
 		["other tool", "text(await tools.web__run({q: 'x'}));"],
 		["unterminated", "text(await tools.exec_command({cmd: 'ls"],
 		["unclosed call", "text(await tools.exec_command({cmd: 'ls'}"],
 		["bad escape", String.raw`text(await tools.exec_command({cmd: '\u12'}));`],
-		[
-			"two calls",
-			"text(await tools.exec_command({cmd:'a'}));text(await tools.exec_command({cmd:'b'}));",
-		],
+		["empty cmd", "text(await tools.exec_command({cmd: '  '}));"],
+		["unbalanced", "text(await tools.exec_command({cmd: 'ls'}));\n}"],
+		["unterminated comment", "text(await tools.exec_command({cmd: 'ls'})); /*"],
 		["empty", ""],
 	])("returns null for %s", (_, input) => {
 		expect(parseCodexExecWrapper(input)).toBeNull();

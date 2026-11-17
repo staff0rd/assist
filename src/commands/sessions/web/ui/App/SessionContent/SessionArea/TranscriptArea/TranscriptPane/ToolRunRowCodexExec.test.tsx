@@ -9,17 +9,19 @@ import { ToolRunRow } from "./ToolRunRow";
 
 afterEach(cleanup);
 
-const rollout = readFileSync(
-	"src/shared/harnessAdapters/fixtures/codexExecWrappers.jsonl",
-	"utf8",
-)
-	.split("\n")
-	.filter(Boolean)
-	.map((line) => JSON.parse(line));
+function readRollout(name: string) {
+	return readFileSync(
+		`src/shared/harnessAdapters/fixtures/${name}.jsonl`,
+		"utf8",
+	)
+		.split("\n")
+		.filter(Boolean)
+		.map((line) => JSON.parse(line));
+}
 
-function renderRollout() {
+function renderRollout(name = "codexExecWrappers") {
 	const messages = codexConversationReader
-		.events(rollout)
+		.events(readRollout(name))
 		.flatMap(eventTranscriptMessages);
 	const [run] = groupToolRuns(messages);
 	if (run?.kind !== "tools") throw new Error("expected one tool run");
@@ -78,6 +80,50 @@ describe("ToolRunRow with Codex exec wrappers", () => {
 		const pre = screen.getByText((_, el) => el?.tagName === "PRE");
 		expect(pre.textContent).toBe(
 			"const args = buildArgs();\nawait tools.exec_command(args);",
+		);
+	});
+});
+
+describe("ToolRunRow with batched Codex exec wrappers", () => {
+	it("shows each batched call as its own spaced row in source order", () => {
+		renderRollout("codexExecBatches");
+		const rows = screen.getAllByRole("button");
+		expect(
+			rows.map((row) =>
+				[...row.querySelectorAll("span")].slice(0, 2).map((s) => s.textContent),
+			),
+		).toEqual([
+			["exec_command", "sed -n '90,155p' packages/web/src/CreditsChart.tsx"],
+			["exec_command", "sed -n '1,40p' packages/bot/src/db.ts"],
+			["write_stdin", "session 24345 · poll"],
+			["exec_command", expect.stringMatching(/^python3 - <<'PY' import json/)],
+			["exec_command", "cat README.md"],
+			["exec_command", "assist backlog view a1751"],
+			["exec", 'store("item",JSON.parse(p.output));text({loaded:true});'],
+			["write_stdin", String.raw`session 5586 · input "y\n"`],
+			["exec", expect.stringMatching(/^text\(await tools\.exec_command/)],
+		]);
+		expect(screen.queryByText(/Promise\.allSettled/)).toBeNull();
+	});
+
+	it("expands a batched multiline script to its exact command", () => {
+		renderRollout("codexExecBatches");
+		fireEvent.click(screen.getAllByRole("button")[3]);
+		const cmd = screen.getByText(
+			(_, el) =>
+				el?.tagName === "DD" &&
+				el.textContent?.startsWith("python3 - <<'PY'\nimport json") === true,
+		);
+		expect(cmd.textContent).toContain("\n    row = json.loads(line)\n");
+		expect(cmd.textContent?.endsWith("\nPY")).toBe(true);
+	});
+
+	it("expands a malformed wrapper to its whole original input", () => {
+		renderRollout("codexExecBatches");
+		fireEvent.click(screen.getAllByRole("button")[8]);
+		const pre = screen.getByText((_, el) => el?.tagName === "PRE");
+		expect(pre.textContent).toBe(
+			'text(await tools.exec_command({cmd:"ls"}));\ntext(await tools.exec_command({cmd:"pwd"});',
 		);
 	});
 });
