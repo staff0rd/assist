@@ -5,7 +5,7 @@ import type { RuleScope } from "../../../../../rules/types";
 import { emptyMessage } from "./emptyMessage";
 import type { RuleActions } from "./RuleActions";
 import { RuleRow } from "./RuleRow";
-import { RuleScopeHeader } from "./RuleScopeHeader";
+import { RuleScopeTop } from "./RuleScopeTop";
 
 export function RuleScopePanel({
 	scope,
@@ -21,7 +21,7 @@ export function RuleScopePanel({
 			aria-live="polite"
 			sx={{ minWidth: 0 }}
 		>
-			<RuleScopeHeader scope={scope} />
+			<RuleScopeTop scope={scope} comments={actions.comments} />
 			{scope.rules.length === 0 ? (
 				<Typography
 					color={scope.error ? "error" : "text.secondary"}

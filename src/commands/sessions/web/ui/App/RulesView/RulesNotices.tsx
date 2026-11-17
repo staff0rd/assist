@@ -1,17 +1,18 @@
 import Alert from "@mui/material/Alert";
 import { CommentSentSnackbar } from "../CommentSentSnackbar";
+import type { RuleComments } from "./useRuleComments";
 
 type Props = {
 	failure: string | undefined;
 	onClearFailure: () => void;
-	sentTo: string | null;
+	sent: RuleComments["sent"];
 	onClearSent: () => void;
 };
 
 export function RulesNotices({
 	failure,
 	onClearFailure,
-	sentTo,
+	sent,
 	onClearSent,
 }: Props) {
 	return (
@@ -21,7 +22,11 @@ export function RulesNotices({
 					{failure}
 				</Alert>
 			)}
-			<CommentSentSnackbar sessionName={sentTo} onClose={onClearSent} />
+			<CommentSentSnackbar
+				sessionName={sent?.to ?? null}
+				subject={sent?.subject}
+				onClose={onClearSent}
+			/>
 		</>
 	);
 }

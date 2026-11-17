@@ -3,14 +3,14 @@ description: Capture a new CLAUDE.md rule from a review comment
 allowed_args: "[quoted text, file and note from the comment pane] [--repo [name] | --user | --node]"
 ---
 
-You are turning a review comment into a written rule in a `CLAUDE.md` file, so the same mistake is caught next time. `$ARGUMENTS` carries what the comment pane sent: an optional `File:` line, the quoted text in a fenced block, and the reviewer's note.
+You are turning a review comment into a written rule in a `CLAUDE.md` file, so the same mistake is caught next time. `$ARGUMENTS` carries what the comment pane sent: an optional `File:` line, the quoted text in a fenced block, and the reviewer's note. A request from the Rules page's Add rule box carries only a scope flag and a note, with no quote.
 
 ## Step 1: Read what you were given
 
 Pull these out of `$ARGUMENTS`:
 
 - **File** — the path the selection came from, if a `File:` line is present. The document preview pane has no path, so it may be missing.
-- **Quote** — the selected text, the concrete example of the rule being broken.
+- **Quote** — the selected text, the concrete example of the rule being broken. Absent when only a note was sent.
 - **Note** — the reviewer's words, the substance of the rule.
 - **Scope flag** — a `--repo` (optionally followed by a repo name), `--user` or `--node` in the arguments. It is an instruction about where the rule goes, not part of the note: strip it from the note before wording the rule.
 
@@ -68,6 +68,8 @@ Run `assist rules add` as a background task and do no other work until it return
 Outside a web session it writes immediately and exits 0.
 
 ## Step 5: Fix what broke it
+
+If Step 1 found no quote, there is no violation to fix: stop after Step 4.
 
 The rule exists because something broke it, so the quoted text is now a live violation. Rectify it in the same pass, without being asked: edit the quoted text in the file the `File:` line named, so it follows the rule you just wrote. Where there was no `File:` line, fix the draft or the text the quote came from. An `advice.rules` rule (`repo (db)`, `user (db)` or `user (node)`) is no exception: the quoted violation still gets fixed, even though the rule went to `advice.rules` rather than a file in this repo.
 

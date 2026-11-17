@@ -41,7 +41,7 @@ export function RulesView({ sessions, cardId, sendInput }: Props) {
 			<RulesNotices
 				failure={failure}
 				onClearFailure={clearFailure}
-				sentTo={comments.sentTo}
+				sent={comments.sent}
 				onClearSent={comments.clearSent}
 			/>
 			<RulesGrid

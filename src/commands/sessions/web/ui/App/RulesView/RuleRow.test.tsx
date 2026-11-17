@@ -38,7 +38,7 @@ function renderRow(overrides: Partial<RuleActions> = {}) {
 		comments: {
 			cwd: "/repo",
 			onComment: vi.fn(),
-			sentTo: null,
+			sent: null,
 			clearSent: () => {},
 		},
 		...overrides,
