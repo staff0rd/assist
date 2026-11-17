@@ -3,6 +3,7 @@ import type { SpawnContext, SpawnSession } from "../types";
 import { type AllocateOptions, allocateTree } from "./allocateTree";
 import { bindNewWorktree } from "./bindNewWorktree";
 import { boundTreeRoots } from "./boundTreeRoots";
+import { stampAllocatedWorktree } from "./stampAllocatedWorktree";
 
 export type TreeSpawnContext = {
 	sessions: Map<string, Session>;
@@ -25,7 +26,8 @@ export function allocateAndBind(
 	const alloc = allocateTree(cwd, boundTreeRoots(ctx.sessions), options);
 	const needsSeeding = alloc.kind === "worktree" && alloc.created === true;
 	const id = ctx.spawnWith(
-		(sid) => create(sid, alloc.cwd, needsSeeding),
+		(sid) =>
+			stampAllocatedWorktree(create(sid, alloc.cwd, needsSeeding), alloc),
 		context,
 	);
 	bindNewWorktree(ctx.sessions.get(id), alloc, ctx.notify, ctx.startHeld);

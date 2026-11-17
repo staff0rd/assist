@@ -4,6 +4,7 @@ import type { TreeSpawnContext } from "./allocateAndBind";
 import { type AllocateOptions, allocateTree } from "./allocateTree";
 import { bindNewWorktree } from "./bindNewWorktree";
 import { boundTreeRoots } from "./boundTreeRoots";
+import { stampAllocatedWorktree } from "./stampAllocatedWorktree";
 
 type Prepare = (cwd: string | undefined) => Promise<void>;
 
@@ -20,7 +21,10 @@ export function allocatePreparedAndBind(
 		prepare(alloc.cwd),
 	);
 	prepared.catch(() => {});
-	const id = ctx.spawnWith((sid) => create(sid, alloc.cwd), context);
+	const id = ctx.spawnWith(
+		(sid) => stampAllocatedWorktree(create(sid, alloc.cwd), alloc),
+		context,
+	);
 	const session = ctx.sessions.get(id);
 	bindNewWorktree(
 		session,

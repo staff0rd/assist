@@ -89,6 +89,25 @@ describe("a second session colliding with a held clone", () => {
 		expect(second.worktree).toEqual({ path: `${clone}-2`, clone });
 	});
 
+	it("is bound to its clone before it is first registered", () => {
+		const { clone } = makeRepo();
+		const ctx = ctxHolding(
+			makeSession({ id: "1", status: "waiting", cwd: clone }),
+		);
+		const spawn = ctx.spawnWith;
+		const atRegistration: Session["worktree"][] = [];
+		ctx.spawnWith = (create, context) =>
+			spawn((sid) => {
+				const session = create(sid);
+				atRegistration.push(session.worktree);
+				return session;
+			}, context);
+
+		spawnInto(ctx, clone);
+
+		expect(atRegistration).toEqual([{ path: `${clone}-2`, clone }]);
+	});
+
 	it("spills a third session into a further worktree", () => {
 		const { clone } = makeRepo();
 		const ctx = ctxHolding(
