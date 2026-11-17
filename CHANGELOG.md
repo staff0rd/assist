@@ -1,3 +1,10 @@
+## [0.1215.1](https://github.com/staff0rd/assist/compare/v0.1215.0...v0.1215.1) (2026-11-17)
+
+
+### Bug Fixes
+
+* show docs feedback on any http docs preview ([3bb55a2](https://github.com/staff0rd/assist/commit/3bb55a2c4ac2f767b119c45818e7744d63854d40))
+
 # [0.1215.0](https://github.com/staff0rd/assist/compare/v0.1214.1...v0.1215.0) (2026-11-17)
 
 
