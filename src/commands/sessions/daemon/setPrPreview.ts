@@ -1,4 +1,5 @@
 import { autoApprovePreview } from "./autoApprovePreview";
+import { yoloAnswerPreview } from "./yoloAnswerPreview";
 import { type SessionClient, sendTo } from "./broadcast";
 import { buildPrPreview } from "./buildPrPreview";
 import type { Session } from "./createSession";
@@ -43,6 +44,7 @@ export function setPrPreview(
 	daemonLog(
 		`pr-preview set: id=${id} requestId=${d.requestId} kind=${kind} target=${target} reviewAfter=${preview.reviewAfter} screenshots=${preview.screenshots?.length ?? 0}`,
 	);
+	if (yoloAnswerPreview(sessions, waiters, notify, session)) return;
 	if (autoApprovePreview(sessions, waiters, notify, session)) return;
 	notify();
 }

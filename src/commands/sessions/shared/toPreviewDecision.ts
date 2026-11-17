@@ -46,5 +46,6 @@ export function toPreviewDecision(
 		dismissed: msg.dismissed === true,
 		restart: msg.restart === true,
 		answers: toAnswers(msg.answers),
+		yolo: msg.yolo === true,
 	};
 }

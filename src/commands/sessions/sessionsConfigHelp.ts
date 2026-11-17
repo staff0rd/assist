@@ -32,6 +32,11 @@ export const sessionsConfigHelp: ConfigHelpEntry[] = [
 		note: "default mode pre-selected in the Ctrl+N new session dialog: draft | bug | prompt | design (default: draft)",
 	},
 	{
+		key: "sessions.yolo",
+		setter: "assist config set sessions.yolo true",
+		note: "default off: the daemon answers an ask-question form itself, without showing it, when every question is single-select with a (Recommended) option, picking those options. Set globally or per repo (--repo)",
+	},
+	{
 		key: "worktree.enabled",
 		setter: "assist config set worktree.enabled true --repo",
 		note: "opt in per repo: every session spills into a fresh adjacent <clone>-N worktree and the clone itself is never allocated; only inPlace launches (e.g. PR Review) and agents joining a stream stay in their tree (default off)",

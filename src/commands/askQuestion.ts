@@ -41,5 +41,11 @@ export async function askQuestion(options: { json: string }): Promise<void> {
 		);
 		process.exit(1);
 	}
-	console.log(formatAskQuestionAnswers(questions, decision.answers ?? {}));
+	console.log(
+		formatAskQuestionAnswers(
+			questions,
+			decision.answers ?? {},
+			decision.yolo === true,
+		),
+	);
 }

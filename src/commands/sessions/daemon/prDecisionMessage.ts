@@ -15,6 +15,7 @@ const FORWARDED = [
 	"dismissed",
 	"restart",
 	"answers",
+	"yolo",
 ] as const;
 
 export function prDecisionMessage(

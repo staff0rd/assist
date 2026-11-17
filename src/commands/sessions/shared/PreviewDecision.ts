@@ -51,6 +51,7 @@ export type PreviewDecisionFields = {
 	dismissed?: boolean;
 	restart?: boolean;
 	answers?: Record<string, string>;
+	yolo?: boolean;
 };
 
 export type PreviewDecision = PreviewDecisionFields & {

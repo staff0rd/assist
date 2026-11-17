@@ -333,6 +333,7 @@ const assistConfigShape = {
 			askQuestion: z.boolean().default(true),
 			askQuestionAutoSubmit: z.boolean().default(false),
 			cleanLeftovers: z.boolean().default(true),
+			yolo: z.boolean().default(false),
 		})
 		.optional(),
 	database: z
