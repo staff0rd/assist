@@ -1,3 +1,10 @@
+## [0.1209.4](https://github.com/staff0rd/assist/compare/v0.1209.3...v0.1209.4) (2026-11-17)
+
+
+### Bug Fixes
+
+* fix config table column widths ([9885466](https://github.com/staff0rd/assist/commit/9885466ade08642e268464bb1fbe453225f27c2e))
+
 ## [0.1209.3](https://github.com/staff0rd/assist/compare/v0.1209.2...v0.1209.3) (2026-11-16)
 
 
