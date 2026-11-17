@@ -75,6 +75,16 @@ describe("reviewModeEntries", () => {
 		for (const entry of entries) expect(entry.columns).toEqual(["codex", "pi"]);
 	});
 
+	it("takes its columns from the whole menu's modes when given", () => {
+		const highLevel = reviewButtonModes.filter((m) =>
+			m.args.includes("--high-level"),
+		);
+		const entries = reviewModeEntries(caps, highLevel, reviewButtonModes);
+
+		expect(entries[0].alternates.map((a) => a.harness)).toEqual(["codex"]);
+		expect(entries[0].columns).toEqual(["codex", "pi"]);
+	});
+
 	it("offers no alternates when only the engine resolves", () => {
 		const entries = reviewModeEntries(
 			capabilities({

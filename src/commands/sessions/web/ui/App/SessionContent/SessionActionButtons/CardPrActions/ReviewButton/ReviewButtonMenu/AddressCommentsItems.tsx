@@ -1,4 +1,5 @@
 import { addressCommentsActions } from "../../../../../../../../../../shared/prActions";
+import { reviewButtonModes } from "../../../../../../../../../../shared/reviewButtonModes";
 import type { HarnessCapabilities } from "../../../../../../parseHarnessCapabilities";
 import { ReviewMenuRow } from "../../../../../ReviewMenuRow";
 import { reviewModeEntries } from "../../../../../reviewModeEntries";
@@ -13,15 +14,16 @@ export function AddressCommentsItems({
 	pick: (e: { stopPropagation: () => void }, run: () => void) => void;
 	capabilities: HarnessCapabilities;
 }) {
-	return reviewModeEntries(capabilities, addressCommentsActions).map(
-		(entry) => (
-			<ReviewMenuRow
-				key={entry.label}
-				entry={entry}
-				onSelect={(e, args) =>
-					pick(e, () => review.launchAddressComments(args.slice(1)))
-				}
-			/>
-		),
-	);
+	return reviewModeEntries(capabilities, addressCommentsActions, [
+		...reviewButtonModes,
+		...addressCommentsActions,
+	]).map((entry) => (
+		<ReviewMenuRow
+			key={entry.label}
+			entry={entry}
+			onSelect={(e, args) =>
+				pick(e, () => review.launchAddressComments(args.slice(1)))
+			}
+		/>
+	));
 }

@@ -1,4 +1,5 @@
 import { Divider } from "@mui/material";
+import { prActions } from "../../../shared/prActions";
 import { reviewButtonModes } from "../../../shared/reviewButtonModes";
 import {
 	type ReviewOptions,
@@ -16,7 +17,10 @@ export function reviewModeItems(
 	onPick: (args: string[]) => void,
 ) {
 	return [
-		...reviewModeEntries(capabilities, reviewButtonModes).map((entry) => (
+		...reviewModeEntries(capabilities, reviewButtonModes, [
+			...reviewButtonModes,
+			...prActions,
+		]).map((entry) => (
 			<ReviewMenuRow
 				key={entry.label}
 				entry={entry}

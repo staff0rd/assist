@@ -1,3 +1,4 @@
+import { prActions } from "../../../../../../../shared/prActions";
 import { reviewButtonModes } from "../../../../../../../shared/reviewButtonModes";
 import type { HarnessCapabilities } from "../../../parseHarnessCapabilities";
 import { ReviewMenuRow } from "../../ReviewMenuRow";
@@ -10,7 +11,10 @@ export function ReviewModeMenuItems({
 	capabilities: HarnessCapabilities;
 	onSelect: (args: string[]) => void;
 }) {
-	return reviewModeEntries(capabilities, reviewButtonModes).map((entry) => (
+	return reviewModeEntries(capabilities, reviewButtonModes, [
+		...reviewButtonModes,
+		...prActions,
+	]).map((entry) => (
 		<ReviewMenuRow
 			key={entry.label}
 			entry={entry}

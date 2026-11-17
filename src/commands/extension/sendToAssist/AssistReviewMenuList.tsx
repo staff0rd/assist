@@ -2,6 +2,7 @@ import { MenuList } from "@mui/material";
 import { type KeyboardEvent, type Ref, useState } from "react";
 import { azureDevopsPrActions } from "../../../shared/azureDevops/azureDevopsPrActions";
 import { prActions } from "../../../shared/prActions";
+import { reviewButtonModes } from "../../../shared/reviewButtonModes";
 import { reviewOptionDefaults } from "../../../shared/reviewOptionFlags";
 import { ReviewMenuRow } from "../../sessions/web/ui/App/ReviewMenuRow";
 import { reviewModeEntries } from "../../sessions/web/ui/App/reviewModeEntries";
@@ -40,6 +41,9 @@ export function AssistReviewMenuList({
 			{reviewModeEntries(
 				capabilities,
 				actionsOnly ? azureDevopsPrActions : prActions,
+				actionsOnly
+					? azureDevopsPrActions
+					: [...reviewButtonModes, ...prActions],
 			).map((entry) => (
 				<ReviewMenuRow
 					key={entry.label}

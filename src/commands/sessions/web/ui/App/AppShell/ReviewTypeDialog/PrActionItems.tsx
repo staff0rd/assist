@@ -1,6 +1,7 @@
 import { Divider, MenuItem } from "@mui/material";
 import { ReviewMenuRow } from "../../ReviewMenuRow";
 import { prActions } from "../../../../../../../shared/prActions";
+import { reviewButtonModes } from "../../../../../../../shared/reviewButtonModes";
 import type { PrSummary } from "../../../../prList";
 import type { HarnessCapabilities } from "../../../parseHarnessCapabilities";
 import { reviewModeEntries } from "../../reviewModeEntries";
@@ -18,7 +19,10 @@ export function PrActionItems({
 }) {
 	return (
 		<>
-			{reviewModeEntries(capabilities, prActions).map((entry) => (
+			{reviewModeEntries(capabilities, prActions, [
+				...reviewButtonModes,
+				...prActions,
+			]).map((entry) => (
 				<ReviewMenuRow
 					key={entry.label}
 					entry={entry}

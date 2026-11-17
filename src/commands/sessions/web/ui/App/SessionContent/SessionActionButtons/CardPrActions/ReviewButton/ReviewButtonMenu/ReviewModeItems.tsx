@@ -1,3 +1,5 @@
+import { addressCommentsActions } from "../../../../../../../../../../shared/prActions";
+import { reviewButtonModes } from "../../../../../../../../../../shared/reviewButtonModes";
 import type { HarnessCapabilities } from "../../../../../../parseHarnessCapabilities";
 import { ReviewMenuRow } from "../../../../../ReviewMenuRow";
 import { reviewModeEntries } from "../../../../../reviewModeEntries";
@@ -15,7 +17,10 @@ export function ReviewModeItems({
 	pick: (e: { stopPropagation: () => void }, run: () => void) => void;
 	capabilities: HarnessCapabilities;
 }) {
-	return reviewModeEntries(capabilities).map((entry) => {
+	return reviewModeEntries(capabilities, reviewButtonModes, [
+		...reviewButtonModes,
+		...addressCommentsActions,
+	]).map((entry) => {
 		const reopen =
 			highLevel?.label && entry.args.includes("--high-level")
 				? highLevel
