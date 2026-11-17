@@ -1,8 +1,9 @@
 import * as fs from "node:fs";
 import * as os from "node:os";
 import * as path from "node:path";
-import { afterEach, beforeEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { parseSessionFile } from "./parseSessionFile";
+import { readSessionMeta } from "./readSessionMeta";
 
 let dir: string;
 
@@ -65,5 +66,36 @@ describe("parseSessionFile", () => {
 		expect(session?.cwd).toBe("/home/me/git/repo");
 		expect(session?.name).toBe("does this work?");
 		expect(session?.timestamp).toBe("2026-11-13T00:00:00.000Z");
+	});
+
+	it("reads only the first head when the first prompt has no text", async () => {
+		const filePath = writeSession([
+			{
+				type: "user",
+				sessionId: "abc",
+				cwd: "/home/me/git/repo",
+				message: {
+					role: "user",
+					content: [{ type: "image", source: { data: "aGVsbG8=" } }],
+				},
+			},
+			{
+				type: "assistant",
+				sessionId: "abc",
+				message: { role: "assistant", content: "y".repeat(40_000) },
+			},
+		]);
+		const handle = await fs.promises.open(filePath, "r");
+		const read = vi.spyOn(handle, "read");
+
+		try {
+			const meta = await readSessionMeta(handle);
+
+			expect(meta.cwd).toBe("/home/me/git/repo");
+			expect(meta.name).toBe("");
+			expect(read).toHaveBeenCalledTimes(1);
+		} finally {
+			await handle.close();
+		}
 	});
 });

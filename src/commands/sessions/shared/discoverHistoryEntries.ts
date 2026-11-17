@@ -4,16 +4,21 @@ import type { HistoryEntry } from "./HistoryEntry";
 import { loadSessionTitles } from "./loadSessionTitles";
 import { parseSessionFile } from "./parseSessionFile";
 import { discoverSessionJsonlPaths } from "./discoverSessionJsonlPaths";
+import { mapAsync } from "../../../shared/mapAsync";
+
+const PARSE_CONCURRENCY = 16;
 
 export async function discoverHistoryEntries(): Promise<HistoryEntry[]> {
 	const paths = await discoverSessionJsonlPaths();
 	const entries: HistoryEntry[] = [];
 
-	await Promise.all(
-		paths.map(async ({ path: filePath, origin }) => {
+	await mapAsync(
+		paths,
+		PARSE_CONCURRENCY,
+		async ({ path: filePath, origin }) => {
 			const session = await parseSessionFile(filePath, origin);
 			if (session) entries.push({ session, filePath });
-		}),
+		},
 	);
 	entries.push(...(await discoverCodexHistoryEntries()));
 

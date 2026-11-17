@@ -23,6 +23,7 @@ describe("buildTranscript", () => {
 			name: "Add a dark mode toggle",
 			commandName: "",
 			commandArgs: "",
+			reachedFirstPrompt: true,
 		});
 	});
 
