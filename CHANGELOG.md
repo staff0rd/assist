@@ -1,3 +1,10 @@
+# [0.1216.0](https://github.com/staff0rd/assist/compare/v0.1215.2...v0.1216.0) (2026-11-17)
+
+
+### Features
+
+* copy buttons on transcript code ([954462b](https://github.com/staff0rd/assist/commit/954462b19f668f13947bf94e901843a66e9d869b))
+
 ## [0.1215.2](https://github.com/staff0rd/assist/compare/v0.1215.1...v0.1215.2) (2026-11-17)
 
 
