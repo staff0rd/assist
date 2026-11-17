@@ -1,3 +1,10 @@
+## [0.1217.2](https://github.com/staff0rd/assist/compare/v0.1217.1...v0.1217.2) (2026-11-17)
+
+
+### Bug Fixes
+
+* new-session defaults use node ([3a7b4d6](https://github.com/staff0rd/assist/commit/3a7b4d6e695bc9f8849b0c9c7bf23d8f8490f01f))
+
 ## [0.1217.1](https://github.com/staff0rd/assist/compare/v0.1217.0...v0.1217.1) (2026-11-17)
 
 
