@@ -81,6 +81,7 @@ describe("transcriptMessages from a Codex rollout", () => {
 				role: "tool",
 				tool: "exec",
 				target: "const r = await tools.web__run({});",
+				label: "const r = await tools.web__run({});",
 			},
 		]);
 	});

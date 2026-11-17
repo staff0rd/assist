@@ -1,6 +1,7 @@
 import { codexToolTarget } from "../../commands/sessions/shared/codex/codexToolTarget";
 import { rolloutString } from "../../commands/sessions/shared/codex/parseRolloutEntry";
 import { codexContentText } from "./codexContentText";
+import { codexExecEvents } from "./codexExec/codexExecEvents";
 import { codexToolOperations } from "./codexToolOperations";
 import type { ConversationEvent, ToolOperation } from "./types";
 
@@ -36,12 +37,15 @@ export function codexToolEvents(
 	const type = rolloutString(payload.type);
 	if (TOOL_CALLS.has(type)) {
 		const target = codexToolTarget(payload);
+		const ops = operations(payload, target);
+		if (type === "custom_tool_call" && payload.name === "exec")
+			return codexExecEvents(rolloutString(payload.input), ops, at);
 		return [
 			{
 				kind: "tool",
 				tool: rolloutString(payload.name) || "tool",
 				target,
-				operations: operations(payload, target),
+				operations: ops,
 				at,
 			},
 		];
