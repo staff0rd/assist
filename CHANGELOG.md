@@ -1,3 +1,10 @@
+## [0.1215.2](https://github.com/staff0rd/assist/compare/v0.1215.1...v0.1215.2) (2026-11-17)
+
+
+### Bug Fixes
+
+* route docs feedback to serving node ([5430945](https://github.com/staff0rd/assist/commit/54309458a5ba6709a158d2a93e318f98d5fe4a7f))
+
 ## [0.1215.1](https://github.com/staff0rd/assist/compare/v0.1215.0...v0.1215.1) (2026-11-17)
 
 
