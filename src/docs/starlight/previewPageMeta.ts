@@ -5,6 +5,7 @@ type PreviewPage = {
 	id: string;
 	title: string;
 	source: string;
+	node: string;
 	changedPages?: ChangedPage[];
 };
 
@@ -17,6 +18,7 @@ export function previewPageMeta(page: PreviewPage) {
 		meta(docsFeedbackMarkers.pageMeta, page.id),
 		meta(docsFeedbackMarkers.titleMeta, page.title),
 		meta(docsFeedbackMarkers.sourceMeta, page.source),
+		meta(docsFeedbackMarkers.nodeMeta, page.node),
 	];
 	if (page.changedPages?.length)
 		metas.push(

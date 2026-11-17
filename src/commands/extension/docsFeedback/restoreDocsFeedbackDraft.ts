@@ -3,6 +3,7 @@ import type { DocsFeedback } from "../../sessions/web/docsFeedback/docsFeedbackS
 import { docsFeedbackDraft } from "./docsFeedbackDraft";
 import { findTextRange } from "./findTextRange";
 import { openDocsFeedback } from "./openDocsFeedback";
+import { readDocsNode } from "./readDocsNode";
 
 function sectionElement(doc: Document, draft: DocsFeedback): Element {
 	const { headingAttribute, sourceAttribute } = docsFeedbackMarkers;
@@ -36,7 +37,11 @@ export function restoreDocsFeedbackDraft(
 	const section = sectionElement(doc, draft);
 	const range = findTextRange(section, draft.selection);
 	return openDocsFeedback(
-		{ ...selection, range: range ?? fallbackRange(doc, section) },
+		{
+			...selection,
+			...readDocsNode(doc),
+			range: range ?? fallbackRange(doc, section),
+		},
 		{ prompt, highlight: Boolean(range) },
 	);
 }

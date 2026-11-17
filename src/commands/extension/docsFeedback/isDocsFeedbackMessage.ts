@@ -2,6 +2,7 @@ import type { DocsFeedback } from "../../sessions/web/docsFeedback/docsFeedbackS
 
 export type DocsFeedbackMessage = DocsFeedback & {
 	type: "assist-docs-feedback";
+	node?: string;
 };
 
 export function isDocsFeedbackMessage(

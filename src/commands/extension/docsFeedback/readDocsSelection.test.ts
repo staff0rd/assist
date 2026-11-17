@@ -18,8 +18,8 @@ const PAGE_META = [
 	'<meta name="assist-docs-source" content="docs/src/content/docs/start.md">',
 ].join("");
 
-function render(meta = true) {
-	document.head.innerHTML = meta ? PAGE_META : "";
+function render(meta = true, extraMeta = "") {
+	document.head.innerHTML = meta ? PAGE_META + extraMeta : "";
 	document.body.innerHTML = PAGE;
 }
 
@@ -47,6 +47,17 @@ describe("readDocsSelection", () => {
 			heading: "Install",
 			source: "docs/guide/pages/start.json",
 			selection: "npm install",
+		});
+	});
+
+	it("reads the node serving the preview when the page names one", () => {
+		render();
+		expect(
+			readDocsSelection(document, select("text", 4, 15)),
+		).not.toHaveProperty("node");
+		render(true, '<meta name="assist-docs-node" content="mac">');
+		expect(readDocsSelection(document, select("text", 4, 15))).toMatchObject({
+			node: "mac",
 		});
 	});
 

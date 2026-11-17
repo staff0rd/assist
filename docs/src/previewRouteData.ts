@@ -1,6 +1,7 @@
 import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
 import { changedDocsPages } from "../../src/docs/starlight/changedDocsPages";
 import { markChangedPages } from "../../src/docs/starlight/markChangedPages";
+import { resolveNodeName } from "../../src/commands/sessions/shared/resolveNodeName";
 import { previewPageMeta } from "../../src/docs/starlight/previewPageMeta";
 
 export const onRequest = defineRouteMiddleware(({ locals }) => {
@@ -13,6 +14,7 @@ export const onRequest = defineRouteMiddleware(({ locals }) => {
 			id: entry.id,
 			title: entry.data.title,
 			source: `docs/${entry.filePath}`,
+			node: resolveNodeName(),
 			changedPages: markChangedPages(
 				sidebar,
 				changedDocsPages(),

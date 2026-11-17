@@ -1,8 +1,12 @@
 import { docsFeedbackMarkers } from "../../../shared/docsFeedbackMarkers";
 import type { DocsFeedback } from "../../sessions/web/docsFeedback/docsFeedbackSchema";
 import { pageLevelSection } from "./pageLevelSection";
+import { readDocsNode } from "./readDocsNode";
 
-export type DocsSelection = Omit<DocsFeedback, "prompt"> & { range: Range };
+export type DocsSelection = Omit<DocsFeedback, "prompt"> & {
+	node?: string;
+	range: Range;
+};
 
 function metaContent(doc: Document, name: string): string | undefined {
 	return (
@@ -41,5 +45,5 @@ export function readDocsSelection(
 	const range = selection.getRangeAt(0);
 	const section = sectionOf(doc, range.startContainer);
 	if (!section) return undefined;
-	return { pageId, ...section, selection: text, range };
+	return { pageId, ...section, selection: text, range, ...readDocsNode(doc) };
 }

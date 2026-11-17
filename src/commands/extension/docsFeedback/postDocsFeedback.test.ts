@@ -37,6 +37,24 @@ describe("postDocsFeedback", () => {
 		);
 	});
 
+	it("posts to the local server without a node when the page names none", async () => {
+		respond(200, {});
+		await postDocsFeedback(SERVER, message);
+		expect(fetch).toHaveBeenCalledWith(
+			`${SERVER}/api/sessions/docs-feedback`,
+			expect.anything(),
+		);
+	});
+
+	it("routes feedback to the node serving the preview", async () => {
+		respond(200, { message: "Sent to assist session m1" });
+		await postDocsFeedback(SERVER, { ...message, node: "mac book" });
+		expect(fetch).toHaveBeenCalledWith(
+			`${SERVER}/api/sessions/docs-feedback?node=mac%20book`,
+			expect.objectContaining({ body: JSON.stringify(feedback) }),
+		);
+	});
+
 	it("relays a missing or ended session", async () => {
 		respond(404, { error: "assist session s9 has ended" });
 		expect(await postDocsFeedback(SERVER, message)).toEqual({

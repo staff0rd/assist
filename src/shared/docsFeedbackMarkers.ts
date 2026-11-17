@@ -3,6 +3,7 @@ export const docsFeedbackMarkers = {
 	titleMeta: "assist-docs-title",
 	sourceMeta: "assist-docs-source",
 	changesMeta: "assist-docs-changes",
+	nodeMeta: "assist-docs-node",
 	changedAttribute: "data-assist-changed",
 	doneAttribute: "data-assist-done",
 	headingAttribute: "data-docs-heading",
