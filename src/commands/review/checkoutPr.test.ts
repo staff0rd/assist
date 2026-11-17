@@ -10,6 +10,7 @@ import { moveToPrCheckoutTree } from "./moveToPrCheckoutTree";
 import { prHeadBranch } from "./prHeadBranch";
 import { reinstallChangedDeps } from "./reinstallChangedDeps";
 import { reportCwdToDaemon } from "./reportCwdToDaemon";
+import { syncReusedCheckout } from "./syncReusedCheckout";
 import { worktreeHoldingBranch } from "./worktreeHoldingBranch";
 
 vi.mock("node:child_process", async () =>
@@ -36,6 +37,7 @@ vi.mock("./moveToPrCheckoutTree", () => ({
 vi.mock("./prHeadBranch", () => ({ prHeadBranch: vi.fn() }));
 vi.mock("./reinstallChangedDeps", () => ({ reinstallChangedDeps: vi.fn() }));
 vi.mock("./reportCwdToDaemon", () => ({ reportCwdToDaemon: vi.fn() }));
+vi.mock("./syncReusedCheckout", () => ({ syncReusedCheckout: vi.fn() }));
 vi.mock("./worktreeHoldingBranch", () => ({
 	worktreeHoldingBranch: vi.fn(),
 }));
@@ -77,6 +79,18 @@ describe("checkoutPr", () => {
 			expect(chdir).not.toHaveBeenCalled();
 			expect(reportCwdToDaemon).not.toHaveBeenCalled();
 		});
+
+		it("syncs the branch to the PR's current head", async () => {
+			gitMock.mockReturnValue("feature");
+
+			await checkoutPr("123");
+
+			expect(syncReusedCheckout).toHaveBeenCalledWith(
+				"123",
+				"feature",
+				"refs/pull/123/head",
+			);
+		});
 	});
 
 	describe("when another worktree holds the PR's branch", () => {
@@ -90,6 +104,19 @@ describe("checkoutPr", () => {
 			expect(mockExecFileSync).not.toHaveBeenCalled();
 			expect(moveMock).not.toHaveBeenCalled();
 		});
+
+		it("syncs that worktree's branch from the Azure DevOps source branch", async () => {
+			holderMock.mockReturnValue("/git/repo");
+			remoteMock.mockReturnValue({ org: "acme", project: "p", repo: "r" });
+
+			await checkoutPr("42");
+
+			expect(syncReusedCheckout).toHaveBeenCalledWith(
+				"42",
+				"feature",
+				"refs/heads/feature",
+			);
+		});
 	});
 
 	describe("when the PR's branch is checked out nowhere", () => {
@@ -97,6 +124,7 @@ describe("checkoutPr", () => {
 			await checkoutPr("123");
 
 			expect(moveMock).toHaveBeenCalled();
+			expect(syncReusedCheckout).not.toHaveBeenCalled();
 			expect(mockExecFileSync).toHaveBeenCalledWith(
 				"gh",
 				["pr", "checkout", "123"],
