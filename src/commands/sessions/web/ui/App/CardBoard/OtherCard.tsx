@@ -5,6 +5,7 @@ import type { SessionInfo } from "../../types";
 import { BoardCard } from "./BoardCard";
 import { CardRepo } from "./CardRepo";
 import { CardClose } from "./CardClose";
+import { CardPhaseProgress } from "./CardPhaseProgress";
 import { cardTextSx } from "./cardTextSx";
 import { clampSx } from "./clampSx";
 import { otherChipColor } from "./otherChipColor";
@@ -39,6 +40,7 @@ export function OtherCard({
 				<CardClose session={session} />
 			</Box>
 			<Box sx={[cardTextSx.title, clampSx(2)]}>{sessionTitle(session)}</Box>
+			<CardPhaseProgress session={session} tone="neutral" />
 		</BoardCard>
 	);
 }

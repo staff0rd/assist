@@ -3,6 +3,7 @@ import { BoardCard } from "./BoardCard";
 import { sessionTitle } from "../sessionTitle";
 import type { SessionInfo } from "../../types";
 import { askedText } from "./askedText";
+import { CardPhaseProgress } from "./CardPhaseProgress";
 import { cardTextSx } from "./cardTextSx";
 import { clampSx } from "./clampSx";
 import { needsYouChip } from "./needsYouChip";
@@ -35,6 +36,7 @@ export function NeedsYouCard({
 			>
 				{askedText(session)}
 			</Box>
+			<CardPhaseProgress session={session} tone={chip.color} />
 		</BoardCard>
 	);
 }
