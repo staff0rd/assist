@@ -18,12 +18,15 @@ export function publishWorkflowOutput(
 		}),
 	);
 	update();
+	let ended = false;
 	return {
 		append: (stream: SdkShellChunk["stream"], data: string) => {
+			if (ended) return;
 			buffer.append(stream, data);
 			update();
 		},
 		end: () => {
+			ended = true;
 			update.cancel();
 			emit({ kind: "workflow", workflow: null });
 		},

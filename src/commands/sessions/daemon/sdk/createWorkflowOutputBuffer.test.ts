@@ -52,4 +52,11 @@ describe("createWorkflowOutputBuffer", () => {
 		buffer.append("stdout", "b");
 		expect(snapshot).toEqual([{ stream: "stdout", text: "a" }]);
 	});
+
+	it("truncates a line that grows past the per-line cap", () => {
+		const buffer = createWorkflowOutputBuffer(10, 5);
+		buffer.append("stdout", "abc");
+		buffer.append("stdout", "defgh\nxyz123456\n");
+		expect(buffer.lines().map((line) => line.text)).toEqual(["abcde", "xyz12"]);
+	});
 });

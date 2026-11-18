@@ -34,4 +34,16 @@ describe("publishWorkflowOutput", () => {
 		expect(events.at(-1)).toEqual({ kind: "workflow", workflow: null });
 		expect(events).toHaveLength(2);
 	});
+
+	it("ignores output that arrives after the workflow ended", () => {
+		vi.useFakeTimers();
+		const events: SdkSessionEvent[] = [];
+		const output = publishWorkflowOutput("assist review 1", (event) =>
+			events.push(event),
+		);
+		output.end();
+		output.append("stdout", "drained after exit\n");
+		vi.advanceTimersByTime(200);
+		expect(events).toEqual([{ kind: "workflow", workflow: null }]);
+	});
 });

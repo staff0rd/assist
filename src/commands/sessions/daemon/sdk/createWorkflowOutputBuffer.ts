@@ -4,8 +4,12 @@ import type { SdkShellChunk } from "../../shared/SdkShellRow";
 type Stream = SdkShellChunk["stream"];
 
 const MAX_LINES = 300;
+const MAX_LINE_CHARS = 2000;
 
-export function createWorkflowOutputBuffer(maxLines = MAX_LINES) {
+export function createWorkflowOutputBuffer(
+	maxLines = MAX_LINES,
+	maxLineChars = MAX_LINE_CHARS,
+) {
 	const lines: SdkShellChunk[] = [];
 	const open: Partial<Record<Stream, SdkShellChunk>> = {};
 	const dropOldest = () => {
@@ -19,9 +23,9 @@ export function createWorkflowOutputBuffer(maxLines = MAX_LINES) {
 			parts.forEach((part, i) => {
 				const last = i === parts.length - 1;
 				let line = i === 0 ? open[stream] : undefined;
-				if (line) line.text += part;
+				if (line) line.text = (line.text + part).slice(0, maxLineChars);
 				else if (!last || part) {
-					line = { stream, text: part };
+					line = { stream, text: part.slice(0, maxLineChars) };
 					lines.push(line);
 				}
 				open[stream] = last ? line : undefined;
