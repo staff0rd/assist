@@ -1,3 +1,10 @@
+## [0.1226.1](https://github.com/staff0rd/assist/compare/v0.1226.0...v0.1226.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* keep backlog chip in card top bar ([f17f957](https://github.com/staff0rd/assist/commit/f17f957c18919dbb7e4beefc4d752d0fb04fcb2f))
+
 # [0.1226.0](https://github.com/staff0rd/assist/compare/v0.1225.2...v0.1226.0) (2026-11-18)
 
 
