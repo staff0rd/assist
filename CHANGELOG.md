@@ -1,3 +1,10 @@
+## [0.1225.1](https://github.com/staff0rd/assist/compare/v0.1225.0...v0.1225.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* card mode toggle without server repo ([6f7aea3](https://github.com/staff0rd/assist/commit/6f7aea308ef9d785975cb6579242e72b858ee728))
+
 # [0.1225.0](https://github.com/staff0rd/assist/compare/v0.1224.0...v0.1225.0) (2026-11-18)
 
 
