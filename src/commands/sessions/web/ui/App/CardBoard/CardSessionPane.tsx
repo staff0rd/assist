@@ -1,9 +1,9 @@
 import Box from "@mui/material/Box";
 import { CloseViewButton } from "../CloseViewButton";
-import { SessionContent } from "../SessionContent";
 import { sessionTitle } from "../sessionTitle";
 import type { SessionInfo } from "../../types";
 import type { SessionSocket } from "../../useSessionSocket";
+import { CardPaneBody } from "./CardPaneBody";
 
 export function CardSessionPane({
 	socket,
@@ -54,11 +54,7 @@ export function CardSessionPane({
 				</Box>
 				<CloseViewButton onClose={onClose} />
 			</Box>
-			<Box
-				sx={{ flex: 1, minHeight: 0, display: "flex", flexDirection: "column" }}
-			>
-				<SessionContent socket={socket} />
-			</Box>
+			<CardPaneBody session={session} socket={socket} />
 		</Box>
 	);
 }

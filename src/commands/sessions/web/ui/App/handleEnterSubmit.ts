@@ -1,6 +1,6 @@
 import type { KeyboardEvent } from "react";
 
-export function handleEnterSubmit(e: KeyboardEvent<HTMLDivElement>) {
+export function handleEnterSubmit(e: KeyboardEvent<HTMLElement>) {
 	const isPlainEnter =
 		e.key === "Enter" && !e.shiftKey && !e.nativeEvent.isComposing;
 	if (!isPlainEnter) {
