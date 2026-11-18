@@ -14,6 +14,7 @@ import type { SessionInfo } from "../types";
 import type { SessionSocket } from "../useSessionSocket";
 import { DiffPanelsProvider } from "./useDiffPanels";
 import { ServerActionsContext } from "./useServerActionsContext";
+import { StarredSessionsProvider } from "./useStarredSessions";
 
 vi.mock("./SessionContent/SessionArea/TerminalArea", () => ({
 	TerminalArea: ({ activeId }: { activeId: string }) => (
@@ -81,11 +82,13 @@ function renderBoard(extra: SessionInfo[] = []) {
 	};
 	render(
 		<MemoryRouter>
-			<ServerActionsContext.Provider value={serverActions}>
-				<DiffPanelsProvider sessionIds={[]} onActivateSession={() => {}}>
-					<CardBoard socket={socket} />
-				</DiffPanelsProvider>
-			</ServerActionsContext.Provider>
+			<StarredSessionsProvider sessions={[]} setSessionStarred={() => {}}>
+				<ServerActionsContext.Provider value={serverActions}>
+					<DiffPanelsProvider sessionIds={[]} onActivateSession={() => {}}>
+						<CardBoard socket={socket} />
+					</DiffPanelsProvider>
+				</ServerActionsContext.Provider>
+			</StarredSessionsProvider>
 		</MemoryRouter>,
 	);
 	return Object.assign(socket, { serverActions });

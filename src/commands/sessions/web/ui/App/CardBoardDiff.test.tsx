@@ -18,8 +18,8 @@ vi.mock("../slashSuggestions/useSuggestedSlashCommands", () => ({
 	useSuggestedSlashCommands: () => [],
 }));
 
-vi.mock("./SessionContent/SessionArea/SessionAreaTopBar", () => ({
-	SessionAreaTopBar: ({ session }: { session: SessionInfo }) => {
+vi.mock("./CardBoard/CardPaneControls", () => ({
+	CardPaneControls: ({ session }: { session: SessionInfo }) => {
 		const { togglePanel } = useDiffPanels();
 		return (
 			<button

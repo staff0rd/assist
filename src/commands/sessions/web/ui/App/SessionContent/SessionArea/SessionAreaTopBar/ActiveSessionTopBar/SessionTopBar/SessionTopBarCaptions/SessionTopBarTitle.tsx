@@ -5,7 +5,6 @@ import { BacklogItemChip } from "../../../../../../BacklogItemChip";
 import { sessionTitle } from "../../../../../../sessionTitle";
 import { repoGroupCwd } from "../../../../../../../repoGroupKey";
 import type { SessionInfo } from "../../../../../../../types";
-import { useShowTopBarTitle } from "../useShowTopBarTitle";
 
 const rowSx = {
 	display: "flex",
@@ -24,7 +23,6 @@ const titleSx = {
 } as const;
 
 export function SessionTopBarTitle({ session }: { session: SessionInfo }) {
-	const showTitle = useShowTopBarTitle();
 	return (
 		<Box sx={rowSx}>
 			{activityItemIds(session.activity).map((itemId) => (
@@ -34,11 +32,9 @@ export function SessionTopBarTitle({ session }: { session: SessionInfo }) {
 					cwd={repoGroupCwd(session)}
 				/>
 			))}
-			{showTitle && (
-				<Typography variant="body1" sx={titleSx}>
-					{sessionTitle(session)}
-				</Typography>
-			)}
+			<Typography variant="body1" sx={titleSx}>
+				{sessionTitle(session)}
+			</Typography>
 		</Box>
 	);
 }

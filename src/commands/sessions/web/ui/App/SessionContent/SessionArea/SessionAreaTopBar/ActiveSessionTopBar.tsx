@@ -1,6 +1,4 @@
-import { nestUnderBacklogRun } from "../../../nestUnderBacklogRun";
-import { childDismissFor } from "../../../childDismissFor";
-import { sessionActionHandlers } from "../../../sessionActionHandlers";
+import { sessionControlHandlers } from "../../../sessionControlHandlers";
 import { SessionTopBar } from "./ActiveSessionTopBar/SessionTopBar";
 import type { SessionInfo, SessionListHandlers } from "../../../../types";
 
@@ -13,21 +11,11 @@ export function ActiveSessionTopBar({
 	sessions: SessionInfo[];
 	lifecycle: SessionListHandlers;
 }) {
-	const children =
-		nestUnderBacklogRun(sessions).find((row) => row.session.id === session.id)
-			?.children ?? [];
 	return (
 		<SessionTopBar
 			key={session.id}
 			session={session}
-			{...sessionActionHandlers(session, lifecycle)}
-			childDismiss={childDismissFor(session, children, lifecycle.onDismiss)}
-			onSetAutoApprove={(enabled) =>
-				lifecycle.onSetAutoApprove(session.id, enabled)
-			}
-			onSetAutoAdvance={(enabled) =>
-				lifecycle.onSetAutoAdvance(session.id, enabled)
-			}
+			{...sessionControlHandlers(session, sessions, lifecycle)}
 		/>
 	);
 }

@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import { sessionTitle } from "../sessionTitle";
+import { ApiNodeContext } from "../../useApiNode";
 import type { SessionInfo } from "../../types";
 import type { SessionSocket } from "../../useSessionSocket";
 import { CardPaneBody } from "./CardPaneBody";
@@ -33,17 +34,20 @@ export function CardSessionPane({
 				bgcolor: "background.paper",
 			})}
 		>
-			<CardPaneHeader
-				session={session}
-				sessionShown={sessionShown}
-				onToggleSession={onToggleSession}
-				onClose={onClose}
-			/>
-			<CardPaneBody
-				session={session}
-				socket={socket}
-				sessionShown={sessionShown}
-			/>
+			<ApiNodeContext.Provider value={session.node}>
+				<CardPaneHeader
+					session={session}
+					socket={socket}
+					sessionShown={sessionShown}
+					onToggleSession={onToggleSession}
+					onClose={onClose}
+				/>
+				<CardPaneBody
+					session={session}
+					socket={socket}
+					sessionShown={sessionShown}
+				/>
+			</ApiNodeContext.Provider>
 		</Box>
 	);
 }
