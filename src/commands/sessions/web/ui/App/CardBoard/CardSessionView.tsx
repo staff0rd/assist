@@ -4,6 +4,7 @@ import type { SessionInfo } from "../../types";
 import { ApiNodeContext } from "../../useApiNode";
 import type { SessionSocket } from "../../useSessionSocket";
 import { SessionAreaTopBar } from "../SessionContent/SessionArea/SessionAreaTopBar";
+import { ShowTopBarTitleContext } from "../SessionContent/SessionArea/SessionAreaTopBar/ActiveSessionTopBar/SessionTopBar/useShowTopBarTitle";
 import { SessionBody } from "../SessionContent/SessionArea/SessionBody";
 import { useSessionLifecycle } from "../useSessionLifecycle";
 import { cardSessionViewSx } from "./cardSessionViewSx";
@@ -25,11 +26,13 @@ export function CardSessionView({
 					data-testid="card-session-view"
 					sx={cardSessionViewSx}
 				>
-					<SessionAreaTopBar
-						session={session}
-						sessions={socket.sessions}
-						lifecycle={lifecycle}
-					/>
+					<ShowTopBarTitleContext.Provider value={false}>
+						<SessionAreaTopBar
+							session={session}
+							sessions={socket.sessions}
+							lifecycle={lifecycle}
+						/>
+					</ShowTopBarTitleContext.Provider>
 					<Box sx={{ flex: 1, minHeight: 0, display: "flex" }}>
 						<SessionBody
 							activeSession={session}
