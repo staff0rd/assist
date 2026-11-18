@@ -1,3 +1,11 @@
+# [0.1218.0](https://github.com/staff0rd/assist/compare/v0.1217.5...v0.1218.0) (2026-11-18)
+
+
+### Features
+
+* add card mode board to sessions ([c8eeef6](https://github.com/staff0rd/assist/commit/c8eeef6bdcf6cfc9deac07a0f94a79d0285e120a))
+* show reopen-in-progress indicator ([107d3e2](https://github.com/staff0rd/assist/commit/107d3e2a7cb68b343060ad8c6cc340ccf1c077c9))
+
 ## [0.1217.5](https://github.com/staff0rd/assist/compare/v0.1217.4...v0.1217.5) (2026-11-18)
 
 
