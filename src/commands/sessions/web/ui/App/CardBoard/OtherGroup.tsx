@@ -9,10 +9,12 @@ import { OtherGroupToggle } from "./OtherGroupToggle";
 export function OtherGroup({
 	sessions,
 	openId,
+	compact,
 	onOpen,
 }: {
 	sessions: SessionInfo[];
 	openId: string | undefined;
+	compact: boolean;
 	onOpen: (id: string) => void;
 }) {
 	const [expanded, setExpanded] = useState(false);
@@ -30,13 +32,14 @@ export function OtherGroup({
 				onToggle={() => setExpanded((e) => !e)}
 			/>
 			{expanded && (
-				<Box sx={boardGridSx}>
+				<Box sx={boardGridSx(compact)}>
 					{sessions.map((s) => (
 						<OtherCard
 							key={s.id}
 							session={s}
 							nowMs={nowMs}
 							selected={s.id === openId}
+							compact={compact}
 							onOpen={() => onOpen(s.id)}
 						/>
 					))}

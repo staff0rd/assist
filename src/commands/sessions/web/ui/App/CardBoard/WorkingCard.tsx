@@ -1,64 +1,47 @@
 import Box from "@mui/material/Box";
 import { BoardCard } from "./BoardCard";
-import { alpha } from "@mui/material/styles";
-import { useElapsed } from "../SessionContent/SessionArea/SessionAreaTopBar/ActiveSessionTopBar/SessionTopBar/SessionTopBarControls/SessionTopBarElapsed/useElapsed";
+import { workingDotSx } from "./workingDotSx";
 import { sessionTitle } from "../sessionTitle";
 import type { SessionInfo } from "../../types";
 import { cardTextSx } from "./cardTextSx";
 import { clampSx } from "./clampSx";
-import { workingActivity } from "./workingActivity";
+import { FullWorking } from "./FullWorking";
 
-const dotSx = {
-	width: 8,
-	height: 8,
-	borderRadius: "50%",
-	bgcolor: "success.main",
-	boxShadow: (t: { palette: { success: { main: string } } }) =>
-		`0 0 0 3px ${alpha(t.palette.success.main, 0.18)}`,
-} as const;
+function CompactWorking({ session }: { session: SessionInfo }) {
+	return (
+		<Box sx={cardTextSx.head}>
+			<Box component="span" sx={workingDotSx} />
+			<Box sx={[cardTextSx.compactTitle, clampSx(2)]}>
+				{sessionTitle(session)}
+			</Box>
+		</Box>
+	);
+}
 
 export function WorkingCard({
 	session,
 	selected,
+	compact,
 	onOpen,
 }: {
 	session: SessionInfo;
 	selected: boolean;
+	compact: boolean;
 	onOpen: () => void;
 }) {
-	const elapsed = useElapsed(session.runningMs, session.runningSince);
 	return (
 		<BoardCard
 			tone="neutral"
 			selected={selected}
+			compact={compact}
 			onOpen={onOpen}
 			testId="working-card"
 		>
-			<Box sx={cardTextSx.head}>
-				<Box component="span" sx={dotSx} />
-				<Box
-					component="span"
-					sx={{ typography: "caption", fontWeight: 600, color: "success.main" }}
-				>
-					Working
-				</Box>
-				<Box component="span" sx={cardTextSx.age}>
-					{elapsed}
-				</Box>
-			</Box>
-			<Box sx={[cardTextSx.title, clampSx(2)]}>{sessionTitle(session)}</Box>
-			<Box
-				sx={[
-					{
-						typography: "body2",
-						fontFamily: "fontFamilyMono",
-						color: "text.secondary",
-					},
-					clampSx(3),
-				]}
-			>
-				{workingActivity(session)}
-			</Box>
+			{compact ? (
+				<CompactWorking session={session} />
+			) : (
+				<FullWorking session={session} />
+			)}
 		</BoardCard>
 	);
 }

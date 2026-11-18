@@ -28,6 +28,12 @@ vi.mock("./SessionContent/PrPreviewSlideInPane", () => ({
 	),
 }));
 
+vi.mock("./CardBoard/CardSessionView", () => ({
+	CardSessionView: ({ session }: { session: { id: string } }) => (
+		<section data-testid="card-session-view">{`session: ${session.id}`}</section>
+	),
+}));
+
 afterEach(cleanup);
 
 const question = {
@@ -173,5 +179,46 @@ describe("CardBoard", () => {
 			undefined,
 			undefined,
 		);
+	});
+
+	it("toggles the session view beside the preview and compacts the board", () => {
+		renderBoard();
+		fireEvent.click(screen.getByTestId("needs-you-card"));
+		expect(screen.queryByTestId("card-session-view")).toBeNull();
+
+		fireEvent.click(screen.getByRole("button", { name: "Show session" }));
+
+		expect(screen.getByTestId("card-session-view").textContent).toBe(
+			"session: w",
+		);
+		expect(screen.getByText("preview: Pick a colour")).toBeTruthy();
+		expect(screen.queryByText("Refactoring the parser")).toBeNull();
+
+		fireEvent.click(screen.getByRole("button", { name: "Hide session" }));
+
+		expect(screen.queryByTestId("card-session-view")).toBeNull();
+		expect(screen.getByText("Refactoring the parser")).toBeTruthy();
+	});
+
+	it("hides the session again when another card opens", () => {
+		renderBoard();
+		fireEvent.click(screen.getByTestId("needs-you-card"));
+		fireEvent.click(screen.getByRole("button", { name: "Show session" }));
+
+		fireEvent.click(screen.getByTestId("working-card"));
+
+		expect(screen.queryByTestId("card-session-view")).toBeNull();
+		expect(screen.getByRole("button", { name: "Show session" })).toBeTruthy();
+	});
+
+	it("hides the session again after the pane closes and reopens", () => {
+		renderBoard();
+		fireEvent.click(screen.getByTestId("working-card"));
+		fireEvent.click(screen.getByRole("button", { name: "Show session" }));
+
+		fireEvent.click(screen.getByTitle("Close"));
+		fireEvent.click(screen.getByTestId("working-card"));
+
+		expect(screen.queryByTestId("card-session-view")).toBeNull();
 	});
 });

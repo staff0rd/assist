@@ -6,6 +6,12 @@ export const cardTextSx = {
 		lineHeight: 1.4,
 		overflowWrap: "anywhere",
 	},
+	compactTitle: {
+		typography: "body2",
+		fontWeight: 600,
+		lineHeight: 1.4,
+		overflowWrap: "anywhere",
+	},
 	age: {
 		ml: "auto",
 		typography: "caption",

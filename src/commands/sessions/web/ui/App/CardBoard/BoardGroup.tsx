@@ -8,11 +8,13 @@ export function BoardGroup({
 	title,
 	color,
 	count,
+	compact = false,
 	children,
 }: {
 	title: string;
 	color: string;
 	count: number;
+	compact?: boolean;
 	children: ReactNode;
 }) {
 	return (
@@ -48,7 +50,7 @@ export function BoardGroup({
 					{count}
 				</Box>
 			</Box>
-			<Box sx={boardGridSx}>{children}</Box>
+			<Box sx={boardGridSx(compact)}>{children}</Box>
 		</Box>
 	);
 }

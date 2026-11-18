@@ -1,21 +1,23 @@
 import { alpha, type Theme } from "@mui/material/styles";
+import { toneColor } from "./toneColor";
+import { cardMinHeight } from "./cardMinHeight";
 
 export type CardTone = "warning" | "check" | "neutral";
 
-function toneColor(t: Theme, tone: CardTone): string {
-	return tone === "neutral" ? t.palette.text.secondary : t.palette[tone].main;
-}
-
-export function boardCardSx(tone: CardTone, selected: boolean) {
+export function boardCardSx(
+	tone: CardTone,
+	selected: boolean,
+	compact: boolean,
+) {
 	return (t: Theme) => ({
 		display: "flex",
 		flexDirection: "column",
 		alignItems: "stretch",
 		justifyContent: "flex-start",
 		textAlign: "left",
-		gap: 1.5,
-		minHeight: tone === "neutral" ? 168 : 208,
-		p: 2.5,
+		gap: compact ? 0.75 : 1.5,
+		minHeight: cardMinHeight(tone, compact),
+		p: compact ? 1.5 : 2.5,
 		minWidth: 0,
 		font: "inherit",
 		color: "text.primary",

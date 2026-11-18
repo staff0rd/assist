@@ -13,17 +13,20 @@ export function OtherCard({
 	session,
 	nowMs,
 	selected,
+	compact,
 	onOpen,
 }: {
 	session: SessionInfo;
 	nowMs: number;
 	selected: boolean;
+	compact: boolean;
 	onOpen: () => void;
 }) {
 	return (
 		<BoardCard
 			tone="neutral"
 			selected={selected}
+			compact={compact}
 			onOpen={onOpen}
 			testId="other-card"
 		>
@@ -41,7 +44,11 @@ export function OtherCard({
 					{formatAge(awaitingSince(session), nowMs)}
 				</Box>
 			</Box>
-			<Box sx={[cardTextSx.title, clampSx(2)]}>{sessionTitle(session)}</Box>
+			<Box
+				sx={[compact ? cardTextSx.compactTitle : cardTextSx.title, clampSx(2)]}
+			>
+				{sessionTitle(session)}
+			</Box>
 		</BoardCard>
 	);
 }

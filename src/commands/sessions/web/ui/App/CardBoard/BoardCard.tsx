@@ -5,12 +5,14 @@ import { boardCardSx, type CardTone } from "./boardCardSx";
 export function BoardCard({
 	tone,
 	selected,
+	compact,
 	onOpen,
 	testId,
 	children,
 }: {
 	tone: CardTone;
 	selected: boolean;
+	compact: boolean;
 	onOpen: () => void;
 	testId: string;
 	children: ReactNode;
@@ -21,7 +23,7 @@ export function BoardCard({
 			onClick={onOpen}
 			aria-pressed={selected}
 			data-testid={testId}
-			sx={boardCardSx(tone, selected)}
+			sx={boardCardSx(tone, selected, compact)}
 		>
 			{children}
 		</ButtonBase>
