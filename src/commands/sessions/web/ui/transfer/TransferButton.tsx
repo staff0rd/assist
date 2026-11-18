@@ -3,6 +3,8 @@ import Menu from "@mui/material/Menu";
 import { useState } from "react";
 import { ActionButton } from "../App/ActionButton";
 import type { SessionInfo } from "../types";
+import { BlockedTransferButton } from "./BlockedTransferButton";
+import { blockedTransferReason } from "./blockedTransferReason";
 import { TransferMenuItems } from "./TransferMenuItems";
 import { transferCandidates } from "./transferCandidates";
 import { transferStatus } from "./transferStatus";
@@ -18,7 +20,10 @@ export function TransferButton({ session }: { session: SessionInfo }) {
 		nodes,
 		anchor !== null && !status.queued,
 	);
-	if (transferCandidates(session, nodes).length === 0) return null;
+	if (transferCandidates(session, nodes).length === 0) {
+		const reason = blockedTransferReason(session, nodes);
+		return reason ? <BlockedTransferButton reason={reason} /> : null;
+	}
 	return (
 		<>
 			<ActionButton

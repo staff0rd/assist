@@ -34,4 +34,16 @@ describe("transferRefusal", () => {
 			"only backlog run and resumable prompt sessions can be transferred",
 		);
 	});
+
+	it("refuses a Pi prompt session with the harness reason", () => {
+		const s = makeSession({
+			commandType: "claude",
+			harness: "pi",
+			claudeSessionId: "c-1",
+			cwd: "/git/assist-3",
+		});
+		expect(transferRefusal(s, "mac", links)).toBe(
+			"Pi can't resume a conversation on another node",
+		);
+	});
 });

@@ -1,4 +1,5 @@
 import { TRANSFER_UNSUPPORTED, transferPlan } from "../../shared/transferPlan";
+import { transferBlockedReason } from "../../shared/transferBlockedReason";
 import type { Session } from "../createSession";
 
 type TargetLinks = {
@@ -13,7 +14,7 @@ export function transferRefusal(
 ): string | undefined {
 	if (!s) return "unknown session";
 	const plan = transferPlan(s);
-	if (!plan) return TRANSFER_UNSUPPORTED;
+	if (!plan) return transferBlockedReason(s) ?? TRANSFER_UNSUPPORTED;
 	if (plan.kind === "prompt" && !(s.worktree?.path ?? s.cwd))
 		return "the session has no working tree to transfer";
 	if (s.transfer?.queued)
