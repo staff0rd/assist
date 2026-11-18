@@ -8,6 +8,7 @@ import { useSlideInSx } from "./PrPreviewSlideIn/useSlideInSx";
 
 export function PrPreviewSlideIn({
 	rendered,
+	placeholder,
 	stackedShow,
 	session,
 	sessionId,
@@ -27,7 +28,8 @@ export function PrPreviewSlideIn({
 			onTransitionEnd={exitOnSlideOut(open, onExited)}
 			sx={sx}
 		>
-			{rendered && (
+			{placeholder}
+			{!placeholder && rendered && (
 				<CoveredPane covered={stackedShow !== undefined}>
 					<PrPreviewSlideInPane
 						key={rendered.requestId}

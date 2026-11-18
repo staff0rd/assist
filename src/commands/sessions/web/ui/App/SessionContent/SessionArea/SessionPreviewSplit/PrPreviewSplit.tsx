@@ -1,20 +1,11 @@
 import Box from "@mui/material/Box";
-import type { ReactNode } from "react";
-import type { PrPreview } from "../../../../../../shared/SessionInfoBase";
-import type { PrDecisionDetails } from "../../../../PrDecisionDetails";
 import { PreviewWidthContext } from "../../usePreviewWidthContext";
+import type { PrPreviewSplitProps } from "./PrPreviewSplit/PrPreviewSplitProps";
 import { PrPreviewSlideIn } from "./PrPreviewSplit/PrPreviewSlideIn";
 import { PrPreviewTerminalColumn } from "./PrPreviewSplit/PrPreviewTerminalColumn";
-import type { SessionInfo } from "../../../../types";
 import { useRetainedPreview } from "./PrPreviewSplit/useRetainedPreview";
 import { splitContainerSx } from "./PrPreviewSplit/splitContainerSx";
 import { usePreviewLayout } from "./PrPreviewSplit/usePreviewLayout";
-
-type OnDecision = (
-	requestId: string,
-	decision: "approve" | "reject",
-	details: PrDecisionDetails,
-) => void;
 
 export function PrPreviewSplit({
 	preview,
@@ -24,20 +15,12 @@ export function PrPreviewSplit({
 	cwd,
 	sendInput,
 	onDecision,
+	placeholder,
 	children,
-}: {
-	preview: PrPreview | null;
-	stackedShow?: PrPreview | undefined;
-	session?: SessionInfo | undefined;
-	sessionId?: string;
-	cwd?: string;
-	sendInput?: ((sessionId: string, data: string) => void) | undefined;
-	onDecision: OnDecision;
-	children: ReactNode;
-}) {
+}: PrPreviewSplitProps) {
 	const { rendered, onExited } = useRetainedPreview(preview);
 	const { containerRef, width } = usePreviewLayout(rendered);
-	const open = preview !== null;
+	const open = preview !== null || placeholder !== undefined;
 
 	return (
 		<Box ref={containerRef} sx={splitContainerSx(width.stacked)}>
@@ -52,6 +35,7 @@ export function PrPreviewSplit({
 			<PreviewWidthContext.Provider value={width}>
 				<PrPreviewSlideIn
 					rendered={rendered}
+					placeholder={placeholder}
 					stackedShow={open ? stackedShow : undefined}
 					session={session}
 					sessionId={sessionId}

@@ -1,4 +1,5 @@
 import RateReviewOutlinedIcon from "@mui/icons-material/RateReviewOutlined";
+import CircularProgress from "@mui/material/CircularProgress";
 import { useState } from "react";
 import type { PrSummary } from "../../../../../prList";
 import type { SessionInfo } from "../../../../types";
@@ -26,15 +27,24 @@ export function ReviewButton({
 		setError,
 	);
 	const [anchorEl, setAnchorEl] = useState<HTMLElement | null>(null);
+	const reopening = highLevel?.reopening === true;
 
 	return (
 		<>
 			<ActionButton
-				label="Review"
-				title="Review PR"
-				icon={<RateReviewOutlinedIcon sx={{ fontSize: 14 }} />}
+				label={reopening ? "Reopening…" : "Review"}
+				title={reopening ? "Reopening high-level review…" : "Review PR"}
+				icon={
+					reopening ? (
+						<CircularProgress size={14} color="inherit" />
+					) : (
+						<RateReviewOutlinedIcon sx={{ fontSize: 14 }} />
+					)
+				}
+				disabled={reopening}
 				onClick={(e) => {
 					e.stopPropagation();
+					if (reopening) return;
 					review.resetOptions();
 					setAnchorEl(e.currentTarget);
 				}}

@@ -1,6 +1,8 @@
 import type { ReactNode } from "react";
 import type { PrDecisionDetails } from "../../../PrDecisionDetails";
+import { useReopeningHighLevelReview } from "../../useReopeningHighLevelReview";
 import { PrPreviewSplit } from "./SessionPreviewSplit/PrPreviewSplit";
+import { ReopeningPlaceholder } from "./SessionPreviewSplit/ReopeningPlaceholder";
 import type { SessionInfo } from "../../../types";
 
 export type SendPrDecision = (
@@ -21,8 +23,14 @@ export function SessionPreviewSplit({
 	sendInput: (sessionId: string, data: string) => void;
 	children: ReactNode;
 }) {
+	const reopeningPr = useReopeningHighLevelReview(session?.id);
 	return (
 		<PrPreviewSplit
+			placeholder={
+				reopeningPr !== undefined && !session?.pendingPrPreview ? (
+					<ReopeningPlaceholder prNumber={reopeningPr} />
+				) : undefined
+			}
 			preview={session?.pendingPrPreview ?? session?.pendingShow ?? null}
 			stackedShow={session?.pendingPrPreview ? session.pendingShow : undefined}
 			session={session}

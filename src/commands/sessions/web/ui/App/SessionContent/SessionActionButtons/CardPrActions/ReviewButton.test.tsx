@@ -312,6 +312,33 @@ describe("ReviewButton on the high-level review session", () => {
 			},
 		);
 
+		it("shows a pending reopen and ignores repeat clicks until it settles", async () => {
+			vi.useRealTimers();
+			let settle: (res: Response) => void = () => {};
+			fetchMock.mockImplementation((url) =>
+				String(url).includes("reopen-high-level-review")
+					? new Promise<Response>((resolve) => {
+							settle = resolve;
+						})
+					: Promise.resolve(Response.json({})),
+			);
+			renderButton(vi.fn(), highLevelSession({ pendingPrPreview: undefined }));
+
+			fireEvent.click(screen.getByText("Reopen high-level review"));
+
+			const button = await screen.findByRole("button", {
+				name: "Reopening high-level review…",
+			});
+			expect((button as HTMLButtonElement).disabled).toBe(true);
+			fireEvent.click(button);
+			expect(reopenRequests()).toHaveLength(1);
+
+			settle(Response.json({}));
+			expect(
+				await screen.findByRole("button", { name: "Review PR" }),
+			).toBeTruthy();
+		});
+
 		it("captions the row with the head of the last high-level review", () => {
 			renderButton(
 				vi.fn(),

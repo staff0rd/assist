@@ -6,15 +6,17 @@ import { useApiNode } from "../../../../../useApiNode";
 import { useSessionLaunchContext } from "../../../../../useSessionLaunchContext";
 import { sessionRegion } from "../../../../sessionRegion";
 import { focusRegion } from "../../../../focusRegion";
+import { useReopeningHighLevelReview } from "../../../../useReopeningHighLevelReview";
 import { pasteAndSubmit } from "../../../../../../../shared/pasteAndSubmit";
-import { hasPendingHighLevelReview } from "./useHighLevelReviewAction/hasPendingHighLevelReview";
 import { isHighLevelReviewSession } from "./useHighLevelReviewAction/isHighLevelReviewSession";
-import { requestReopenHighLevelReview } from "./useHighLevelReviewAction/requestReopenHighLevelReview";
+import { startHighLevelReopen } from "./useHighLevelReviewAction/startHighLevelReopen";
+import { useReopenArrival } from "./useHighLevelReviewAction/useReopenArrival";
 
 export type HighLevelReviewAction = {
 	run: () => void;
 	label?: string;
 	caption?: string;
+	reopening?: boolean;
 };
 
 export function useHighLevelReviewAction(
@@ -26,9 +28,11 @@ export function useHighLevelReviewAction(
 	const { activateSession, sendInput } = useSessionLaunchContext();
 	const ringColor = useTheme().palette.primary.main;
 	const node = useApiNode();
+	const reopening = useReopeningHighLevelReview(session?.id) === pr.number;
+	const arrived = useReopenArrival(session, pr.number);
 	if (!session || !isHighLevelReviewSession(session, pr.number))
 		return undefined;
-	if (hasPendingHighLevelReview(session, pr.number))
+	if (arrived)
 		return {
 			run: () => {
 				activateSession(session.id);
@@ -49,9 +53,7 @@ export function useHighLevelReviewAction(
 		caption: session.highLevelReviewHead
 			? `Saved slices for ${session.highLevelReviewHead} · no re-slicing`
 			: undefined,
-		run: () =>
-			void requestReopenHighLevelReview(session.id, pr.number, node).then(
-				(failure) => failure && onError(failure),
-			),
+		reopening,
+		run: () => startHighLevelReopen(session.id, pr.number, node, onError),
 	};
 }

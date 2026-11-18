@@ -1,3 +1,4 @@
+import CircularProgress from "@mui/material/CircularProgress";
 import { addressCommentsActions } from "../../../../../../../../../../shared/prActions";
 import { reviewButtonModes } from "../../../../../../../../../../shared/reviewButtonModes";
 import type { HarnessCapabilities } from "../../../../../../parseHarnessCapabilities";
@@ -25,15 +26,20 @@ export function ReviewModeItems({
 			highLevel?.label && entry.args.includes("--high-level")
 				? highLevel
 				: undefined;
+		const label = reopen?.reopening
+			? "Reopening high-level review…"
+			: reopen?.label;
 		return (
 			<ReviewMenuRow
 				key={entry.label}
-				entry={
-					reopen?.label
-						? { ...entry, label: reopen.label, alternates: [] }
-						: entry
+				entry={label ? { ...entry, label, alternates: [] } : entry}
+				caption={reopen?.reopening ? undefined : reopen?.caption}
+				icon={
+					reopen?.reopening ? (
+						<CircularProgress size={12} color="inherit" />
+					) : undefined
 				}
-				caption={reopen?.caption}
+				disabled={reopen?.reopening}
 				onSelect={(e, args) =>
 					pick(
 						e,

@@ -1,5 +1,5 @@
 import MenuItem from "@mui/material/MenuItem";
-import type { MouseEvent } from "react";
+import type { MouseEvent, ReactNode } from "react";
 import { HarnessColumns } from "./HarnessColumns";
 import { reviewAlternateSx } from "./reviewAlternateSx";
 import { ReviewMenuLabel } from "./ReviewMenuLabel";
@@ -9,10 +9,14 @@ import { reviewRowKeyDown } from "./reviewRowKeyDown";
 export function ReviewMenuRow({
 	entry,
 	caption,
+	icon,
+	disabled,
 	onSelect,
 }: {
 	entry: ReviewModeEntry;
 	caption?: string | undefined;
+	icon?: ReactNode;
+	disabled?: boolean | undefined;
 	onSelect: (e: MouseEvent, args: string[]) => void;
 }) {
 	const hasButtons = entry.columns.length > 0;
@@ -21,9 +25,11 @@ export function ReviewMenuRow({
 			sx={
 				hasButtons ? reviewAlternateSx.rowWithAlternates : reviewAlternateSx.row
 			}
+			disabled={disabled}
 			onClick={(e) => onSelect(e, entry.args)}
 			onKeyDown={reviewRowKeyDown}
 		>
+			{icon}
 			<ReviewMenuLabel label={entry.label} caption={caption} />
 			{hasButtons && (
 				<HarnessColumns
