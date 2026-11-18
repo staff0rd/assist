@@ -1,3 +1,10 @@
+# [0.1228.0](https://github.com/staff0rd/assist/compare/v0.1227.0...v0.1228.0) (2026-11-18)
+
+
+### Features
+
+* phase footer on Needs you and Other ([804a618](https://github.com/staff0rd/assist/commit/804a6182a2aab51ad5b970e4635aad19d7a9f9e8))
+
 # [0.1227.0](https://github.com/staff0rd/assist/compare/v0.1226.1...v0.1227.0) (2026-11-18)
 
 
