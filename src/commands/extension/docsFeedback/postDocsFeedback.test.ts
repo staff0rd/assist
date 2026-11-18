@@ -55,6 +55,13 @@ describe("postDocsFeedback", () => {
 		);
 	});
 
+	it("relays an error naming the page's node when it cannot be reached", async () => {
+		respond(404, { error: "No link to node mac" });
+		expect(await postDocsFeedback(SERVER, { ...message, node: "mac" })).toEqual(
+			{ ok: false, message: "No link to node mac" },
+		);
+	});
+
 	it("relays a missing or ended session", async () => {
 		respond(404, { error: "assist session s9 has ended" });
 		expect(await postDocsFeedback(SERVER, message)).toEqual({

@@ -260,5 +260,24 @@ describe("proxyToNode", () => {
 		});
 		expect(res.status).toBe(404);
 		expect(res.headers.get("access-control-allow-origin")).toBe(EXTENSION);
+		expect(await res.json()).toEqual({ error: "No link to node mac" });
+	});
+
+	it("names the page's node when its link is down", async () => {
+		const closed = createServer();
+		const deadUrl = await listen(closed);
+		await new Promise((resolve) => closed.close(resolve));
+		links.current = [...links.current, { name: "mac", url: deadUrl }];
+		const log = vi.spyOn(console, "log").mockImplementation(() => {});
+		const res = await fetch(`${viewerUrl}${DOCS_FEEDBACK}?node=mac`, {
+			method: "POST",
+			headers: { origin: EXTENSION },
+			body: "feedback",
+		});
+		log.mockRestore();
+		links.current = links.current.filter((link) => link.name !== "mac");
+		expect(res.status).toBe(502);
+		expect(res.headers.get("access-control-allow-origin")).toBe(EXTENSION);
+		expect((await res.json()).error).toMatch(/^mac unreachable: /);
 	});
 });
