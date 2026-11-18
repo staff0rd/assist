@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import { statusPillSx } from "../../designSystem/statusPillSx";
 import type { SessionInfo } from "../../types";
 import { awaitingSince } from "./awaitingSince";
+import { CardRepo } from "./CardRepo";
 import { cardTextSx } from "./cardTextSx";
 import { formatAge } from "./formatAge";
 import type { needsYouChip } from "./needsYouChip";
@@ -26,6 +27,7 @@ export function NeedsYouCardHead({
 			>
 				{chip.label}
 			</Box>
+			<CardRepo session={session} />
 			<Box component="span" sx={cardTextSx.age}>
 				{formatAge(awaitingSince(session), nowMs)}
 			</Box>

@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import { type Theme } from "@mui/material/styles";
+import { type SxProps, type Theme } from "@mui/material/styles";
 import type { RepoChip } from "./PhoneRepoChips/buildRepoChips";
 import { PhoneRepoChip } from "./PhoneRepoChips/PhoneRepoChip";
 
@@ -20,15 +20,17 @@ export function PhoneRepoChips({
 	total,
 	selected,
 	onSelect,
+	sx = rowSx,
 }: {
 	chips: RepoChip[];
 	total: number;
 	selected: string | null;
 	onSelect: (repo: string | null) => void;
+	sx?: SxProps<Theme>;
 }) {
 	if (chips.length === 0) return null;
 	return (
-		<Box role="radiogroup" aria-label="Filter by repo" sx={rowSx}>
+		<Box role="radiogroup" aria-label="Filter by repo" sx={sx}>
 			<PhoneRepoChip
 				label="All"
 				count={total}

@@ -4,6 +4,7 @@ import { sessionTitle } from "../sessionTitle";
 import type { SessionInfo } from "../../types";
 import { awaitingSince } from "./awaitingSince";
 import { BoardCard } from "./BoardCard";
+import { CardRepo } from "./CardRepo";
 import { cardTextSx } from "./cardTextSx";
 import { clampSx } from "./clampSx";
 import { formatAge } from "./formatAge";
@@ -40,6 +41,7 @@ export function OtherCard({
 				>
 					{session.status}
 				</Box>
+				<CardRepo session={session} />
 				<Box component="span" sx={cardTextSx.age}>
 					{formatAge(awaitingSince(session), nowMs)}
 				</Box>

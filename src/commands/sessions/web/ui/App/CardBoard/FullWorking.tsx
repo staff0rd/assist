@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import { useElapsed } from "../SessionContent/SessionArea/SessionAreaTopBar/ActiveSessionTopBar/SessionTopBar/SessionTopBarControls/SessionTopBarElapsed/useElapsed";
 import { sessionTitle } from "../sessionTitle";
 import type { SessionInfo } from "../../types";
+import { CardRepo } from "./CardRepo";
 import { cardTextSx } from "./cardTextSx";
 import { clampSx } from "./clampSx";
 import { workingActivity } from "./workingActivity";
@@ -19,6 +20,7 @@ export function FullWorking({ session }: { session: SessionInfo }) {
 				>
 					Working
 				</Box>
+				<CardRepo session={session} />
 				<Box component="span" sx={cardTextSx.age}>
 					{elapsed}
 				</Box>
