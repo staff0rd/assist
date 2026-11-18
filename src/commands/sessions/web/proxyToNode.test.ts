@@ -4,6 +4,8 @@ import { afterAll, beforeAll, describe, expect, it, vi } from "vitest";
 import { loadConfig } from "../../../shared/loadConfig";
 import { makeAssistConfig } from "../../../test/mothers/makeAssistConfig";
 import type * as loadConfigMockModule from "../../../test/mocks/loadConfigMock";
+import { allowExtensionOrigin } from "./fromGithub/allowExtensionOrigin";
+import { sessionFromGithubPreflight } from "./fromGithub/sessionFromGithubPreflight";
 import { proxyToNode } from "./proxyToNode";
 
 const links = {
@@ -48,6 +50,8 @@ function readBody(req: IncomingMessage): Promise<string> {
 }
 
 let viewerUrl = "";
+const DOCS_FEEDBACK = "/api/sessions/docs-feedback";
+const EXTENSION = "moz-extension://abc";
 
 beforeAll(async () => {
 	vi.mocked(loadConfig).mockImplementation(() =>
@@ -58,6 +62,10 @@ beforeAll(async () => {
 		if (req.url?.includes("hang=1")) {
 			seenHang.count++;
 			return;
+		}
+		if (req.url?.startsWith(DOCS_FEEDBACK)) {
+			if (req.method === "OPTIONS") return sessionFromGithubPreflight(req, res);
+			allowExtensionOrigin(req, res);
 		}
 		seen.push({
 			url: req.url,
@@ -217,5 +225,40 @@ describe("proxyToNode", () => {
 		const res = await fetch(`${viewerUrl}/api/diff?node=mac`);
 		expect(res.status).toBe(404);
 		expect(await res.json()).toEqual({ error: "No link to node mac" });
+	});
+
+	it("forwards docs feedback and its preflight to the page's node for the extension", async () => {
+		const preflight = await fetch(
+			`${viewerUrl}${DOCS_FEEDBACK}?node=pc-windows`,
+			{
+				method: "OPTIONS",
+				headers: { origin: EXTENSION, "access-control-request-method": "POST" },
+			},
+		);
+		expect(preflight.status).toBe(204);
+		expect(preflight.headers.get("access-control-allow-origin")).toBe(
+			EXTENSION,
+		);
+		const res = await fetch(`${viewerUrl}${DOCS_FEEDBACK}?node=pc-windows`, {
+			method: "POST",
+			headers: { origin: EXTENSION },
+			body: "feedback",
+		});
+		expect(res.status).toBe(201);
+		expect(res.headers.get("access-control-allow-origin")).toBe(EXTENSION);
+		expect(seen.at(-1)).toEqual({
+			url: DOCS_FEEDBACK,
+			linkedFrom: "pc-wsl",
+			body: "feedback",
+		});
+	});
+
+	it("lets the extension read the error when the page's node has no link", async () => {
+		const res = await fetch(`${viewerUrl}${DOCS_FEEDBACK}?node=mac`, {
+			method: "POST",
+			headers: { origin: EXTENSION },
+		});
+		expect(res.status).toBe(404);
+		expect(res.headers.get("access-control-allow-origin")).toBe(EXTENSION);
 	});
 });

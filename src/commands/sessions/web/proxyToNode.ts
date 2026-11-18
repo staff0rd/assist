@@ -1,5 +1,6 @@
 import { type IncomingMessage, type ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
+import { allowExtensionOrigin } from "./fromGithub/allowExtensionOrigin";
 import { findLinkSpec } from "../shared/loadLinkSpecs";
 import { TRACE_HEADER } from "../shared/newTraceId";
 import { resolveNodeName } from "../shared/resolveNodeName";
@@ -55,6 +56,7 @@ export async function proxyToNode(
 	if (arrivedOverLink(req)) logLinkedRequest(req, res);
 	const target = proxyTarget(req);
 	if (target.kind === "local") return false;
+	allowExtensionOrigin(req, res);
 	if (target.kind === "unknown") {
 		console.log(
 			`link ${target.node} http: ${req.method} ${req.url} -> no such link`,
