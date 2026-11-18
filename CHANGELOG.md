@@ -1,3 +1,10 @@
+## [0.1223.2](https://github.com/staff0rd/assist/compare/v0.1223.1...v0.1223.2) (2026-11-18)
+
+
+### Bug Fixes
+
+* keep card board wide on narrow screens ([ea0d999](https://github.com/staff0rd/assist/commit/ea0d999e893e2c7998b86b66e08bcfa937222dc0))
+
 ## [0.1223.1](https://github.com/staff0rd/assist/compare/v0.1223.0...v0.1223.1) (2026-11-18)
 
 
