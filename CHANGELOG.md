@@ -1,3 +1,17 @@
+# [0.1226.0](https://github.com/staff0rd/assist/compare/v0.1225.2...v0.1226.0) (2026-11-18)
+
+
+### Bug Fixes
+
+* close card when preview ends ([d80d58d](https://github.com/staff0rd/assist/commit/d80d58d771287dd105efd124031ea74db3b8da14))
+* no title in card session top bar ([d72b303](https://github.com/staff0rd/assist/commit/d72b303fff266fe7ed4f4acec6bcde83da17565a))
+
+
+### Features
+
+* disabled Pi transfer, cwd in menu ([c449797](https://github.com/staff0rd/assist/commit/c44979711debcd75d1aea8356e9790022873d335))
+* phase footer on Working cards ([d48a244](https://github.com/staff0rd/assist/commit/d48a2448227b02c57b0467a49dd5da560d7afaaa))
+
 ## [0.1225.2](https://github.com/staff0rd/assist/compare/v0.1225.1...v0.1225.2) (2026-11-18)
 
 
