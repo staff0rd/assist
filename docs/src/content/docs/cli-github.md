@@ -32,9 +32,9 @@ covers:
 
 These back [`/github`](../github-issues/). Each takes `-R <owner/repo>` for an issue outside the current repo.
 
-- `assist github issue create` :badge[internal] files an issue from `--title` and `--body`, with `--label`, `--milestone`, `--project`, `--status`, `--type` and `--parent`. Called by `/github create`.
-- `assist github issue edit <number>` :badge[internal] reworks an issue's description in the preview pane, or with `--parent <issue>` makes it a sub-issue. Called by `/github`.
-- `assist github issue comment <number>` :badge[internal] comments on an issue with `--body`. Called by `/github update`.
+- `assist github issue create` :badge[internal] files an issue from `--title` and `--body`, with `--label`, `--milestone`, `--project`, `--status`, `--type` and `--parent`, and attaches each `--screenshot '[Group/]Caption=path'` under the issue's `## Screenshots` section. Called by `/github create`.
+- `assist github issue edit <number>` :badge[internal] reworks an issue's description in the preview pane, renames it with `--title`, attaches images with `--screenshot`, or with `--parent <issue>` makes it a sub-issue. Called by `/github`.
+- `assist github issue comment <number>` :badge[internal] comments on an issue with `--body`, attaching images with `--screenshot`. Called by `/github update`.
 - `assist github issue edit-comment <comment-id>` :badge[internal] replaces a posted comment with `--body`. Called by agents revising an issue comment.
 - `assist github issue started <number>` :badge[internal] assigns the issue to you and moves it to In Progress on its boards. Called by `/github started`.
 - `assist github issue unassign <number>` :badge[internal] removes you, or each `--assignee` login, from the issue's assignees. Called by agents removing an assignee.

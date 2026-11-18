@@ -8,12 +8,12 @@ covers: []
 
 ## Run from a clone
 
-To work on assist itself, install it from a clone instead of npm:
+To work on assist itself, install it from a clone instead of npm. The clone installs its dependencies with [pnpm](https://pnpm.io/installation):
 
 ```bash
 git clone git@github.com:staff0rd/assist.git
 cd assist
-npm install
+pnpm install
 npm run build
 npm install -g .
 ```
@@ -38,6 +38,6 @@ assist config set worktree.trunk true
 assist config set autoUpdate.enabled true
 ```
 
-The `auto-build` run entry is what an update runs after pulling. This repo's `assist.yml` already defines it to run `npm i`, then the build script. Without one, an update pulls but does not build.
+The `auto-build` run entry is what an update runs after pulling. This repo's `assist.yml` already defines it to run `pnpm install`, then the build script. Without one, an update pulls but does not build.
 
 See [Parallel work](../sessions-parallel-work/) for how worktrees and `worktree.trunk` behave, and [Updating assist](../updating/) for how updates are paused, checked and restarted.

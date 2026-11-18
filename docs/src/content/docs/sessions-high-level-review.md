@@ -175,7 +175,7 @@ The rail on the left lists **Overview**, then each slice with its line counts an
 ::screenshot{file="sessions-high-level-manual-testing.png"}
 
 - **All files** shows every changed file as a tree with its line counts, each tagged with the slices it's in. Click a tag to go to that slice.
-- **Backend PR** asks whether a change that needs backend work links the backend pull request, with the description beneath to check.
+- **Related PRs** asks whether a change that spans repos links its pull requests in the other repos, with the description beneath to check.
 
 Each slice has its own items, ticked and commented separately:
 

@@ -5,6 +5,7 @@ group: Sessions
 order: 7
 covers:
   - config:sessions.maxLive
+  - config:sessions.nodeVersion
 ---
 
 ## Where sessions live
@@ -21,4 +22,12 @@ One daemon holds at most 24 live sessions, and starting another past that is ref
 
 ```bash
 assist config set sessions.maxLive 32
+```
+
+## Node version
+
+The web server and daemon run on whichever Node.js launched assist, and so do the agents they start. To pin them to another, give a version or range installed with fnm, nvm or volta, or the path to a Node.js binary:
+
+```bash
+assist config set sessions.nodeVersion 24.22.1 --node
 ```

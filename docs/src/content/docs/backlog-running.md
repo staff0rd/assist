@@ -3,7 +3,9 @@ id: backlog-running
 title: Running items
 group: Backlog
 order: 2
-covers: []
+covers:
+  - config:backlog.parallelPhases
+  - config:backlog.maxParallelPhases
 screenshots:
   - file: backlog-build.png
     alt: The Build button on a todo item in the backlog list
@@ -82,3 +84,12 @@ The run's card in the [sidebar](../sessions-sidebar/) shows :status[running] whi
 ::screenshot{file="backlog-dismiss.png"}
 
 Every run ends with a review phase, added automatically after the item's own phases. Its session checks the work against each acceptance criterion and fixes what fails. Tell it the item is done once you're happy, or use **Done** on the session's top bar; the item is then marked done.
+
+## Running phases in parallel
+
+With the experimental `backlog.parallelPhases` on, a run starts the phases that don't depend on each other at the same time, each in its own worktree and session. `backlog.maxParallelPhases` caps how many run at once (3 by default):
+
+```bash
+assist config set backlog.parallelPhases true
+assist config set backlog.maxParallelPhases 2
+```

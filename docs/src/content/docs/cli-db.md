@@ -8,6 +8,7 @@ covers:
   - cli:db drop-retired
   - cli:schema unlock
   - cli:schema confirm
+  - cli:schema lock
 ---
 
 [Getting started](../getting-started/) sets up the database and applies its migrations with `assist db migrate`.
@@ -23,3 +24,4 @@ These apply when working on assist itself, where an agent can't change the datab
 
 - `assist schema unlock` :badge[internal] sends a pin to your desktop notifications, authorising schema changes for the session's backlog item phase, or for the Claude session when there is no item. Called by agents whose schema change was blocked.
 - `assist schema confirm <pin>` :badge[internal] approves those schema changes. Called by agents whose schema change was blocked, with the pin you give them.
+- `assist schema lock` revokes that approval, for the session's backlog item phase, or the Claude session when there is no item.

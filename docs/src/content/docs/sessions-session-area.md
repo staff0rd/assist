@@ -17,13 +17,13 @@ screenshots:
       - click: text=Dark mode toggle
     crop: "[data-testid=session-top-bar]"
   - file: sessions-sdk.png
-    alt: A Claude (SDK) session showing its transcript, with the composer offering a suggested next prompt
+    alt: A Claude (SDK) session showing its transcript, with 🙄 on Claude's last reply and the composer offering a suggested next prompt
     route: /sessions
     scene: dashboard
     setup:
       - session:
           repo: website
-          prompt: Why does the footer overlap the cookie banner?
+          prompt: Why does the **footer** overlap the cookie banner in `Layout.tsx`?
           title: Cookie banner overlap
           harness: claude-sdk
           reply:
@@ -37,7 +37,7 @@ screenshots:
       width: 1280
       height: 640
   - file: sessions-sdk-queued.png
-    alt: A message queued in a Claude (SDK) session while Claude works, with its Edit and Remove buttons
+    alt: A comment on Claude's reply queued in a Claude (SDK) session while Claude works, with its Edit and Remove buttons
     route: /sessions
     scene: dashboard
     setup:
@@ -53,6 +53,9 @@ screenshots:
     actions:
       - click: text="Raise the cookie banner"
       - click: "[aria-label='Message Claude']"
+      - type: "> I'll raise the banner above it."
+      - press: Shift+Enter
+      - press: Shift+Enter
       - type: Check the modal still sits above the banner
       - press: Enter
       - hover: text=Check the modal still sits above the banner
@@ -60,7 +63,7 @@ screenshots:
       width: 1280
       height: 640
   - file: sessions-sdk-shell.png
-    alt: A shell command's output in a Claude (SDK) session, attached to the next message
+    alt: A shell command's output in a Claude (SDK) session, attached to the next message unless dropped with ×
     route: /sessions
     scene: dashboard
     setup:
@@ -127,11 +130,15 @@ A session on the [Claude (SDK)](../harnesses/#claude-sdk) harness has no termina
 In the composer:
 
 - :kbd[Enter] sends. :kbd[Shift+Enter], or :kbd[Enter] straight after a `\`, adds a line break.
-- While the field is empty after a turn, it shows the prompt Claude expects you to send next. :kbd[Tab] fills the field with it. On the phone, tap the suggestion above the reply field.
+- While the field is empty after a turn, it shows the prompt Claude expects you to send next. :kbd[Tab] or :kbd[ArrowRight] fills the field with it. On the phone, tap the suggestion above the reply field.
 - **Stop**, or :kbd[Esc], interrupts Claude's turn.
 - A message sent while Claude is working is queued until the turn ends. Hover a queued message to **Remove** it, or **Edit** it to take it back into the composer.
 
 ::screenshot{file="sessions-sdk-queued.png"}
+
+Click empty space in the transcript to put the cursor in the composer.
+
+🙄 on Claude's last reply asks it to say the same thing again, much more concisely.
 
 Select text in the transcript to comment on it, as in the [diff](../sessions-diff/#commenting).
 
@@ -141,7 +148,7 @@ Start a message with `!` to run it as a shell command in the session's working c
 
 ::screenshot{file="sessions-sdk-shell.png"}
 
-**Stop** on a running command's row, or :kbd[Esc] while it runs, stops it and keeps its output so far.
+**Stop** on a running command's row, or :kbd[Esc] while it runs, stops it and keeps its output so far. **×** on a finished command's row drops its output so it isn't attached.
 
 ## Your last message
 

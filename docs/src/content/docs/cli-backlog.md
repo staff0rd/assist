@@ -29,6 +29,7 @@ covers:
   - cli:backlog delete
   - cli:backlog comment
   - cli:backlog refresh-docs
+  - cli:backlog docs-screenshots
   - cli:docs unlock
   - cli:docs confirm
   - cli:backlog delete-comment
@@ -39,6 +40,8 @@ covers:
   - cli:backlog add-activity
   - cli:backlog record-slack
   - cli:backlog run
+  - cli:backlog run-phase
+  - cli:backlog land
   - cli:backlog next
   - cli:next
   - claude:next
@@ -97,6 +100,8 @@ These work on the current repo's [backlog](../backlog/). Item ids are written `a
 
 - `assist next [id]` (or `assist backlog next`) runs the item already in progress, or one you pick, then offers the next. With `[id]` it runs that item first; with no items left it starts `/draft`. `--once` stops after one item. In a terminal started by `assist next`, `assist draft`, `assist bug` or `assist refine`, `/next [id]` ends the current session and moves on to item `<id>`, or to whatever `assist next` picks.
 - `assist backlog run <id>` :badge[internal] runs an item's plan from the phase it is on. `--model <model>` overrides `harness.defaults.run.model` (`--no-model` runs on the harness's own default), and `--no-write` runs the harness without write access. Called by the dashboard's Build and `assist next`.
+- `assist backlog run-phase <id> <phase>` runs one of an item's ready phases in its own worktree, alongside its other ready phases, with `backlog.parallelPhases` on. `assist backlog run` starts it.
+- `assist backlog land` rebases a parallel phase's commits onto the branch it tracks, verifies again if that moved, and pushes. The agent running a parallel phase runs it.
 - `assist backlog refine [id]` :badge[internal] is the same as [`assist refine`](../launchers/). Called by agents working on backlog items.
 - `assist backlog rewind <id> <phase> --reason <reason>` :badge[internal] sends an item back to an earlier phase. Called by the review phase of a backlog run.
 - `assist backlog phase-done <id> <phase> <summary>` :badge[internal] marks a phase complete and records its summary. Called by the agent running each phase of a backlog run.
@@ -105,6 +110,7 @@ These work on the current repo's [backlog](../backlog/). Item ids are written `a
 
 - `assist backlog clone <origin>` clones an item's repo over SSH into `clone.baseDir`.
 - `assist backlog refresh-docs` queues a [Refresh docs](../backlog-docs/) story now for every done story no refresh covers yet, in a repo with `docs.refreshAfter` set, whatever its value.
+- `assist backlog docs-screenshots <refresh-id>` lists the stories a Refresh docs story covers whose commits changed UI, with the UI files each changed. Each `--story <id>=<file.png>` maps one to the screenshot that documents it, and the check passes once every one is mapped to a screenshot declared on a docs page and added or recaptured in the working tree.
 - `assist docs unlock` :badge[internal] lets the current phase of a backlog run edit docs pages and screenshots, which are otherwise left to Refresh docs, once you approve. It sends you a pin as a desktop notification. Called by agents whose docs edit was blocked.
 - `assist docs confirm <pin>` :badge[internal] approves that unlock with the pin from the notification. Called by agents whose docs edit was blocked, once you give them the pin.
 - `assist backlog move-repo <old-origin> [new-origin]` moves every item from one repo to another after a rename, the current repo when no new origin is given. `--yes` skips the prompt.

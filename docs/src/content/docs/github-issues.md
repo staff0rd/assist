@@ -20,7 +20,7 @@ Run `/github` in a session to work with a GitHub issue. Name an issue as `owner/
 | `/github done [issue]`           | Closes the issue                                                                          |
 | `/github help`                   | Lists these                                                                               |
 
-Everything that changes the issue, its description, a new issue or a comment, opens in the preview pane for you to approve first. Drop or paste screenshots onto the pane to attach them.
+Every change to an issue opens in the preview pane for your approval. Drop or paste screenshots onto the pane to attach them, or ask the agent to add one.
 
 ## Creating an issue
 

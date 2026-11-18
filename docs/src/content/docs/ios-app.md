@@ -41,6 +41,14 @@ screenshots:
     phone: true
     scene: dashboard
     waitFor: text=Dark mode toggle
+  - file: ios-app-repo-filter.png
+    alt: The iOS app session list filtered to one repo by its chip
+    route: /
+    phone: true
+    scene: dashboard
+    waitFor: text=Dark mode toggle
+    actions:
+      - click: "[aria-checked] >> text=sandbox"
   - file: ios-app-connect.png
     alt: Connecting the iOS app to a home node on first launch
     route: /
@@ -174,6 +182,12 @@ When the home node can't be reached, the app shows the error. Press **Retry now*
 
 The tab bar along the bottom switches between **Sessions**, **Backlog** and **History**.
 
+Tap a repo in the chip row above the Sessions or History list to show only that repo's entries, or **All** for every repo. A dot on a repo's chip means one of its sessions needs you. The app remembers your choice across tabs and launches.
+
+::screenshot{file="ios-app-repo-filter.png"}
+
+On a History entry's transcript, **Resume** starts it again as a live session and opens it. Tap the conversation id under the title to copy it.
+
 ::screenshot{file="ios-app-backlog.png"}
 
 On a backlog item, pick the node and harness to run on, then tap **Start** to run it, or **Refine** to start refining it in a new session.
@@ -186,7 +200,7 @@ Tap **⋯** on a session's screen, or long-press its row in the list, for its ac
 - **Auto-advance phases** is the dashboard's [Continue](../backlog-running/#steering-a-run) toggle for a backlog run.
 - **Transfer to node** moves a backlog run to another node.
 - :icon[Replay] **Start over session**, beside :icon[Replay] **Restart session**, discards the conversation and starts a new one with only the session's first prompt.
-- Tap the `#` number in the header to copy the session's id.
+- Tap the `#` number in the header to copy the session's id, or the conversation id beneath it to copy the harness's id for the conversation.
 
 ::screenshot{file="ios-app-actions.png"}
 

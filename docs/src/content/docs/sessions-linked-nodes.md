@@ -76,6 +76,8 @@ The New session dialog's **Node** choice picks where the session runs. Cards for
 
 ::screenshot{file="sessions-transfer.png"}
 
+A transfer that is waiting its turn shows a banner on the session with **Cancel transfer**. One that fails shows the error with **Retry** and **Dismiss**.
+
 ## Restarting and updating a linked node
 
 With a linked node picked, the dashboard menu's **Restart** and **Update assist** items act on that node, and its row on the [Nodes page](../updating/#the-nodes-page) has the same actions.

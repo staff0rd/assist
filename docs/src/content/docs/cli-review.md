@@ -15,6 +15,7 @@ covers:
   - `--submit` answers yes to posting by default, and `--no-prompt` skips every question.
   - `--backlog` files the findings as one [backlog](../backlog/) bug, with a phase per finding, instead of posting them.
   - `--force`, `--address-comments` and `--announce` match the menu's options.
+  - `--reuse-slices`, with `--high-level`, reopens the review from the slices saved for the pull request's current head without slicing again, matching **Reopen high-level review**.
   - `--checkout-only` checks the pull request out and leaves an idle agent in it, without reviewing.
   - `--verbose` prints a line per step instead of spinners.
 

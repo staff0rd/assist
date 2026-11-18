@@ -103,7 +103,7 @@ To queue one now, click **Refresh docs** at the top of the Backlog tab. It count
 
 ## Reviewing a refresh
 
-[Run](../backlog-running/) the Refresh docs story like any other. The agent reads each covered story and its commits, updates the pages for what changed for users, and asks you to approve the changes, listing each changed page with a link to it in the docs preview at http://localhost:4173.
+[Run](../backlog-running/) the Refresh docs story like any other. The agent reads each covered story and its commits, updates the pages for what changed for users, adds or recaptures a screenshot for each story that changed UI, and asks you to approve the changes, listing each changed page with a link to it in the docs preview at http://localhost:4173 and each UI story with its screenshot.
 
 ::screenshot{file="backlog-docs-review.png"}
 
