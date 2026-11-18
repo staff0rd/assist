@@ -8,6 +8,7 @@ covers:
   - claude:show
   - config:sessions.askQuestion
   - config:sessions.askQuestionAutoSubmit
+  - config:sessions.yolo
   - config:prs.reviewAfterRaise
 screenshots:
   - file: sessions-ask.png
@@ -214,6 +215,12 @@ Questions the agent asks you open in the pane as a form instead of in the termin
 ::screenshot{file="sessions-question.png"}
 
 Turn on **Auto submit** in the pane (`sessions.askQuestionAutoSubmit`) and a form whose questions each take one option is sent as soon as you pick the option that completes it, without pressing **Answer**.
+
+With yolo mode on, a form whose questions each take one option and offer a (Recommended) one is answered with those options without being shown, and a manual check raised in a backlog phase that has later phases is marked **Works**:
+
+```bash
+assist config set sessions.yolo true
+```
 
 ## Trying a change
 

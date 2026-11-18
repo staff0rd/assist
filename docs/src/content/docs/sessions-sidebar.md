@@ -3,7 +3,8 @@ id: sessions-sidebar
 title: Sidebar and cards
 group: Sessions
 order: 1
-covers: []
+covers:
+  - config:sessions.cardMode
 screenshots:
   - file: sessions-sidebar.png
     alt: Sidebar cards in the waiting, running and done states
@@ -63,6 +64,10 @@ Starred sessions, and the groups holding them, come first; everything else keeps
 A group you collapse stays where it is, marked with a pin, until you open it or its last session closes.
 
 The button at the left of the tab row hides the sidebar; the same button then appears in the toolbar to bring it back.
+
+## Card mode
+
+**Card mode** in the dashboard menu (`sessions.cardMode`) swaps the sidebar and terminal for a board of session cards, sorted into **Needs you** and **Working**.
 
 ## Closing a session
 
