@@ -1,4 +1,4 @@
-import { mkdtempSync, realpathSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, realpathSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
@@ -14,7 +14,8 @@ describe("canonicalTreePath", () => {
 	afterEach(() => rmSync(dir, { recursive: true, force: true }));
 
 	it("resolves an equivalent spelling of an existing tree to the same path", () => {
-		expect(canonicalTreePath(join(dir, "x", ".."))).toBe(dir);
+		mkdirSync(join(dir, "x"));
+		expect(canonicalTreePath(`${dir}/x/..`)).toBe(dir);
 	});
 
 	it.runIf(process.platform === "win32")(
