@@ -1,3 +1,10 @@
+# [0.1222.0](https://github.com/staff0rd/assist/compare/v0.1221.1...v0.1222.0) (2026-11-18)
+
+
+### Features
+
+* card board Other group and servers ([22e28ba](https://github.com/staff0rd/assist/commit/22e28baf750977a4b914647bbdfb15f0df412058))
+
 ## [0.1221.1](https://github.com/staff0rd/assist/compare/v0.1221.0...v0.1221.1) (2026-11-18)
 
 
