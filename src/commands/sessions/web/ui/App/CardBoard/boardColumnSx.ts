@@ -2,17 +2,17 @@ import type { BoardLayout } from "./boardLayout";
 
 const BASIS: Record<BoardLayout, string | number> = {
 	full: 1,
-	narrow: 1,
+	narrow: "5 1 0",
 	compact: "0 0 300px",
 };
 
 export function boardColumnSx(layout: BoardLayout) {
-	const full = layout === "full";
+	const full = layout !== "compact";
 	return {
 		flex: BASIS[layout],
-		minWidth: layout === "narrow" ? 360 : 0,
+		minWidth: 0,
 		overflow: "auto",
-		px: full ? 4 : layout === "narrow" ? 2.5 : 2,
+		px: full ? 4 : 2,
 		py: full ? 3.5 : 2.5,
 		display: "flex",
 		flexDirection: "column",
