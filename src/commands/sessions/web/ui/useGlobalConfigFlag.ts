@@ -7,8 +7,10 @@ import { useApiNode } from "./useApiNode";
 export function useGlobalConfigFlag(
 	key: string,
 	cwd: string | undefined,
+	localOnly = false,
 ): [boolean, (enabled: boolean) => void] {
-	const node = useApiNode();
+	const apiNode = useApiNode();
+	const node = localOnly ? undefined : apiNode;
 	const [enabled, setEnabled] = useState(false);
 
 	useEffect(() => {

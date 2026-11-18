@@ -1,13 +1,18 @@
 import { type ReactNode, useMemo } from "react";
 import { useGlobalConfigFlag } from "../../../useGlobalConfigFlag";
-import { useRepoSelectionContext } from "../../../useRepoSelectionContext";
 import { CardModeContext } from "../../useCardModeContext";
 
-export function CardModeProvider({ children }: { children: ReactNode }) {
-	const { selectedCwd } = useRepoSelectionContext();
+export function CardModeProvider({
+	localCwd,
+	children,
+}: {
+	localCwd: string;
+	children: ReactNode;
+}) {
 	const [cardMode, setCardMode] = useGlobalConfigFlag(
 		"sessions.cardMode",
-		selectedCwd,
+		localCwd,
+		true,
 	);
 	const value = useMemo(
 		() => ({ cardMode, setCardMode }),

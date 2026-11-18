@@ -32,7 +32,7 @@ export function AppShellProviders({
 						<NodeSelectionContext.Provider value={socket.nodeSelection}>
 							<ApiNodeContext.Provider value={selection.selectedNode}>
 								<SessionLaunchContext.Provider value={launch}>
-									<CardModeProvider>
+									<CardModeProvider localCwd={socket.currentCwd}>
 										<HistorySearchQueryProvider>
 											{children}
 										</HistorySearchQueryProvider>
