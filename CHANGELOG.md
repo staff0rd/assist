@@ -1,3 +1,10 @@
+## [0.1236.1](https://github.com/staff0rd/assist/compare/v0.1236.0...v0.1236.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* cap workflow line length ([39696fb](https://github.com/staff0rd/assist/commit/39696fb34725e8a9992d4003d03002ca2072a65f))
+
 # [0.1236.0](https://github.com/staff0rd/assist/compare/v0.1235.1...v0.1236.0) (2026-11-18)
 
 
