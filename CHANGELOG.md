@@ -1,3 +1,10 @@
+## [0.1225.2](https://github.com/staff0rd/assist/compare/v0.1225.1...v0.1225.2) (2026-11-18)
+
+
+### Bug Fixes
+
+* preview resizes with session drawer ([2a95da6](https://github.com/staff0rd/assist/commit/2a95da6e97b3d5710d0381326a7e69c16012c80c))
+
 ## [0.1225.1](https://github.com/staff0rd/assist/compare/v0.1225.0...v0.1225.1) (2026-11-18)
 
 
