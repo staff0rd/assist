@@ -69,13 +69,20 @@ function invocation(): {
 	args: string[];
 	cwd: string;
 	detached: boolean | undefined;
+	verbatim: boolean | undefined;
 } {
 	const [shell, args, options] = mockSpawn.mock.calls[0] as unknown as [
 		string,
 		string[],
-		{ cwd: string; detached?: boolean },
+		{ cwd: string; detached?: boolean; windowsVerbatimArguments?: boolean },
 	];
-	return { shell, args, cwd: options.cwd, detached: options.detached };
+	return {
+		shell,
+		args,
+		cwd: options.cwd,
+		detached: options.detached,
+		verbatim: options.windowsVerbatimArguments,
+	};
 }
 
 function spyKill(): { killed: number[]; restore: () => void } {
@@ -110,8 +117,9 @@ describe("runInstall", () => {
 	it("cds into the worktree so a login shell profile cannot redirect the install", () => {
 		seed("/home/me/git/assist-2");
 
-		const { args, cwd } = invocation();
+		const { args, cwd, verbatim } = invocation();
 		expect(cwd).toBe("/home/me/git/assist-2");
+		expect(verbatim).toBeUndefined();
 		expect(args).toEqual([
 			"-l",
 			"-c",
@@ -122,11 +130,13 @@ describe("runInstall", () => {
 	it("cds into the worktree on Windows paths", () => {
 		seed(String.raw`C:\git\assist-2`);
 
-		const { shell, args } = invocation();
+		const { shell, args, verbatim } = invocation();
 		expect(shell).toBe("cmd.exe");
+		expect(verbatim).toBe(true);
 		expect(args).toEqual([
+			"/s",
 			"/c",
-			String.raw`cd /d "C:\git\assist-2" && npm install`,
+			String.raw`"cd /d "C:\git\assist-2" && npm install"`,
 		]);
 	});
 
@@ -158,8 +168,9 @@ describe("runInstall", () => {
 		seed(String.raw`C:\git\assist-2`);
 
 		expect(invocation().args).toEqual([
+			"/s",
 			"/c",
-			String.raw`set "PATH=C:\fnm\v24;%PATH%" && cd /d "C:\git\assist-2" && npm install`,
+			String.raw`"set "PATH=C:\fnm\v24;%PATH%" && cd /d "C:\git\assist-2" && npm install"`,
 		]);
 	});
 

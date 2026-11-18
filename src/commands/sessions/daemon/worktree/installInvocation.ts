@@ -11,13 +11,14 @@ export function installInvocation(
 		cwd: string;
 		detached: boolean;
 		windowsHide: true;
+		windowsVerbatimArguments?: true;
 		stdio: ["ignore", "pipe", "pipe"];
 	},
 ] {
 	const windows = /^[A-Za-z]:[\\/]/.test(worktreePath);
 	const shell = windows ? "cmd.exe" : (process.env.SHELL ?? "bash");
 	const args = windows
-		? ["/c", windowsCommand(worktreePath, command, binDir)]
+		? ["/s", "/c", `"${windowsCommand(worktreePath, command, binDir)}"`]
 		: ["-l", "-c", posixCommand(worktreePath, command, binDir)];
 	return [
 		shell,
@@ -26,6 +27,7 @@ export function installInvocation(
 			cwd: worktreePath,
 			detached: true,
 			windowsHide: true,
+			...(windows && { windowsVerbatimArguments: true as const }),
 			stdio: ["ignore", "pipe", "pipe"],
 		},
 	];
