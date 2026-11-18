@@ -1,3 +1,16 @@
+# [0.1230.0](https://github.com/staff0rd/assist/compare/v0.1229.1...v0.1230.0) (2026-11-18)
+
+
+### Bug Fixes
+
+* card preview Alt+D focus region ([4957567](https://github.com/staff0rd/assist/commit/49575671b52db5bd1529ba652227d2f812ed4a03))
+
+
+### Features
+
+* backlog chip on board card heads ([b2d4dcf](https://github.com/staff0rd/assist/commit/b2d4dcfe4d514b6490de6e8e4fc60f7b6457af7b))
+* card pane header owns session controls ([3e26123](https://github.com/staff0rd/assist/commit/3e2612313fa299c0ed47098bca82940008bdbe01))
+
 ## [0.1229.1](https://github.com/staff0rd/assist/compare/v0.1229.0...v0.1229.1) (2026-11-18)
 
 
