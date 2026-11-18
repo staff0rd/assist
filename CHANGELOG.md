@@ -1,3 +1,10 @@
+# [0.1220.0](https://github.com/staff0rd/assist/compare/v0.1219.1...v0.1220.0) (2026-11-18)
+
+
+### Features
+
+* open board cards beside the board ([dcc95f9](https://github.com/staff0rd/assist/commit/dcc95f9e32d3ae4b7c2c605cd1d3c85119e2b2b6))
+
 ## [0.1219.1](https://github.com/staff0rd/assist/compare/v0.1219.0...v0.1219.1) (2026-11-18)
 
 
