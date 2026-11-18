@@ -8,6 +8,7 @@ import { cardTextSx } from "./cardTextSx";
 import { clampSx } from "./clampSx";
 import { needsYouChip } from "./needsYouChip";
 import { NeedsYouCardHead } from "./NeedsYouCardHead";
+import { sessionTypeSize } from "../sessionTypeSize";
 
 export function NeedsYouCard({
 	session,
@@ -30,7 +31,12 @@ export function NeedsYouCard({
 			<Box sx={[cardTextSx.title, clampSx(2)]}>{sessionTitle(session)}</Box>
 			<Box
 				sx={[
-					{ typography: "body2", color: "text.primary", opacity: 0.85 },
+					{
+						typography: "body2",
+						fontSize: sessionTypeSize("body2"),
+						color: "text.primary",
+						opacity: 0.85,
+					},
 					clampSx(4),
 				]}
 			>

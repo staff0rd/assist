@@ -1,10 +1,11 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import type { SessionToggle } from "../../../../sessionToggles";
+import { sessionTextSize } from "../../../../sessionTextSize";
 
 const captionSx = {
 	color: "text.disabled",
-	fontSize: "0.65rem",
+	fontSize: sessionTextSize("0.65rem"),
 	lineHeight: 1.4,
 } as const;
 

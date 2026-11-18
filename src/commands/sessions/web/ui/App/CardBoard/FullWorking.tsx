@@ -9,6 +9,7 @@ import { cardTextSx } from "./cardTextSx";
 import { clampSx } from "./clampSx";
 import { workingActivity } from "./workingActivity";
 import { workingDotSx } from "./workingDotSx";
+import { sessionTypeSize } from "../sessionTypeSize";
 
 export function FullWorking({ session }: { session: SessionInfo }) {
 	return (
@@ -17,7 +18,12 @@ export function FullWorking({ session }: { session: SessionInfo }) {
 				<Box component="span" sx={workingDotSx} />
 				<Box
 					component="span"
-					sx={{ typography: "caption", fontWeight: 600, color: "success.main" }}
+					sx={{
+						typography: "caption",
+						fontSize: sessionTypeSize("caption"),
+						fontWeight: 600,
+						color: "success.main",
+					}}
 				>
 					Working
 				</Box>
@@ -30,6 +36,7 @@ export function FullWorking({ session }: { session: SessionInfo }) {
 				sx={[
 					{
 						typography: "body2",
+						fontSize: sessionTypeSize("body2"),
 						fontFamily: "fontFamilyMono",
 						color: "text.secondary",
 					},

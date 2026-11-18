@@ -6,6 +6,7 @@ import { sessionToggles } from "../../../sessionToggles";
 import type { SessionInfo } from "../../../../types";
 import { TransferCaption } from "../../../../transfer/TransferCaption";
 import { transferIndicator } from "../../../../transfer/transferIndicator";
+import { sessionTextSize } from "../../../sessionTextSize";
 
 const metaSx = {
 	gridColumn: 2,
@@ -15,7 +16,7 @@ const metaSx = {
 	gap: 0.625,
 	minWidth: 0,
 	overflow: "hidden",
-	fontSize: "0.6875rem",
+	fontSize: sessionTextSize("0.6875rem"),
 	lineHeight: "16px",
 	color: "text.secondary",
 } as const;

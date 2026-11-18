@@ -1,6 +1,10 @@
 import Typography from "@mui/material/Typography";
 import type { HarnessKind } from "../../../../../../../../../shared/harnesses";
 import { contextColor } from "../../../../statusColors";
+import { sessionTextSize } from "../../../../sessionTextSize";
+import { sessionTypeSize } from "../../../../sessionTypeSize";
+
+const captionSize = sessionTypeSize("caption");
 
 export function SessionMetaCaptions({
 	restored,
@@ -16,14 +20,20 @@ export function SessionMetaCaptions({
 	return (
 		<>
 			{undurable && (
-				<Typography variant="caption" sx={{ color: "warning.main" }}>
+				<Typography
+					variant="caption"
+					sx={{ color: "warning.main", fontSize: captionSize }}
+				>
 					{undurable.reason}
 				</Typography>
 			)}
 			{restored !== undefined && (
 				<Typography
 					variant="caption"
-					sx={{ color: restored ? "success.main" : "warning.main" }}
+					sx={{
+						color: restored ? "success.main" : "warning.main",
+						fontSize: captionSize,
+					}}
 				>
 					{restored ? "restored" : "not restored"}
 				</Typography>
@@ -34,7 +44,7 @@ export function SessionMetaCaptions({
 					sx={{
 						color: contextColor(usedPct, harness),
 						opacity: 0.6,
-						fontSize: "0.8rem",
+						fontSize: sessionTextSize("0.8rem"),
 					}}
 				>
 					{Math.round(usedPct)}%

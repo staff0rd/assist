@@ -5,6 +5,7 @@ import { statusColors } from "../../../statusColors";
 import { DisplayStatusGlyph } from "../../../../DisplayStatusGlyph";
 import type { DisplayStatus } from "../../../../displayStatus";
 import { isAwaitingUser } from "../../../../isAwaitingUser";
+import { sessionTextSize } from "../../../sessionTextSize";
 
 const pulse = keyframes`
 	0%, 100% { opacity: 1; }
@@ -14,7 +15,7 @@ const pulse = keyframes`
 const glyphSx = {
 	gridColumn: 1,
 	gridRow: 1,
-	fontSize: "0.7rem",
+	fontSize: sessionTextSize("0.7rem"),
 	lineHeight: "20px",
 	textAlign: "center",
 } as const;

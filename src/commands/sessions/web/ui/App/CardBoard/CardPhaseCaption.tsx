@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { sessionTypeSize } from "../sessionTypeSize";
 
 export function CardPhaseCaption({
 	count,
@@ -15,6 +16,7 @@ export function CardPhaseCaption({
 				gap: 0.75,
 				minWidth: 0,
 				typography: "caption",
+				fontSize: sessionTypeSize("caption"),
 				color: "text.secondary",
 			}}
 		>
