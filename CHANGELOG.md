@@ -1,3 +1,12 @@
+## [0.1230.2](https://github.com/staff0rd/assist/compare/v0.1230.1...v0.1230.2) (2026-11-18)
+
+
+### Bug Fixes
+
+* drop harness chip from live cards ([4b0ad2e](https://github.com/staff0rd/assist/commit/4b0ad2e153befdd2e441d7f3fc07ca942dcb76cd))
+* let extension read forwarded docs feedback ([4eb6888](https://github.com/staff0rd/assist/commit/4eb6888ea27e4d2ce953b66fff2ffd905e6fa230))
+* refresh docs for recent stories ([d2835ef](https://github.com/staff0rd/assist/commit/d2835ef3364000580453b02fc735328923bfbc75))
+
 ## [0.1230.1](https://github.com/staff0rd/assist/compare/v0.1230.0...v0.1230.1) (2026-11-18)
 
 
