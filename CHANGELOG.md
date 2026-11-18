@@ -1,3 +1,10 @@
+## [0.1229.1](https://github.com/staff0rd/assist/compare/v0.1229.0...v0.1229.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* card mode diff panel and Alt+D ([5193835](https://github.com/staff0rd/assist/commit/5193835a0f701e4e3a37ae7547a97c8df605eef9))
+
 # [0.1229.0](https://github.com/staff0rd/assist/compare/v0.1228.0...v0.1229.0) (2026-11-18)
 
 
