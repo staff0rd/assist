@@ -34,6 +34,7 @@ type ColorTokens = {
 	};
 	well: string;
 	stripe: string;
+	track: string;
 	codeWash: string;
 	overlay: { background: string; text: string };
 	scrim: string;

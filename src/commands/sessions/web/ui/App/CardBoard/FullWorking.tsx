@@ -3,6 +3,7 @@ import { sessionTitle } from "../sessionTitle";
 import type { SessionInfo } from "../../types";
 import { CardRepo } from "./CardRepo";
 import { CardClose } from "./CardClose";
+import { CardPhaseProgress } from "./CardPhaseProgress";
 import { cardTextSx } from "./cardTextSx";
 import { clampSx } from "./clampSx";
 import { workingActivity } from "./workingActivity";
@@ -35,6 +36,7 @@ export function FullWorking({ session }: { session: SessionInfo }) {
 			>
 				{workingActivity(session)}
 			</Box>
+			<CardPhaseProgress session={session} tone="working" />
 		</>
 	);
 }

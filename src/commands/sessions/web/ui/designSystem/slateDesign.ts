@@ -37,6 +37,7 @@ export const slateDesign: DesignTokens = {
 			},
 			well: ink,
 			stripe: raised,
+			track: "#2c3340",
 			codeWash: "rgba(255, 255, 255, 0.08)",
 			overlay: { background: raised, text: fg },
 			scrim: "rgba(0, 0, 0, 0.5)",
@@ -120,6 +121,7 @@ export const slateDesign: DesignTokens = {
 			},
 			well: "#f3f4f6",
 			stripe: "rgba(0, 0, 0, 0.1)",
+			track: "rgba(0, 0, 0, 0.12)",
 			codeWash: "rgba(0, 0, 0, 0.06)",
 			overlay: { background: "rgba(97, 97, 97, 0.92)", text: "#fff" },
 			onAppBar: {
