@@ -1,3 +1,10 @@
+# [0.1219.0](https://github.com/staff0rd/assist/compare/v0.1218.0...v0.1219.0) (2026-11-18)
+
+
+### Features
+
+* use repo's pinned node in sessions ([5569184](https://github.com/staff0rd/assist/commit/5569184ff92da83493a3e05fb57591466c4e5d1e))
+
 # [0.1218.0](https://github.com/staff0rd/assist/compare/v0.1217.5...v0.1218.0) (2026-11-18)
 
 
