@@ -1,15 +1,11 @@
 import Box from "@mui/material/Box";
+import { BoardCard } from "./BoardCard";
 import { alpha } from "@mui/material/styles";
 import { useElapsed } from "../SessionContent/SessionArea/SessionAreaTopBar/ActiveSessionTopBar/SessionTopBar/SessionTopBarControls/SessionTopBarElapsed/useElapsed";
 import { sessionTitle } from "../sessionTitle";
 import type { SessionInfo } from "../../types";
-import {
-	boardCardSx,
-	cardAgeSx,
-	cardHeadSx,
-	cardTitleSx,
-	clampSx,
-} from "./boardCardSx";
+import { cardTextSx } from "./cardTextSx";
+import { clampSx } from "./clampSx";
 import { workingActivity } from "./workingActivity";
 
 const dotSx = {
@@ -21,11 +17,24 @@ const dotSx = {
 		`0 0 0 3px ${alpha(t.palette.success.main, 0.18)}`,
 } as const;
 
-export function WorkingCard({ session }: { session: SessionInfo }) {
+export function WorkingCard({
+	session,
+	selected,
+	onOpen,
+}: {
+	session: SessionInfo;
+	selected: boolean;
+	onOpen: () => void;
+}) {
 	const elapsed = useElapsed(session.runningMs, session.runningSince);
 	return (
-		<Box sx={boardCardSx("neutral")} data-testid="working-card">
-			<Box sx={cardHeadSx}>
+		<BoardCard
+			tone="neutral"
+			selected={selected}
+			onOpen={onOpen}
+			testId="working-card"
+		>
+			<Box sx={cardTextSx.head}>
 				<Box component="span" sx={dotSx} />
 				<Box
 					component="span"
@@ -33,11 +42,11 @@ export function WorkingCard({ session }: { session: SessionInfo }) {
 				>
 					Working
 				</Box>
-				<Box component="span" sx={cardAgeSx}>
+				<Box component="span" sx={cardTextSx.age}>
 					{elapsed}
 				</Box>
 			</Box>
-			<Box sx={[cardTitleSx, clampSx(2)]}>{sessionTitle(session)}</Box>
+			<Box sx={[cardTextSx.title, clampSx(2)]}>{sessionTitle(session)}</Box>
 			<Box
 				sx={[
 					{
@@ -50,6 +59,6 @@ export function WorkingCard({ session }: { session: SessionInfo }) {
 			>
 				{workingActivity(session)}
 			</Box>
-		</Box>
+		</BoardCard>
 	);
 }

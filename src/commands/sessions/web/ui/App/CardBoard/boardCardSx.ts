@@ -1,13 +1,25 @@
 import { alpha, type Theme } from "@mui/material/styles";
 
-export function boardCardSx(tone: "warning" | "check" | "neutral") {
+export type CardTone = "warning" | "check" | "neutral";
+
+function toneColor(t: Theme, tone: CardTone): string {
+	return tone === "neutral" ? t.palette.text.secondary : t.palette[tone].main;
+}
+
+export function boardCardSx(tone: CardTone, selected: boolean) {
 	return (t: Theme) => ({
 		display: "flex",
 		flexDirection: "column",
-		gap: 1.25,
-		minHeight: tone === "neutral" ? 140 : 176,
-		p: 2,
+		alignItems: "stretch",
+		justifyContent: "flex-start",
+		textAlign: "left",
+		gap: 1.5,
+		minHeight: tone === "neutral" ? 168 : 208,
+		p: 2.5,
 		minWidth: 0,
+		font: "inherit",
+		color: "text.primary",
+		cursor: "pointer",
 		borderRadius: `${t.tokens.radius.md}px`,
 		border: 1,
 		borderColor:
@@ -16,33 +28,20 @@ export function boardCardSx(tone: "warning" | "check" | "neutral") {
 				: alpha(t.palette[tone].main, 0.35),
 		bgcolor:
 			tone === "neutral" ? t.tokens.color.surface : t.tokens.color.wash[tone],
+		boxShadow: selected
+			? `0 0 0 ${t.tokens.selection.ringWidth}px ${t.palette.primary.main}`
+			: "none",
+		transition: "border-color 120ms, background-color 120ms",
+		"&:hover": {
+			borderColor: alpha(toneColor(t, tone), 0.7),
+			bgcolor:
+				tone === "neutral"
+					? t.tokens.color.raised
+					: alpha(t.palette[tone].main, 0.14),
+		},
+		"&.Mui-focusVisible": {
+			outline: `${t.tokens.selection.ringWidth}px solid ${t.palette.primary.main}`,
+			outlineOffset: 2,
+		},
 	});
 }
-
-export const cardHeadSx = {
-	display: "flex",
-	alignItems: "center",
-	gap: 1,
-} as const;
-
-export const cardTitleSx = {
-	fontSize: "subtitle1.fontSize",
-	fontWeight: 600,
-	lineHeight: 1.4,
-	overflowWrap: "anywhere",
-} as const;
-
-export const cardAgeSx = {
-	ml: "auto",
-	typography: "caption",
-	color: "text.secondary",
-	whiteSpace: "nowrap",
-} as const;
-
-export const clampSx = (lines: number) =>
-	({
-		display: "-webkit-box",
-		WebkitLineClamp: lines,
-		WebkitBoxOrient: "vertical",
-		overflow: "hidden",
-	}) as const;

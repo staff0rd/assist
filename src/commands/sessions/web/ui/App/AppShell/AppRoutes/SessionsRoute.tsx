@@ -5,6 +5,6 @@ import type { SessionSocket } from "../../../useSessionSocket";
 
 export function SessionsRoute({ socket }: { socket: SessionSocket }) {
 	const { cardMode } = useCardModeContext();
-	if (cardMode) return <CardBoard sessions={socket.sessions} />;
+	if (cardMode) return <CardBoard socket={socket} />;
 	return <SessionContent socket={socket} />;
 }

@@ -5,8 +5,8 @@ import { paletteColor } from "../../designSystem/paletteColor";
 
 const gridSx = {
 	display: "grid",
-	gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-	gap: 2,
+	gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
+	gap: 2.5,
 } as const;
 
 export function BoardGroup({
