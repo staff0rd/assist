@@ -1,3 +1,15 @@
+# [0.1233.0](https://github.com/staff0rd/assist/compare/v0.1232.0...v0.1233.0) (2026-11-18)
+
+
+### Bug Fixes
+
+* card mode screenshot and badge ([53379a2](https://github.com/staff0rd/assist/commit/53379a27716f8de55d3ad37e2f0be181735a340a))
+
+
+### Features
+
+* scale session card text size ([15917d4](https://github.com/staff0rd/assist/commit/15917d46d7445f6186584b5367f4fa2bb2e9e88c))
+
 # [0.1232.0](https://github.com/staff0rd/assist/compare/v0.1231.1...v0.1232.0) (2026-11-18)
 
 
