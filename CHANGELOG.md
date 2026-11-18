@@ -1,3 +1,10 @@
+## [0.1235.1](https://github.com/staff0rd/assist/compare/v0.1235.0...v0.1235.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* verbatim cmd.exe args for installs ([8c30202](https://github.com/staff0rd/assist/commit/8c30202f4073a37f209a26ae38098e78342b9279))
+
 # [0.1235.0](https://github.com/staff0rd/assist/compare/v0.1234.0...v0.1235.0) (2026-11-18)
 
 
