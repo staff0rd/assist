@@ -4,6 +4,7 @@ import { worktreePlaceholderBranch } from "../../shared/worktreePlaceholderBranc
 import { createBranch } from "../branch/createBranch";
 import { generateBranchSlug } from "../branch/generateBranchSlug";
 import { resolveDefaultBranch } from "../branch/resolveDefaultBranch";
+import { placeholderBranchSource } from "./placeholderBranchSource";
 
 export async function moveOffPlaceholder(
 	message: string,
@@ -12,8 +13,9 @@ export async function moveOffPlaceholder(
 	if (config.worktree?.trunk === true) return;
 	const placeholder = worktreePlaceholderBranch();
 	if (!placeholder) return;
-	const slug = await generateBranchSlug(message);
-	const { branchName } = await createBranch({ slug, from: "HEAD" });
+	const { text, jira } = await placeholderBranchSource(message);
+	const slug = await generateBranchSlug(text);
+	const { branchName } = await createBranch({ slug, jira, from: "HEAD" });
 	trackDefaultBranch(config);
 	console.log(`Moved off placeholder ${placeholder} onto ${branchName}`);
 }

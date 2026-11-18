@@ -4,7 +4,9 @@ import type * as childProcessMockModule from "../../test/mocks/childProcessMock"
 import type { AssistConfig } from "../../shared/types";
 import { worktreePlaceholderBranch } from "../../shared/worktreePlaceholderBranch";
 import { createBranch } from "../branch/createBranch";
+import { generateBranchSlug } from "../branch/generateBranchSlug";
 import { moveOffPlaceholder } from "./moveOffPlaceholder";
+import { placeholderBranchSource } from "./placeholderBranchSource";
 
 vi.mock("node:child_process", async () =>
 	(
@@ -20,6 +22,9 @@ vi.mock("../branch/createBranch", () => ({ createBranch: vi.fn() }));
 vi.mock("../branch/generateBranchSlug", () => ({
 	generateBranchSlug: vi.fn(async () => "card-layout"),
 }));
+vi.mock("./placeholderBranchSource", () => ({
+	placeholderBranchSource: vi.fn(),
+}));
 vi.mock("../branch/resolveDefaultBranch", () => ({
 	resolveDefaultBranch: () => "main",
 }));
@@ -27,6 +32,8 @@ vi.mock("../branch/resolveDefaultBranch", () => ({
 const mockPlaceholder = vi.mocked(worktreePlaceholderBranch);
 const mockCreate = vi.mocked(createBranch);
 const mockExecFile = vi.mocked(execFileSync);
+const mockSource = vi.mocked(placeholderBranchSource);
+const mockSlug = vi.mocked(generateBranchSlug);
 
 describe("moveOffPlaceholder", () => {
 	beforeEach(() => {
@@ -36,6 +43,7 @@ describe("moveOffPlaceholder", () => {
 			branchName: "card-layout",
 			baseRef: "HEAD",
 		});
+		mockSource.mockImplementation(async (message) => ({ text: message }));
 	});
 
 	it("branches from HEAD off the placeholder and tracks the mainline", async () => {
@@ -43,8 +51,10 @@ describe("moveOffPlaceholder", () => {
 
 		await moveOffPlaceholder("fix: card layout", {} as AssistConfig);
 
+		expect(mockSlug).toHaveBeenCalledWith("fix: card layout");
 		expect(mockCreate).toHaveBeenCalledWith({
 			slug: "card-layout",
+			jira: undefined,
 			from: "HEAD",
 		});
 		expect(mockExecFile).toHaveBeenCalledWith(
@@ -52,6 +62,20 @@ describe("moveOffPlaceholder", () => {
 			["branch", "--set-upstream-to", "origin/main"],
 			expect.anything(),
 		);
+	});
+
+	it("names the branch from the session's item and its Jira key", async () => {
+		mockPlaceholder.mockReturnValue("repo-3");
+		mockSource.mockResolvedValue({ text: "Card layout", jira: "ABC-12" });
+
+		await moveOffPlaceholder("fix: card layout", {} as AssistConfig);
+
+		expect(mockSlug).toHaveBeenCalledWith("Card layout");
+		expect(mockCreate).toHaveBeenCalledWith({
+			slug: "card-layout",
+			jira: "ABC-12",
+			from: "HEAD",
+		});
 	});
 
 	it("leaves an already named branch alone", async () => {
