@@ -4,11 +4,13 @@ import { BoardColumn } from "./CardBoard/BoardColumn";
 import { boardLayout } from "./CardBoard/boardLayout";
 import { CardSessionPane } from "./CardBoard/CardSessionPane";
 import { BoardActionsContext } from "./CardBoard/useBoardActionsContext";
+import { useCardDiffHotkey } from "./CardBoard/useCardDiffHotkey";
 import { useOpenCard } from "./CardBoard/useOpenCard";
 
 export function CardBoard({ socket }: { socket: SessionSocket }) {
-	const { openSession, open, close, sessionShown, toggleSession } =
+	const { openSession, open, close, sessionShown, toggleSession, showSession } =
 		useOpenCard(socket);
+	useCardDiffHotkey(openSession, showSession);
 
 	return (
 		<BoardActionsContext.Provider

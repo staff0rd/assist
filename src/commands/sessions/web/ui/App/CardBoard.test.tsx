@@ -12,6 +12,7 @@ import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 import { CardBoard } from "./CardBoard";
 import type { SessionInfo } from "../types";
 import type { SessionSocket } from "../useSessionSocket";
+import { DiffPanelsProvider } from "./useDiffPanels";
 import { ServerActionsContext } from "./useServerActionsContext";
 
 vi.mock("./SessionContent/SessionArea/TerminalArea", () => ({
@@ -81,7 +82,9 @@ function renderBoard(extra: SessionInfo[] = []) {
 	render(
 		<MemoryRouter>
 			<ServerActionsContext.Provider value={serverActions}>
-				<CardBoard socket={socket} />
+				<DiffPanelsProvider sessionIds={[]} onActivateSession={() => {}}>
+					<CardBoard socket={socket} />
+				</DiffPanelsProvider>
 			</ServerActionsContext.Provider>
 		</MemoryRouter>,
 	);

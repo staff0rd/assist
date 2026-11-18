@@ -15,6 +15,7 @@ export function useOpenCard(socket: SessionSocket) {
 		openSession,
 		sessionShown: sessionShown && openSession !== undefined,
 		toggleSession: () => setSessionShown((shown) => !shown),
+		showSession: () => setSessionShown(true),
 		open: (id: string) => {
 			if (id !== openId) setSessionShown(true);
 			setOpenId(id);

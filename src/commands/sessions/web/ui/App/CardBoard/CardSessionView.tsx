@@ -6,6 +6,7 @@ import type { SessionSocket } from "../../useSessionSocket";
 import { SessionAreaTopBar } from "../SessionContent/SessionArea/SessionAreaTopBar";
 import { ShowTopBarTitleContext } from "../SessionContent/SessionArea/SessionAreaTopBar/ActiveSessionTopBar/SessionTopBar/useShowTopBarTitle";
 import { SessionBody } from "../SessionContent/SessionArea/SessionBody";
+import { SessionDiffSplit } from "../SessionContent/SessionArea/SessionDiffSplit";
 import { useSessionLifecycle } from "../useSessionLifecycle";
 import { cardSessionViewSx } from "./cardSessionViewSx";
 
@@ -33,7 +34,11 @@ export function CardSessionView({
 							lifecycle={lifecycle}
 						/>
 					</ShowTopBarTitleContext.Provider>
-					<Box sx={{ flex: 1, minHeight: 0, display: "flex" }}>
+					<SessionDiffSplit
+						sessionId={session.id}
+						sessions={socket.sessions}
+						sendInput={socket.sendInput}
+					>
 						<SessionBody
 							activeSession={session}
 							sessions={[session]}
@@ -46,7 +51,7 @@ export function CardSessionView({
 							fetchSessionTranscript={socket.fetchSessionTranscript}
 							interruptSession={socket.interruptSession}
 						/>
-					</Box>
+					</SessionDiffSplit>
 				</Box>
 			</SessionSlashProviders>
 		</ApiNodeContext.Provider>
