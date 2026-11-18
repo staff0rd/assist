@@ -1,3 +1,16 @@
+# [0.1224.0](https://github.com/staff0rd/assist/compare/v0.1223.2...v0.1224.0) (2026-11-18)
+
+
+### Bug Fixes
+
+* card pane splits 5:4 like design ([2655c91](https://github.com/staff0rd/assist/commit/2655c91e3fa0b3b1288ec84889d797d826e63244))
+* render question text as markdown ([8300ed1](https://github.com/staff0rd/assist/commit/8300ed17bdb48a0ee4f1de282834c005aad8513f))
+
+
+### Features
+
+* repo filter and repo on board cards ([434dfaa](https://github.com/staff0rd/assist/commit/434dfaaaccdca94f7548ef650a5ba2545bc5a10d))
+
 ## [0.1223.2](https://github.com/staff0rd/assist/compare/v0.1223.1...v0.1223.2) (2026-11-18)
 
 
