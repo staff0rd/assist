@@ -10,6 +10,7 @@ const fixture = (name: string): Record<string, unknown>[] =>
 
 const transcript = fixture("claudeTranscript.jsonl");
 const excluded = fixture("claudeExcluded.jsonl");
+const queued = fixture("claudeQueuedCommand.jsonl");
 const askedAt = transcript.findIndex(
 	(entry) =>
 		JSON.stringify(entry).includes('"name":"AskUserQuestion"') &&
@@ -70,6 +71,33 @@ describe("claudeConversationReader", () => {
 		).toEqual([]);
 	});
 
+	it("reads a prompt absorbed mid-turn as a user message in transcript order", () => {
+		const users = reader
+			.events(queued)
+			.filter((event) => event.kind === "message" && event.role === "user");
+		expect(users).toEqual([
+			{
+				kind: "message",
+				role: "user",
+				text: "gimme url\n\nalso /draft a market explorer so i can check buy/sell prices myslf",
+				at: "2026-11-18T11:29:57.434Z",
+			},
+			expect.objectContaining({
+				text: expect.stringMatching(/^is this separate to a1794/),
+			}),
+		]);
+	});
+
+	it("ignores hook and task-notification attachments", () => {
+		const others = queued.filter(
+			(entry) =>
+				entry.type === "attachment" &&
+				(entry.attachment as { commandMode?: string }).commandMode !== "prompt",
+		);
+		expect(others).toHaveLength(2);
+		expect(reader.events(others)).toEqual([]);
+	});
+
 	it("marks interrupts without turning them into prompts", () => {
 		expect(
 			reader.events(excluded).filter(({ kind }) => kind === "interrupt"),
@@ -96,7 +124,9 @@ describe("claudeConversationReader", () => {
 	});
 
 	it("recognises every entry shape in captured sessions", () => {
-		expect(reader.unrecognised?.([...transcript, ...excluded])).toEqual([]);
+		expect(
+			reader.unrecognised?.([...transcript, ...excluded, ...queued]),
+		).toEqual([]);
 	});
 
 	it("reports unknown entry types and content blocks once each", () => {

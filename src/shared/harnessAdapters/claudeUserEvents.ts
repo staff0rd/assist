@@ -1,0 +1,43 @@
+import { normalizeUser } from "../../commands/sessions/shared/normalizeUser";
+import { renderUserPrompt } from "../../commands/sessions/shared/renderUserPrompt";
+import { claudeContentBlocksOf } from "./claudeContentBlocksOf";
+import { claudeShellEvents } from "./claudeShellEvents";
+import type { ConversationEvent } from "./types";
+
+type Entry = Record<string, unknown>;
+
+export function claudeUserEvents(
+	entry: Entry,
+	at?: string,
+): ConversationEvent[] {
+	const shell = claudeShellEvents(entry, at);
+	const events = shell.events;
+	const text = shell.textless
+		? undefined
+		: renderUserPrompt(entry, Number.POSITIVE_INFINITY);
+	if (text) events.push({ kind: "message", role: "user", text, at });
+	else {
+		const normalized = normalizeUser(entry);
+		if (normalized.kind === "interrupt") events.push({ kind: "interrupt", at });
+		if (normalized.kind === "restart")
+			events.push({ kind: "restart", killed: normalized.killed, at });
+	}
+	for (const block of claudeContentBlocksOf(contentOf(entry))) {
+		if (block.type !== "tool_result" || block.is_error) continue;
+		const body = resultText(block.content).trim();
+		if (body) events.push({ kind: "toolResult", text: body, at });
+	}
+	return events;
+}
+
+function contentOf(entry: Entry): unknown {
+	return (entry.message as { content?: unknown } | undefined)?.content;
+}
+
+function resultText(content: unknown): string {
+	if (typeof content === "string") return content;
+	return claudeContentBlocksOf(content)
+		.filter((block) => block.type === "text")
+		.map((block) => String(block.text ?? ""))
+		.join("\n");
+}

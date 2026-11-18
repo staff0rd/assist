@@ -1,9 +1,6 @@
-import { normalizeUser } from "../../commands/sessions/shared/normalizeUser";
-import { renderUserPrompt } from "../../commands/sessions/shared/renderUserPrompt";
 import { claudeAssistantEvents } from "./claudeAssistantEvents";
-import { claudeContentBlocksOf } from "./claudeContentBlocksOf";
-import { claudeShellEvents } from "./claudeShellEvents";
 import type { ConversationEvent } from "./types";
+import { claudeUserEvents } from "./claudeUserEvents";
 
 type Entry = Record<string, unknown>;
 
@@ -11,33 +8,26 @@ function contentOf(entry: Entry): unknown {
 	return (entry.message as { content?: unknown } | undefined)?.content;
 }
 
-function resultText(content: unknown): string {
-	if (typeof content === "string") return content;
-	return claudeContentBlocksOf(content)
-		.filter((block) => block.type === "text")
-		.map((block) => String(block.text ?? ""))
-		.join("\n");
+function queuedPromptOf(entry: Entry): unknown {
+	const attachment = entry.attachment as Entry | undefined;
+	if (
+		attachment?.type !== "queued_command" ||
+		attachment.commandMode !== "prompt" ||
+		attachment.isMeta
+	)
+		return undefined;
+	return attachment.prompt;
 }
 
-function userEvents(entry: Entry, at?: string): ConversationEvent[] {
-	const shell = claudeShellEvents(entry, at);
-	const events = shell.events;
-	const text = shell.textless
-		? undefined
-		: renderUserPrompt(entry, Number.POSITIVE_INFINITY);
-	if (text) events.push({ kind: "message", role: "user", text, at });
-	else {
-		const normalized = normalizeUser(entry);
-		if (normalized.kind === "interrupt") events.push({ kind: "interrupt", at });
-		if (normalized.kind === "restart")
-			events.push({ kind: "restart", killed: normalized.killed, at });
-	}
-	for (const block of claudeContentBlocksOf(contentOf(entry))) {
-		if (block.type !== "tool_result" || block.is_error) continue;
-		const body = resultText(block.content).trim();
-		if (body) events.push({ kind: "toolResult", text: body, at });
-	}
-	return events;
+/* why: a queued prompt Claude Code absorbs mid-turn is recorded only as a
+ * queued_command attachment, with no user row, so it is read as one. */
+function attachmentEvents(entry: Entry, at?: string): ConversationEvent[] {
+	const prompt = queuedPromptOf(entry);
+	if (prompt === undefined) return [];
+	return claudeUserEvents(
+		{ type: "user", message: { role: "user", content: prompt } },
+		at,
+	);
 }
 
 export function claudeEntryEvents(
@@ -46,7 +36,8 @@ export function claudeEntryEvents(
 ): ConversationEvent[] {
 	if (entry.isSidechain || entry.isMeta) return [];
 	const at = typeof entry.timestamp === "string" ? entry.timestamp : undefined;
-	if (entry.type === "user") return userEvents(entry, at);
+	if (entry.type === "user") return claudeUserEvents(entry, at);
+	if (entry.type === "attachment") return attachmentEvents(entry, at);
 	if (entry.type === "assistant")
 		return claudeAssistantEvents(contentOf(entry), at, resultUrls);
 	return [];
