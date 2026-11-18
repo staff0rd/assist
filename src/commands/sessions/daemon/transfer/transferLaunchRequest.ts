@@ -1,6 +1,6 @@
 import type { TransferPlan } from "../../shared/transferPlan";
 import type { Session } from "../createSession";
-import type { TransferredConversation } from "./TransferredConversation";
+import type { TransferredConversation } from "../../../../shared/harnessAdapters/TransferredConversation";
 import type { TransferSnapshot } from "./TransferSnapshot";
 
 type Launch = {
@@ -26,5 +26,5 @@ export function transferLaunchRequest(
 	};
 	if (plan.kind === "backlog-run")
 		return { type: "create-assist", assistArgs: plan.args, ...common };
-	return { type: "create", harness: "claude", conversation, ...common };
+	return { type: "create", harness: plan.harness, conversation, ...common };
 }

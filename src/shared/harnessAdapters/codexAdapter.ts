@@ -1,3 +1,5 @@
+import { exportCodexRollout } from "./exportCodexRollout";
+import { placeCodexRollout } from "./placeCodexRollout";
 import { spawnCodex as spawnCodexPty } from "../../commands/sessions/daemon/spawnCodex";
 import { findCodexRolloutPath } from "../../commands/sessions/shared/codex/findCodexRolloutPath";
 import { hasCodexRolloutSync } from "../../commands/sessions/shared/codex/hasCodexRolloutSync";
@@ -40,6 +42,8 @@ export const codexAdapter: HarnessAdapter = {
 		toRef: (harnessSessionId, cwd) => ({ cwd, harnessSessionId }),
 		discover: resolveCodexSessionId,
 		relocate: codexRelocate,
+		exportTranscript: exportCodexRollout,
+		importTranscript: placeCodexRollout,
 		reader: codexConversationReader,
 	},
 	toolOperations: codexToolOperations,

@@ -1,7 +1,6 @@
-import { readFile } from "node:fs/promises";
 import { harnessAdapter } from "../../../../shared/harnessAdapters/harnessAdapter";
+import type { TransferredConversation } from "../../../../shared/harnessAdapters/TransferredConversation";
 import type { TransferPlan } from "../../shared/transferPlan";
-import type { TransferredConversation } from "./TransferredConversation";
 
 type TranscriptResult =
 	| { ok: true; conversation: TransferredConversation | undefined }
@@ -11,13 +10,13 @@ export async function readTransferTranscript(
 	plan: TransferPlan,
 ): Promise<TranscriptResult> {
 	if (plan.kind !== "prompt") return { ok: true, conversation: undefined };
-	const id = plan.conversationId;
+	const { exportTranscript } = harnessAdapter(plan.harness).conversation;
 	try {
-		const path = await harnessAdapter("claude").conversation.locate(id);
-		if (!path) throw new Error(`no transcript found for ${id}`);
+		if (!exportTranscript)
+			throw new Error(`${plan.harness} cannot export its transcript`);
 		return {
 			ok: true,
-			conversation: { id, transcript: await readFile(path, "utf8") },
+			conversation: await exportTranscript(plan.conversationId),
 		};
 	} catch (error) {
 		const reason = error instanceof Error ? error.message : String(error);

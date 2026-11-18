@@ -62,6 +62,8 @@ describe("phaseDone", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
 		process.env.ASSIST_SESSION_ID = "test-session";
+		vi.stubEnv("ASSIST_BACKLOG_ITEM_ID", undefined);
+		vi.stubEnv("ASSIST_PHASE_LAND_TREE", undefined);
 		process.exitCode = undefined;
 		mockGetReady.mockResolvedValue({ orm });
 		mockLoadItem.mockResolvedValue(
@@ -75,6 +77,7 @@ describe("phaseDone", () => {
 		cleanup();
 		clearSignalOwner(1);
 		delete process.env.ASSIST_SESSION_ID;
+		vi.unstubAllEnvs();
 		process.exitCode = undefined;
 	});
 

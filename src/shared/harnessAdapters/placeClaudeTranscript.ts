@@ -1,7 +1,7 @@
 import { mkdir, writeFile } from "node:fs/promises";
 import { join } from "node:path";
-import { projectDirForCwd } from "../../shared/findTranscriptPathSync";
-import { daemonLog } from "../daemonLog";
+import { projectDirForCwd } from "../../commands/sessions/shared/findTranscriptPathSync";
+import { daemonLog } from "../../commands/sessions/daemon/daemonLog";
 import type { TransferredConversation } from "./TransferredConversation";
 
 export async function placeClaudeTranscript(

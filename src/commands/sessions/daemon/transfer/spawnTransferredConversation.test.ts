@@ -2,8 +2,8 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { harnessAdapter } from "../../../../shared/harnessAdapters/harnessAdapter";
 import { makeSession } from "../../../../test/mothers/makeSession";
+import { findSessionJsonlPath } from "../../shared/findSessionJsonlPath";
 import { projectDirForCwd } from "../../shared/findTranscriptPathSync";
 import type { Session } from "../createSession";
 import type { TreeSpawnContext } from "../worktree/allocateAndBind";
@@ -12,7 +12,7 @@ import { readTransferTranscript } from "./readTransferTranscript";
 import { restoreTransferSnapshot } from "./restoreTransferSnapshot";
 import { spawnTransferredConversation } from "./spawnTransferredConversation";
 import { transferLaunchRequest } from "./transferLaunchRequest";
-import { parseTransferredConversation } from "./TransferredConversation";
+import { parseTransferredConversation } from "../../../../shared/harnessAdapters/TransferredConversation";
 import { parseTransferSnapshot } from "./TransferSnapshot";
 
 const home = vi.hoisted(() => ({ root: "" }));
@@ -21,6 +21,9 @@ vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("../../shared/claudeProjectsRoot", () => ({
 	claudeProjectsRoot: () => home.root,
 	projectSlug: (cwd: string) => cwd.replace(/[^a-zA-Z0-9]/g, "-"),
+}));
+vi.mock("../../shared/findSessionJsonlPath", () => ({
+	findSessionJsonlPath: vi.fn(),
 }));
 vi.mock("../worktree/allocateTree", () => ({ allocateTree: vi.fn() }));
 vi.mock("../worktree/seedWorktree", () => ({
@@ -60,10 +63,12 @@ function context(): TreeSpawnContext {
 async function routedRequest(): Promise<Record<string, unknown>> {
 	const source = join(home.root, "source.jsonl");
 	writeFileSync(source, TRANSCRIPT);
-	vi.spyOn(harnessAdapter("claude").conversation, "locate").mockResolvedValue(
-		source,
-	);
-	const plan = { kind: "prompt", conversationId: "c-1" } as const;
+	vi.mocked(findSessionJsonlPath).mockResolvedValue(source);
+	const plan = {
+		kind: "prompt",
+		conversationId: "c-1",
+		harness: "claude",
+	} as const;
 	const read = await readTransferTranscript(plan);
 	if (!read.ok) throw new Error(read.error);
 	const s = makeSession({ id: "7", title: "Fix login", subtitle: "auth" });
@@ -114,6 +119,7 @@ describe("transferred prompt conversation", () => {
 		const ctx = context();
 		const id = await spawnTransferredConversation(ctx, vi.fn(), {
 			cwd: d.cwd as string,
+			harness: "claude",
 			conversation,
 			snapshot: parsed,
 			title: d.title as string,
@@ -135,12 +141,34 @@ describe("transferred prompt conversation", () => {
 		expect(ctx.startHeld).toHaveBeenCalledTimes(1);
 	});
 
+	it("resumes a Claude (SDK) conversation as a driven session", async () => {
+		const d = await routedRequest();
+		const conversation = parseTransferredConversation(d.conversation);
+		if (!conversation) throw new Error("unparsed transfer");
+		const ctx = context();
+		const id = await spawnTransferredConversation(ctx, vi.fn(), {
+			cwd: d.cwd as string,
+			harness: "claude-sdk",
+			conversation,
+			snapshot,
+		});
+		const placed = join(projectDirForCwd("/git/assist-4"), "c-1.jsonl");
+		expect(readFileSync(placed, "utf8")).toBe(TRANSCRIPT);
+		expect(ctx.sessions.get(id)).toMatchObject({
+			claudeSessionId: "c-1",
+			harness: "claude-sdk",
+			drivenStart: true,
+		});
+	});
+
 	it("reports transcript delivery failure when the source transcript is missing", async () => {
-		vi.spyOn(harnessAdapter("claude").conversation, "locate").mockResolvedValue(
-			null,
-		);
+		vi.mocked(findSessionJsonlPath).mockResolvedValue(null);
 		await expect(
-			readTransferTranscript({ kind: "prompt", conversationId: "c-9" }),
+			readTransferTranscript({
+				kind: "prompt",
+				conversationId: "c-9",
+				harness: "claude",
+			}),
 		).resolves.toEqual({
 			ok: false,
 			error: "transcript delivery failed: no transcript found for c-9",

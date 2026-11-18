@@ -41,11 +41,6 @@ const claudeSdk: CapabilityDeclarations = {
 	...claude,
 	"session.driven": supported,
 	"tasks.background": supported,
-	"conversation.transfer": unsupported(
-		"assist cannot yet carry a Claude (SDK) conversation to another node",
-		"transfer a Claude session, or start a fresh session on the other node",
-		"a1783",
-	),
 };
 
 const codex: CapabilityDeclarations = {
@@ -53,11 +48,7 @@ const codex: CapabilityDeclarations = {
 	"launch.terminal": supported,
 	"conversation.resume": supported,
 	"conversation.relocate": supported,
-	"conversation.transfer": unsupported(
-		"assist cannot yet carry a Codex conversation to another node",
-		"transfer a Claude session, or start a fresh session on the other node",
-		"a1783",
-	),
+	"conversation.transfer": supported,
 	"conversation.id": supported,
 	"conversation.preassignId": unsupported(
 		"Codex assigns its own conversation id when its rollout starts",

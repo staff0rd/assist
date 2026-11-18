@@ -1,3 +1,4 @@
+import type { TransferredConversation } from "./TransferredConversation";
 import type { IPty } from "node-pty";
 import type { HarnessKind } from "../harnesses";
 import type { SpinnerHandle } from "../../commands/review/MultiSpinner";
@@ -260,6 +261,13 @@ export type HarnessAdapter = HarnessCapabilitySource & {
 		toRef: (conversationId: string, cwd?: string) => ConversationRef;
 		discover?: (launch: ConversationLaunch) => Promise<string | null>;
 		relocate: (conversationId: string, fromCwd: string, toCwd: string) => void;
+		exportTranscript?: (
+			conversationId: string,
+		) => Promise<TransferredConversation>;
+		importTranscript?: (
+			conversation: TransferredConversation,
+			cwd: string,
+		) => Promise<string>;
 		reader?: ConversationReader;
 		interruptedTasks?: (ref: ConversationRef) => string[];
 	};

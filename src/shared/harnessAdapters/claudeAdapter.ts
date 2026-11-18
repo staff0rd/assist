@@ -1,3 +1,5 @@
+import { exportClaudeTranscript } from "./exportClaudeTranscript";
+import { placeClaudeTranscript } from "./placeClaudeTranscript";
 import { hasTranscriptOnDisk } from "../../commands/sessions/daemon/hasTranscriptOnDisk";
 import { spawnClaude as spawnClaudePty } from "../../commands/sessions/daemon/spawnClaude";
 import { findSessionJsonlPath } from "../../commands/sessions/shared/findSessionJsonlPath";
@@ -34,6 +36,8 @@ export const claudeAdapter: HarnessAdapter = {
 		boundId: ({ claudeSessionId }) => claudeSessionId,
 		toRef: (claudeSessionId, cwd) => ({ cwd, claudeSessionId }),
 		relocate: carryTranscriptToTree,
+		exportTranscript: exportClaudeTranscript,
+		importTranscript: placeClaudeTranscript,
 		reader: claudeConversationReader,
 		interruptedTasks: claudeInterruptedTasks,
 	},
