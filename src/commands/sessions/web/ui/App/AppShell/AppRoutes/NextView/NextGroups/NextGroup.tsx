@@ -6,13 +6,17 @@ import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
 import { NextChipLabel } from "../NextChipLabel";
 import type { NextChip } from "../nextChips";
+import { sessionTextSize } from "../../../../sessionTextSize";
 
-const groupTitleSx = { fontSize: 14, fontWeight: 600 } as const;
+const groupTitleSx = {
+	fontSize: sessionTextSize(14),
+	fontWeight: 600,
+} as const;
 
 const countSx = (t: Theme) => ({
 	color: "text.disabled",
 	fontFamily: t.typography.fontFamilyMono,
-	fontSize: 12,
+	fontSize: sessionTextSize(12),
 });
 
 export function NextGroup({

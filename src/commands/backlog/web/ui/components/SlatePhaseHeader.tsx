@@ -2,6 +2,7 @@ import { Box, Chip, type ChipProps, Stack } from "@mui/material";
 import type { Theme } from "@mui/material/styles";
 import type { PhaseStatus } from "../types";
 import { type PhaseHeaderProps, PhaseRewind } from "./PhaseRewind";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 const slateStatusBadge: Record<
 	PhaseStatus,
@@ -16,13 +17,13 @@ const slateHeaderSx = {
 	alignItems: "center",
 	flexWrap: "wrap",
 	gap: 1,
-	fontSize: 14,
+	fontSize: sessionTextSize(14),
 	fontWeight: 600,
 } as const;
 
 const numberSx = (t: Theme) => ({
 	fontFamily: t.typography.fontFamilyMono,
-	fontSize: 12,
+	fontSize: sessionTextSize(12),
 	fontWeight: 500,
 	color: "text.disabled",
 });

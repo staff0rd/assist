@@ -10,4 +10,9 @@ describe("sessionTextSize", () => {
 			"calc(0.875rem + var(--session-text-offset, 0px))",
 		);
 	});
+
+	it("leaves an already offset size unchanged", () => {
+		const once = sessionTextSize("0.75rem");
+		expect(sessionTextSize(once)).toBe(once);
+	});
 });

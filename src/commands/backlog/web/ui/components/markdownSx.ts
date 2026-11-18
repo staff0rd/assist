@@ -1,5 +1,6 @@
 import type { SxProps, Theme } from "@mui/material";
 import { slateProseSx } from "./slateProseSx";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 const staticSx = {
 	maxWidth: "72ch",
@@ -16,11 +17,11 @@ const staticSx = {
 		mt: 2.5,
 		mb: 1,
 	},
-	"& h1": { fontSize: "1.6rem" },
-	"& h2": { fontSize: "1.35rem" },
-	"& h3": { fontSize: "1.15rem" },
-	"& h4": { fontSize: "1.05rem" },
-	"& h5, & h6": { fontSize: "1rem" },
+	"& h1": { fontSize: sessionTextSize("1.6rem") },
+	"& h2": { fontSize: sessionTextSize("1.35rem") },
+	"& h3": { fontSize: sessionTextSize("1.15rem") },
+	"& h4": { fontSize: sessionTextSize("1.05rem") },
+	"& h5, & h6": { fontSize: sessionTextSize("1rem") },
 	"& strong": { fontWeight: 600 },
 	"& em": { fontStyle: "italic" },
 	"& ul, & ol": { mt: 0, mb: 1.5, pl: 3 },

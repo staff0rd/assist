@@ -1,9 +1,10 @@
 import Typography from "@mui/material/Typography";
+import { sessionTextSize } from "../../../sessionTextSize";
 
 const refSx = {
 	fontFamily: "fontFamilyMono",
 	whiteSpace: "nowrap",
-	fontSize: 12,
+	fontSize: sessionTextSize(12),
 	fontWeight: 400,
 	color: "text.disabled",
 } as const;

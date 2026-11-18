@@ -1,6 +1,7 @@
 import { Box, Divider, List, ListItem, Typography } from "@mui/material";
 import { MarkdownHtml } from "./MarkdownHtml";
 import { renderMarkdownInline } from "./renderMarkdown";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 export function ManualChecks({ checks }: { checks: string[] }) {
 	return (
@@ -22,14 +23,21 @@ export function ManualChecks({ checks }: { checks: string[] }) {
 					>
 						<Typography
 							component="span"
-							sx={{ mr: 1, fontSize: "0.875rem", color: "text.secondary" }}
+							sx={{
+								mr: 1,
+								fontSize: sessionTextSize("0.875rem"),
+								color: "text.secondary",
+							}}
 						>
 							{"\u2610"}
 						</Typography>
 						<MarkdownHtml
 							component="span"
 							className="markdown"
-							sx={{ fontSize: "0.875rem", color: "text.secondary" }}
+							sx={{
+								fontSize: sessionTextSize("0.875rem"),
+								color: "text.secondary",
+							}}
 							html={renderMarkdownInline(check)}
 						/>
 					</ListItem>

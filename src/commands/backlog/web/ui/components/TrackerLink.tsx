@@ -3,8 +3,9 @@ import type { ReactNode } from "react";
 import { TrackerChip } from "./TrackerChip";
 import { TrackerIconLink } from "./TrackerIconLink";
 import { TrackerToken } from "./TrackerToken";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
-const sx = { fontSize: "0.875rem" } as const;
+const sx = { fontSize: sessionTextSize("0.875rem") } as const;
 
 export type TrackerLinkVariant = "link" | "chip" | "token" | "icon";
 

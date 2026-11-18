@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import { Link as RouterLink } from "react-router";
 import { formatItemId } from "../../../../../../../../../backlog/formatItemId";
 import { itemDetailPath } from "../../../../../../../../../backlog/web/ui/itemDetailPath";
+import { sessionTextSize } from "../../../../../sessionTextSize";
 
 const cellSx = { width: "100%", maxWidth: 0 } as const;
 
@@ -18,7 +19,7 @@ const nameSx = {
 const metaSx = {
 	display: "block",
 	mt: "2px",
-	fontSize: "0.75rem",
+	fontSize: sessionTextSize("0.75rem"),
 	color: "text.secondary",
 	overflow: "hidden",
 	textOverflow: "ellipsis",

@@ -8,6 +8,7 @@ import { usageJobLabels } from "../../usageJobLabels";
 import { UsageJobNoteCell } from "./UsageJobRow/UsageJobNoteCell";
 import { UsageJobOutcomeCell } from "./UsageJobRow/UsageJobOutcomeCell";
 import { usageJobDetail } from "./UsageJobRow/usageJobDetail";
+import { UsageJobModelCell } from "./UsageJobRow/UsageJobModelCell";
 
 const numericSx = {
 	whiteSpace: "nowrap",
@@ -27,9 +28,7 @@ export function UsageJobRow({ row }: { row: UsageJobRowData }) {
 			<TableCell sx={{ color: "text.secondary" }}>
 				{capitalise(row.trigger)}
 			</TableCell>
-			<TableCell sx={{ fontFamily: "fontFamilyMono", fontSize: "0.75rem" }}>
-				{row.model ?? "—"}
-			</TableCell>
+			<UsageJobModelCell model={row.model} />
 			<UsageJobNoteCell
 				value={formatRelativeTime(row.startedAt)}
 				note={new Date(row.startedAt).toLocaleString()}

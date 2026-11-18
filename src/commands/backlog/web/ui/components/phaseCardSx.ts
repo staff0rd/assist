@@ -1,6 +1,7 @@
 import { alpha, type Theme } from "@mui/material/styles";
 import type { PhaseStatus } from "../types";
 import { taskMarkerClassName } from "./taskMarkerClassName";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 function slateBorder(theme: Theme, status: PhaseStatus) {
 	const { primary, success, divider } = theme.palette;
@@ -19,7 +20,7 @@ function slatePhaseCardSx(theme: Theme, status: PhaseStatus) {
 		"& .MuiList-root": { ml: 0 },
 		"& .MuiListItem-root": {
 			py: "2px",
-			fontSize: 13.5,
+			fontSize: sessionTextSize(13.5),
 			color: done ? "text.primary" : "text.secondary",
 		},
 		[`& .${taskMarkerClassName}`]: {

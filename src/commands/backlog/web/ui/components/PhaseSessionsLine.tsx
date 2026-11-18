@@ -1,16 +1,17 @@
 import { Box, Typography } from "@mui/material";
 import type { PhaseSession } from "../types";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 const labelSx = {
 	color: "text.secondary",
-	fontSize: "0.75rem",
+	fontSize: sessionTextSize("0.75rem"),
 	letterSpacing: "0.08em",
 	display: "block",
 } as const;
 
 const sessionSx = {
 	color: "text.secondary",
-	fontSize: "0.75rem",
+	fontSize: sessionTextSize("0.75rem"),
 	fontFamily: "fontFamilyMono",
 	display: "block",
 } as const;

@@ -3,11 +3,12 @@ import type { ReleaseCommit } from "../../../../../releases/types";
 import { ReleaseQueuedCommitRow } from "./ReleaseQueuedBody/ReleaseQueuedCommitRow";
 import { ReleaseQueuedSkeleton } from "./ReleaseQueuedBody/ReleaseQueuedSkeleton";
 import type { ReleaseCompareView } from "../useReleaseCompare";
+import { sessionTextSize } from "../../../sessionTextSize";
 
 const errorSx = {
 	px: 1.5,
 	py: 2,
-	fontSize: 13,
+	fontSize: sessionTextSize(13),
 	lineHeight: 1.5,
 	color: "error.main",
 } as const;

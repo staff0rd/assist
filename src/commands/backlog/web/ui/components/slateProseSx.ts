@@ -1,4 +1,5 @@
 import type { Theme } from "@mui/material/styles";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 export function slateProseSx(theme: Theme) {
 	const { color, radius } = theme.tokens;
@@ -10,11 +11,11 @@ export function slateProseSx(theme: Theme) {
 	};
 	return {
 		maxWidth: "68ch",
-		fontSize: 14,
+		fontSize: sessionTextSize(14),
 		lineHeight: 1.65,
 		"& p": { mt: 0, mb: "14px" },
 		"&& h1, && h2, && h3, && h4, && h5, && h6": {
-			fontSize: 15,
+			fontSize: sessionTextSize(15),
 			fontWeight: 600,
 			lineHeight: 1.4,
 			mt: 2,

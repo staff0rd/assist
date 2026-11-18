@@ -3,39 +3,16 @@ import type { ReleaseLayer } from "./releaseLayerLabels";
 import { releaseLegendItems } from "./ReleaseLegend/releaseLegendItems";
 import { ReleaseMark } from "./ReleaseMark";
 import { releaseToneColors } from "./releaseToneColors";
-
-const legendSx = {
-	display: "flex",
-	flexWrap: "wrap",
-	alignItems: "center",
-	gap: 2,
-	pt: 1.5,
-	mt: 1,
-	borderTop: 1,
-	borderColor: "divider",
-	fontSize: 14.4,
-	color: "text.secondary",
-} as const;
-
-const entrySx = { display: "inline-flex", alignItems: "center", gap: 0.75 };
-
-const headSx = {
-	fontFamily: "fontFamilyMono",
-	fontSize: 12.6,
-	letterSpacing: "0.09em",
-	textTransform: "uppercase",
-} as const;
-
-const edgeSx = { width: 22, height: 2 } as const;
+import { releaseLegendSx } from "./releaseLegendSx";
 
 export function ReleaseLegend({ layer }: { layer: ReleaseLayer }) {
 	return (
-		<Box sx={legendSx}>
-			<Box component="span" sx={headSx}>
+		<Box sx={releaseLegendSx.legend}>
+			<Box component="span" sx={releaseLegendSx.head}>
 				hover anything for the long version
 			</Box>
 			{releaseLegendItems(layer).map((item) => (
-				<Box component="span" key={item.label} sx={entrySx}>
+				<Box component="span" key={item.label} sx={releaseLegendSx.entry}>
 					<ReleaseMark
 						title={item.tooltip}
 						color={releaseToneColors[item.tone]}
@@ -45,21 +22,25 @@ export function ReleaseLegend({ layer }: { layer: ReleaseLayer }) {
 					{item.label}
 				</Box>
 			))}
-			<Box component="span" sx={entrySx}>
+			<Box component="span" sx={releaseLegendSx.entry}>
 				<ReleaseMark title="This promotion has happened — the target carries the source's commit">
 					<Box
 						component="span"
-						sx={{ ...edgeSx, display: "block", bgcolor: "primary.main" }}
+						sx={{
+							...releaseLegendSx.edge,
+							display: "block",
+							bgcolor: "primary.main",
+						}}
 					/>
 				</ReleaseMark>
 				promoted
 			</Box>
-			<Box component="span" sx={entrySx}>
+			<Box component="span" sx={releaseLegendSx.entry}>
 				<ReleaseMark title="This promotion has not happened yet">
 					<Box
 						component="span"
 						sx={{
-							...edgeSx,
+							...releaseLegendSx.edge,
 							display: "block",
 							borderTop: "2px dashed",
 							borderColor: "text.disabled",

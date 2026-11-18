@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import type { ReleaseCommit } from "../../../../../releases/types";
 import type { ReleaseCompareView } from "../useReleaseCompare";
 import { ReleaseQueuedFooterLink } from "./ReleaseQueuedFooter/ReleaseQueuedFooterLink";
+import { sessionTextSize } from "../../../sessionTextSize";
 
 const footSx = {
 	display: "flex",
@@ -12,7 +13,7 @@ const footSx = {
 	py: 1,
 	borderTop: 1,
 	borderColor: "divider",
-	fontSize: 12.5,
+	fontSize: sessionTextSize(12.5),
 	color: "text.secondary",
 } as const;
 

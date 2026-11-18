@@ -1,4 +1,5 @@
 import { releaseToneColors } from "../../../../releaseToneColors";
+import { sessionTextSize } from "../../../../../sessionTextSize";
 
 export const releaseQueuedCommitRowSx = {
 	row: (live: boolean) =>
@@ -12,26 +13,30 @@ export const releaseQueuedCommitRowSx = {
 			opacity: live ? 0.62 : 1,
 			"&:hover": { bgcolor: "action.hover" },
 		}) as const,
-	ref: { fontFamily: "fontFamilyMono", fontSize: 12.5 },
+	ref: { fontFamily: "fontFamilyMono", fontSize: sessionTextSize(12.5) },
 	subject: {
 		display: "flex",
 		alignItems: "baseline",
 		minWidth: 0,
-		fontSize: 13,
+		fontSize: sessionTextSize(13),
 	},
 	subjectText: {
 		overflow: "hidden",
 		textOverflow: "ellipsis",
 		whiteSpace: "nowrap",
 	},
-	by: { fontSize: 12, color: "text.secondary", whiteSpace: "nowrap" },
+	by: {
+		fontSize: sessionTextSize(12),
+		color: "text.secondary",
+		whiteSpace: "nowrap",
+	},
 	liveBadge: {
 		ml: 1,
 		px: 0.5,
 		flexShrink: 0,
 		border: "1px solid currentColor",
 		borderRadius: "3px",
-		fontSize: 10.5,
+		fontSize: sessionTextSize(10.5),
 		fontWeight: 600,
 		letterSpacing: "0.06em",
 		textTransform: "uppercase",

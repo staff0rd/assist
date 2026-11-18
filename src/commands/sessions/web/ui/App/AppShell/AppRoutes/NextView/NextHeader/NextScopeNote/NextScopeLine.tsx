@@ -1,10 +1,11 @@
 import type { Theme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
+import { sessionTextSize } from "../../../../../sessionTextSize";
 
 const codeSx = (t: Theme) => ({
 	fontFamily: t.typography.fontFamilyMono,
-	fontSize: 11.5,
+	fontSize: sessionTextSize(11.5),
 	color: "text.primary",
 });
 

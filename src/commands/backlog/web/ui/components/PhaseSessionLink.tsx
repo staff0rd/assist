@@ -3,6 +3,7 @@ import { useNavigate } from "react-router";
 import type { SessionInfo } from "../../../../sessions/web/ui/useSessionSocket";
 import type { BacklogItemSummary } from "../types";
 import { PhaseSessionDot } from "./PhaseSessionDot";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 const linkSx = {
 	display: "inline-flex",
@@ -10,7 +11,7 @@ const linkSx = {
 	gap: 0.625,
 	color: "warning.main",
 	fontWeight: 500,
-	fontSize: "0.75rem",
+	fontSize: sessionTextSize("0.75rem"),
 	whiteSpace: "nowrap",
 	borderRadius: 1,
 };

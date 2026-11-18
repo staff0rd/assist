@@ -1,9 +1,10 @@
 import { Stack, Typography } from "@mui/material";
 import type { BacklogComment } from "../types";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 const metaRowSx = {
 	alignItems: "center",
-	fontSize: "0.75rem",
+	fontSize: sessionTextSize("0.75rem"),
 	color: "text.secondary",
 	mb: 0.5,
 } as const;

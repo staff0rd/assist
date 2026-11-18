@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import type { ReleaseCommit } from "../../../../../releases/types";
 import type { ReleaseCompareView } from "../useReleaseCompare";
+import { sessionTextSize } from "../../../sessionTextSize";
 
 const SHORT_SHA = 7;
 
@@ -15,11 +16,11 @@ const headSx = {
 	borderColor: "divider",
 } as const;
 
-const titleSx = { fontWeight: 500, fontSize: 13.5 } as const;
+const titleSx = { fontWeight: 500, fontSize: sessionTextSize(13.5) } as const;
 
 const rangeSx = {
 	fontFamily: "fontFamilyMono",
-	fontSize: 12,
+	fontSize: sessionTextSize(12),
 	color: "text.secondary",
 	whiteSpace: "nowrap",
 } as const;

@@ -1,12 +1,13 @@
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import type { NodeUpdateEntry } from "../../NodeUpdateEntry";
+import { sessionTextSize } from "../../../sessionTextSize";
 
 const wideCellSx = { gridColumn: { xs: "2 / -1", sm: "auto" } } as const;
 
 const monoSx = {
 	fontFamily: "fontFamilyMono",
-	fontSize: 12,
+	fontSize: sessionTextSize(12),
 	fontVariantNumeric: "tabular-nums",
 } as const;
 

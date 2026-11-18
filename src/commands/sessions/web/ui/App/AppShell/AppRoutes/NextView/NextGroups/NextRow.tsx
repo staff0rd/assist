@@ -5,6 +5,7 @@ import type { ReactNode } from "react";
 import type { SessionInfo } from "../../../../../types";
 import { NextItemActions } from "../NextItemActions";
 import { NextRepoRef } from "../NextRepoRef";
+import { sessionTextSize } from "../../../../sessionTextSize";
 
 const nextRowSx = (t: Theme) => ({
 	px: "14px",
@@ -17,7 +18,7 @@ const nextRowSx = (t: Theme) => ({
 
 const titleSx = {
 	fontWeight: 600,
-	fontSize: 14,
+	fontSize: sessionTextSize(14),
 	overflowWrap: "anywhere",
 } as const;
 

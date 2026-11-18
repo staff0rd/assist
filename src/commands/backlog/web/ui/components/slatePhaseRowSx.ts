@@ -1,3 +1,5 @@
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
+
 export function slatePhaseRowSx(active: boolean) {
 	return {
 		justifyContent: "flex-start",
@@ -6,7 +8,7 @@ export function slatePhaseRowSx(active: boolean) {
 		minWidth: 0,
 		py: "3px",
 		pl: 0.5,
-		fontSize: 12,
+		fontSize: sessionTextSize(12),
 		textAlign: "left",
 		color: active ? "text.primary" : "text.secondary",
 		transition: "color .2s ease",
@@ -18,7 +20,7 @@ export function slatePhaseRowSx(active: boolean) {
 		},
 		"& .phase-caption": {
 			display: "block",
-			fontSize: 11,
+			fontSize: sessionTextSize(11),
 			lineHeight: "16px",
 			color: "text.secondary",
 		},

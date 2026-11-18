@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import type { Theme } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 import { useLayoutEffect, useRef } from "react";
+import { sessionTextSize } from "../../../../sessionTextSize";
 
 const logSx = {
 	m: 0,
@@ -9,7 +10,7 @@ const logSx = {
 	borderRadius: 1,
 	bgcolor: (t: Theme) => t.tokens.color.well,
 	fontFamily: "fontFamilyMono",
-	fontSize: 12,
+	fontSize: sessionTextSize(12),
 	lineHeight: 1.7,
 	maxHeight: 320,
 	overflow: "auto",

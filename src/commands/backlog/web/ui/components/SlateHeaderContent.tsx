@@ -2,6 +2,7 @@ import { Box, Stack, Typography } from "@mui/material";
 import { BackButton } from "./BackButton";
 import { HeaderActions, type HeaderContentProps } from "./HeaderActions";
 import { ItemMeta } from "./ItemMeta";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 const slateHeaderSx = {
 	justifyContent: "space-between",
@@ -14,7 +15,7 @@ const slateTitleBlockSx = { display: "grid", gap: "6px", minWidth: 0 } as const;
 
 const slateTitleSx = {
 	m: 0,
-	fontSize: 24,
+	fontSize: sessionTextSize(24),
 	fontWeight: 600,
 	lineHeight: 1.25,
 	letterSpacing: "-0.015em",

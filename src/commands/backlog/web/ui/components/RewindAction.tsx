@@ -4,13 +4,14 @@ import { rewindPhase } from "../api";
 import { useApiNode } from "../../../../sessions/web/ui/useApiNode";
 import { useRepoCwd } from "../useRepoCwd";
 import { RewindDialog } from "./RewindDialog";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 const rewindSx = {
 	ml: "auto",
 	minHeight: 0,
 	px: "6px",
 	py: "2px",
-	fontSize: 12,
+	fontSize: sessionTextSize(12),
 	fontWeight: 500,
 	borderRadius: "4px",
 } as const;

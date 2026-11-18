@@ -1,7 +1,11 @@
 import type { PhaseUsage } from "../types";
 import { UsageSummary } from "./UsageSummary";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
-const totalSx = { color: "text.secondary", fontSize: "0.75rem" } as const;
+const totalSx = {
+	color: "text.secondary",
+	fontSize: sessionTextSize("0.75rem"),
+} as const;
 
 /** Item-level cost: the sum of every phase's tokens up/down and active time. */
 export function ItemUsageTotal({ usage }: { usage: PhaseUsage[] }) {

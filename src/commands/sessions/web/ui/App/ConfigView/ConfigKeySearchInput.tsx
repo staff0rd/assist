@@ -1,6 +1,7 @@
 import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import TextField from "@mui/material/TextField";
+import { sessionTextSize } from "../sessionTextSize";
 
 export function ConfigKeySearchInput({
 	search,
@@ -19,7 +20,7 @@ export function ConfigKeySearchInput({
 			slotProps={{
 				htmlInput: { "aria-label": "Filter config keys and descriptions" },
 				input: {
-					sx: { fontSize: 12 },
+					sx: { fontSize: sessionTextSize(12) },
 					endAdornment: search ? (
 						<IconButton
 							size="small"

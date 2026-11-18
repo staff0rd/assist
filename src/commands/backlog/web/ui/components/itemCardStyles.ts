@@ -1,6 +1,7 @@
 import { keyframes } from "@emotion/react";
 import type { SxProps, Theme } from "@mui/material";
 import { alpha } from "@mui/material";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 const baseCardSx = {
 	position: "relative",
@@ -94,9 +95,9 @@ export const itemCardStyles: Record<string, SxProps<Theme>> = {
 		...aboveStretchedLinkSx,
 		width: "fit-content",
 		maxWidth: "100%",
-		fontSize: "0.75rem",
+		fontSize: sessionTextSize("0.75rem"),
 		color: "text.secondary",
-		"& a, & p": { fontSize: "0.75rem" },
+		"& a, & p": { fontSize: sessionTextSize("0.75rem") },
 		...focusRingSx,
 	},
 	id: { color: "text.disabled" },

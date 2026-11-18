@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import type { NodeRowData } from "../../../nodeRows";
 import { linkStateLabel } from "./linkStateLabel";
+import { sessionTextSize } from "../../../../../../sessionTextSize";
 
 const kvSx = {
 	display: "grid",
@@ -13,7 +14,10 @@ const kvSx = {
 	"& dd": { m: 0, minWidth: 0, overflowWrap: "anywhere" },
 } as const;
 
-const monoSx = { fontFamily: "fontFamilyMono", fontSize: 12 } as const;
+const monoSx = {
+	fontFamily: "fontFamilyMono",
+	fontSize: sessionTextSize(12),
+} as const;
 
 export function ConnectionFacts({ row }: { row: NodeRowData }) {
 	const { link } = row;

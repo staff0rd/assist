@@ -4,19 +4,20 @@ import { itemSectionAnchor } from "./itemSectionAnchor";
 import { MarkdownHtml } from "./MarkdownHtml";
 import { renderMarkdownInline } from "./renderMarkdown";
 import { sectionHeadingSx } from "./sectionHeadingSx";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 type AcceptanceCriteriaListProps = {
 	criteria: string[];
 };
 
-const listSx = { maxWidth: "68ch", fontSize: 14 } as const;
+const listSx = { maxWidth: "68ch", fontSize: sessionTextSize(14) } as const;
 
 const markerSx = (t: Theme) => ({
 	mr: 1,
 	minWidth: 14,
 	color: "text.disabled",
 	fontFamily: t.typography.fontFamilyMono,
-	fontSize: 12,
+	fontSize: sessionTextSize(12),
 });
 
 export function AcceptanceCriteriaList({

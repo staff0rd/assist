@@ -3,10 +3,11 @@ import ToggleButton from "@mui/material/ToggleButton";
 import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
 import Tooltip from "@mui/material/Tooltip";
 import { type ReleaseLayer, releaseLayerLabels } from "./releaseLayerLabels";
+import { sessionTextSize } from "../sessionTextSize";
 
 const wrapSx = { display: "flex", justifyContent: "flex-end" } as const;
 
-const buttonSx = { fontSize: "0.975rem" } as const;
+const buttonSx = { fontSize: sessionTextSize("0.975rem") } as const;
 
 const layerNotes: Record<ReleaseLayer, string> = {
 	live: "What each environment is running right now",

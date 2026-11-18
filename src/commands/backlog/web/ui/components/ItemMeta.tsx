@@ -6,16 +6,23 @@ import { JiraKeyLink } from "./JiraKeyLink";
 import { StatusPicker } from "./StatusPicker";
 import { typeChipColors } from "./typeChipColors";
 import { UsageSummary } from "./UsageSummary";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 const metaRowSx = {
 	alignItems: "center",
 	color: "text.disabled",
-	fontSize: "0.875rem",
+	fontSize: sessionTextSize("0.875rem"),
 } as const;
 
-const idSx = { fontFamily: "fontFamilyMono", fontSize: 12 } as const;
+const idSx = {
+	fontFamily: "fontFamilyMono",
+	fontSize: sessionTextSize(12),
+} as const;
 
-const usageSx = { color: "text.secondary", fontSize: "0.75rem" } as const;
+const usageSx = {
+	color: "text.secondary",
+	fontSize: sessionTextSize("0.75rem"),
+} as const;
 
 export function ItemMeta({
 	item,

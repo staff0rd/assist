@@ -2,6 +2,7 @@ import { Box, Link, Typography } from "@mui/material";
 import { Fragment } from "react";
 import type { PhaseStatus } from "../types";
 import { phaseAnchor } from "./itemSectionAnchor";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 export type PhaseDependency = { number: number; status: PhaseStatus };
 
@@ -9,7 +10,7 @@ const rowSx = {
 	display: "grid",
 	gridTemplateColumns: "auto minmax(0, 1fr)",
 	columnGap: 1.5,
-	fontSize: "0.75rem",
+	fontSize: sessionTextSize("0.75rem"),
 	mt: 0.5,
 	mb: 1,
 } as const;

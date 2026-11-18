@@ -1,5 +1,6 @@
 import { statusBarInset } from "../../../../sessions/web/ui/designSystem/statusBarInset";
 import { itemDetailLayout } from "./itemDetailLayout";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 const APP_BAR_HEIGHT = 48;
 
@@ -27,7 +28,7 @@ export function slateLinkSx(active: boolean) {
 		py: 0.5,
 		borderLeft: 2,
 		borderColor: active ? "primary.main" : "divider",
-		fontSize: 13,
+		fontSize: sessionTextSize(13),
 		textAlign: "left",
 		color: active ? "text.primary" : "text.secondary",
 		transition: "color .2s ease",

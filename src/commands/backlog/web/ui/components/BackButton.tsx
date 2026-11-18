@@ -1,5 +1,6 @@
 import { Button } from "@mui/material";
 import { useNavigate } from "react-router";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 type BackButtonProps = {
 	to: string;
@@ -10,7 +11,7 @@ const backSx = {
 	minHeight: 0,
 	minWidth: 0,
 	p: 0,
-	fontSize: 12,
+	fontSize: sessionTextSize(12),
 	fontWeight: 400,
 	lineHeight: 1.5,
 	"&:hover": { bgcolor: "transparent" },

@@ -1,9 +1,10 @@
 import TableCell from "@mui/material/TableCell";
 import Typography from "@mui/material/Typography";
+import { sessionTextSize } from "../../../../sessionTextSize";
 
 const noteSx = {
 	display: "block",
-	fontSize: "0.75rem",
+	fontSize: sessionTextSize("0.75rem"),
 	color: "text.secondary",
 } as const;
 

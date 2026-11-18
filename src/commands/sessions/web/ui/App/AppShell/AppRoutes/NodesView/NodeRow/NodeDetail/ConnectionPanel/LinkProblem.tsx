@@ -7,8 +7,12 @@ import {
 	bannerTextSx,
 } from "../../../../nodeUpdates/NodeUpdateDetail/Advice/bannerSx";
 import { protocolDirection } from "../../../protocolDirection";
+import { sessionTextSize } from "../../../../../../sessionTextSize";
 
-const codeSx = { fontFamily: "fontFamilyMono", fontSize: 12 } as const;
+const codeSx = {
+	fontFamily: "fontFamilyMono",
+	fontSize: sessionTextSize(12),
+} as const;
 
 export function LinkProblem({ link }: { link: LinkStatus }) {
 	if (link.state === "disconnected" && link.error)

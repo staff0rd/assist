@@ -4,6 +4,7 @@ import type { ReleaseStreamState } from "../../../../releases/types";
 import type { ReleasePill } from "./releasePill";
 import { ReleaseStreamLinks } from "./ReleaseStreamRail/ReleaseStreamLinks";
 import { ReleaseStreamPills } from "./ReleaseStreamRail/ReleaseStreamPills";
+import { sessionTextSize } from "../../sessionTextSize";
 
 const railSx = {
 	flex: { md: "0 0 252px" },
@@ -14,12 +15,12 @@ const railSx = {
 	py: 1,
 } as const;
 
-const nameSx = { fontSize: "1.05rem" } as const;
+const nameSx = { fontSize: sessionTextSize("1.05rem") } as const;
 
 const metaSx = {
 	fontFamily: "fontFamilyMono",
 	display: "block",
-	fontSize: 13.2,
+	fontSize: sessionTextSize(13.2),
 	color: "text.secondary",
 };
 

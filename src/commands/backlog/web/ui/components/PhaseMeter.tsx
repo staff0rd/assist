@@ -4,6 +4,7 @@ import {
 	phaseMeterSegments,
 	type PhaseSegmentKind,
 } from "./phaseMeterSegments";
+import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
 
 const segmentColors: Record<PhaseSegmentKind, string> = {
 	done: "text.secondary",
@@ -20,7 +21,7 @@ const meterSx = {
 };
 
 const labelSx = {
-	fontSize: "0.6875rem",
+	fontSize: sessionTextSize("0.6875rem"),
 	color: "text.secondary",
 	fontVariantNumeric: "tabular-nums",
 };
