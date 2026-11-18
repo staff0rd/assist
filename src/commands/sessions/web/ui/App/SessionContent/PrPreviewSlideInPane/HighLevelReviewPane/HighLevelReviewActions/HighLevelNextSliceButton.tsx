@@ -1,8 +1,9 @@
+import { sessionTextSize } from "../../../../sessionTextSize";
 import { Box, Button } from "@mui/material";
 
 const keySx = {
 	fontFamily: "fontFamilyMono",
-	fontSize: 11,
+	fontSize: sessionTextSize(11),
 	border: 1,
 	borderColor: "divider",
 	borderRadius: 0.5,

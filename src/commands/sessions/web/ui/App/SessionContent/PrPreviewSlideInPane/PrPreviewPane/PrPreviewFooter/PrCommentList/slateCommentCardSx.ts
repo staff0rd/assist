@@ -1,3 +1,4 @@
+import { sessionTextSize } from "../../../../../sessionTextSize";
 import type { Theme } from "@mui/material/styles";
 
 export const slateCommentsSx = (t: Theme) => ({
@@ -12,7 +13,7 @@ export const slateCommentsSx = (t: Theme) => ({
 });
 
 export const slateCommentsHeadingSx = {
-	fontSize: 11,
+	fontSize: sessionTextSize(11),
 	fontWeight: 600,
 	letterSpacing: "0.06em",
 	textTransform: "uppercase",
@@ -29,7 +30,7 @@ export const slateCommentCardSx = (t: Theme) => ({
 	bgcolor: t.tokens.color.raised,
 	border: 1,
 	borderColor: t.tokens.color.lineSoft,
-	fontSize: 12.5,
+	fontSize: sessionTextSize(12.5),
 });
 
 export const slateCommentCloseSx = {

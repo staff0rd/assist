@@ -1,3 +1,4 @@
+import { sessionTextSize } from "../../../../../sessionTextSize";
 import { Box, InputBase, Typography } from "@mui/material";
 import {
 	highLevelGlobInputSx,
@@ -38,7 +39,7 @@ export function HighLevelGlobInput({
 					flex: 1,
 					minWidth: 0,
 					fontFamily: "fontFamilyMono",
-					fontSize: 12,
+					fontSize: sessionTextSize(12),
 				}}
 			/>
 			{glob.trim() && (

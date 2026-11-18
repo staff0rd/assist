@@ -1,3 +1,4 @@
+import { sessionTextSize } from "../../../../../../sessionTextSize";
 import type { Theme } from "@mui/material/styles";
 
 export const highLevelGlobInputSx = {
@@ -17,7 +18,7 @@ export const highLevelGlobInputSx = {
 } as const;
 
 export const highLevelGlobLabelSx = {
-	fontSize: 11,
+	fontSize: sessionTextSize(11),
 	color: "text.disabled",
 	whiteSpace: "nowrap",
 	px: 1,

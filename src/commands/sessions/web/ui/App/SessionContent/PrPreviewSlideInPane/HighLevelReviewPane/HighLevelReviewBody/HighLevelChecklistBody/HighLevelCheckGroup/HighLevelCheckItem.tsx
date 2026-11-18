@@ -1,3 +1,4 @@
+import { sessionTextSize } from "../../../../../../sessionTextSize";
 import { Box, Stack, TextField } from "@mui/material";
 import type { ReactNode } from "react";
 import type { HighLevelCheckResult } from "../../../../../../../../../../review/highLevel/types";
@@ -39,7 +40,10 @@ export function HighLevelCheckItem({
 						slotProps={{
 							htmlInput: { "aria-label": `Comment on ${check.title}` },
 						}}
-						sx={{ mt: 0.5, "& .MuiInputBase-input": { fontSize: 12 } }}
+						sx={{
+							mt: 0.5,
+							"& .MuiInputBase-input": { fontSize: sessionTextSize(12) },
+						}}
 					/>
 					{detail}
 				</Box>

@@ -1,10 +1,12 @@
+import { sessionTextSize } from "../../../../sessionTextSize";
+
 export function tabSx(selected: boolean) {
 	return {
 		height: "100%",
 		px: 1.25,
 		gap: 0.75,
 		flexShrink: 0,
-		fontSize: 12,
+		fontSize: sessionTextSize(12),
 		fontWeight: 500,
 		letterSpacing: "0.04em",
 		textTransform: "uppercase",

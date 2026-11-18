@@ -1,7 +1,10 @@
+import { sessionTextSize } from "../../../../../../sessionTextSize";
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 
-const labelSx = { "& .MuiFormControlLabel-label": { fontSize: 12 } } as const;
+const labelSx = {
+	"& .MuiFormControlLabel-label": { fontSize: sessionTextSize(12) },
+} as const;
 
 export function ChainToggle({
 	label,

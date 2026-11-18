@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { SessionTextSizeTheme } from "../../../../SessionTextSizeTheme";
 import { PrPreviewSlideInPane } from "../../../PrPreviewSlideInPane";
 import { CoveredPane } from "./PrPreviewSlideIn/CoveredPane";
 import { exitOnSlideOut } from "./PrPreviewSlideIn/exitOnSlideOut";
@@ -28,30 +29,32 @@ export function PrPreviewSlideIn({
 			onTransitionEnd={exitOnSlideOut(open, onExited)}
 			sx={sx}
 		>
-			{placeholder}
-			{!placeholder && rendered && (
-				<CoveredPane covered={stackedShow !== undefined}>
-					<PrPreviewSlideInPane
-						key={rendered.requestId}
-						preview={rendered}
+			<SessionTextSizeTheme>
+				{placeholder}
+				{!placeholder && rendered && (
+					<CoveredPane covered={stackedShow !== undefined}>
+						<PrPreviewSlideInPane
+							key={rendered.requestId}
+							preview={rendered}
+							session={session}
+							sessionId={sessionId}
+							cwd={cwd}
+							sendInput={sendInput}
+							onDecision={(decision, details) =>
+								onDecision(rendered.requestId, decision, details)
+							}
+						/>
+					</CoveredPane>
+				)}
+				{stackedShow && (
+					<StackedShowPane
+						show={stackedShow}
 						session={session}
-						sessionId={sessionId}
-						cwd={cwd}
 						sendInput={sendInput}
-						onDecision={(decision, details) =>
-							onDecision(rendered.requestId, decision, details)
-						}
+						onDecision={onDecision}
 					/>
-				</CoveredPane>
-			)}
-			{stackedShow && (
-				<StackedShowPane
-					show={stackedShow}
-					session={session}
-					sendInput={sendInput}
-					onDecision={onDecision}
-				/>
-			)}
+				)}
+			</SessionTextSizeTheme>
 		</Box>
 	);
 }

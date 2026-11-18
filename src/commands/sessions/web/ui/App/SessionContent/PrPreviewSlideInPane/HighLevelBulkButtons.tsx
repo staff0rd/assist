@@ -1,3 +1,4 @@
+import { sessionTextSize } from "../../sessionTextSize";
 import UnfoldLessIcon from "@mui/icons-material/UnfoldLess";
 import UnfoldMoreIcon from "@mui/icons-material/UnfoldMore";
 import { Box, Button } from "@mui/material";
@@ -20,7 +21,7 @@ function CountBadge({ count }: { count: number }) {
 				borderRadius: 1,
 				bgcolor: "action.selected",
 				fontFamily: "fontFamilyMono",
-				fontSize: 11,
+				fontSize: sessionTextSize(11),
 				lineHeight: "16px",
 				textAlign: "center",
 			}}

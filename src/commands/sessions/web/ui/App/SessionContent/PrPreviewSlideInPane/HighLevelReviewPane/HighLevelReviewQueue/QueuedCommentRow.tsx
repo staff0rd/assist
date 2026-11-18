@@ -1,3 +1,4 @@
+import { sessionTextSize } from "../../../../sessionTextSize";
 import CloseIcon from "@mui/icons-material/Close";
 import EditIcon from "@mui/icons-material/Edit";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
@@ -21,7 +22,7 @@ export function QueuedCommentRow({
 		<Stack direction="row" spacing={1} sx={{ alignItems: "flex-start" }}>
 			<Box sx={{ flex: 1, minWidth: 0 }}>
 				<Typography variant="body2">
-					<Box component="code" sx={{ fontSize: 12, mr: 1 }}>
+					<Box component="code" sx={{ fontSize: sessionTextSize(12), mr: 1 }}>
 						{location}
 					</Box>
 					{editing ? null : comment.note}

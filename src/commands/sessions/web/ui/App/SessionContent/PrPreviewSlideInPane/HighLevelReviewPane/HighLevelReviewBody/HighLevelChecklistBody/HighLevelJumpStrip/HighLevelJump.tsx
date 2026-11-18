@@ -1,3 +1,4 @@
+import { sessionTextSize } from "../../../../../../sessionTextSize";
 import { Box, ButtonBase } from "@mui/material";
 
 function jumpSx(active: boolean) {
@@ -6,7 +7,7 @@ function jumpSx(active: boolean) {
 		px: 1.5,
 		gap: 0.75,
 		flexShrink: 0,
-		fontSize: 12,
+		fontSize: sessionTextSize(12),
 		fontWeight: 500,
 		letterSpacing: "0.02857em",
 		textTransform: "uppercase",

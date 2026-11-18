@@ -1,4 +1,5 @@
 import type { Theme } from "@mui/material/styles";
+import { sessionTextSize } from "../App/sessionTextSize";
 
 const outrankMarkdown = (selector: string) =>
 	selector
@@ -11,11 +12,11 @@ export function slateDocSx(t: Theme) {
 	return {
 		px: 2.5,
 		py: 2,
-		fontSize: 14,
+		fontSize: sessionTextSize(14),
 		lineHeight: 1.6,
 		[outrankMarkdown("")]: { lineHeight: 1.6 },
 		[outrankMarkdown("h1, h2, h3, h4, h5, h6")]: {
-			fontSize: 15,
+			fontSize: sessionTextSize(15),
 			fontWeight: 600,
 			lineHeight: 1.4,
 			mt: 2,

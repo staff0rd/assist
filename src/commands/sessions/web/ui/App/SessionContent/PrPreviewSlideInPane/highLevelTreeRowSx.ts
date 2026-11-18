@@ -1,3 +1,4 @@
+import { sessionTextSize } from "../../sessionTextSize";
 import { alpha, type Theme } from "@mui/material/styles";
 
 export const HIGH_LEVEL_TREE_INDENT = 12;
@@ -33,7 +34,7 @@ export const highLevelButtonResetSx = {
 
 export const highLevelTreeNameSx = {
 	fontFamily: "fontFamilyMono",
-	fontSize: 12,
+	fontSize: sessionTextSize(12),
 	overflow: "hidden",
 	textOverflow: "ellipsis",
 	whiteSpace: "nowrap",
@@ -41,7 +42,7 @@ export const highLevelTreeNameSx = {
 
 export const highLevelTreeCountSx = {
 	fontFamily: "fontFamilyMono",
-	fontSize: 11,
+	fontSize: sessionTextSize(11),
 	flexShrink: 0,
 } as const;
 

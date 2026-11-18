@@ -1,3 +1,4 @@
+import { sessionTextSize } from "../../../../../sessionTextSize";
 import ExpandLessIcon from "@mui/icons-material/ExpandLess";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Button, Collapse } from "@mui/material";
@@ -18,7 +19,12 @@ export function HighLevelCheckDetail({
 				size="small"
 				onClick={() => setOpen(!open)}
 				startIcon={open ? <ExpandLessIcon /> : <ExpandMoreIcon />}
-				sx={{ textTransform: "none", fontSize: 12, py: 0, minWidth: 0 }}
+				sx={{
+					textTransform: "none",
+					fontSize: sessionTextSize(12),
+					py: 0,
+					minWidth: 0,
+				}}
 			>
 				{label}
 			</Button>

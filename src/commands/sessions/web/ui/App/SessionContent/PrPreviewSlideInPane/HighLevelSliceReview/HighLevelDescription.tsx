@@ -3,6 +3,7 @@ import { useMemo } from "react";
 import { MarkdownHtml } from "../../../../../../../backlog/web/ui/components/MarkdownHtml";
 import type { HighLevelCheckResult } from "../../../../../../../review/highLevel/types";
 import { baseTranscriptMarkdownSx } from "../../SessionArea/TranscriptArea/TranscriptPane/TranscriptRow/TextRow/baseTranscriptMarkdownSx";
+import { transcriptHeadingSx } from "../../SessionArea/TranscriptArea/TranscriptPane/TranscriptRow/TextRow/transcriptHeadingSx";
 import { descriptionMarksSx } from "./HighLevelDescription/descriptionMarksSx";
 import { HighLevelDescriptionChips } from "./HighLevelDescription/HighLevelDescriptionChips";
 import { matchedIssueReference } from "./HighLevelDescription/matchedIssueReference";
@@ -45,7 +46,11 @@ export function HighLevelDescription({
 			{body.trim() ? (
 				<MarkdownHtml
 					className="markdown"
-					sx={[baseTranscriptMarkdownSx, descriptionMarksSx]}
+					sx={[
+						baseTranscriptMarkdownSx,
+						transcriptHeadingSx,
+						descriptionMarksSx,
+					]}
 					html={html}
 				/>
 			) : (
