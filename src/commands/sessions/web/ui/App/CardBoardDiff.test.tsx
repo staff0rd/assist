@@ -62,11 +62,7 @@ vi.mock(
 );
 
 vi.mock("./SessionContent/PrPreviewSlideInPane", () => ({
-	PrPreviewSlideInPane: ({ sessionId }: { sessionId: string }) => (
-		<div data-preview-session-id={sessionId} tabIndex={-1}>
-			preview
-		</div>
-	),
+	PrPreviewSlideInPane: () => <div>preview</div>,
 }));
 
 let frames: FrameRequestCallback[] = [];
@@ -199,7 +195,9 @@ describe("CardBoard diff panel", () => {
 
 		pressAltD();
 
-		expect(document.activeElement).toBe(screen.getByText("preview"));
+		expect(document.activeElement).toBe(
+			screen.getByText("preview").closest("[data-preview-session-id='w']"),
+		);
 		expect(screen.queryByTestId("diff-panel")).toBeNull();
 	});
 });

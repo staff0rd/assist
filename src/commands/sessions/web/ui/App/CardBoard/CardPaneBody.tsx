@@ -35,7 +35,11 @@ export function CardPaneBody({
 					<CardSessionView session={session} socket={socket} />
 				</SessionDrawer>
 				{preview ? (
-					<Box sx={columnSx}>
+					<Box
+						sx={[columnSx, { outline: "none" }]}
+						data-preview-session-id={session.id}
+						tabIndex={-1}
+					>
 						<CardPendingPreview
 							preview={preview}
 							session={session}
