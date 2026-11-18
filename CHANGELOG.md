@@ -1,3 +1,10 @@
+# [0.1236.0](https://github.com/staff0rd/assist/compare/v0.1235.1...v0.1236.0) (2026-11-18)
+
+
+### Features
+
+* stream SDK workflow output to tail ([6c21c6e](https://github.com/staff0rd/assist/commit/6c21c6e2c18c28b8134b4f7048a8d8e5c3b4e3a6))
+
 ## [0.1235.1](https://github.com/staff0rd/assist/compare/v0.1235.0...v0.1235.1) (2026-11-18)
 
 
