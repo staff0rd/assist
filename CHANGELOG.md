@@ -1,3 +1,10 @@
+## [0.1230.1](https://github.com/staff0rd/assist/compare/v0.1230.0...v0.1230.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* skip wrap balancing in card header ([5f9fc78](https://github.com/staff0rd/assist/commit/5f9fc78f673280064093e8d0a03a2df1b461be0a))
+
 # [0.1230.0](https://github.com/staff0rd/assist/compare/v0.1229.1...v0.1230.0) (2026-11-18)
 
 
