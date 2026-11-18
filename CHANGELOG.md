@@ -1,3 +1,10 @@
+# [0.1229.0](https://github.com/staff0rd/assist/compare/v0.1228.0...v0.1229.0) (2026-11-18)
+
+
+### Features
+
+* card pane shows session by default ([7c7501f](https://github.com/staff0rd/assist/commit/7c7501f9c531dec1ea56611961a5991f06fccd30))
+
 # [0.1228.0](https://github.com/staff0rd/assist/compare/v0.1227.0...v0.1228.0) (2026-11-18)
 
 
