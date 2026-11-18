@@ -406,6 +406,7 @@ const assistConfigShape = {
 			exposeCodexActions: z.boolean().optional(),
 			exposePiActions: z.boolean().optional(),
 			codexModel: z.string().optional(),
+			claudeSdkChrome: z.boolean().optional(),
 			defaults: z
 				.strictObject({
 					draft: sessionTypeDefaultsSchema,

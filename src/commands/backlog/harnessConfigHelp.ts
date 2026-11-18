@@ -18,6 +18,11 @@ export const harnessConfigHelp: ConfigHelpEntry[] = [
 		note: "force the web UI 'with pi' actions off even when pi is on PATH",
 	},
 	{
+		key: "harness.claudeSdkChrome",
+		setter: "assist config set harness.claudeSdkChrome <true|false>",
+		note: "launch claude-sdk sessions with --chrome (Claude in Chrome); defaults to true",
+	},
+	{
 		key: "harness.codexModel",
 		setter: "assist config set harness.codexModel <model>",
 		note: "a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config",
