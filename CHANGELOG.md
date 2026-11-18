@@ -1,3 +1,15 @@
+# [0.1231.0](https://github.com/staff0rd/assist/compare/v0.1230.2...v0.1231.0) (2026-11-18)
+
+
+### Bug Fixes
+
+* document card mode and yolo keys ([311025d](https://github.com/staff0rd/assist/commit/311025de480752116a6ca20971c61bddc0987b43))
+
+
+### Features
+
+* adjustable transcript text size ([85c5b3a](https://github.com/staff0rd/assist/commit/85c5b3addd2ff102d73c728431cf432aed53004e))
+
 ## [0.1230.2](https://github.com/staff0rd/assist/compare/v0.1230.1...v0.1230.2) (2026-11-18)
 
 
