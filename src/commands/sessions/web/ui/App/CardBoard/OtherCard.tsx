@@ -3,6 +3,7 @@ import { statusPillSx } from "../../designSystem/statusPillSx";
 import { sessionTitle } from "../sessionTitle";
 import type { SessionInfo } from "../../types";
 import { BoardCard } from "./BoardCard";
+import { CardBacklogChips } from "./CardBacklogChips";
 import { CardRepo } from "./CardRepo";
 import { CardClose } from "./CardClose";
 import { CardPhaseProgress } from "./CardPhaseProgress";
@@ -36,6 +37,7 @@ export function OtherCard({
 				>
 					{session.status}
 				</Box>
+				<CardBacklogChips session={session} />
 				<CardRepo session={session} />
 				<CardClose session={session} />
 			</Box>

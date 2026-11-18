@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { ThemeProvider } from "@mui/material/styles";
 import { cleanup, render, screen } from "@testing-library/react";
+import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it } from "vitest";
 import { makeSessionInfo } from "../../../../../../test/mothers/makeSessionInfo";
 import { createDesignTheme } from "../../designSystem/createDesignTheme";
@@ -11,9 +12,11 @@ afterEach(cleanup);
 
 function renderCard(session: SessionInfo) {
 	render(
-		<ThemeProvider theme={createDesignTheme("dark")}>
-			<FullWorking session={session} />
-		</ThemeProvider>,
+		<MemoryRouter>
+			<ThemeProvider theme={createDesignTheme("dark")}>
+				<FullWorking session={session} />
+			</ThemeProvider>
+		</MemoryRouter>,
 	);
 }
 

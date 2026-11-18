@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import { sessionTitle } from "../sessionTitle";
 import type { SessionInfo } from "../../types";
+import { CardBacklogChips } from "./CardBacklogChips";
 import { CardRepo } from "./CardRepo";
 import { CardClose } from "./CardClose";
 import { CardPhaseProgress } from "./CardPhaseProgress";
@@ -20,6 +21,7 @@ export function FullWorking({ session }: { session: SessionInfo }) {
 				>
 					Working
 				</Box>
+				<CardBacklogChips session={session} />
 				<CardRepo session={session} />
 				<CardClose session={session} />
 			</Box>

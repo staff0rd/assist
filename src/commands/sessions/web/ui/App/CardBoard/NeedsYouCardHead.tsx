@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import { statusPillSx } from "../../designSystem/statusPillSx";
 import type { SessionInfo } from "../../types";
+import { CardBacklogChips } from "./CardBacklogChips";
 import { CardRepo } from "./CardRepo";
 import { CardClose } from "./CardClose";
 import { cardTextSx } from "./cardTextSx";
@@ -24,6 +25,7 @@ export function NeedsYouCardHead({
 			>
 				{chip.label}
 			</Box>
+			<CardBacklogChips session={session} />
 			<CardRepo session={session} />
 			<CardClose session={session} />
 		</Box>
