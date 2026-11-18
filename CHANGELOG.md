@@ -1,3 +1,10 @@
+# [0.1235.0](https://github.com/staff0rd/assist/compare/v0.1234.0...v0.1235.0) (2026-11-18)
+
+
+### Features
+
+* backlog chip in card pane header ([4be411f](https://github.com/staff0rd/assist/commit/4be411f1eff5bf4588a19800f4b48d2d42fb8e0f))
+
 # [0.1234.0](https://github.com/staff0rd/assist/compare/v0.1233.0...v0.1234.0) (2026-11-18)
 
 
