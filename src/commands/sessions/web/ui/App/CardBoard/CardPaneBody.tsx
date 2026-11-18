@@ -7,6 +7,7 @@ import { CardPendingPreview } from "./CardPendingPreview";
 import { CardServerLog } from "./CardServerLog";
 import { CardSessionView } from "./CardSessionView";
 import { cardPanePreview } from "./cardPanePreview";
+import { SessionDrawer } from "./SessionDrawer";
 
 const columnSx = {
 	flex: 1,
@@ -30,7 +31,9 @@ export function CardPaneBody({
 	return (
 		<SocketShellProviders socket={socket}>
 			<Box sx={[columnSx, { overflow: "hidden" }]}>
-				{sessionShown && <CardSessionView session={session} socket={socket} />}
+				<SessionDrawer key={session.id} shown={sessionShown}>
+					<CardSessionView session={session} socket={socket} />
+				</SessionDrawer>
 				<Box sx={columnSx}>
 					{preview ? (
 						<CardPendingPreview

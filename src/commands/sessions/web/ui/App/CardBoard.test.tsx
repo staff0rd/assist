@@ -1,5 +1,11 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+	waitFor,
+} from "@testing-library/react";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
@@ -192,7 +198,7 @@ describe("CardBoard", () => {
 		);
 	});
 
-	it("toggles the session view above the preview", () => {
+	it("toggles the session view above the preview", async () => {
 		renderBoard();
 		fireEvent.click(screen.getByTestId("needs-you-card"));
 		expect(screen.queryByTestId("card-session-view")).toBeNull();
@@ -206,7 +212,9 @@ describe("CardBoard", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "Hide session" }));
 
-		expect(screen.queryByTestId("card-session-view")).toBeNull();
+		await waitFor(() =>
+			expect(screen.queryByTestId("card-session-view")).toBeNull(),
+		);
 	});
 
 	it("hides the session again when another card opens", () => {
