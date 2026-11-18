@@ -2,7 +2,7 @@ import type { BoardLayout } from "./boardLayout";
 
 const BASIS: Record<BoardLayout, string | number> = {
 	full: 1,
-	narrow: "0 0 380px",
+	narrow: 1,
 	compact: "0 0 300px",
 };
 

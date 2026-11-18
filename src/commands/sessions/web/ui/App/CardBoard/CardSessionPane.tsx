@@ -24,7 +24,7 @@ export function CardSessionPane({
 			aria-label={sessionTitle(session)}
 			data-testid="card-session-pane"
 			sx={(t) => ({
-				flex: 1,
+				flex: sessionShown ? 1 : "0 0 640px",
 				minWidth: 0,
 				display: "flex",
 				flexDirection: "column",
