@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import * as pty from "node-pty";
 import { withHarnessPath } from "../../../shared/nodeRuntime/withHarnessPath";
 import { daemonLog } from "./daemonLog";
+import { sessionBinDirs } from "./sessionBinDirs";
 import { ensureSpawnHelperExecutable } from "./ensureSpawnHelperExecutable";
 import { resolvePtyCommand } from "./resolvePtyCommand";
 import { sessionChildEnv } from "./sessionChildEnv";
@@ -22,13 +23,18 @@ export function spawnPty(
 ): pty.IPty {
 	refuseMissingCwd(cwd, sessionId);
 	ensureSpawnHelperExecutable();
-	const command = resolvePtyCommand(args);
+	const dir = cwd ?? process.cwd();
+	const binDirs = sessionBinDirs(dir, sessionId);
+	const command = resolvePtyCommand(args, binDirs);
 
 	return pty.spawn(command.file, command.args, {
 		name: "xterm-256color",
 		...viewerSize(),
-		cwd: cwd ?? process.cwd(),
-		env: withHarnessPath(sessionChildEnv(process.env, sessionId, extraEnv)),
+		cwd: dir,
+		env: withHarnessPath(
+			sessionChildEnv(process.env, sessionId, extraEnv),
+			binDirs,
+		),
 	});
 }
 

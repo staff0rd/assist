@@ -2,14 +2,17 @@ import { loginShellCommand } from "../../../shared/nodeRuntime/loginShellCommand
 
 type PtyCommand = { file: string; args: string[] };
 
-export function resolvePtyCommand(args: string[]): PtyCommand {
+export function resolvePtyCommand(
+	args: string[],
+	binDirs?: readonly string[],
+): PtyCommand {
 	if (process.platform !== "win32")
 		return {
 			file: process.env.SHELL ?? "bash",
 			args: [
 				"-l",
 				"-c",
-				loginShellCommand(`exec ${args.map(shellEscape).join(" ")}`),
+				loginShellCommand(`exec ${args.map(shellEscape).join(" ")}`, binDirs),
 			],
 		};
 	/* why: cmd.exe (and the assist.cmd shim) end the command line at the first

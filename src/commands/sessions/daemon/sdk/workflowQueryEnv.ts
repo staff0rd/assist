@@ -1,10 +1,13 @@
+import { withHarnessPath } from "../../../../shared/nodeRuntime/withHarnessPath";
 import { sdkAgentEnv } from "../../../../shared/sdkAgentEnv";
+import { sessionBinDirs } from "../sessionBinDirs";
 import { sessionChildEnv } from "../sessionChildEnv";
 
 export function workflowQueryEnv(
 	base: Record<string, string | undefined>,
 	sessionId: string | undefined,
 	launcherEnv: Record<string, string> | undefined,
+	cwd?: string,
 ): Record<string, string> {
 	const env: Record<string, string> = {
 		...sessionChildEnv(base, sessionId),
@@ -12,7 +15,8 @@ export function workflowQueryEnv(
 		CLAUDE_CODE_ARTIFACT: base.CLAUDE_CODE_ARTIFACT ?? "1",
 		[sdkAgentEnv]: "1",
 	};
-	if (!launcherEnv) return env;
+	const binDirs = sessionBinDirs(cwd, sessionId);
+	if (!launcherEnv) return withHarnessPath(env, binDirs);
 	const { ASSIST_ACTIVITY_ID: _activityId, ...rest } = env;
-	return { ...rest, ...launcherEnv };
+	return withHarnessPath({ ...rest, ...launcherEnv }, binDirs);
 }

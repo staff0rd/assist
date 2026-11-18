@@ -6,8 +6,9 @@ function shellEscape(s: string): string {
 
 export function loginShellCommand(
 	command: string,
-	binDir: string | undefined = harnessBinDir(),
+	binDir: string | readonly string[] | undefined = harnessBinDir(),
 ): string {
-	if (!binDir) return command;
-	return `export PATH=${shellEscape(binDir)}:"$PATH"; ${command}`;
+	const dirs = typeof binDir === "string" ? [binDir] : (binDir ?? []);
+	if (dirs.length === 0) return command;
+	return `export PATH=${shellEscape(dirs.join(":"))}:"$PATH"; ${command}`;
 }

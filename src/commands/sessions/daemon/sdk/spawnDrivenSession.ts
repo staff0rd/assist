@@ -36,7 +36,7 @@ export function spawnDrivenSession(
 		control,
 		input: input.messages,
 		childEnv: (base: Record<string, string | undefined>) =>
-			workflowQueryEnv(base, opts.sessionId, opts.launcherEnv),
+			workflowQueryEnv(base, opts.sessionId, opts.launcherEnv, opts.cwd),
 	};
 	startDrivenQuery(driver, context, turn, backgroundTasks);
 	return control.process;

@@ -5,7 +5,7 @@ import {
 } from "../../../../shared/nodeRuntime/declaredNode";
 import type { NodeSpecResolution } from "../../../../shared/nodeRuntime/NodeSpecResolution";
 import { resolveNodeSpec } from "../../../../shared/nodeRuntime/resolveNodeSpec";
-import { findNodePin } from "./findNodePin";
+import { findNodePin } from "../../../../shared/nodeRuntime/findNodePin";
 
 type InstallNode =
 	| { ok: true; binDir: string | undefined; description: string }

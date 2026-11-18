@@ -27,7 +27,7 @@ export function reopenHighLevelReviewRun(
 	trackDeferredCommand(session, command);
 	const label = `reopen-high-level-review #${prNumber}: session ${id}`;
 	const pid = runDeferredCommand(
-		{ ...command, env: workflowQueryEnv(process.env, id, undefined) },
+		{ ...command, env: workflowQueryEnv(process.env, id, undefined, cwd) },
 		(result) => {
 			const missing = noSavedSlices(result);
 			if (!missing) {

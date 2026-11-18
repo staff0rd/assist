@@ -3,7 +3,7 @@ import { dirname, join, resolve } from "node:path";
 
 const PIN_FILES = [".node-version", ".nvmrc"];
 
-type NodePin = { file: string; spec: string };
+export type NodePin = { file: string; spec: string };
 
 function readPin(file: string): string | undefined {
 	if (!existsSync(file)) return undefined;

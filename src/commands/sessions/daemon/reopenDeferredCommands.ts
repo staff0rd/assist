@@ -34,7 +34,7 @@ function reopen(
 		{
 			...command,
 			env: reopenedCommandEnv(
-				workflowQueryEnv(process.env, id, undefined),
+				workflowQueryEnv(process.env, id, undefined, command.cwd),
 				command.env,
 			),
 		},
