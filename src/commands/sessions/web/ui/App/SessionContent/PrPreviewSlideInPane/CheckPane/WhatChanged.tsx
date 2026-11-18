@@ -1,7 +1,7 @@
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import { Box, ButtonBase, Collapse, Typography } from "@mui/material";
 import { useState } from "react";
-import { InlineMarkdown } from "./InlineMarkdown";
+import { InlineMarkdown } from "../InlineMarkdown";
 
 export function WhatChanged({ changed }: { changed: string }) {
 	const [open, setOpen] = useState(false);

@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import { MarkdownHtml } from "../../../../../../../backlog/web/ui/components/MarkdownHtml";
-import { renderMarkdownInline } from "../../../../../../../backlog/web/ui/components/renderMarkdown";
+import { MarkdownHtml } from "../../../../../../backlog/web/ui/components/MarkdownHtml";
+import { renderMarkdownInline } from "../../../../../../backlog/web/ui/components/renderMarkdown";
 
 export const inlineMarkdownSx = {
 	"& code": {

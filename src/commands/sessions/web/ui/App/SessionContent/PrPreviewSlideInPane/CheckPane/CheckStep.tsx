@@ -5,7 +5,7 @@ import { renderMarkdownInline } from "../../../../../../../backlog/web/ui/compon
 import { addCopyButtons } from "../../copyCode/addCopyButtons";
 import { copyCodeButtonSx } from "../../copyCode/copyCodeButtonSx";
 import { copyCodeOnClick } from "../../copyCode/copyCodeOnClick";
-import { inlineMarkdownSx } from "./InlineMarkdown";
+import { inlineMarkdownSx } from "../InlineMarkdown";
 
 const checkStepSx = (theme: Theme) => ({
 	...inlineMarkdownSx,

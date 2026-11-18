@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Checkbox from "@mui/material/Checkbox";
 import Radio from "@mui/material/Radio";
 import type { QuestionOptionRowProps } from "../../App/SessionContent/PrPreviewSlideInPane/QuestionPane/QuestionOptionRowProps";
+import { InlineMarkdown } from "../../App/SessionContent/PrPreviewSlideInPane/InlineMarkdown";
 import { OptionPreviewButton } from "../../App/SessionContent/PrPreviewSlideInPane/QuestionPane/OptionPreviewButton";
 import { optionSx } from "./optionSx";
 
@@ -29,7 +30,7 @@ export function PhoneQuestionOption({
 				<Box sx={{ fontSize: 16, fontWeight: 600 }}>{label}</Box>
 				{description && (
 					<Box sx={{ fontSize: 13, lineHeight: 1.35, color: "text.secondary" }}>
-						{description}
+						<InlineMarkdown text={description} />
 					</Box>
 				)}
 				{children}

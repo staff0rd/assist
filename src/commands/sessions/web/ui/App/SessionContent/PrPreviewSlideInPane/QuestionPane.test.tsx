@@ -99,6 +99,43 @@ describe("QuestionPane", () => {
 		).toBeTruthy();
 	});
 
+	it("renders markdown links and inline code in context and descriptions", () => {
+		pane([
+			{
+				...questions[0],
+				context:
+					"[Thread](https://example.com/t). Line 19 defines `Supervisor`.",
+				options: [
+					{
+						label: "Compact",
+						description: "See [docs](https://example.com/d) for `--compact`",
+					},
+					questions[0].options[1],
+				],
+			},
+		]);
+		const thread = screen.getByRole("link", { name: "Thread" });
+		expect(thread.getAttribute("href")).toBe("https://example.com/t");
+		expect(thread.getAttribute("target")).toBe("_blank");
+		expect(screen.getByText("Supervisor").tagName).toBe("CODE");
+		expect(screen.getByText("--compact").tagName).toBe("CODE");
+		const docs = screen.getByRole("link", { name: "docs" });
+		expect(docs.getAttribute("target")).toBe("_blank");
+		fireEvent.click(docs);
+		expect(
+			(screen.getByRole("radio", { name: /Compact/ }) as HTMLInputElement)
+				.checked,
+		).toBe(false);
+	});
+
+	it("renders plain context and descriptions unchanged", () => {
+		pane([{ ...questions[0], context: "The list is getting long." }]);
+		expect(screen.getByText("The list is getting long.").textContent).toBe(
+			"The list is getting long.",
+		);
+		expect(screen.getByText("One line each")).toBeTruthy();
+	});
+
 	it("shows nothing extra when a question has no context", () => {
 		pane([questions[0]]);
 		const legend = screen.getByText("Which layout?").parentElement!;

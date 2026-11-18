@@ -95,6 +95,33 @@ describe("PhoneQuestionCard", () => {
 		).toBeTruthy();
 	});
 
+	it("renders markdown links and inline code in context and descriptions", () => {
+		card([
+			{
+				...questions[0]!,
+				context:
+					"[Thread](https://example.com/t). Line 19 defines `Supervisor`.",
+				options: [
+					{
+						label: "One commit",
+						description: "See [docs](https://example.com/d) for `feat`",
+					},
+					questions[0]!.options[1]!,
+				],
+			},
+		]);
+		const thread = screen.getByRole("link", { name: "Thread" });
+		expect(thread.getAttribute("href")).toBe("https://example.com/t");
+		expect(thread.getAttribute("target")).toBe("_blank");
+		expect(screen.getByText("Supervisor").tagName).toBe("CODE");
+		expect(screen.getByText("feat").tagName).toBe("CODE");
+		fireEvent.click(screen.getByRole("link", { name: "docs" }));
+		expect(
+			(screen.getByRole("radio", { name: /One commit/ }) as HTMLInputElement)
+				.checked,
+		).toBe(false);
+	});
+
 	it("shows nothing extra when a question has no context", () => {
 		card([questions[0]!]);
 		const group = screen.getByRole("group", { name: "How should I commit?" });

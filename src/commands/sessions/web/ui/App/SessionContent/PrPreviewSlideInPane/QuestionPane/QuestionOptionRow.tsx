@@ -1,5 +1,6 @@
 import { Box, Checkbox, Radio, Typography } from "@mui/material";
 import type { QuestionOptionRowProps } from "./QuestionOptionRowProps";
+import { InlineMarkdown } from "../InlineMarkdown";
 import { OptionPreviewButton } from "./OptionPreviewButton";
 import { questionOptionRowSx } from "./questionOptionRowSx";
 
@@ -37,7 +38,7 @@ export function QuestionOptionRow({
 				</Typography>
 				{description && (
 					<Typography variant="body2" sx={{ color: "text.secondary" }}>
-						{description}
+						<InlineMarkdown text={description} />
 					</Typography>
 				)}
 				{children}

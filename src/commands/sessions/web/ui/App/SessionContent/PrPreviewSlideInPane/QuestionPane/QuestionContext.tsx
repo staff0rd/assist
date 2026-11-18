@@ -1,4 +1,5 @@
 import { Typography } from "@mui/material";
+import { InlineMarkdown } from "../InlineMarkdown";
 
 export function QuestionContext({ context }: { context?: string }) {
 	if (!context) return null;
@@ -8,7 +9,7 @@ export function QuestionContext({ context }: { context?: string }) {
 			component="span"
 			sx={{ color: "text.secondary", mt: 0.5, mb: 0.5 }}
 		>
-			{context}
+			<InlineMarkdown text={context} />
 		</Typography>
 	);
 }

@@ -1,5 +1,5 @@
 import { Box, Chip } from "@mui/material";
-import { InlineMarkdown } from "./InlineMarkdown";
+import { InlineMarkdown } from "../InlineMarkdown";
 import { Label } from "./Label";
 
 export function BeforeChips({ items }: { items: string[] }) {
