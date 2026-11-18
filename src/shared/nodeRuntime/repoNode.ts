@@ -6,22 +6,27 @@ import { resolveNodeSpec } from "./resolveNodeSpec";
 
 export type RepoNode = { pin: NodePin } & NodeSpecResolution;
 
+type Resolve = (spec: string, highest: boolean) => NodeSpecResolution;
+
 const resolved = new Map<string, NodeSpecResolution>();
 
-function cachedResolve(spec: string): NodeSpecResolution {
-	const hit = resolved.get(spec);
+const cachedResolve: Resolve = (spec, highest) => {
+	const key = `${highest}:${spec}`;
+	const hit = resolved.get(key);
 	if (hit) return hit;
-	const resolution = resolveNodeSpec(spec);
-	if (resolution.ok) resolved.set(spec, resolution);
+	const resolution = resolveNodeSpec(spec, undefined, highest);
+	if (resolution.ok) resolved.set(key, resolution);
 	return resolution;
-}
+};
 
 export function repoNode(
 	cwd: string,
-	resolve: (spec: string) => NodeSpecResolution = cachedResolve,
+	resolve: Resolve = cachedResolve,
 ): RepoNode | undefined {
 	const root = findRepoRoot(cwd) ?? cwd;
-	const pin = findNodePin(cwd, root) ?? findEnginesPin(cwd, root);
-	if (!pin) return undefined;
-	return { pin, ...resolve(pin.spec) };
+	const filePin = findNodePin(cwd, root);
+	if (filePin) return { pin: filePin, ...resolve(filePin.spec, false) };
+	const enginesPin = findEnginesPin(cwd, root);
+	if (!enginesPin) return undefined;
+	return { pin: enginesPin, ...resolve(enginesPin.spec, true) };
 }

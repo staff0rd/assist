@@ -27,6 +27,7 @@ function isPathSpec(spec: string): boolean {
 export function resolveNodeSpec(
 	spec: string,
 	deps: ResolveNodeDeps = defaultDeps(),
+	highest = false,
 ): NodeSpecResolution {
 	const trimmed = spec.trim();
 	if (isPathSpec(trimmed)) return nodeAtPath(trimmed, deps);
@@ -36,5 +37,5 @@ export function resolveNodeSpec(
 			ok: false,
 			error: "not a node version (e.g. 24, 24.22.1) or a path to a node binary",
 		};
-	return nodeForRange(range, deps);
+	return nodeForRange(range, deps, highest);
 }

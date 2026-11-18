@@ -69,6 +69,25 @@ describe("resolveNodeSpec", () => {
 		});
 	});
 
+	it("picks the highest install over a satisfying current node when asked", () => {
+		fnmNode("22.23.4");
+		const newest = fnmNode("24.22.1");
+
+		expect(resolveNodeSpec(">=22", deps(), true)).toMatchObject({
+			ok: true,
+			node: { path: newest, version: "24.22.1" },
+		});
+	});
+
+	it("keeps the current node in highest mode when it is the newest", () => {
+		fnmNode("22.1.0");
+
+		expect(resolveNodeSpec(">=22", deps(), true)).toMatchObject({
+			ok: true,
+			node: { path: "/usr/bin/node", version: "22.21.1" },
+		});
+	});
+
 	it("resolves an explicit install dir to its bin/node", () => {
 		const path = install("custom/node-24/bin/node");
 

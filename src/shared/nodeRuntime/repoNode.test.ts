@@ -13,7 +13,7 @@ const node24 = {
 	version: "24.22.1",
 };
 
-const found = vi.fn((_spec: string): NodeSpecResolution => ({
+const found = vi.fn((_spec: string, _highest: boolean): NodeSpecResolution => ({
 	ok: true,
 	node: node24,
 }));
@@ -41,7 +41,7 @@ describe("repoNode", () => {
 			ok: true,
 			node: node24,
 		});
-		expect(found).toHaveBeenCalledWith("24");
+		expect(found).toHaveBeenCalledWith("24", false);
 	});
 
 	it("prefers .node-version over .nvmrc in the same directory", () => {
@@ -71,6 +71,7 @@ describe("repoNode", () => {
 			file,
 			spec: ">=24",
 		});
+		expect(found).toHaveBeenCalledWith(">=24", true);
 	});
 
 	it("does not look above the repo root", () => {
