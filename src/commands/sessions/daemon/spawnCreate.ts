@@ -3,11 +3,14 @@ import { daemonLog } from "./daemonLog";
 import type { SessionManager } from "./SessionManager";
 import { spawnContextFrom } from "./spawnContextFrom";
 import { sessionBlocker } from "./sessionBlocker";
+import { spawnTransferredPrompt } from "./transfer/spawnTransferredPrompt";
 
 export function spawnCreate(
 	m: SessionManager,
 	d: Record<string, unknown>,
-): string | { error: string } {
+): string | { error: string } | Promise<string> {
+	const transferred = spawnTransferredPrompt(m, d);
+	if (transferred) return transferred;
 	const design = d.design === true;
 	const harness = d.harness as HarnessKind | undefined;
 	const prompt = d.prompt as string | undefined;

@@ -15,6 +15,7 @@ export const fakeHarnessCapabilities: CapabilityDeclarations = {
 	),
 	"conversation.relocate": supported,
 	"conversation.resume": supported,
+	"conversation.transfer": supported,
 	"intercept.command": supported,
 	"intercept.fileRead": supported,
 	"intercept.editDiff": supported,

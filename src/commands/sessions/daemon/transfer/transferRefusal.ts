@@ -1,4 +1,4 @@
-import { backlogRunArgs } from "../../shared/backlogRunArgs";
+import { TRANSFER_UNSUPPORTED, transferPlan } from "../../shared/transferPlan";
 import type { Session } from "../createSession";
 
 type TargetLinks = {
@@ -12,7 +12,10 @@ export function transferRefusal(
 	links: TargetLinks,
 ): string | undefined {
 	if (!s) return "unknown session";
-	if (!backlogRunArgs(s)) return "only backlog run sessions can be transferred";
+	const plan = transferPlan(s);
+	if (!plan) return TRANSFER_UNSUPPORTED;
+	if (plan.kind === "prompt" && !(s.worktree?.path ?? s.cwd))
+		return "the session has no working tree to transfer";
 	if (s.transfer?.queued)
 		return `a transfer to ${s.transfer.target} is already pending`;
 	if (s.transfer && !s.transfer.error)

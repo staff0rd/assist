@@ -7,6 +7,8 @@ export const capabilityDefinitions = {
 		"Reopens an existing conversation by id with its history intact, so a daemon restart or `--resume-session` continues the same conversation instead of starting fresh.",
 	"conversation.relocate":
 		"Continues a conversation from a different working directory than the one it started in, so resuming a session whose worktree was reaped or replaced keeps its history in the replacement worktree.",
+	"conversation.transfer":
+		"Moves a prompt session to another linked node: its transcript is carried over the link, placed where the harness expects it for the restored working tree, and resumed by id on the target.",
 	"conversation.id":
 		"Gives every conversation a stable id that assist records on the session, so a standalone link such as a /diff page can find the session that owns it.",
 	"conversation.preassignId":

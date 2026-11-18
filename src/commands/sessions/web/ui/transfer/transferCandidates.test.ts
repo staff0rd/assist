@@ -34,7 +34,34 @@ describe("transferCandidates", () => {
 		]);
 	});
 
-	it("offers nothing for sessions that are not backlog runs", () => {
+	it("offers connected nodes for a Claude prompt session in a repo", () => {
+		expect(
+			transferCandidates(
+				session({
+					commandType: "claude",
+					assistArgs: undefined,
+					claudeSessionId: "c-1",
+				}),
+				nodes,
+			),
+		).toEqual(["mac"]);
+	});
+
+	it("offers nothing for a prompt session outside a repo", () => {
+		expect(
+			transferCandidates(
+				session({
+					commandType: "claude",
+					assistArgs: undefined,
+					claudeSessionId: "c-1",
+					repoGroup: undefined,
+				}),
+				nodes,
+			),
+		).toEqual([]);
+	});
+
+	it("offers nothing for sessions that are neither backlog runs nor Claude prompts", () => {
 		expect(
 			transferCandidates(session({ assistArgs: ["draft"] }), nodes),
 		).toEqual([]);

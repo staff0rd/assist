@@ -40,10 +40,10 @@ async function upstreamBranch(path: string): Promise<string | undefined> {
 
 export async function pushTransferSnapshot(
 	path: string,
-	itemId: string,
+	key: string,
 	treeRoot?: string,
 ): Promise<TransferSnapshot> {
-	const ref = transferRefFor(itemId);
+	const ref = transferRefFor(key);
 	const branch = await currentBranch(path, treeRoot);
 	const upstream = await upstreamBranch(path);
 	const head = (await git(path, ["rev-parse", "HEAD"])).trim();

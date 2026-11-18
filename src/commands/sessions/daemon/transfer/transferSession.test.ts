@@ -4,11 +4,17 @@ import type { SessionClient } from "../broadcast";
 import type { Session } from "../createSession";
 import { daemonLog } from "../daemonLog";
 import { pushTransferSnapshot } from "./pushTransferSnapshot";
+import { readTransferTranscript } from "./readTransferTranscript";
 import type { TransferDeps } from "./TransferDeps";
 import { transferSession } from "./transferSession";
 
 vi.mock("../daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./pushTransferSnapshot", () => ({ pushTransferSnapshot: vi.fn() }));
+vi.mock("./readTransferTranscript", () => ({
+	readTransferTranscript: vi.fn(() =>
+		Promise.resolve({ ok: true, conversation: undefined }),
+	),
+}));
 
 const snapshot = { ref: "assist/transfer/a1402", branch: "feat/x" };
 
@@ -53,6 +59,10 @@ describe("transferSession", () => {
 		vi.mocked(pushTransferSnapshot).mockReset();
 		vi.mocked(pushTransferSnapshot).mockResolvedValue(snapshot);
 		vi.mocked(daemonLog).mockClear();
+		vi.mocked(readTransferTranscript).mockResolvedValue({
+			ok: true,
+			conversation: undefined,
+		});
 	});
 
 	it("aborts without stopping and keeps the error when the push fails", async () => {
@@ -207,6 +217,53 @@ describe("transferSession", () => {
 		session.transfer = { target: "mac", queued: {} };
 		await transferSession(client, deps, request);
 		expect(sent[0].message).toMatch(/already pending/);
+	});
+
+	it("pushes a prompt session to a ref keyed by node and session id and routes create", async () => {
+		const { session, deps, routed, client } = setup({
+			type: "created",
+			sessionId: "mac:3",
+		});
+		session.commandType = "claude";
+		session.assistArgs = undefined;
+		session.claudeSessionId = "c-1";
+		vi.mocked(readTransferTranscript).mockResolvedValue({
+			ok: true,
+			conversation: { id: "c-1", transcript: "{}\n" },
+		});
+		await transferSession(client, deps, request);
+		expect(pushTransferSnapshot).toHaveBeenCalledWith(
+			"/git/assist-3",
+			"work-wsl-7",
+			"/git/assist-3",
+		);
+		expect(routed[0]).toMatchObject({
+			type: "create",
+			harness: "claude",
+			node: "mac",
+			conversation: { id: "c-1", transcript: "{}\n" },
+			transfer: snapshot,
+		});
+		expect(deps.discard).toHaveBeenCalledWith("7");
+	});
+
+	it("keeps a prompt session with the error when its transcript can't be read", async () => {
+		const { session, deps, routed, client } = setup(undefined);
+		session.commandType = "claude";
+		session.assistArgs = undefined;
+		session.claudeSessionId = "c-1";
+		vi.mocked(readTransferTranscript).mockResolvedValue({
+			ok: false,
+			error: "transcript delivery failed: no transcript found for c-1",
+		});
+		await transferSession(client, deps, request);
+		expect(pushTransferSnapshot).not.toHaveBeenCalled();
+		expect(routed).toEqual([]);
+		expect(deps.stop).not.toHaveBeenCalled();
+		expect(session.transfer).toEqual({
+			target: "mac",
+			error: "transcript delivery failed: no transcript found for c-1",
+		});
 	});
 
 	it("refuses a target that is not connected without stopping", async () => {

@@ -1,12 +1,12 @@
 import { newTraceId } from "../../shared/newTraceId";
-import { backlogRunArgs } from "../../shared/backlogRunArgs";
-import { type SessionClient, sendTo } from "../broadcast";
+import { transferPlan } from "../../shared/transferPlan";
+import type { SessionClient } from "../broadcast";
 import { daemonLog } from "../daemonLog";
-import { handOffToTarget } from "./handOffToTarget";
 import { queueTransfer } from "./queueTransfer";
+import { refuseTransfer } from "./refuseTransfer";
+import { snapshotAndHandOff } from "./snapshotAndHandOff";
 import type { TransferDeps } from "./TransferDeps";
 import { transferRefusal } from "./transferRefusal";
-import { snapshotOrFail } from "./snapshotOrFail";
 
 type TransferRequest = {
 	sessionId: string;
@@ -15,11 +15,6 @@ type TransferRequest = {
 	phaseEnded?: boolean;
 };
 
-function refuse(client: SessionClient, id: string, message: string): void {
-	daemonLog(`session ${id} transfer refused: ${message}`);
-	sendTo(client, { type: "error", message: `Transfer refused: ${message}` });
-}
-
 export async function transferSession(
 	client: SessionClient,
 	deps: TransferDeps,
@@ -27,9 +22,9 @@ export async function transferSession(
 ): Promise<void> {
 	const s = deps.session(id);
 	const refused = transferRefusal(s, target, deps.links);
-	const args = s && backlogRunArgs(s);
-	if (refused || !s || !args)
-		return refuse(client, id, refused ?? "unknown session");
+	const plan = s && transferPlan(s);
+	if (refused || !s || !plan)
+		return refuseTransfer(client, id, refused ?? "unknown session");
 	if (s.status === "running" && !phaseEnded)
 		return queueTransfer(client, deps.notify, s, target, cwd);
 	const traceId = newTraceId();
@@ -38,17 +33,5 @@ export async function transferSession(
 	);
 	s.transfer = { target, stage: "snapshotting" };
 	deps.notify();
-	const pushed = await snapshotOrFail(s, args, traceId);
-	if (!pushed.ok) {
-		s.transfer = { target, error: pushed.error };
-		deps.notify();
-		return refuse(client, id, pushed.error);
-	}
-	await handOffToTarget(client, deps, s, {
-		args,
-		target,
-		cwd,
-		traceId,
-		snapshot: pushed.snapshot,
-	});
+	await snapshotAndHandOff(client, deps, s, { plan, target, cwd, traceId });
 }

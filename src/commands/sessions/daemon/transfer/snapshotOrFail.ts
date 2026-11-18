@@ -8,11 +8,11 @@ type SnapshotResult =
 
 export async function snapshotOrFail(
 	s: Session,
-	args: string[],
+	key: string,
 	traceId: string,
 ): Promise<SnapshotResult> {
 	try {
-		return { ok: true, snapshot: await snapshotTree(s, args, traceId) };
+		return { ok: true, snapshot: await snapshotTree(s, key, traceId) };
 	} catch (error) {
 		const reason = error instanceof Error ? error.message : String(error);
 		return { ok: false, error: `push failed: ${reason}` };

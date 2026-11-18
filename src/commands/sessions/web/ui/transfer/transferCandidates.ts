@@ -1,11 +1,11 @@
-import { backlogRunArgs } from "../../../shared/backlogRunArgs";
+import { transferPlan } from "../../../shared/transferPlan";
 import type { NodesState, SessionInfo } from "../types";
 
 export function transferCandidates(
 	session: SessionInfo,
 	nodes: NodesState | null,
 ): string[] {
-	if (!nodes || !backlogRunArgs(session) || !session.repoGroup) return [];
+	if (!nodes || !transferPlan(session) || !session.repoGroup) return [];
 	const current = session.node ?? nodes.local;
 	const connected = nodes.links
 		.filter((link) => link.state === "connected")

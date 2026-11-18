@@ -7,6 +7,7 @@ const claude: CapabilityDeclarations = {
 	"launch.terminal": supported,
 	"conversation.resume": supported,
 	"conversation.relocate": supported,
+	"conversation.transfer": supported,
 	"conversation.id": supported,
 	"conversation.preassignId": supported,
 	"systemPrompt.append": supported,
@@ -40,6 +41,11 @@ const claudeSdk: CapabilityDeclarations = {
 	...claude,
 	"session.driven": supported,
 	"tasks.background": supported,
+	"conversation.transfer": unsupported(
+		"assist cannot yet carry a Claude (SDK) conversation to another node",
+		"transfer a Claude session, or start a fresh session on the other node",
+		"a1783",
+	),
 };
 
 const codex: CapabilityDeclarations = {
@@ -47,6 +53,11 @@ const codex: CapabilityDeclarations = {
 	"launch.terminal": supported,
 	"conversation.resume": supported,
 	"conversation.relocate": supported,
+	"conversation.transfer": unsupported(
+		"assist cannot yet carry a Codex conversation to another node",
+		"transfer a Claude session, or start a fresh session on the other node",
+		"a1783",
+	),
 	"conversation.id": supported,
 	"conversation.preassignId": unsupported(
 		"Codex assigns its own conversation id when its rollout starts",
@@ -132,6 +143,11 @@ export const harnessCapabilityDeclarations: Record<
 		"conversation.relocate": unsupported(
 			"pi sessions cannot be resumed, so a pi conversation cannot continue in a replacement worktree",
 			"start a fresh session in the replacement worktree; pick Claude or Codex to keep the conversation across worktree replacement",
+			"a696",
+		),
+		"conversation.transfer": unsupported(
+			"Pi can't resume a conversation on another node",
+			"start a fresh session on the other node",
 			"a696",
 		),
 		"conversation.id": unsupported(

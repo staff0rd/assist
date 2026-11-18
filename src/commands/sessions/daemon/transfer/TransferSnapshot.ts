@@ -4,8 +4,12 @@ export type TransferSnapshot = {
 	upstream?: string;
 };
 
-export function transferRefFor(itemId: string): string {
-	return `assist/transfer/${itemId}`;
+export function transferRefFor(key: string): string {
+	return `assist/transfer/${key}`;
+}
+
+export function promptTransferKey(node: string, sessionId: string): string {
+	return `${node}-${sessionId}`;
 }
 
 export function parseTransferSnapshot(
