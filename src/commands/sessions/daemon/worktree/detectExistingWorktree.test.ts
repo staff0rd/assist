@@ -23,6 +23,11 @@ describe("detectExistingWorktree", () => {
 		expect(detectExistingWorktree(clone)).toBeUndefined();
 	});
 
+	it("does not bind the main clone when git prints an equivalent spelling of it", () => {
+		mainMock.mockReturnValue(`${clone}/../repo`);
+		expect(detectExistingWorktree(clone)).toBeUndefined();
+	});
+
 	it("binds a linked worktree to its clone", () => {
 		mainMock.mockReturnValue(asGitPrintsIt(clone));
 		const linked = resolve("/git/repo-2");
