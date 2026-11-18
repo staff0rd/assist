@@ -1,3 +1,10 @@
+## [0.1219.1](https://github.com/staff0rd/assist/compare/v0.1219.0...v0.1219.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* use newest node for engines ranges ([e92dc99](https://github.com/staff0rd/assist/commit/e92dc9981743b376655396b5756e099160035298))
+
 # [0.1219.0](https://github.com/staff0rd/assist/compare/v0.1218.0...v0.1219.0) (2026-11-18)
 
 
