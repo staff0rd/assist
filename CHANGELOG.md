@@ -1,3 +1,10 @@
+## [0.1223.1](https://github.com/staff0rd/assist/compare/v0.1223.0...v0.1223.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* card pane 640px beside fluid board ([f0889a8](https://github.com/staff0rd/assist/commit/f0889a8cd3f8758cf1d8c76b98d0cba536ed2552))
+
 # [0.1223.0](https://github.com/staff0rd/assist/compare/v0.1222.0...v0.1223.0) (2026-11-18)
 
 
