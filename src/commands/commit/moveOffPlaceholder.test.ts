@@ -56,6 +56,7 @@ describe("moveOffPlaceholder", () => {
 			slug: "card-layout",
 			jira: undefined,
 			from: "HEAD",
+			unique: true,
 		});
 		expect(mockExecFile).toHaveBeenCalledWith(
 			"git",
@@ -75,6 +76,7 @@ describe("moveOffPlaceholder", () => {
 			slug: "card-layout",
 			jira: "ABC-12",
 			from: "HEAD",
+			unique: true,
 		});
 	});
 

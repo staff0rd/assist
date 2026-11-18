@@ -15,7 +15,12 @@ export async function moveOffPlaceholder(
 	if (!placeholder) return;
 	const { text, jira } = await placeholderBranchSource(message);
 	const slug = await generateBranchSlug(text);
-	const { branchName } = await createBranch({ slug, jira, from: "HEAD" });
+	const { branchName } = await createBranch({
+		slug,
+		jira,
+		from: "HEAD",
+		unique: true,
+	});
 	trackDefaultBranch(config);
 	console.log(`Moved off placeholder ${placeholder} onto ${branchName}`);
 }

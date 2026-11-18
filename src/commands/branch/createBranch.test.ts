@@ -28,6 +28,10 @@ vi.mock("./resolveDefaultBranch", () => ({
 	resolveDefaultBranch: (override?: string) => override ?? "main",
 }));
 
+vi.mock("./freeBranchName", () => ({
+	freeBranchName: (name: string) => `${name}-2`,
+}));
+
 vi.mock("../../shared/resolveSessionItemId", () => ({
 	resolveSessionItemId: () => null,
 }));
@@ -45,6 +49,7 @@ function firstCallOrder(mock: { mock: { invocationCallOrder: number[] } }) {
 describe("createBranch", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockExecFileSync.mockReset();
 		vi.mocked(loadConfig).mockReturnValue(makeAssistConfig());
 	});
 
@@ -115,6 +120,21 @@ describe("createBranch", () => {
 		expect(mockExecFileSync).not.toHaveBeenCalledWith(
 			"git",
 			["switch", "-c", "stacked-work", "nope"],
+			expect.anything(),
+		);
+	});
+
+	it("switches to a free variant of a taken name when unique", async () => {
+		const result = await createBranch({
+			slug: "card-layout",
+			from: "HEAD",
+			unique: true,
+		});
+
+		expect(result.branchName).toBe("card-layout-2");
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"git",
+			["switch", "-c", "card-layout-2", "HEAD"],
 			expect.anything(),
 		);
 	});

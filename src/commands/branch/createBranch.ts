@@ -4,24 +4,28 @@ import { gitRefUrl } from "../../shared/gitRefUrl";
 import { loadConfig } from "../../shared/loadConfig";
 import { resolveSessionItemId } from "../../shared/resolveSessionItemId";
 import { buildBranchName } from "./buildBranchName";
+import { freeBranchName } from "./freeBranchName";
 import { resolveDefaultBranch } from "./resolveDefaultBranch";
 
 export async function createBranch({
 	slug,
 	jira,
 	from,
+	unique,
 }: {
 	slug: string;
 	jira?: string;
 	from?: string;
+	unique?: boolean;
 }): Promise<{ branchName: string; baseRef: string }> {
 	const config = loadConfig();
-	const branchName = buildBranchName({
+	const generatedName = buildBranchName({
 		prefix: config.branch?.prefix,
 		jira,
 		slug,
 	});
 	execSync("git fetch", { stdio: "inherit" });
+	const branchName = unique ? freeBranchName(generatedName) : generatedName;
 
 	let baseRef: string;
 	if (from) {
