@@ -1,3 +1,10 @@
+# [0.1234.0](https://github.com/staff0rd/assist/compare/v0.1233.0...v0.1234.0) (2026-11-18)
+
+
+### Features
+
+* scale text on all app pages ([85c1736](https://github.com/staff0rd/assist/commit/85c1736b6c8fab0eaae5cc52842ab9091e8f2ff2))
+
 # [0.1233.0](https://github.com/staff0rd/assist/compare/v0.1232.0...v0.1233.0) (2026-11-18)
 
 
