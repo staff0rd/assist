@@ -1,3 +1,10 @@
+# [0.1232.0](https://github.com/staff0rd/assist/compare/v0.1231.1...v0.1232.0) (2026-11-18)
+
+
+### Features
+
+* scale preview pane with text size ([ddca4a1](https://github.com/staff0rd/assist/commit/ddca4a177fe28a9174769beaaa5c5f1e9e7d97aa))
+
 ## [0.1231.1](https://github.com/staff0rd/assist/compare/v0.1231.0...v0.1231.1) (2026-11-18)
 
 
