@@ -26,6 +26,16 @@ screenshots:
       width: 1280
       height: 560
     crop: "[data-testid=sidebar]"
+  - file: sessions-card-mode.png
+    alt: Card mode's board of session cards in Needs you and Working columns
+    route: /sessions
+    scene: dashboard
+    setup:
+      - assist: [config, set, sessions.cardMode, "true", --node]
+    waitFor: text=Needs you
+    viewport:
+      width: 1280
+      height: 640
 ---
 
 ## Session cards
@@ -65,10 +75,6 @@ A group you collapse stays where it is, marked with a pin, until you open it or 
 
 The button at the left of the tab row hides the sidebar; the same button then appears in the toolbar to bring it back.
 
-## Card mode
-
-**Card mode** in the dashboard menu (`sessions.cardMode`) swaps the sidebar and terminal for a board of session cards, sorted into **Needs you** and **Working**.
-
 ## Closing a session
 
 The × on a card ends the session. A finished session is dismissed straight away; anything still live asks first, because closing kills its process. A card with nested sessions offers to close just itself or all of them. Hold :kbd[Shift] as you click the × or press :kbd[Enter] to skip the confirmation; on a card with nested sessions this closes all of them. An agent can also close its own session: [`/close`](../sessions-cli/#slash-commands) has it check its work is finished first.
@@ -81,3 +87,9 @@ The **History** tab lists past sessions in the selected repo. The search box sea
 
 ::screenshot{file="sessions-history.png"}
 Clicking an entry shows its transcript, and **Resume** starts it again as a live session.
+
+## Card mode
+
+:badge[experimental] **Card mode** in the dashboard menu (`sessions.cardMode`) swaps the sidebar and terminal for a board of session cards, sorted into **Needs you** and **Working**.
+
+::screenshot{file="sessions-card-mode.png"}
