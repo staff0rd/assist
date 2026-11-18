@@ -2,27 +2,11 @@ import { useMemo } from "react";
 import { SessionArea } from "./SessionContent/SessionArea";
 import { LastMessageHistoryContext } from "./SessionContent/useLastMessageHistory";
 import type { SessionSocket } from "../useSessionSocket";
+import { useSessionLifecycle } from "./useSessionLifecycle";
 import { SocketShellProviders } from "./SessionContent/SessionArea/TranscriptArea/SocketShellProviders";
 
 export function SessionContent({ socket }: { socket: SessionSocket }) {
-	const lifecycle = useMemo(
-		() => ({
-			onRetry: socket.retrySession,
-			onRestart: socket.restartSession,
-			onStartOver: socket.startOverSession,
-			onDismiss: socket.dismissSession,
-			onSetAutoApprove: socket.setAutoApprove,
-			onSetAutoAdvance: socket.setAutoAdvance,
-		}),
-		[
-			socket.retrySession,
-			socket.restartSession,
-			socket.startOverSession,
-			socket.dismissSession,
-			socket.setAutoApprove,
-			socket.setAutoAdvance,
-		],
-	);
+	const lifecycle = useSessionLifecycle(socket);
 	const lastMessageHistory = useMemo(
 		() => ({
 			userMessages: socket.userMessages,
