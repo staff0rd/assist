@@ -10,15 +10,11 @@ import { NeedsYouCardHead } from "./NeedsYouCardHead";
 
 export function NeedsYouCard({
 	session,
-	nowMs,
 	selected,
-	compact,
 	onOpen,
 }: {
 	session: SessionInfo;
-	nowMs: number;
 	selected: boolean;
-	compact: boolean;
 	onOpen: () => void;
 }) {
 	const chip = needsYouChip(session);
@@ -26,26 +22,19 @@ export function NeedsYouCard({
 		<BoardCard
 			tone={chip.color}
 			selected={selected}
-			compact={compact}
 			onOpen={onOpen}
 			testId="needs-you-card"
 		>
-			<NeedsYouCardHead session={session} chip={chip} nowMs={nowMs} />
+			<NeedsYouCardHead session={session} chip={chip} />
+			<Box sx={[cardTextSx.title, clampSx(2)]}>{sessionTitle(session)}</Box>
 			<Box
-				sx={[compact ? cardTextSx.compactTitle : cardTextSx.title, clampSx(2)]}
+				sx={[
+					{ typography: "body2", color: "text.primary", opacity: 0.85 },
+					clampSx(4),
+				]}
 			>
-				{sessionTitle(session)}
+				{askedText(session)}
 			</Box>
-			{!compact && (
-				<Box
-					sx={[
-						{ typography: "body2", color: "text.primary", opacity: 0.85 },
-						clampSx(4),
-					]}
-				>
-					{askedText(session)}
-				</Box>
-			)}
 		</BoardCard>
 	);
 }

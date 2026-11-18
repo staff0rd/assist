@@ -62,6 +62,7 @@ function renderBoard(extra: SessionInfo[] = []) {
 			}),
 		],
 		selectSession: vi.fn(),
+		dismissSession: vi.fn(),
 		initialized: new Set(),
 		sendPrDecision: vi.fn(),
 		sendInput: vi.fn(),
@@ -113,6 +114,16 @@ describe("CardBoard", () => {
 			"r",
 			expect.stringContaining("carry on"),
 		);
+	});
+
+	it("dismisses a session from its card without opening it", () => {
+		const socket = renderBoard();
+
+		fireEvent.click(screen.getByTitle(/Dismiss session r/), { shiftKey: true });
+
+		expect(socket.dismissSession).toHaveBeenCalledWith("r", undefined);
+		expect(socket.selectSession).not.toHaveBeenCalled();
+		expect(screen.queryByTestId("card-session-pane")).toBeNull();
 	});
 
 	it("returns to the full board when the pane closes", () => {
@@ -181,7 +192,7 @@ describe("CardBoard", () => {
 		);
 	});
 
-	it("toggles the session view beside the preview and compacts the board", () => {
+	it("toggles the session view above the preview", () => {
 		renderBoard();
 		fireEvent.click(screen.getByTestId("needs-you-card"));
 		expect(screen.queryByTestId("card-session-view")).toBeNull();
@@ -192,12 +203,10 @@ describe("CardBoard", () => {
 			"session: w",
 		);
 		expect(screen.getByText("preview: Pick a colour")).toBeTruthy();
-		expect(screen.queryByText("Refactoring the parser")).toBeNull();
 
 		fireEvent.click(screen.getByRole("button", { name: "Hide session" }));
 
 		expect(screen.queryByTestId("card-session-view")).toBeNull();
-		expect(screen.getByText("Refactoring the parser")).toBeTruthy();
 	});
 
 	it("hides the session again when another card opens", () => {

@@ -1,6 +1,5 @@
-export type BoardLayout = "full" | "narrow" | "compact";
+export type BoardLayout = "full" | "narrow";
 
-export function boardLayout(paneOpen: boolean, sessionShown: boolean) {
-	if (!paneOpen) return "full";
-	return sessionShown ? "compact" : "narrow";
+export function boardLayout(paneOpen: boolean): BoardLayout {
+	return paneOpen ? "narrow" : "full";
 }

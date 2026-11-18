@@ -4,11 +4,12 @@ import type { SessionInfo } from "../../types";
 import { boardColumnSx } from "./boardColumnSx";
 import { PhoneRepoChips } from "../../PhoneShell/PhoneRepoChips";
 import type { BoardLayout } from "./boardLayout";
-import { NeedsYouGroup } from "./NeedsYouGroup";
+import { CardGroup } from "./CardGroup";
+import { NeedsYouCard } from "./NeedsYouCard";
 import { OtherGroup } from "./OtherGroup";
 import { ServersStrip } from "./ServersStrip";
 import { useBoardGroups } from "./useBoardGroups";
-import { WorkingGroup } from "./WorkingGroup";
+import { WorkingCard } from "./WorkingCard";
 
 const repoChipsSx = { display: "flex", flexWrap: "wrap", gap: 1 } as const;
 
@@ -25,7 +26,6 @@ export function BoardColumn({
 }) {
 	const { filter, groups } = useBoardGroups(sessions);
 	const { needsYou, working, other, servers } = groups;
-	const compact = layout === "compact";
 
 	return (
 		<Box data-testid="card-board" sx={boardColumnSx(layout)}>
@@ -37,16 +37,20 @@ export function BoardColumn({
 				sx={repoChipsSx}
 			/>
 			<ServersStrip sessions={servers} openId={openId} onOpen={onOpen} />
-			<NeedsYouGroup
+			<CardGroup
+				title="Needs you"
+				color="warning.main"
+				card={NeedsYouCard}
 				sessions={needsYou}
 				openId={openId}
-				compact={compact}
 				onOpen={onOpen}
 			/>
-			<WorkingGroup
+			<CardGroup
+				title="Working"
+				color="success.main"
+				card={WorkingCard}
 				sessions={working}
 				openId={openId}
-				compact={compact}
 				onOpen={onOpen}
 			/>
 			{needsYou.length === 0 && working.length === 0 && (
@@ -54,12 +58,7 @@ export function BoardColumn({
 					Nothing needs you and nothing is working.
 				</Typography>
 			)}
-			<OtherGroup
-				sessions={other}
-				openId={openId}
-				compact={compact}
-				onOpen={onOpen}
-			/>
+			<OtherGroup sessions={other} openId={openId} onOpen={onOpen} />
 		</Box>
 	);
 }

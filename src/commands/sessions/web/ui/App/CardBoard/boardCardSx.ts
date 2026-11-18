@@ -4,20 +4,16 @@ import { cardMinHeight } from "./cardMinHeight";
 
 export type CardTone = "warning" | "check" | "neutral";
 
-export function boardCardSx(
-	tone: CardTone,
-	selected: boolean,
-	compact: boolean,
-) {
+export function boardCardSx(tone: CardTone, selected: boolean) {
 	return (t: Theme) => ({
 		display: "flex",
 		flexDirection: "column",
 		alignItems: "stretch",
 		justifyContent: "flex-start",
 		textAlign: "left",
-		gap: compact ? 0.75 : 1.5,
-		minHeight: cardMinHeight(tone, compact),
-		p: compact ? 1.5 : 2.5,
+		gap: 1.5,
+		minHeight: cardMinHeight(tone),
+		p: 2.5,
 		minWidth: 0,
 		font: "inherit",
 		color: "text.primary",

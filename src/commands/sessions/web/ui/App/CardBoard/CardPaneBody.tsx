@@ -9,6 +9,7 @@ import { CardSessionView } from "./CardSessionView";
 import { cardPanePreview } from "./cardPanePreview";
 
 const columnSx = {
+	flex: 1,
 	minHeight: 0,
 	display: "flex",
 	flexDirection: "column",
@@ -28,16 +29,9 @@ export function CardPaneBody({
 	const preview = cardPanePreview(session);
 	return (
 		<SocketShellProviders socket={socket}>
-			<Box sx={{ flex: 1, minHeight: 0, display: "flex" }}>
+			<Box sx={[columnSx, { overflow: "hidden" }]}>
 				{sessionShown && <CardSessionView session={session} socket={socket} />}
-				<Box
-					sx={[
-						columnSx,
-						sessionShown
-							? { flex: "0 0 460px", minWidth: 0 }
-							: { flex: 1, minWidth: 0 },
-					]}
-				>
+				<Box sx={columnSx}>
 					{preview ? (
 						<CardPendingPreview
 							preview={preview}

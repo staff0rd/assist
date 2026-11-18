@@ -1,16 +1,8 @@
 import Box from "@mui/material/Box";
-import type { SessionInfo } from "../../types";
+import type { BoardGroupProps } from "./BoardGroupProps";
 import { ServerPill } from "./ServerPill";
 
-export function ServersStrip({
-	sessions,
-	openId,
-	onOpen,
-}: {
-	sessions: SessionInfo[];
-	openId: string | undefined;
-	onOpen: (id: string) => void;
-}) {
+export function ServersStrip({ sessions, openId, onOpen }: BoardGroupProps) {
 	if (sessions.length === 0) return null;
 	return (
 		<Box

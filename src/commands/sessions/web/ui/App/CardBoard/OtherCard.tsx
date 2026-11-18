@@ -2,32 +2,26 @@ import Box from "@mui/material/Box";
 import { statusPillSx } from "../../designSystem/statusPillSx";
 import { sessionTitle } from "../sessionTitle";
 import type { SessionInfo } from "../../types";
-import { awaitingSince } from "./awaitingSince";
 import { BoardCard } from "./BoardCard";
 import { CardRepo } from "./CardRepo";
+import { CardClose } from "./CardClose";
 import { cardTextSx } from "./cardTextSx";
 import { clampSx } from "./clampSx";
-import { formatAge } from "./formatAge";
 import { otherChipColor } from "./otherChipColor";
 
 export function OtherCard({
 	session,
-	nowMs,
 	selected,
-	compact,
 	onOpen,
 }: {
 	session: SessionInfo;
-	nowMs: number;
 	selected: boolean;
-	compact: boolean;
 	onOpen: () => void;
 }) {
 	return (
 		<BoardCard
 			tone="neutral"
 			selected={selected}
-			compact={compact}
 			onOpen={onOpen}
 			testId="other-card"
 		>
@@ -42,15 +36,9 @@ export function OtherCard({
 					{session.status}
 				</Box>
 				<CardRepo session={session} />
-				<Box component="span" sx={cardTextSx.age}>
-					{formatAge(awaitingSince(session), nowMs)}
-				</Box>
+				<CardClose session={session} />
 			</Box>
-			<Box
-				sx={[compact ? cardTextSx.compactTitle : cardTextSx.title, clampSx(2)]}
-			>
-				{sessionTitle(session)}
-			</Box>
+			<Box sx={[cardTextSx.title, clampSx(2)]}>{sessionTitle(session)}</Box>
 		</BoardCard>
 	);
 }

@@ -1,9 +1,15 @@
 import Box from "@mui/material/Box";
+import { keyframes } from "@mui/material/styles";
 import { SessionSlashProviders } from "../../slashSuggestions/SessionSlashProviders";
 import type { SessionInfo } from "../../types";
 import { ApiNodeContext } from "../../useApiNode";
 import type { SessionSocket } from "../../useSessionSocket";
 import { SessionBody } from "../SessionContent/SessionArea/SessionBody";
+
+const slideDown = keyframes`
+	from { transform: translateY(-100%); }
+	to { transform: translateY(0); }
+`;
 
 export function CardSessionView({
 	session,
@@ -20,11 +26,13 @@ export function CardSessionView({
 					aria-label="Session"
 					data-testid="card-session-view"
 					sx={(t) => ({
-						flex: 1,
-						minWidth: 0,
+						flex: "0 0 50%",
+						minHeight: 0,
 						display: "flex",
-						borderRight: 1,
+						borderBottom: 1,
 						borderColor: t.tokens.color.line,
+						animation: `${slideDown} 220ms ease-out`,
+						"@media (prefers-reduced-motion: reduce)": { animation: "none" },
 					})}
 				>
 					<SessionBody
