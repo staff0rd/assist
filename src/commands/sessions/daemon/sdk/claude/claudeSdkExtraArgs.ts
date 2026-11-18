@@ -1,13 +1,24 @@
 import { loadConfigFrom } from "../../../../../shared/loadConfigFrom";
 import { daemonLog } from "../../daemonLog";
 
+function chromeEnabled(cwd: string, label: string): boolean {
+	try {
+		return loadConfigFrom(cwd).harness.claudeSdkChrome ?? true;
+	} catch (error) {
+		daemonLog(
+			`${label} claude-sdk: config unreadable for cwd=${cwd}: ${error}`,
+		);
+		return true;
+	}
+}
+
 export function claudeSdkExtraArgs(
 	cwd: string,
-	sessionLabel: string,
+	label: string,
 ): Record<string, string | null> {
-	const chrome = loadConfigFrom(cwd).harness.claudeSdkChrome ?? true;
+	const chrome = chromeEnabled(cwd, label);
 	daemonLog(
-		`claude-sdk ${sessionLabel}: Claude in Chrome ${chrome ? "on (--chrome)" : "off"}`,
+		`${label} claude-sdk: Claude in Chrome ${chrome ? "on (--chrome)" : "off"}`,
 	);
 	return chrome ? { chrome: null } : {};
 }

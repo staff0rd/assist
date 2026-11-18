@@ -26,10 +26,7 @@ export function sdkQueryOptions(
 		abortController: abort,
 		model: opts.model,
 		promptSuggestions: true,
-		extraArgs: claudeSdkExtraArgs(
-			opts.cwd ?? process.cwd(),
-			opts.sessionId ?? opts.resumeId ?? opts.conversationId ?? "session",
-		),
+		extraArgs: claudeSdkExtraArgs(opts.cwd ?? process.cwd(), context.label),
 		systemPrompt: { type: "preset", preset: "claude_code", append },
 	};
 }
