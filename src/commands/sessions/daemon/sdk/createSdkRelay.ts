@@ -41,5 +41,5 @@ export function createSdkRelay(label: string, backgroundTasks: boolean) {
 			if (idle) emit({ kind: "status", status: "waiting" });
 		},
 	};
-	return { handle, current: () => current };
+	return { handle, emit, current: () => current };
 }

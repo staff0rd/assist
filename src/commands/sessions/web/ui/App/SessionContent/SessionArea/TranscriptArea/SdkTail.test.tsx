@@ -191,6 +191,95 @@ describe("SdkTail", () => {
 		);
 	});
 
+	it("names the workflow command and its elapsed time, with its output below", () => {
+		vi.useFakeTimers({ now: 200_000 });
+		render(
+			<SdkTail
+				session={makeSessionInfo({
+					sdk: true,
+					status: "running",
+					sdkWorkflow: {
+						command: "assist review 2285",
+						startedAt: 200_000 - 102_000,
+						lines: [
+							{ stream: "stdout", text: "[claude] Read a.ts" },
+							{ stream: "stderr", text: "[codex] retrying after 429" },
+						],
+					},
+				})}
+			/>,
+		);
+		expect(screen.getByRole("status").textContent).toContain(
+			"Working · assist review 2285 · 1m 42s",
+		);
+		const output = screen.getByLabelText("Workflow output");
+		expect(output.textContent).toBe(
+			"[claude] Read a.ts\n[codex] retrying after 429",
+		);
+		const stderr = screen.getByText("[codex] retrying after 429");
+		expect(getComputedStyle(stderr).color).not.toBe(
+			getComputedStyle(screen.getByText("[claude] Read a.ts")).color,
+		);
+	});
+
+	it("scrolls the workflow output to the newest line", () => {
+		const session = (lines: string[]) =>
+			makeSessionInfo({
+				sdk: true,
+				status: "running",
+				sdkWorkflow: {
+					command: "assist review 1",
+					startedAt: Date.now(),
+					lines: lines.map((text) => ({ stream: "stdout" as const, text })),
+				},
+			});
+		const { rerender } = render(<SdkTail session={session(["one"])} />);
+		const output = screen.getByLabelText("Workflow output");
+		Object.defineProperty(output, "scrollHeight", { value: 500 });
+		rerender(<SdkTail session={session(["one", "two"])} />);
+		expect(output.scrollTop).toBe(500);
+	});
+
+	it("prefers an attached query's activity over the workflow command", () => {
+		render(
+			<SdkTail
+				session={makeSessionInfo({
+					sdk: true,
+					status: "running",
+					sdkActivity: "Working · Bash",
+					sdkWorkflow: {
+						command: "assist backlog run",
+						startedAt: Date.now(),
+						lines: [{ stream: "stdout", text: "phase 1" }],
+					},
+				})}
+			/>,
+		);
+		expect(screen.getByRole("status").textContent).not.toContain(
+			"assist backlog run",
+		);
+		expect(screen.getByLabelText("Workflow output").textContent).toBe(
+			"phase 1",
+		);
+	});
+
+	it("hides the workflow output once the session stops running", () => {
+		render(
+			<SdkTail
+				session={makeSessionInfo({
+					sdk: true,
+					status: "done",
+					sdkWorkflow: {
+						command: "assist review 1",
+						startedAt: Date.now(),
+						lines: [{ stream: "stdout", text: "x" }],
+					},
+				})}
+			/>,
+		);
+		expect(screen.queryByLabelText("Workflow output")).toBeNull();
+	});
+
 	it("hides the elapsed time while the turn is stopping", () => {
 		render(
 			<SdkTail

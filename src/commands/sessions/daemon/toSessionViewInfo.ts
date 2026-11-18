@@ -23,6 +23,7 @@ export function toSessionViewInfo({
 	sdkPromptSuggestion,
 	sdkInterrupting,
 	sdkResuming,
+	sdkWorkflow,
 }: Session) {
 	return {
 		sdk: pty?.sdk || (!pty && pendingStart && drivenStart) ? true : undefined,
@@ -36,6 +37,7 @@ export function toSessionViewInfo({
 		sdkPromptSuggestion,
 		sdkInterrupting,
 		sdkResuming,
+		sdkWorkflow,
 		transfer,
 		lastUserMessage,
 		lastAssistantMessage,

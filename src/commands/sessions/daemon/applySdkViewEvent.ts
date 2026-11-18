@@ -19,6 +19,8 @@ export function applySdkViewEvent(
 		applySdkQueued(session, event);
 	} else if (event.kind === "pending" || event.kind === "background") {
 		applySdkTaskList(session, event);
+	} else if (event.kind === "workflow") {
+		session.sdkWorkflow = event.workflow ?? undefined;
 	} else if (event.kind === "suggestion") {
 		session.sdkPromptSuggestion = event.text ?? undefined;
 	} else if (event.kind === "resumed") {

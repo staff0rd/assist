@@ -6,6 +6,7 @@ import { refuseMissingCwd } from "../spawnPty";
 import { createSdkRelay } from "./createSdkRelay";
 import { killSdkChild } from "./killSdkChild";
 import { pipeWorkflowOutput } from "./pipeWorkflowOutput";
+import { publishWorkflowOutput } from "./publishWorkflowOutput";
 import { noopDisposable, sdkTerminalStub } from "./sdkTerminalStub";
 import { startWorkflowChild } from "./startWorkflowChild";
 import { trackWorkflowExit } from "./trackWorkflowExit";
@@ -24,9 +25,12 @@ export function spawnSdkWorkflow(
 		label,
 		harnessCapability(harness, "tasks.background").supported,
 	);
+	const output = publishWorkflowOutput(args.join(" "), relay.emit);
 	const dataListeners: ((data: string) => void)[] = [];
-	pipeWorkflowOutput(child, label, (data) => {
-		for (const listener of dataListeners) listener(data);
+	pipeWorkflowOutput(child, label, (data, stream) => {
+		output.append(stream, data);
+		const terminal = data.replaceAll("\n", "\r\n");
+		for (const listener of dataListeners) listener(terminal);
 	});
 	return {
 		get pid() {
@@ -37,7 +41,10 @@ export function spawnSdkWorkflow(
 			dataListeners.push(listener);
 			return noopDisposable;
 		},
-		onExit: trackWorkflowExit(child, label, () => relay.current()?.kill()),
+		onExit: trackWorkflowExit(child, label, () => {
+			output.end();
+			relay.current()?.kill();
+		}),
 		kill: () => {
 			daemonLog(
 				`${label} sdk workflow ended by kill (pid ${child.pid ?? "none"})`,

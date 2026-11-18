@@ -5,6 +5,7 @@ import type { SpinnerHandle } from "../../commands/review/MultiSpinner";
 import type { ReviewerResult } from "../../commands/review/runStreamingChild";
 import type { SpawnResult } from "../spawnInherit";
 import type { CapabilityId } from "./capabilityDefinitions";
+import type { SdkWorkflowView } from "../../commands/sessions/shared/SdkWorkflowView";
 
 export type SdkProcessInfo = {
 	command: string;
@@ -21,6 +22,7 @@ export type SdkSessionEvent =
 	| { kind: "pending"; texts: string[] }
 	| { kind: "background"; tasks: string[] }
 	| { kind: "suggestion"; text: string | null }
+	| { kind: "workflow"; workflow: SdkWorkflowView | null }
 	| { kind: "interrupting"; pending: boolean }
 	| { kind: "resumed" }
 	| { kind: "conversation"; id: string };

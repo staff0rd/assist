@@ -1,5 +1,6 @@
 import type { SdkProcessInfo } from "../../../shared/harnessAdapters/types";
 import type { SdkShellRow } from "./SdkShellRow";
+import type { SdkWorkflowView } from "./SdkWorkflowView";
 
 export type SdkViewState = {
 	sdkActivity?: string;
@@ -12,4 +13,5 @@ export type SdkViewState = {
 	sdkPromptSuggestion?: string;
 	sdkInterrupting?: boolean;
 	sdkResuming?: boolean;
+	sdkWorkflow?: SdkWorkflowView;
 };

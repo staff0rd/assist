@@ -1,19 +1,13 @@
 import type { SessionInfo, Transcript } from "../../../../types";
 import { sdkComposerState } from "../SdkComposer/sdkComposerState";
-import { formatToolElapsed } from "./formatToolElapsed";
 import { SdkPendingRows } from "./SdkPendingRows";
 import { SdkTailRow } from "./SdkTailRow";
 import { TranscriptDivider } from "./TranscriptPane/TranscriptRow/TranscriptDivider";
-import { useTickingSeconds } from "./useTickingSeconds";
+import { useActivityRow } from "./useActivityRow";
+import { WorkflowOutput } from "./WorkflowOutput";
 import { processLine } from "./processLine";
 import { SdkQueuedRows } from "./SdkQueuedRows";
 import { SdkShellRows } from "./SdkShellRows";
-
-function activityText(session: SessionInfo): string | undefined {
-	if (session.status !== "running") return undefined;
-	if (session.sdkInterrupting) return "Stopping turn…";
-	return session.sdkActivity ?? "Working";
-}
 
 function endsWithRestart(session: SessionInfo, transcript?: Transcript | null) {
 	if (transcript?.sessionId !== session.id) return false;
@@ -27,12 +21,7 @@ export function SdkTail({
 	session: SessionInfo;
 	transcript?: Transcript | null;
 }) {
-	const activity = activityText(session);
-	const elapsed = useTickingSeconds(
-		activity && !session.sdkInterrupting
-			? session.sdkActivityElapsed
-			: undefined,
-	);
+	const row = useActivityRow(session);
 	if (sdkComposerState(session).resuming)
 		return (
 			<>
@@ -47,14 +36,15 @@ export function SdkTail({
 			<SdkPendingRows session={session} transcript={transcript} />
 			<SdkShellRows session={session} />
 			<SdkQueuedRows session={session} />
-			{activity && (
+			{row && (
 				<SdkTailRow
-					text={activity}
-					suffix={
-						elapsed === undefined ? undefined : formatToolElapsed(elapsed)
-					}
+					text={row.text}
+					suffix={row.suffix}
 					process={processLine(session)}
 				/>
+			)}
+			{row && session.sdkWorkflow && (
+				<WorkflowOutput lines={session.sdkWorkflow.lines} />
 			)}
 			{session.sdkBackgroundTasks?.map((task, i) => (
 				<SdkTailRow key={`${i}:${task}`} text={`Background · ${task}`} />
