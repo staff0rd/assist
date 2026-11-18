@@ -1,26 +1,25 @@
 import Box from "@mui/material/Box";
-import { Outlet, useLocation } from "react-router";
+import { useLocation } from "react-router";
 import { AppSidebar } from "../../AppSidebar";
-import { ErrorBoundary } from "./AppLayout/ErrorBoundary";
 import { useActivateSession } from "../../../useActivateSession";
 import { DiffPanelsProvider } from "../../useDiffPanels";
-import { useScrollRestoration } from "./AppLayout/useScrollRestoration";
-import { ScrollRestorationContext } from "../../../useScrollRestorationContext";
 import type { SessionSocket } from "../../../useSessionSocket";
 import { useSidebarCollapsedContext } from "../../useSidebarCollapsedContext";
+import { useShowsSidebar } from "./AppLayout/useShowsSidebar";
 import { useSidebarTab } from "./AppLayout/useSidebarTab";
 import { StarredSessionsProvider } from "../../useStarredSessions";
 import { appLayoutSx } from "./AppLayout/appLayoutSx";
+import { LayoutContentPane } from "./AppLayout/LayoutContentPane";
 
 export function AppLayout({ socket }: { socket: SessionSocket }) {
 	const { pathname } = useLocation();
-	const { containerRef, restoration } = useScrollRestoration(pathname);
 	const { tab, onTabChange } = useSidebarTab(
 		socket.requestHistory,
 		socket.clearTranscript,
 	);
 	const activateSession = useActivateSession(socket.selectSession);
 	const { collapsed } = useSidebarCollapsedContext();
+	const showSidebar = useShowsSidebar(pathname);
 
 	return (
 		<StarredSessionsProvider
@@ -32,29 +31,15 @@ export function AppLayout({ socket }: { socket: SessionSocket }) {
 				onActivateSession={activateSession}
 			>
 				<Box sx={appLayoutSx}>
-					<AppSidebar
-						socket={socket}
-						tab={tab}
-						onTabChange={onTabChange}
-						collapsed={collapsed}
-					/>
-					<Box
-						ref={containerRef}
-						sx={{
-							flex: 1,
-							minWidth: 0,
-							height: "100%",
-							display: "flex",
-							flexDirection: "column",
-							overflow: "auto",
-						}}
-					>
-						<ScrollRestorationContext.Provider value={restoration}>
-							<ErrorBoundary key={pathname}>
-								<Outlet />
-							</ErrorBoundary>
-						</ScrollRestorationContext.Provider>
-					</Box>
+					{showSidebar && (
+						<AppSidebar
+							socket={socket}
+							tab={tab}
+							onTabChange={onTabChange}
+							collapsed={collapsed}
+						/>
+					)}
+					<LayoutContentPane pathname={pathname} />
 				</Box>
 			</DiffPanelsProvider>
 		</StarredSessionsProvider>

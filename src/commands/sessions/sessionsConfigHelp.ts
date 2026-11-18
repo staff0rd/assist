@@ -32,6 +32,11 @@ export const sessionsConfigHelp: ConfigHelpEntry[] = [
 		note: "default mode pre-selected in the Ctrl+N new session dialog: draft | bug | prompt | design (default: draft)",
 	},
 	{
+		key: "sessions.cardMode",
+		setter: "assist config set sessions.cardMode true --node",
+		note: "default off: the web Sessions page shows a board of cards (Needs you, Working) instead of the session sidebar and terminal. Also toggled from Card mode in the hamburger menu",
+	},
+	{
 		key: "sessions.yolo",
 		setter: "assist config set sessions.yolo true",
 		note: "default off: the daemon answers an ask-question form itself, without showing it, when every question is single-select with a (Recommended) option, picking those options, and marks a manual check raised in a backlog phase with later phases Works. Set globally or per repo (--repo)",

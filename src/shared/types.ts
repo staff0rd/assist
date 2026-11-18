@@ -332,6 +332,7 @@ const assistConfigShape = {
 			hotkeys: hotkeysSchema.optional(),
 			askQuestion: z.boolean().default(true),
 			askQuestionAutoSubmit: z.boolean().default(false),
+			cardMode: z.boolean().default(false),
 			cleanLeftovers: z.boolean().default(true),
 			yolo: z.boolean().default(false),
 		})

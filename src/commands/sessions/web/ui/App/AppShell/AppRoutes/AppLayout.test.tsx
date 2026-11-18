@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import { AppLayout } from "./AppLayout";
 import type { SessionSocket } from "../../../useSessionSocket";
+import { CardModeContext } from "../../useCardModeContext";
 import { SidebarCollapsedContext } from "../../useSidebarCollapsedContext";
 
 vi.mock("../../AppSidebar/Sidebar/SidebarBody", () => ({
@@ -44,31 +45,35 @@ function socketStub(selectSession: (id: string) => void): SessionSocket {
 function Harness({
 	socket,
 	initiallyCollapsed,
+	cardMode,
 }: {
 	socket: SessionSocket;
 	initiallyCollapsed: boolean;
+	cardMode: boolean;
 }) {
 	const [collapsed, setCollapsed] = useState(initiallyCollapsed);
 	return (
-		<SidebarCollapsedContext.Provider
-			value={{ collapsed, onToggleCollapsed: () => setCollapsed(!collapsed) }}
-		>
-			<button type="button" onClick={() => setCollapsed(!collapsed)}>
-				toggle sidebar
-			</button>
-			<Routes>
-				<Route element={<AppLayout socket={socket} />}>
-					<Route
-						path="/sessions"
-						element={<div data-testid="content">sessions</div>}
-					/>
-					<Route
-						path="/config"
-						element={<div data-testid="content">config</div>}
-					/>
-				</Route>
-			</Routes>
-		</SidebarCollapsedContext.Provider>
+		<CardModeContext.Provider value={{ cardMode, setCardMode: () => {} }}>
+			<SidebarCollapsedContext.Provider
+				value={{ collapsed, onToggleCollapsed: () => setCollapsed(!collapsed) }}
+			>
+				<button type="button" onClick={() => setCollapsed(!collapsed)}>
+					toggle sidebar
+				</button>
+				<Routes>
+					<Route element={<AppLayout socket={socket} />}>
+						<Route
+							path="/sessions"
+							element={<div data-testid="content">sessions</div>}
+						/>
+						<Route
+							path="/config"
+							element={<div data-testid="content">config</div>}
+						/>
+					</Route>
+				</Routes>
+			</SidebarCollapsedContext.Provider>
+		</CardModeContext.Provider>
 	);
 }
 
@@ -76,16 +81,19 @@ function renderLayout({
 	collapsed = false,
 	route = "/sessions",
 	selectSession = vi.fn(),
+	cardMode = false,
 }: {
 	collapsed?: boolean;
 	route?: string;
 	selectSession?: (id: string) => void;
+	cardMode?: boolean;
 } = {}) {
 	render(
 		<MemoryRouter initialEntries={[route]}>
 			<Harness
 				socket={socketStub(selectSession)}
 				initiallyCollapsed={collapsed}
+				cardMode={cardMode}
 			/>
 		</MemoryRouter>,
 	);
@@ -212,5 +220,27 @@ describe("AppLayout jump-to-next-waiting while collapsed", () => {
 		pressNextWaitingHotkey();
 
 		expect(screen.getByTestId("content").textContent).toBe("sessions");
+	});
+});
+
+describe("AppLayout card mode", () => {
+	it("keeps the sidebar with card mode off", () => {
+		renderLayout({ cardMode: false });
+
+		expect(screen.getByTestId("sidebar-body")).toBeDefined();
+		expect(styleOf(sidebar()).display).toBe("flex");
+	});
+
+	it("drops the sidebar on the sessions route with card mode on", () => {
+		renderLayout({ cardMode: true });
+
+		expect(screen.queryByTestId("sidebar-body")).toBeNull();
+		expect(contentPane().previousElementSibling).toBeNull();
+	});
+
+	it("keeps the sidebar on other routes with card mode on", () => {
+		renderLayout({ cardMode: true, route: "/config" });
+
+		expect(screen.getByTestId("sidebar-body")).toBeDefined();
 	});
 });

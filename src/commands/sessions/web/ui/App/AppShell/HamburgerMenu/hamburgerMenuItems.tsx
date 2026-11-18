@@ -2,6 +2,7 @@ import KeyboardIcon from "@mui/icons-material/Keyboard";
 import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import SystemUpdateAltIcon from "@mui/icons-material/SystemUpdateAlt";
 import Divider from "@mui/material/Divider";
+import { CardModeMenuItem } from "./hamburgerMenuItems/CardModeMenuItem";
 import { ColorModeIcon } from "./hamburgerMenuItems/ColorModeIcon";
 import { FirefoxExtensionMenuItem } from "./hamburgerMenuItems/FirefoxExtensionMenuItem";
 import { IconMenuItem } from "./hamburgerMenuItems/IconMenuItem";
@@ -34,6 +35,7 @@ export function hamburgerMenuItems(handlers: HamburgerMenuHandlers) {
 			label="Toggle dark mode"
 			onClick={handlers.onToggleColorMode}
 		/>,
+		<CardModeMenuItem key="card-mode" />,
 		<RenderHudMenuItem key="render-hud" />,
 		<IconMenuItem
 			key="shortcuts"

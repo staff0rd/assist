@@ -13,9 +13,9 @@ import { ReleasesView } from "../ReleasesView";
 import { RulesRoute } from "./AppRoutes/RulesRoute";
 import { countRender } from "../../renderCounters";
 import { RenderRateHud } from "./AppRoutes/RenderRateHud";
-import { SessionContent } from "../SessionContent";
 import { UsageHistoryView } from "../UsageHistoryView";
 import type { SessionSocket } from "../../useSessionSocket";
+import { SessionsRoute } from "./AppRoutes/SessionsRoute";
 import { BacklogContent } from "./AppRoutes/BacklogContent";
 
 export function AppRoutes({ socket }: { socket: SessionSocket }) {
@@ -26,7 +26,7 @@ export function AppRoutes({ socket }: { socket: SessionSocket }) {
 			<RenderRateHud />
 			<Routes>
 				<Route element={<AppLayout socket={socket} />}>
-					<Route path="sessions" element={<SessionContent socket={socket} />} />
+					<Route path="sessions" element={<SessionsRoute socket={socket} />} />
 					<Route
 						path="backlog/*"
 						element={<BacklogContent socket={socket} />}

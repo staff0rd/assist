@@ -3,6 +3,7 @@ import { ApiNodeContext } from "../../useApiNode";
 import { NodeSelectionContext } from "../../useNodeSelectionContext";
 import { RepoSelectionContext } from "../../useRepoSelectionContext";
 import { SessionLaunchContext } from "../../useSessionLaunchContext";
+import { CardModeProvider } from "./AppShellProviders/CardModeProvider";
 import { useNodeUpdates } from "./AppShellProviders/useNodeUpdates";
 import { NodeUpdatesContext } from "./useNodeUpdatesContext";
 import { LocalRestartContext } from "./useLocalRestartContext";
@@ -31,9 +32,11 @@ export function AppShellProviders({
 						<NodeSelectionContext.Provider value={socket.nodeSelection}>
 							<ApiNodeContext.Provider value={selection.selectedNode}>
 								<SessionLaunchContext.Provider value={launch}>
-									<HistorySearchQueryProvider>
-										{children}
-									</HistorySearchQueryProvider>
+									<CardModeProvider>
+										<HistorySearchQueryProvider>
+											{children}
+										</HistorySearchQueryProvider>
+									</CardModeProvider>
 								</SessionLaunchContext.Provider>
 							</ApiNodeContext.Provider>
 						</NodeSelectionContext.Provider>
