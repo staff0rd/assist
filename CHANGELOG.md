@@ -1,3 +1,16 @@
+# [0.1221.0](https://github.com/staff0rd/assist/compare/v0.1220.0...v0.1221.0) (2026-11-18)
+
+
+### Bug Fixes
+
+* commit moves off worktree placeholder ([8a4e068](https://github.com/staff0rd/assist/commit/8a4e068f54e64efde8a487efa17a3e677cf22d50))
+* name placeholder branch from item ([e1d168e](https://github.com/staff0rd/assist/commit/e1d168ea16af724ed0288ab5b1277301534254e0))
+
+
+### Features
+
+* card pane preview and reply box ([e796469](https://github.com/staff0rd/assist/commit/e796469eed741bf197b92ee56087a26e4131486b))
+
 # [0.1220.0](https://github.com/staff0rd/assist/compare/v0.1219.1...v0.1220.0) (2026-11-18)
 
 
