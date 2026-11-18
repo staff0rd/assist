@@ -1,10 +1,7 @@
-import { execFile } from "node:child_process";
 import type { IncomingMessage, ServerResponse } from "node:http";
-import { promisify } from "node:util";
-import { respondJson } from "../../../shared/web";
 import { ghFailure } from "../../../shared/ghFailure";
-
-const execFileAsync = promisify(execFile);
+import { ghRawFileAtSha } from "../../../shared/ghRawFileAtSha";
+import { respondJson } from "../../../shared/web";
 
 const MAX_FILE_BYTES = 2 * 1024 * 1024;
 const REPO = /^[\w.-]+\/[\w.-]+$/;
@@ -30,19 +27,9 @@ export async function githubFileContent(
 		respondJson(res, 400, { error: "Invalid repo, sha or path" });
 		return;
 	}
-	const encodedPath = path.split("/").map(encodeURIComponent).join("/");
 	try {
-		const { stdout } = await execFileAsync(
-			"gh",
-			[
-				"api",
-				"-H",
-				"Accept: application/vnd.github.raw",
-				`repos/${repo}/contents/${encodedPath}?ref=${sha}`,
-			],
-			{ encoding: "utf8", windowsHide: true, maxBuffer: MAX_FILE_BYTES },
-		);
-		respondJson(res, 200, { content: stdout });
+		const content = await ghRawFileAtSha(repo, sha, path, MAX_FILE_BYTES);
+		respondJson(res, 200, { content });
 	} catch (error) {
 		respondJson(res, 502, { error: ghFailure(error) });
 	}

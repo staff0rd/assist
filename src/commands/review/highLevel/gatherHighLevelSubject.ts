@@ -1,35 +1,30 @@
 import { loadConfig } from "../../../shared/loadConfig";
 import { getRepoInfo } from "../../prs/shared";
-import { buildHighLevelStructure } from "./buildHighLevelStructure";
-import { capHighLevelPatches } from "./capHighLevelPatches";
 import { evaluateHighLevelChecks } from "./evaluateHighLevelChecks";
-import { fetchHighLevelFiles } from "./fetchHighLevelFiles";
 import { fetchHighLevelPr } from "./fetchHighLevelPr";
-import {
-	gatherHighLevelSlices,
-	type HighLevelSlicing,
-} from "./gatherHighLevelSlices";
-import { gatherHighLevelTests } from "./gatherHighLevelTests";
+import { gatherFreshHighLevelSubject } from "./gatherFreshHighLevelSubject";
+import type { HighLevelSlicing } from "./gatherHighLevelSlices";
 import type { HighLevelOverlaySubject } from "./HighLevelOverlaySubject";
 import { loadReopenedReview } from "./loadReopenedReview";
 import { resolveHighLevelConfig } from "./resolveHighLevelConfig";
-import { selectCriticalDiffs } from "./selectCriticalDiffs";
+import { reuseCachedHighLevelSubject } from "./reuseCachedHighLevelSubject";
 
-export function gatherHighLevelSubject(
+export async function gatherHighLevelSubject(
 	prNumber: number,
 	force: boolean,
 	slicing?: HighLevelSlicing,
-): HighLevelOverlaySubject {
+): Promise<HighLevelOverlaySubject> {
 	const { org, repo } = getRepoInfo();
-	const slug = `${org}/${repo}`;
 	const pr = fetchHighLevelPr(prNumber, { org, repo });
 	const config = resolveHighLevelConfig(loadConfig());
-	const fetched = fetchHighLevelFiles(prNumber, slug);
-	const files = capHighLevelPatches(fetched, config.criticalPaths);
-	const head = { repo: slug, headRef: pr.headRef, headSha: pr.headSha };
-	const sliced = slicing
-		? gatherHighLevelSlices({ ...head, prNumber }, files, slicing)
-		: undefined;
+	const head = {
+		repo: `${org}/${repo}`,
+		headRef: pr.headRef,
+		headSha: pr.headSha,
+	};
+	const { cache, sliced } =
+		reuseCachedHighLevelSubject({ ...head, prNumber }, config, slicing) ??
+		(await gatherFreshHighLevelSubject({ ...head, prNumber }, config, slicing));
 	return {
 		...head,
 		prNumber,
@@ -37,14 +32,14 @@ export function gatherHighLevelSubject(
 		body: pr.body,
 		checks: evaluateHighLevelChecks({
 			...pr,
-			changedFiles: files.map((file) => file.path),
+			changedFiles: cache.changedFiles,
 			config,
 			sliced: sliced !== undefined,
 		}),
-		structure: buildHighLevelStructure(files),
-		criticalDiffs: selectCriticalDiffs(files, config.criticalPaths),
+		structure: cache.structure,
+		criticalDiffs: cache.criticalDiffs,
 		criticalPaths: config.criticalPaths,
-		tests: gatherHighLevelTests(fetched, config.testPaths, slug, pr.headSha),
+		tests: cache.tests,
 		testPaths: config.testPaths,
 		collapsedPaths: config.collapsedPaths,
 		...sliced,

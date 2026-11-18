@@ -15,13 +15,13 @@ function resolvePrNumber(number: string | undefined): number {
 	return parsed;
 }
 
-function gatherSubject(
+async function gatherSubject(
 	prNumber: number,
 	force: boolean,
 	slicing: HighLevelSlicing | undefined,
 ) {
 	try {
-		return gatherHighLevelSubject(prNumber, force, slicing);
+		return await gatherHighLevelSubject(prNumber, force, slicing);
 	} catch (error) {
 		console.error(
 			`Error: ${error instanceof Error ? error.message : String(error)}`,
@@ -48,7 +48,7 @@ export async function runHighLevelReview(
 				...(options.reuseSlices ? { reuseOnly: true } : {}),
 			}
 		: undefined;
-	const subject = gatherSubject(resolvePrNumber(number), force, slicing);
+	const subject = await gatherSubject(resolvePrNumber(number), force, slicing);
 	announceSavedReview(subject, force);
 	if (!session) return printHighLevelChecklist(subject);
 	await openHighLevelOverlay(session, subject, () =>

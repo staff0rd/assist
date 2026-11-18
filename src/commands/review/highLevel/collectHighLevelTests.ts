@@ -1,5 +1,5 @@
-import { minimatch } from "minimatch";
 import { extractTestHierarchy } from "./extractTestHierarchy";
+import { highLevelTestCandidates } from "./highLevelTestCandidates";
 import { patchAddedLines } from "./patchAddedLines";
 import type { HighLevelFile, HighLevelTestFile } from "./types";
 
@@ -20,11 +20,7 @@ export function collectHighLevelTests(
 	testPaths: string[],
 	readSource: (path: string) => string,
 ): HighLevelTestFile[] {
-	return files
-		.filter(
-			(file) =>
-				file.status !== "removed" &&
-				testPaths.some((glob) => minimatch(file.path, glob)),
-		)
-		.flatMap((file) => testFile(file, readSource));
+	return highLevelTestCandidates(files, testPaths).flatMap((file) =>
+		testFile(file, readSource),
+	);
 }
