@@ -87,4 +87,36 @@ describe("CardPaneHeader", () => {
 		expect(screen.queryByTitle(dismissTitle)).toBeNull();
 		expect(screen.getByRole("button", { name: "Show session" })).toBeTruthy();
 	});
+
+	describe("run session", () => {
+		const run = makeSessionInfo({
+			id: "r1",
+			status: "running",
+			commandType: "run",
+			runName: "dev",
+			title: "Run title",
+		});
+
+		it("shows the controls that apply to servers and no title", () => {
+			renderHeader(run, false);
+
+			expect(screen.queryByText("Run title")).toBeNull();
+			expect(
+				screen.getByRole("button", { name: /^Retry session r1/ }),
+			).toBeTruthy();
+			expect(
+				screen.getByTitle("Dismiss session r1 (Shift skips confirmation)"),
+			).toBeTruthy();
+			expect(screen.getByTitle("Close")).toBeTruthy();
+		});
+
+		it("omits Show session, restart and auto toggles", () => {
+			renderHeader(run, false);
+
+			expect(screen.queryByRole("button", { name: /session$/ })).toBeNull();
+			expect(screen.queryByText("Restart")).toBeNull();
+			expect(screen.queryByText("Continue")).toBeNull();
+			expect(screen.queryByText("Auto start")).toBeNull();
+		});
+	});
 });

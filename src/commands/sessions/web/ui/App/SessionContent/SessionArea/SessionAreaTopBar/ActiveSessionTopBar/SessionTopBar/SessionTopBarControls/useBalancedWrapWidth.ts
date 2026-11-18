@@ -1,5 +1,7 @@
 import { type RefObject, useEffect, useState } from "react";
 import { balancedWrapWidth } from "./useBalancedWrapWidth/balancedWrapWidth";
+import { flexItems } from "./useBalancedWrapWidth/flexItems";
+import { outerWidth } from "./useBalancedWrapWidth/outerWidth";
 
 type Measure = { widths: number[]; gap: number };
 
@@ -11,30 +13,17 @@ function sameMeasure(a: Measure, b: Measure): boolean {
 	);
 }
 
-function outerWidth(item: Element): number {
-	const style = getComputedStyle(item);
-	return (
-		item.getBoundingClientRect().width +
-		(Number.parseFloat(style.marginLeft) || 0) +
-		(Number.parseFloat(style.marginRight) || 0)
-	);
-}
-
-function flexItems(box: Element): Element[] {
-	return Array.from(box.children).flatMap((child) =>
-		getComputedStyle(child).display === "contents" ? flexItems(child) : [child],
-	);
-}
-
 export function useBalancedWrapWidth(
 	ref: RefObject<HTMLElement | null>,
 	available: number | null,
 ): number | undefined {
 	const [measure, setMeasure] = useState<Measure>({ widths: [], gap: 0 });
 
+	const balancing = available !== null;
+
 	useEffect(() => {
 		const box = ref.current;
-		if (!box || typeof ResizeObserver === "undefined") return;
+		if (!balancing || !box || typeof ResizeObserver === "undefined") return;
 		const read = () => {
 			const next = {
 				widths: flexItems(box).map(outerWidth),
@@ -55,7 +44,7 @@ export function useBalancedWrapWidth(
 			resize.disconnect();
 			mutation.disconnect();
 		};
-	}, [ref]);
+	}, [ref, balancing]);
 
 	if (available === null) return undefined;
 	return balancedWrapWidth(measure.widths, measure.gap, available);
