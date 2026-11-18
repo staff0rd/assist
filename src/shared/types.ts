@@ -333,6 +333,7 @@ const assistConfigShape = {
 			askQuestion: z.boolean().default(true),
 			askQuestionAutoSubmit: z.boolean().default(false),
 			cardMode: z.boolean().default(false),
+			textSizeOffset: z.number().int().min(-4).max(8).default(0),
 			cleanLeftovers: z.boolean().default(true),
 			yolo: z.boolean().default(false),
 		})

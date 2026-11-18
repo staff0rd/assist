@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { sessionTypeSize } from "../../../../../../sessionTypeSize";
 import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
 
@@ -19,6 +20,7 @@ export function TextRowLabel({
 			component="div"
 			sx={{
 				color: accent,
+				fontSize: sessionTypeSize("caption"),
 				fontWeight: 600,
 				display: "flex",
 				alignItems: "center",

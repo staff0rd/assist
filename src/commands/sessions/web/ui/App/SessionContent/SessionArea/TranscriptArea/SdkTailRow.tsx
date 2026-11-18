@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import { SDK_TAIL_SEPARATOR, SdkTailDetail } from "./SdkTailDetail";
 import { SdkTailDots } from "./SdkTailDots";
+import { sessionTextSize } from "../../../sessionTextSize";
 
 const rowSx = {
 	display: "flex",
@@ -8,7 +9,7 @@ const rowSx = {
 	gap: 1.25,
 	py: 0.75,
 	pl: 1,
-	fontSize: 13,
+	fontSize: sessionTextSize(13),
 	color: "text.secondary",
 } as const;
 

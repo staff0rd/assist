@@ -1,4 +1,5 @@
 import type { Theme } from "@mui/material/styles";
+import { sessionTextSize } from "../../../sessionTextSize";
 
 const shellWash = (t: Theme) => t.tokens.color.wash.shell;
 
@@ -51,7 +52,7 @@ export const shellSx = {
 		gap: 1,
 		minWidth: 0,
 		fontFamily: "fontFamilyMono",
-		fontSize: 13,
+		fontSize: sessionTextSize(13),
 		fontWeight: 500,
 	},
 	bang: { color: "secondary.main", fontWeight: 600 },
@@ -67,7 +68,7 @@ export const shellSx = {
 		maxHeight: "11em",
 		overflow: "auto",
 		fontFamily: "fontFamilyMono",
-		fontSize: 12,
+		fontSize: sessionTextSize(12),
 		lineHeight: 1.55,
 		color: "text.secondary",
 		bgcolor: (t: Theme) => t.tokens.color.well,
@@ -93,7 +94,7 @@ export const shellSx = {
 		alignItems: "center",
 		columnGap: 1.25,
 		rowGap: 0.5,
-		fontSize: 12,
+		fontSize: sessionTextSize(12),
 		color: "text.secondary",
 	},
 	ok: { color: "success.main", fontFamily: "fontFamilyMono" },

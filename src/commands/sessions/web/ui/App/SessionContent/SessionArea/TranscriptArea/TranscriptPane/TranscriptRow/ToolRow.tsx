@@ -1,4 +1,5 @@
 import BuildIcon from "@mui/icons-material/Build";
+import { sessionTypeSize } from "../../../../../sessionTypeSize";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 
@@ -8,7 +9,11 @@ export function ToolRow({ tool, target }: { tool: string; target: string }) {
 			<BuildIcon sx={{ fontSize: 14, color: "text.disabled" }} />
 			<Typography
 				variant="caption"
-				sx={{ color: "text.secondary", fontFamily: "fontFamilyMono" }}
+				sx={{
+					color: "text.secondary",
+					fontFamily: "fontFamilyMono",
+					fontSize: sessionTypeSize("caption"),
+				}}
 			>
 				<Box component="span" sx={{ color: "warning.main" }}>
 					{tool}

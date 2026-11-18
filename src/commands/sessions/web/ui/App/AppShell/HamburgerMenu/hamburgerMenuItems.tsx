@@ -13,6 +13,7 @@ import {
 	ShiftSkipMenuItem,
 } from "./hamburgerMenuItems/ShiftSkipMenuItem";
 import { TestflightMenuItem } from "./hamburgerMenuItems/TestflightMenuItem";
+import { TextSizeMenuItem } from "./hamburgerMenuItems/TextSizeMenuItem";
 
 type HamburgerMenuHandlers = {
 	mode: "light" | "dark";
@@ -36,6 +37,7 @@ export function hamburgerMenuItems(handlers: HamburgerMenuHandlers) {
 			onClick={handlers.onToggleColorMode}
 		/>,
 		<CardModeMenuItem key="card-mode" />,
+		<TextSizeMenuItem key="text-size" />,
 		<RenderHudMenuItem key="render-hud" />,
 		<IconMenuItem
 			key="shortcuts"

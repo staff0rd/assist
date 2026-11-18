@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { sessionTypeSize } from "../../../../../sessionTypeSize";
 import type { ToolInputField } from "../../../../../../../../../../shared/harnessAdapters/types";
 import { isUrlTarget } from "./isUrlTarget";
 import { TargetLink } from "./TargetLink";
@@ -15,6 +16,7 @@ export function RevealedFields({ fields }: { fields: ToolInputField[] }) {
 				gridTemplateColumns: "max-content minmax(0, 1fr)",
 				columnGap: 1,
 				typography: "caption",
+				fontSize: sessionTypeSize("caption"),
 				fontFamily: "fontFamilyMono",
 				color: "text.secondary",
 			}}

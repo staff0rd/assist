@@ -1,3 +1,5 @@
+import { sessionTypeSize } from "../../../../../sessionTypeSize";
+
 export const callRowSx = {
 	display: "flex",
 	alignItems: "center",
@@ -9,6 +11,7 @@ export const callRowSx = {
 	minWidth: 0,
 	borderRadius: 1,
 	typography: "caption",
+	fontSize: sessionTypeSize("caption"),
 	color: "text.secondary",
 	textAlign: "left",
 	"&:hover": { bgcolor: "action.hover" },

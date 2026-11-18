@@ -1,15 +1,23 @@
 import type { Theme } from "@mui/material";
-import { markdownContentSx } from "../../../../../../../../../../backlog/web/ui/components/markdownSx";
-import { slashHighlightSx } from "../../../../../../../slashSuggestions/slashHighlightSx";
-import { copyCodeBlockSx } from "../../../../../copyCode/copyCodeBlockSx";
+import { sessionTextSize } from "../../../../../../sessionTextSize";
+import { sessionTypeSize } from "../../../../../../sessionTypeSize";
+import { baseTranscriptMarkdownSx } from "./baseTranscriptMarkdownSx";
+
+const headingSizes = {
+	"& h1": "1.6rem",
+	"& h2": "1.35rem",
+	"& h3": "1.15rem",
+	"& h4": "1.05rem",
+	"& h5, & h6": "1rem",
+};
 
 export const transcriptMarkdownSx = (theme: Theme) => ({
-	...markdownContentSx(theme),
-	fontSize: theme.typography.body2.fontSize ?? "inherit",
-	maxWidth: "none",
-	lineHeight: 1.6,
-	color: "text.primary",
-	overflowWrap: "anywhere",
-	"& .slash-chip": slashHighlightSx.chip,
-	...copyCodeBlockSx(theme),
+	...baseTranscriptMarkdownSx(theme),
+	fontSize: sessionTypeSize("body2")(theme),
+	...Object.fromEntries(
+		Object.entries(headingSizes).map(([selector, size]) => [
+			selector,
+			{ fontSize: sessionTextSize(size) },
+		]),
+	),
 });

@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import { sessionTypeSize } from "../../../../../sessionTypeSize";
 import { isUrlTarget } from "./isUrlTarget";
 import { TargetLink } from "./TargetLink";
 
@@ -11,6 +12,7 @@ export function RevealedTarget({ target }: { target: string }) {
 				ml: 4,
 				mb: 0.5,
 				typography: "caption",
+				fontSize: sessionTypeSize("caption"),
 				fontFamily: "fontFamilyMono",
 				color: "text.secondary",
 				whiteSpace: "pre-wrap",

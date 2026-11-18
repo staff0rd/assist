@@ -1,4 +1,5 @@
 import Typography from "@mui/material/Typography";
+import { sessionTypeSize } from "../../../../../../sessionTypeSize";
 import { useKnownSlashCommands } from "../../../../../../../slashSuggestions/useKnownSlashCommands";
 import { SlashCommandText } from "../../../../../../../slashSuggestions/SlashCommandText";
 import { slashHighlightSx } from "../../../../../../../slashSuggestions/slashHighlightSx";
@@ -10,6 +11,7 @@ const plainSx = {
 	whiteSpace: "pre-wrap",
 	overflowWrap: "anywhere",
 	lineHeight: 1.6,
+	fontSize: sessionTypeSize("body2"),
 } as const;
 
 export function TextRowBody({
