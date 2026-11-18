@@ -1,3 +1,10 @@
+## [0.1221.1](https://github.com/staff0rd/assist/compare/v0.1221.0...v0.1221.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* suffix placeholder branch when taken ([b156654](https://github.com/staff0rd/assist/commit/b1566542aa3e871c50aca5ad9008b20705e7b03f))
+
 # [0.1221.0](https://github.com/staff0rd/assist/compare/v0.1220.0...v0.1221.0) (2026-11-18)
 
 
