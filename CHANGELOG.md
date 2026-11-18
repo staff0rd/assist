@@ -1,3 +1,17 @@
+# [0.1225.0](https://github.com/staff0rd/assist/compare/v0.1224.0...v0.1225.0) (2026-11-18)
+
+
+### Bug Fixes
+
+* read card mode from the local node ([70088eb](https://github.com/staff0rd/assist/commit/70088eb1ecbcaac5b7d4ade4fb31faee0d1c68d5))
+
+
+### Features
+
+* card close buttons, slide-down session ([ba01a07](https://github.com/staff0rd/assist/commit/ba01a07e4ee78061b95351b2006b8086b05225d8))
+* session top bar in card session view ([b3d45e5](https://github.com/staff0rd/assist/commit/b3d45e53ed12850dfb3b9c459a52bbc3c25d0396))
+* transfer prompt sessions to nodes ([12df05e](https://github.com/staff0rd/assist/commit/12df05e8b8d3c85cb1c0a59513b63cf8a2ac28d3))
+
 # [0.1224.0](https://github.com/staff0rd/assist/compare/v0.1223.2...v0.1224.0) (2026-11-18)
 
 
