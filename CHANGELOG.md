@@ -1,3 +1,10 @@
+## [0.1231.1](https://github.com/staff0rd/assist/compare/v0.1231.0...v0.1231.1) (2026-11-18)
+
+
+### Bug Fixes
+
+* show prompts absorbed mid-turn ([3b1bf56](https://github.com/staff0rd/assist/commit/3b1bf5699b7223d2d4c61208347ccdcf250374be))
+
 # [0.1231.0](https://github.com/staff0rd/assist/compare/v0.1230.2...v0.1231.0) (2026-11-18)
 
 
