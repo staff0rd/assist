@@ -11,6 +11,7 @@ import { shouldPull } from "./shouldPull";
 import { refuseLockedDocs } from "./refuseLockedDocs";
 import { refuseLockedSchema } from "./refuseLockedSchema";
 import { commitStaged } from "./commitStaged";
+import { moveOffPlaceholder } from "./moveOffPlaceholder";
 import { stageFiles } from "./stageFiles";
 
 export async function execCommit(
@@ -19,6 +20,7 @@ export async function execCommit(
 	config: AssistConfig,
 ): Promise<void> {
 	try {
+		await moveOffPlaceholder(message, config);
 		warnIfUnexpectedBranch(config);
 		const pulled = shouldPull(config);
 		if (pulled) {

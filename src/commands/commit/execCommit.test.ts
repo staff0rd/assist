@@ -2,6 +2,7 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 import { recordSessionRefs } from "../../shared/db/recordSessionRefs";
 import type { AssistConfig } from "../../shared/types";
 import { execCommit } from "./execCommit";
+import { moveOffPlaceholder } from "./moveOffPlaceholder";
 import { pushCommit } from "./pushCommit";
 
 vi.mock("../../shared/db/recordSessionRefs", () => ({
@@ -22,6 +23,7 @@ vi.mock("./collectCommitRefs", () => ({
 	collectCommitRefs: () => [{ kind: "commit", ref: "65888b3eb" }],
 }));
 vi.mock("./pushCommit", () => ({ pushCommit: vi.fn() }));
+vi.mock("./moveOffPlaceholder", () => ({ moveOffPlaceholder: vi.fn() }));
 
 const recordMock = vi.mocked(recordSessionRefs);
 const pushMock = vi.mocked(pushCommit);
@@ -61,5 +63,11 @@ describe("execCommit", () => {
 		expect(console.error).toHaveBeenCalledWith(
 			"Warning: the commit was not recorded on item a1715: db down",
 		);
+	});
+
+	it("moves off the worktree placeholder before committing", async () => {
+		await execCommit([], "fix: card layout", config);
+
+		expect(moveOffPlaceholder).toHaveBeenCalledWith("fix: card layout", config);
 	});
 });

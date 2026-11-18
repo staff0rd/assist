@@ -1,7 +1,6 @@
 import { execFileSync, execSync } from "node:child_process";
-import { basename } from "node:path";
-import { linkedWorktree } from "../../shared/linkedWorktree";
 import { loadConfig } from "../../shared/loadConfig";
+import { worktreePlaceholderBranch } from "../../shared/worktreePlaceholderBranch";
 import { createBranch } from "../branch/createBranch";
 import { generateBranchSlug } from "../branch/generateBranchSlug";
 import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
@@ -30,7 +29,7 @@ function recordedBranch(item: BacklogItem): string | undefined {
 }
 
 function adoptRecordedBranch(item: BacklogItem, branch: string): void {
-	const parked = worktreeBranchInPlay();
+	const parked = worktreePlaceholderBranch();
 	if (!parked) {
 		log(
 			item,
@@ -52,24 +51,6 @@ function adoptRecordedBranch(item: BacklogItem, branch: string): void {
 			item,
 			`branch ${branch} already recorded but the worktree stayed on ${parked}: ${message(error)}`,
 		);
-	}
-}
-
-function worktreeBranchInPlay(): string | null {
-	const tree = linkedWorktree(process.cwd());
-	if (!tree) return null;
-	const head = currentBranch();
-	return head === basename(tree.root) ? head : null;
-}
-
-function currentBranch(): string | null {
-	try {
-		return execSync("git rev-parse --abbrev-ref HEAD", {
-			encoding: "utf8",
-			stdio: ["ignore", "pipe", "ignore"],
-		}).trim();
-	} catch {
-		return null;
 	}
 }
 
