@@ -4,11 +4,11 @@ import { useCloseWhenPreviewEnds } from "./useCloseWhenPreviewEnds";
 
 export function useOpenCard(socket: SessionSocket) {
 	const [openId, setOpenId] = useState<string | null>(null);
-	const [sessionShown, setSessionShown] = useState(false);
+	const [sessionShown, setSessionShown] = useState(true);
 	const openSession = socket.sessions.find((s) => s.id === openId);
 	const close = () => {
 		setOpenId(null);
-		setSessionShown(false);
+		setSessionShown(true);
 	};
 	useCloseWhenPreviewEnds(openSession, sessionShown, close);
 	return {
@@ -16,7 +16,7 @@ export function useOpenCard(socket: SessionSocket) {
 		sessionShown: sessionShown && openSession !== undefined,
 		toggleSession: () => setSessionShown((shown) => !shown),
 		open: (id: string) => {
-			if (id !== openId) setSessionShown(false);
+			if (id !== openId) setSessionShown(true);
 			setOpenId(id);
 			socket.selectSession(id);
 		},

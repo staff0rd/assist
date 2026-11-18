@@ -31,20 +31,24 @@ export function CardPaneBody({
 	return (
 		<SocketShellProviders socket={socket}>
 			<Box sx={[columnSx, { overflow: "hidden" }]}>
-				<SessionDrawer key={session.id} shown={sessionShown}>
+				<SessionDrawer key={session.id} shown={sessionShown} full={!preview}>
 					<CardSessionView session={session} socket={socket} />
 				</SessionDrawer>
-				<Box sx={columnSx}>
-					{preview ? (
+				{preview ? (
+					<Box sx={columnSx}>
 						<CardPendingPreview
 							preview={preview}
 							session={session}
 							socket={socket}
 						/>
-					) : (
-						<CardLastMessage session={session} socket={socket} />
-					)}
-				</Box>
+					</Box>
+				) : (
+					!sessionShown && (
+						<Box sx={columnSx}>
+							<CardLastMessage session={session} socket={socket} />
+						</Box>
+					)
+				)}
 			</Box>
 		</SocketShellProviders>
 	);

@@ -105,9 +105,20 @@ describe("CardBoard", () => {
 		expect(screen.queryByTestId("card-last-message")).toBeNull();
 	});
 
-	it("shows the last message and sends a reply when nothing is pending", () => {
+	it("shows the session full height when nothing is pending", () => {
+		renderBoard();
+		fireEvent.click(screen.getByTestId("working-card"));
+
+		expect(screen.getByTestId("card-session-view").textContent).toBe(
+			"session: r",
+		);
+		expect(screen.queryByTestId("card-last-message")).toBeNull();
+	});
+
+	it("shows the last message and sends a reply once the session is hidden", () => {
 		const socket = renderBoard();
 		fireEvent.click(screen.getByTestId("working-card"));
+		fireEvent.click(screen.getByRole("button", { name: "Hide session" }));
 
 		const pane = screen.getByTestId("card-last-message");
 		expect(pane.textContent).toContain("Refactoring the parser");
@@ -198,12 +209,9 @@ describe("CardBoard", () => {
 		);
 	});
 
-	it("toggles the session view above the preview", async () => {
+	it("shows the session above the preview by default and hides it on toggle", async () => {
 		renderBoard();
 		fireEvent.click(screen.getByTestId("needs-you-card"));
-		expect(screen.queryByTestId("card-session-view")).toBeNull();
-
-		fireEvent.click(screen.getByRole("button", { name: "Show session" }));
 
 		expect(screen.getByTestId("card-session-view").textContent).toBe(
 			"session: w",
@@ -215,27 +223,30 @@ describe("CardBoard", () => {
 		await waitFor(() =>
 			expect(screen.queryByTestId("card-session-view")).toBeNull(),
 		);
+		expect(screen.getByText("preview: Pick a colour")).toBeTruthy();
 	});
 
-	it("hides the session again when another card opens", () => {
+	it("shows the session again when another card opens", () => {
 		renderBoard();
 		fireEvent.click(screen.getByTestId("needs-you-card"));
-		fireEvent.click(screen.getByRole("button", { name: "Show session" }));
+		fireEvent.click(screen.getByRole("button", { name: "Hide session" }));
 
 		fireEvent.click(screen.getByTestId("working-card"));
 
-		expect(screen.queryByTestId("card-session-view")).toBeNull();
-		expect(screen.getByRole("button", { name: "Show session" })).toBeTruthy();
+		expect(screen.getByTestId("card-session-view").textContent).toBe(
+			"session: r",
+		);
+		expect(screen.getByRole("button", { name: "Hide session" })).toBeTruthy();
 	});
 
-	it("hides the session again after the pane closes and reopens", () => {
+	it("shows the session again after the pane closes and reopens", () => {
 		renderBoard();
 		fireEvent.click(screen.getByTestId("working-card"));
-		fireEvent.click(screen.getByRole("button", { name: "Show session" }));
+		fireEvent.click(screen.getByRole("button", { name: "Hide session" }));
 
 		fireEvent.click(screen.getByTitle("Close"));
 		fireEvent.click(screen.getByTestId("working-card"));
 
-		expect(screen.queryByTestId("card-session-view")).toBeNull();
+		expect(screen.getByTestId("card-session-view")).toBeTruthy();
 	});
 });

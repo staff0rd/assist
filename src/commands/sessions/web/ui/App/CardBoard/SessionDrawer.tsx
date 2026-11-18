@@ -2,9 +2,9 @@ import Box from "@mui/material/Box";
 import { type Theme, useTheme } from "@mui/material/styles";
 import { type ReactNode, useEffect, useState } from "react";
 
-function drawerSx(open: boolean) {
+function drawerSx(basis: string) {
 	return (t: Theme) => ({
-		flex: `0 0 ${open ? "50%" : "0%"}`,
+		flex: `0 0 ${basis}`,
 		minHeight: 0,
 		overflow: "hidden",
 		display: "flex",
@@ -18,9 +18,11 @@ function drawerSx(open: boolean) {
 
 export function SessionDrawer({
 	shown,
+	full,
 	children,
 }: {
 	shown: boolean;
+	full: boolean;
 	children: ReactNode;
 }) {
 	const [mounted, setMounted] = useState(shown);
@@ -38,5 +40,6 @@ export function SessionDrawer({
 		return () => cancelAnimationFrame(frame);
 	}, [shown, duration]);
 
-	return <Box sx={drawerSx(open)}>{mounted && children}</Box>;
+	const basis = !open ? "0%" : full ? "100%" : "50%";
+	return <Box sx={drawerSx(basis)}>{mounted && children}</Box>;
 }
