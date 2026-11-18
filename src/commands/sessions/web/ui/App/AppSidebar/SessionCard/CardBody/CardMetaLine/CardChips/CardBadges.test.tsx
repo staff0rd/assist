@@ -69,4 +69,12 @@ describe("CardBadges", () => {
 
 		expect(screen.queryByText("Check")).toBeNull();
 	});
+
+	it("shows no harness chip for a codex session", () => {
+		renderWithTheme(
+			<CardBadges session={makeSessionInfo({ harness: "codex" })} />,
+		);
+
+		expect(screen.queryByText("codex")).toBeNull();
+	});
 });

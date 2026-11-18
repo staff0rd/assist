@@ -3,7 +3,6 @@ import { CloneBadge } from "./CardBadges/CloneBadge";
 import { reviewPhaseBadgeSx } from "../../../../../../designSystem/reviewPhaseBadgeSx";
 import { tokenBadgeSx } from "../../../../../../designSystem/tokenBadgeSx";
 import { displayStatus } from "../../../../../../displayStatus";
-import { HarnessBadge } from "../../../../HarnessBadge";
 import { NodeBadge } from "../../../../NodeBadge";
 import { ServingChip } from "./CardBadges/ServingChip";
 import type { SessionInfo } from "../../../../../../types";
@@ -34,7 +33,6 @@ export function CardBadges({ session }: { session: SessionInfo }) {
 				</Box>
 			)}
 			<ServingChip session={session} />
-			<HarnessBadge harness={session.harness} />
 			{badgeClone && clone && <CloneBadge clone={clone} />}
 			<NodeBadge node={session.node} />
 			{inReview && (
