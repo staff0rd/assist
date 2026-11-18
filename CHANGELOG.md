@@ -1,3 +1,10 @@
+## [0.1217.5](https://github.com/staff0rd/assist/compare/v0.1217.4...v0.1217.5) (2026-11-18)
+
+
+### Bug Fixes
+
+* reopen high-level review from cache ([9f41124](https://github.com/staff0rd/assist/commit/9f411249381a00b878142e7a52b439f8e71b0b61)), closes [hi#level](https://github.com/hi/issues/level)
+
 ## [0.1217.4](https://github.com/staff0rd/assist/compare/v0.1217.3...v0.1217.4) (2026-11-17)
 
 
