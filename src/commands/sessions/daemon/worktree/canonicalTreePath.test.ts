@@ -1,6 +1,6 @@
 import { mkdirSync, mkdtempSync, realpathSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join, resolve } from "node:path";
+import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { canonicalTreePath } from "./canonicalTreePath";
 
@@ -27,7 +27,6 @@ describe("canonicalTreePath", () => {
 	);
 
 	it("falls back to the resolved path for a tree that does not exist", () => {
-		const missing = join(dir, "missing", "..", "gone");
-		expect(canonicalTreePath(missing)).toBe(resolve(missing));
+		expect(canonicalTreePath(`${dir}/missing/../gone`)).toBe(join(dir, "gone"));
 	});
 });
