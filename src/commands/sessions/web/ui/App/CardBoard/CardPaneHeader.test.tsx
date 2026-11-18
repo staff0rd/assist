@@ -119,4 +119,30 @@ describe("CardPaneHeader", () => {
 			expect(screen.queryByText("Auto start")).toBeNull();
 		});
 	});
+
+	it("shows the backlog item chip before the session controls", () => {
+		renderHeader(
+			{
+				...session,
+				cwd: "/git/repo",
+				activity: { kind: "backlog", itemId: 1791, startedAt: 0 },
+			},
+			false,
+		);
+
+		const chip = screen.getByRole("link", { name: "a1791" });
+		expect(chip.getAttribute("href")).toBe(
+			`/backlog/items/a1791?cwd=${encodeURIComponent("/git/repo")}`,
+		);
+		const controls = screen.getByTestId("card-pane-controls");
+		expect(
+			chip.compareDocumentPosition(controls) & Node.DOCUMENT_POSITION_FOLLOWING,
+		).toBeTruthy();
+	});
+
+	it("shows no chip when the session has no linked item", () => {
+		renderHeader(session, false);
+
+		expect(screen.queryByRole("link")).toBeNull();
+	});
 });

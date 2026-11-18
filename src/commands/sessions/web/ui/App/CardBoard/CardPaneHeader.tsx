@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import { CloseViewButton } from "../CloseViewButton";
 import type { SessionInfo } from "../../types";
 import type { SessionSocket } from "../../useSessionSocket";
+import { CardBacklogChips } from "./CardBacklogChips";
 import { CardPaneControls } from "./CardPaneControls";
 import { ShowSessionButton } from "./ShowSessionButton";
 
@@ -31,6 +32,7 @@ export function CardPaneHeader({
 				borderColor: t.tokens.color.line,
 			})}
 		>
+			<CardBacklogChips session={session} />
 			<CardPaneControls session={session} socket={socket} />
 			<Box
 				sx={{ display: "flex", alignItems: "center", gap: 1, flexShrink: 0 }}
