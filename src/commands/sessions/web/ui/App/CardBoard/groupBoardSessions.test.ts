@@ -52,21 +52,27 @@ describe("groupBoardSessions", () => {
 		expect(needsYou).toEqual([]);
 	});
 
-	it("leaves server runs out of Working", () => {
-		const { working } = groupBoardSessions([
+	it("puts run sessions in Servers and never in the card groups", () => {
+		const groups = groupBoardSessions([
 			makeSessionInfo({ id: "srv", status: "running", commandType: "run" }),
+			makeSessionInfo({ id: "ask", status: "waiting", commandType: "run" }),
+			makeSessionInfo({ id: "old", status: "done", commandType: "run" }),
 		]);
 
-		expect(working).toEqual([]);
+		expect(ids(groups.servers)).toEqual(["srv", "ask", "old"]);
+		expect(groups.working).toEqual([]);
+		expect(groups.needsYou).toEqual([]);
+		expect(groups.other).toEqual([]);
 	});
 
-	it("leaves error, done, stopped and parked sessions out of both groups", () => {
-		const { needsYou, working } = groupBoardSessions(
+	it("puts error, done, stopped and parked sessions in Other", () => {
+		const { needsYou, working, other } = groupBoardSessions(
 			(["error", "done", "stopped", "parked"] as const).map((status) =>
 				makeSessionInfo({ id: status, status }),
 			),
 		);
 
+		expect(ids(other)).toEqual(["error", "done", "stopped", "parked"]);
 		expect(needsYou).toEqual([]);
 		expect(working).toEqual([]);
 	});

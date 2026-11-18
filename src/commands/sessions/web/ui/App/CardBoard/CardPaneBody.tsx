@@ -4,6 +4,7 @@ import type { SessionSocket } from "../../useSessionSocket";
 import { SocketShellProviders } from "../SessionContent/SessionArea/TranscriptArea/SocketShellProviders";
 import { CardLastMessage } from "./CardLastMessage";
 import { CardPendingPreview } from "./CardPendingPreview";
+import { CardServerLog } from "./CardServerLog";
 import { cardPanePreview } from "./cardPanePreview";
 
 export function CardPaneBody({
@@ -13,6 +14,8 @@ export function CardPaneBody({
 	session: SessionInfo;
 	socket: SessionSocket;
 }) {
+	if (session.commandType === "run")
+		return <CardServerLog session={session} socket={socket} />;
 	const preview = cardPanePreview(session);
 	return (
 		<SocketShellProviders socket={socket}>

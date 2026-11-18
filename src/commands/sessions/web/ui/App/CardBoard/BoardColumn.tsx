@@ -6,6 +6,8 @@ import { BoardGroup } from "./BoardGroup";
 import { boardColumnSx } from "./boardColumnSx";
 import { groupBoardSessions } from "./groupBoardSessions";
 import { NeedsYouGroup } from "./NeedsYouGroup";
+import { OtherGroup } from "./OtherGroup";
+import { ServersStrip } from "./ServersStrip";
 import { WorkingCard } from "./WorkingCard";
 
 export function BoardColumn({
@@ -17,13 +19,14 @@ export function BoardColumn({
 	openId: string | undefined;
 	onOpen: (id: string) => void;
 }) {
-	const { needsYou, working } = useMemo(
+	const { needsYou, working, other, servers } = useMemo(
 		() => groupBoardSessions(sessions),
 		[sessions],
 	);
 
 	return (
 		<Box data-testid="card-board" sx={boardColumnSx(openId !== undefined)}>
+			<ServersStrip sessions={servers} openId={openId} onOpen={onOpen} />
 			<NeedsYouGroup sessions={needsYou} openId={openId} onOpen={onOpen} />
 			{working.length > 0 && (
 				<BoardGroup title="Working" color="success.main" count={working.length}>
@@ -42,6 +45,7 @@ export function BoardColumn({
 					Nothing needs you and nothing is working.
 				</Typography>
 			)}
+			<OtherGroup sessions={other} openId={openId} onOpen={onOpen} />
 		</Box>
 	);
 }

@@ -4,7 +4,15 @@ import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { makeSessionInfo } from "../../../../../test/mothers/makeSessionInfo";
 import { CardBoard } from "./CardBoard";
+import type { SessionInfo } from "../types";
 import type { SessionSocket } from "../useSessionSocket";
+import { ServerActionsContext } from "./useServerActionsContext";
+
+vi.mock("./SessionContent/SessionArea/TerminalArea", () => ({
+	TerminalArea: ({ activeId }: { activeId: string }) => (
+		<div data-testid="server-log">{`log: ${activeId}`}</div>
+	),
+}));
 
 vi.mock("./SessionContent/PrPreviewSlideInPane", () => ({
 	PrPreviewSlideInPane: ({
@@ -30,9 +38,10 @@ const question = {
 	kind: "question" as const,
 };
 
-function renderBoard() {
+function renderBoard(extra: SessionInfo[] = []) {
 	const socket = {
 		sessions: [
+			...extra,
 			makeSessionInfo({
 				id: "w",
 				status: "waiting",
@@ -47,15 +56,23 @@ function renderBoard() {
 			}),
 		],
 		selectSession: vi.fn(),
+		initialized: new Set(),
 		sendPrDecision: vi.fn(),
 		sendInput: vi.fn(),
 	} as unknown as SessionSocket;
+	const serverActions = {
+		onStop: vi.fn(),
+		onStart: vi.fn(),
+		onDiscard: vi.fn(),
+	};
 	render(
 		<MemoryRouter>
-			<CardBoard socket={socket} />
+			<ServerActionsContext.Provider value={serverActions}>
+				<CardBoard socket={socket} />
+			</ServerActionsContext.Provider>
 		</MemoryRouter>,
 	);
-	return socket;
+	return Object.assign(socket, { serverActions });
 }
 
 describe("CardBoard", () => {
@@ -99,5 +116,62 @@ describe("CardBoard", () => {
 		fireEvent.click(screen.getByTitle("Close"));
 
 		expect(screen.queryByTestId("card-session-pane")).toBeNull();
+	});
+
+	it("keeps finished sessions in a collapsed Other group that opens like a card", () => {
+		const socket = renderBoard([
+			makeSessionInfo({ id: "d", status: "done", title: "Shipped" }),
+		]);
+		expect(screen.queryByTestId("other-card")).toBeNull();
+
+		fireEvent.click(screen.getByRole("button", { name: /Other \(1\)/ }));
+		fireEvent.click(screen.getByTestId("other-card"));
+
+		expect(socket.selectSession).toHaveBeenCalledWith("d");
+		expect(screen.getByTestId("card-session-pane")).toBeTruthy();
+	});
+
+	it("shows running servers as pills that stop and open their log", () => {
+		const socket = renderBoard([
+			makeSessionInfo({
+				id: "srv",
+				status: "running",
+				commandType: "run",
+				server: true,
+				runName: "dev",
+				port: 5173,
+			}),
+		]);
+		const pill = screen.getByTestId("server-pill");
+		expect(screen.getAllByTestId("working-card")).toHaveLength(1);
+		expect(pill.textContent).toContain(":5173");
+
+		fireEvent.click(screen.getByRole("button", { name: "Stop dev" }));
+		expect(socket.serverActions.onStop).toHaveBeenCalledWith("srv");
+
+		fireEvent.click(screen.getByText("dev"));
+		expect(screen.getByTestId("server-log").textContent).toBe("log: srv");
+	});
+
+	it("offers restart on an exited server", () => {
+		const socket = renderBoard([
+			makeSessionInfo({
+				id: "srv",
+				status: "done",
+				commandType: "run",
+				runName: "dev",
+				cwd: "/repo",
+			}),
+		]);
+
+		fireEvent.click(screen.getByRole("button", { name: "Restart dev" }));
+
+		expect(socket.serverActions.onStart).toHaveBeenCalledWith(
+			"dev",
+			"/repo",
+			undefined,
+			undefined,
+			undefined,
+		);
 	});
 });

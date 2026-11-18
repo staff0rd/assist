@@ -2,12 +2,7 @@ import Box from "@mui/material/Box";
 import { alpha } from "@mui/material/styles";
 import type { ReactNode } from "react";
 import { paletteColor } from "../../designSystem/paletteColor";
-
-const gridSx = {
-	display: "grid",
-	gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))",
-	gap: 2.5,
-} as const;
+import { boardGridSx } from "./boardGridSx";
 
 export function BoardGroup({
 	title,
@@ -53,7 +48,7 @@ export function BoardGroup({
 					{count}
 				</Box>
 			</Box>
-			<Box sx={gridSx}>{children}</Box>
+			<Box sx={boardGridSx}>{children}</Box>
 		</Box>
 	);
 }
