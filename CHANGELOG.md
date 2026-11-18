@@ -1,3 +1,10 @@
+# [0.1223.0](https://github.com/staff0rd/assist/compare/v0.1222.0...v0.1223.0) (2026-11-18)
+
+
+### Features
+
+* card pane show session toggle ([4b3e074](https://github.com/staff0rd/assist/commit/4b3e074f589f7f86f5026c6bd650e779aa3abf6f))
+
 # [0.1222.0](https://github.com/staff0rd/assist/compare/v0.1221.1...v0.1222.0) (2026-11-18)
 
 
