@@ -7,7 +7,6 @@ import { SessionTopBarStatus } from "./SessionTopBarCaptions/SessionTopBarStatus
 import { SessionTopBarTitle } from "./SessionTopBarCaptions/SessionTopBarTitle";
 import type { SessionInfo } from "../../../../../../types";
 import { useIdentityLayout } from "./SessionTopBarCaptions/useIdentityLayout";
-import { useShowTopBarTitle } from "./useShowTopBarTitle";
 
 const columnSx = {
 	display: "flex",
@@ -48,7 +47,6 @@ export function SessionTopBarCaptions({
 	const rowRef = useRef<HTMLDivElement>(null);
 	const { width, collapsed } = useIdentityLayout(rowRef, budget);
 	const caption = sessionPhaseCaption(session);
-	const showTitle = useShowTopBarTitle();
 
 	useEffect(() => onIdentityWidth(width), [width, onIdentityWidth]);
 
@@ -58,7 +56,7 @@ export function SessionTopBarCaptions({
 				<SessionTopBarIds session={session} collapsed={collapsed} />
 				<SessionTopBarStatus session={session} />
 			</Box>
-			{showTitle && <SessionTopBarTitle session={session} />}
+			<SessionTopBarTitle session={session} />
 			{caption && <Typography sx={phaseSx}>{caption}</Typography>}
 		</Box>
 	);
