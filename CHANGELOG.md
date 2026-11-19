@@ -1,3 +1,10 @@
+# [0.1237.0](https://github.com/staff0rd/assist/compare/v0.1236.2...v0.1237.0) (2026-11-19)
+
+
+### Features
+
+* add assist sessions list ([8e69d92](https://github.com/staff0rd/assist/commit/8e69d9209ec87f396b8e2959f67f104a8c190590))
+
 ## [0.1236.2](https://github.com/staff0rd/assist/compare/v0.1236.1...v0.1236.2) (2026-11-19)
 
 
