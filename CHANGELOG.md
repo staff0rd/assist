@@ -1,3 +1,11 @@
+# [0.1238.0](https://github.com/staff0rd/assist/compare/v0.1237.0...v0.1238.0) (2026-11-19)
+
+
+### Features
+
+* add assist sessions previews and decide ([4504a78](https://github.com/staff0rd/assist/commit/4504a780697531cb5c53526b10bae0da576eb95b))
+* add assist sessions send ([98949ee](https://github.com/staff0rd/assist/commit/98949ee6ea9e8b96374317a0e64cc0c31785d40d))
+
 # [0.1237.0](https://github.com/staff0rd/assist/compare/v0.1236.2...v0.1237.0) (2026-11-19)
 
 
