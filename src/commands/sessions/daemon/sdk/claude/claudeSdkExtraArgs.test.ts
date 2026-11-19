@@ -34,11 +34,13 @@ describe("claudeSdkExtraArgs", () => {
 		});
 	});
 
-	it("passes no extra args when the key is false", () => {
+	it("passes --no-chrome when the key is false", () => {
 		withChrome(false);
-		expect(claudeSdkExtraArgs("/repo", "session s1")).toEqual({});
+		expect(claudeSdkExtraArgs("/repo", "session s1")).toEqual({
+			"no-chrome": null,
+		});
 		expect(daemonLog).toHaveBeenCalledWith(
-			"session s1 claude-sdk: Claude in Chrome off",
+			"session s1 claude-sdk: Claude in Chrome off (--no-chrome)",
 		);
 	});
 

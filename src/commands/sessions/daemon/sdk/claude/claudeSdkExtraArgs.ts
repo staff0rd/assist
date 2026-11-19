@@ -18,7 +18,7 @@ export function claudeSdkExtraArgs(
 ): Record<string, string | null> {
 	const chrome = chromeEnabled(cwd, label);
 	daemonLog(
-		`${label} claude-sdk: Claude in Chrome ${chrome ? "on (--chrome)" : "off"}`,
+		`${label} claude-sdk: Claude in Chrome ${chrome ? "on (--chrome)" : "off (--no-chrome)"}`,
 	);
-	return chrome ? { chrome: null } : {};
+	return chrome ? { chrome: null } : { "no-chrome": null };
 }
