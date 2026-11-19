@@ -1,3 +1,10 @@
+# [0.1240.0](https://github.com/staff0rd/assist/compare/v0.1239.4...v0.1240.0) (2026-11-19)
+
+
+### Features
+
+* support /clear in codex-sdk sessions ([ff4c80a](https://github.com/staff0rd/assist/commit/ff4c80a2752606f3ee261ba9d87878b8ff312bf1))
+
 ## [0.1239.4](https://github.com/staff0rd/assist/compare/v0.1239.3...v0.1239.4) (2026-11-19)
 
 
