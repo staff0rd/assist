@@ -47,6 +47,14 @@ describe("createSdkRelay", () => {
 		expect(events).toEqual([{ kind: "activity", text: "Working · Bash" }]);
 	});
 
+	it("calls onAttach when a query attaches", () => {
+		const onAttach = vi.fn();
+		const relay = createSdkRelay("session 1", true, onAttach);
+		expect(onAttach).not.toHaveBeenCalled();
+		relay.handle.attach?.(makeQuery().query, false);
+		expect(onAttach).toHaveBeenCalledTimes(1);
+	});
+
 	it("reports an idle launch as waiting", () => {
 		const { relay, events } = relayWithEvents();
 		relay.handle.attach?.(makeQuery().query, true);

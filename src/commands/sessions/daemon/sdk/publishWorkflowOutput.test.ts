@@ -46,4 +46,15 @@ describe("publishWorkflowOutput", () => {
 		vi.advanceTimersByTime(200);
 		expect(events).toEqual([{ kind: "workflow", workflow: null }]);
 	});
+
+	it("clears only once when ended twice", () => {
+		vi.useFakeTimers();
+		const events: SdkSessionEvent[] = [];
+		const output = publishWorkflowOutput("assist backlog run", (event) =>
+			events.push(event),
+		);
+		output.end();
+		output.end();
+		expect(events).toEqual([{ kind: "workflow", workflow: null }]);
+	});
 });
