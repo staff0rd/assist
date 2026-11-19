@@ -1,3 +1,10 @@
+## [0.1239.2](https://github.com/staff0rd/assist/compare/v0.1239.1...v0.1239.2) (2026-11-19)
+
+
+### Bug Fixes
+
+* hide workflow output once agent runs ([cac533f](https://github.com/staff0rd/assist/commit/cac533f45cab1924018acdbb3810f718c022f758))
+
 ## [0.1239.1](https://github.com/staff0rd/assist/compare/v0.1239.0...v0.1239.1) (2026-11-19)
 
 
