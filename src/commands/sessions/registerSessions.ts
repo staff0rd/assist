@@ -3,6 +3,7 @@ import { configHelp } from "../../shared/configHelp";
 import { internalCommand } from "../../shared/internalCommand";
 import { registerNodes } from "./nodes/registerNodes";
 import { registerOutputCommand } from "./registerOutputCommand";
+import { registerPreviewCommands } from "./previews/registerPreviewCommands";
 import { registerSetStatusCommand } from "./registerSetStatusCommand";
 import { registerSessionsWeb } from "./registerSessionsWeb";
 import { harnessDefaultsConfigHelp } from "../backlog/harnessDefaultsConfigHelp";
@@ -56,6 +57,7 @@ export function registerSessions(program: Command): void {
 		.action(lazyAction(() => import("./list/listSessions"), "listSessions"));
 
 	registerOutputCommand(cmd);
+	registerPreviewCommands(cmd);
 	registerSetStatusCommand(cmd);
 	registerNodes(cmd);
 

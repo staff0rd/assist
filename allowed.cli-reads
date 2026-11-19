@@ -72,6 +72,7 @@ assist sessions nodes
 assist sessions nodes doctor
 assist sessions nodes logs
 assist sessions output
+assist sessions previews
 assist ask
 assist show
 assist sql auth list

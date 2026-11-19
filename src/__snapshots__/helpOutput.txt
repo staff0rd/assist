@@ -3625,21 +3625,25 @@ Usage: assist sessions [options] [command]
 Web dashboard for coding agent sessions
 
 Options:
-  --no-open                      Do not open a browser on startup
-  -h, --help                     display help for command
+  --no-open                        Do not open a browser on startup
+  -h, --help                       display help for command
 
 Commands:
-  web [options]                  Start the sessions web dashboard
-  close                          Dismiss the current daemon-managed session, ending it and reaping
-                                 its worktree
-  rename <title>                 Retitle the current daemon-managed session, overriding the
-                                 generated title for the rest of its life
-  list [options]                 List every session on this node and linked nodes, with the ids
-                                 other sessions commands accept
-  output [options] [session-id]  Print a snapshot of a session's output with ANSI codes stripped
-  set-status [options] <status>  Report the current session's status to the sessions daemon (used by
-                                 Claude Code and Codex hooks)
-  nodes [options]                List this node and every linked node with its link state
+  web [options]                    Start the sessions web dashboard
+  close                            Dismiss the current daemon-managed session, ending it and reaping
+                                   its worktree
+  rename <title>                   Retitle the current daemon-managed session, overriding the
+                                   generated title for the rest of its life
+  list [options]                   List every session on this node and linked nodes, with the ids
+                                   other sessions commands accept
+  output [options] [session-id]    Print a snapshot of a session's output with ANSI codes stripped
+  previews [options] <session-id>  Show a session's pending preview: kind, title, body and a
+                                   question form's options
+  decide [options] <session-id>    Answer a session's pending preview, unblocking the command
+                                   waiting on it
+  set-status [options] <status>    Report the current session's status to the sessions daemon (used
+                                   by Claude Code and Codex hooks)
+  nodes [options]                  List this node and every linked node with its link state
 
 Config:
   assist config set sessions.nodeName <name> --node                       # this install's node label, shown in the web UI hamburger menu and reported by /api/health (default: OS hostname, with -wsl under WSL)
@@ -3743,6 +3747,34 @@ Options:
   -n, --lines <count>  Number of lines (default: "200")
   --server [group]     Read the live server run for this repo's remote and group (default: default)
   -h, --help           display help for command
+
+=== assist sessions previews --help
+Usage: assist sessions previews [options] <session-id>
+
+Show a session's pending preview: kind, title, body and a question form's options
+
+Arguments:
+  session-id  Session id from assist sessions list (<node>:<id> for a linked node)
+
+Options:
+  --json      Print the pending preview as JSON (null when none)
+  -h, --help  display help for command
+
+=== assist sessions decide --help
+Usage: assist sessions decide [options] <session-id>
+
+Answer a session's pending preview, unblocking the command waiting on it
+
+Arguments:
+  session-id         Session id from assist sessions list (<node>:<id> for a linked node)
+
+Options:
+  --approve [note]   Approve (a manual check: works), optionally with a note
+  --reject [note]    Reject with a reason (a manual check: doesn't work; a question form: decline)
+  --answer <choice>  Answer a question form: <number|header>=<option label or own text>, or just
+                     <choice> for a single question; repeat per question or multi-select choice
+                     (default: [])
+  -h, --help         display help for command
 
 === assist sessions set-status --help
 Usage: assist sessions set-status [options] <status>

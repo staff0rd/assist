@@ -1,15 +1,6 @@
-import { askQuestionInputSchema } from "../shared/askQuestionInputSchema";
+import { parseQuestions } from "../shared/parseQuestions";
 
 const RECOMMENDED = "(Recommended)";
-
-function parseQuestions(body: string) {
-	try {
-		const parsed = askQuestionInputSchema.safeParse(JSON.parse(body));
-		return parsed.success ? parsed.data.questions : undefined;
-	} catch {
-		return undefined;
-	}
-}
 
 export function recommendedAnswers(
 	body: string,
