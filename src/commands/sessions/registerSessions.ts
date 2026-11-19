@@ -43,6 +43,18 @@ export function registerSessions(program: Command): void {
 		"/rename",
 	);
 
+	cmd
+		.command("list")
+		.description(
+			"List every session on this node and linked nodes, with the ids other sessions commands accept",
+		)
+		.option("--json", "Print the sessions as JSON")
+		.option(
+			"--node <name>",
+			"Only list sessions on this node (local for this one)",
+		)
+		.action(lazyAction(() => import("./list/listSessions"), "listSessions"));
+
 	registerOutputCommand(cmd);
 	registerSetStatusCommand(cmd);
 	registerNodes(cmd);

@@ -3634,6 +3634,8 @@ Commands:
                                  its worktree
   rename <title>                 Retitle the current daemon-managed session, overriding the
                                  generated title for the rest of its life
+  list [options]                 List every session on this node and linked nodes, with the ids
+                                 other sessions commands accept
   output [options] [session-id]  Print a snapshot of a session's output with ANSI codes stripped
   set-status [options] <status>  Report the current session's status to the sessions daemon (used by
                                  Claude Code and Codex hooks)
@@ -3717,6 +3719,16 @@ Retitle the current daemon-managed session, overriding the generated title for t
 
 Options:
   -h, --help  display help for command
+
+=== assist sessions list --help
+Usage: assist sessions list [options]
+
+List every session on this node and linked nodes, with the ids other sessions commands accept
+
+Options:
+  --json         Print the sessions as JSON
+  --node <name>  Only list sessions on this node (local for this one)
+  -h, --help     display help for command
 
 === assist sessions output --help
 Usage: assist sessions output [options] [session-id]

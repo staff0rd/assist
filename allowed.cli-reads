@@ -67,6 +67,7 @@ assist run
 assist screenshot
 assist seq auth list
 assist seq query
+assist sessions list
 assist sessions nodes
 assist sessions nodes doctor
 assist sessions nodes logs
