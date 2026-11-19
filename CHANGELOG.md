@@ -1,3 +1,10 @@
+# [0.1239.0](https://github.com/staff0rd/assist/compare/v0.1238.0...v0.1239.0) (2026-11-19)
+
+
+### Features
+
+* close/rename/interrupt any session ([9f726b9](https://github.com/staff0rd/assist/commit/9f726b9a977023213cda22dda30a6bb5243de7ff))
+
 # [0.1238.0](https://github.com/staff0rd/assist/compare/v0.1237.0...v0.1238.0) (2026-11-19)
 
 
