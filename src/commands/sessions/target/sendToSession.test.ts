@@ -48,6 +48,13 @@ describe("sendToSession", () => {
 		expect(process.exitCode).toBe(1);
 	});
 
+	it("fails with the refusal without sending when the session is refused", async () => {
+		await sendToSession("s1", rename, (s) => `no ${s.id}`);
+		expect(sendToDaemon).not.toHaveBeenCalled();
+		expect(console.error).toHaveBeenCalledWith("no s1");
+		expect(process.exitCode).toBe(1);
+	});
+
 	it("fails when no daemon is running", async () => {
 		vi.mocked(connectToDaemon).mockRejectedValue(new Error("ENOENT"));
 		await sendToSession("s1", rename);

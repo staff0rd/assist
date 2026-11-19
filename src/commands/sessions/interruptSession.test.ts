@@ -45,6 +45,16 @@ describe("interruptSession", () => {
 		expect(build(id)).toEqual({ type: "interrupt", sessionId: "laptop:s9" });
 	});
 
+	it("refuses a targeted session that is not a Claude SDK session", async () => {
+		await interruptSession({ id: "s2" });
+
+		const refuse = vi.mocked(sendToSession).mock.calls[0][2];
+		expect(refuse?.({ id: "s2", sdk: true } as never)).toBeUndefined();
+		expect(refuse?.({ id: "s2" } as never)).toContain(
+			"Session s2 is not a Claude SDK session",
+		);
+	});
+
 	it("reports there is nothing to interrupt outside a daemon-managed session", async () => {
 		await interruptSession();
 
