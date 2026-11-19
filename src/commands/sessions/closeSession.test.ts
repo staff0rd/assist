@@ -1,10 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { closeSession } from "./closeSession";
 import { sendToDaemon } from "./daemon/sendToDaemon";
+import { sendToSession } from "./target/sendToSession";
 
 vi.mock("./daemon/sendToDaemon", () => ({
 	sendToDaemon: vi.fn(),
 }));
+
+vi.mock("./target/sendToSession", () => ({ sendToSession: vi.fn() }));
 
 vi.mock("./daemon/appendDaemonLog", () => ({
 	appendDaemonLog: vi.fn(),
@@ -62,5 +65,21 @@ describe("closeSession", () => {
 		sendMock.mockRejectedValue(new Error("no daemon"));
 
 		await expect(closeSession()).resolves.toBeUndefined();
+	});
+
+	it("routes an explicit id to the targeted session instead of the current one", async () => {
+		process.env.ASSIST_SESSION = "1";
+		process.env.ASSIST_SESSION_ID = "s1";
+
+		await closeSession({ id: "laptop:s9" });
+
+		expect(sendMock).not.toHaveBeenCalled();
+		const [id, build] = vi.mocked(sendToSession).mock.calls[0];
+		expect(id).toBe("laptop:s9");
+		expect(build(id)).toEqual({
+			type: "dismiss",
+			sessionId: "laptop:s9",
+			closeServerRuns: true,
+		});
 	});
 });

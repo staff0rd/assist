@@ -3630,10 +3630,12 @@ Options:
 
 Commands:
   web [options]                    Start the sessions web dashboard
-  close                            Dismiss the current daemon-managed session, ending it and reaping
-                                   its worktree
-  rename <title>                   Retitle the current daemon-managed session, overriding the
-                                   generated title for the rest of its life
+  close [options]                  Dismiss a daemon-managed session (the current one by default),
+                                   ending it and reaping its worktree
+  rename [options] <title>         Retitle a daemon-managed session (the current one by default),
+                                   overriding the generated title for the rest of its life
+  interrupt [options]              Interrupt the running turn of a Claude session (the current one
+                                   by default)
   list [options]                   List every session on this node and linked nodes, with the ids
                                    other sessions commands accept
   output [options] [session-id]    Print a snapshot of a session's output with ANSI codes stripped
@@ -3713,17 +3715,29 @@ Config:
 === assist sessions close --help
 Usage: assist sessions close [options]
 
-Dismiss the current daemon-managed session, ending it and reaping its worktree
+Dismiss a daemon-managed session (the current one by default), ending it and reaping its worktree
 
 Options:
+  --id <id>   Session id from assist sessions list (<node>:<id> for a linked node)
   -h, --help  display help for command
 
 === assist sessions rename --help
 Usage: assist sessions rename [options] <title>
 
-Retitle the current daemon-managed session, overriding the generated title for the rest of its life
+Retitle a daemon-managed session (the current one by default), overriding the generated title for
+the rest of its life
 
 Options:
+  --id <id>   Session id from assist sessions list (<node>:<id> for a linked node)
+  -h, --help  display help for command
+
+=== assist sessions interrupt --help
+Usage: assist sessions interrupt [options]
+
+Interrupt the running turn of a Claude session (the current one by default)
+
+Options:
+  --id <id>   Session id from assist sessions list (<node>:<id> for a linked node)
   -h, --help  display help for command
 
 === assist sessions list --help

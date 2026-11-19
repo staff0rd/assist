@@ -1,18 +1,9 @@
-import { appendDaemonLog } from "./daemon/appendDaemonLog";
-import { sendToDaemon } from "./daemon/sendToDaemon";
-import { inWebSession } from "./shared/inWebSession";
+import { actOnSession } from "./target/actOnSession";
 
-export async function closeSession(): Promise<void> {
-	if (!inWebSession()) {
-		console.log("No daemon-managed session to close.");
-		return;
-	}
-	const sessionId = process.env.ASSIST_SESSION_ID as string;
-	try {
-		await sendToDaemon({ type: "dismiss", sessionId, closeServerRuns: true });
-	} catch (error) {
-		appendDaemonLog(
-			`close send failed: id=${sessionId}: ${error instanceof Error ? error.message : String(error)}`,
-		);
-	}
+export function closeSession(options: { id?: string } = {}): Promise<void> {
+	return actOnSession(options.id, "close", (sessionId) => ({
+		type: "dismiss",
+		sessionId,
+		closeServerRuns: true,
+	}));
 }

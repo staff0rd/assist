@@ -1,7 +1,8 @@
 import type { Command } from "commander";
 import { configHelp } from "../../shared/configHelp";
-import { internalCommand } from "../../shared/internalCommand";
 import { registerNodes } from "./nodes/registerNodes";
+import { registerInterruptCommand } from "./registerInterruptCommand";
+import { registerCloseRenameCommands } from "./registerCloseRenameCommands";
 import { registerOutputCommand } from "./registerOutputCommand";
 import { registerPreviewCommands } from "./previews/registerPreviewCommands";
 import { registerSendCommand } from "./registerSendCommand";
@@ -25,25 +26,8 @@ export function registerSessions(program: Command): void {
 
 	registerSessionsWeb(cmd);
 
-	internalCommand(
-		cmd
-			.command("close")
-			.description(
-				"Dismiss the current daemon-managed session, ending it and reaping its worktree",
-			)
-			.action(lazyAction(() => import("./closeSession"), "closeSession")),
-		"/close",
-	);
-
-	internalCommand(
-		cmd
-			.command("rename <title>")
-			.description(
-				"Retitle the current daemon-managed session, overriding the generated title for the rest of its life",
-			)
-			.action(lazyAction(() => import("./renameSession"), "renameSession")),
-		"/rename",
-	);
+	registerCloseRenameCommands(cmd);
+	registerInterruptCommand(cmd);
 
 	cmd
 		.command("list")

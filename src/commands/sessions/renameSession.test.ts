@@ -1,10 +1,13 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { sendToDaemon } from "./daemon/sendToDaemon";
+import { sendToSession } from "./target/sendToSession";
 import { renameSession } from "./renameSession";
 
 vi.mock("./daemon/sendToDaemon", () => ({
 	sendToDaemon: vi.fn(),
 }));
+
+vi.mock("./target/sendToSession", () => ({ sendToSession: vi.fn() }));
 
 vi.mock("./daemon/appendDaemonLog", () => ({
 	appendDaemonLog: vi.fn(),
@@ -62,5 +65,21 @@ describe("renameSession", () => {
 		sendMock.mockRejectedValue(new Error("no daemon"));
 
 		await expect(renameSession("fix login redirect")).resolves.toBeUndefined();
+	});
+
+	it("routes an explicit id to the targeted session instead of the current one", async () => {
+		process.env.ASSIST_SESSION = "1";
+		process.env.ASSIST_SESSION_ID = "s1";
+
+		await renameSession("fix login redirect", { id: "laptop:s9" });
+
+		expect(sendMock).not.toHaveBeenCalled();
+		const [id, build] = vi.mocked(sendToSession).mock.calls[0];
+		expect(id).toBe("laptop:s9");
+		expect(build(id)).toEqual({
+			type: "rename",
+			sessionId: "laptop:s9",
+			title: "fix login redirect",
+		});
 	});
 });
