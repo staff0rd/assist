@@ -218,6 +218,22 @@ describe("watchWait --build", () => {
 		expect(errored.join("\n")).toContain('build "auto-build" failed');
 	});
 
+	it("names the missing tool when the build exits 127", async () => {
+		mockRunWatchBuild.mockResolvedValue({
+			kind: "failed",
+			exitCode: 127,
+			output: "pnpm: command not found",
+			missingTool: "pnpm is not installed; install it with: npm i -g pnpm",
+		});
+
+		await run({ build: true });
+
+		expect(exitCode).toBe(4);
+		expect(errored.join("\n")).toContain(
+			"pnpm is not installed; install it with: npm i -g pnpm",
+		);
+	});
+
 	it("does not build when the pull was blocked", async () => {
 		mockPullFastForward.mockReturnValue({
 			kind: "blocked",
@@ -435,6 +451,27 @@ describe("watchWait interrupted build", () => {
 		expect(mockWaitForUpstream).toHaveBeenCalled();
 		expect(existsSync(buildMarker)).toBe(true);
 		expect(exitCode).toBe(2);
+	});
+
+	it("names the missing tool when the pending rebuild exits 127", async () => {
+		writeFileSync(buildMarker, "");
+		mockRunWatchBuild.mockResolvedValue({
+			kind: "failed",
+			exitCode: 127,
+			output: "pnpm: command not found",
+			missingTool: "pnpm is not installed; install it with: npm i -g pnpm",
+		});
+		mockWaitForUpstream.mockResolvedValue({
+			kind: "timeout",
+			upstream: "origin/main",
+			timeout: "60m",
+		});
+
+		await run({ build: true, timeout: "60m" });
+
+		expect(errored.join("\n")).toContain(
+			"failed with exit code 127; the next pull retries it\npnpm is not installed; install it with: npm i -g pnpm",
+		);
 	});
 
 	it("runs a sync left pending by the interrupted lap", async () => {

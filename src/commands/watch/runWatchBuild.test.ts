@@ -81,6 +81,22 @@ describe("runWatchBuild", () => {
 		});
 	});
 
+	it("names the missing tool when the build exits 127", async () => {
+		mockRunCommandToCompletion.mockResolvedValue({
+			kind: "completed",
+			exitCode: 127,
+			output: "/usr/bin/bash: line 1: pnpm: command not found\n",
+		});
+
+		await expect(runWatchBuild("auto-build")).resolves.toEqual({
+			kind: "failed",
+			exitCode: 127,
+			output: "/usr/bin/bash: line 1: pnpm: command not found\n",
+			missingTool:
+				"pnpm is not installed; install it with: npm install -g pnpm (or: corepack enable pnpm)",
+		});
+	});
+
 	it("reports a command that could not be spawned as a failure", async () => {
 		mockRunCommandToCompletion.mockResolvedValue({
 			kind: "failed",

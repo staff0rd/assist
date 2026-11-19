@@ -4,6 +4,7 @@ import { MissingRunCwdError, resolveRunCwd } from "../run/resolveRunCwd";
 import { runCommandToCompletion } from "../run/runCommandToCompletion";
 import { runPreCommands } from "../run/runPreCommands";
 import type { BuildOutcome } from "./BuildOutcome";
+import { missingBuildTool } from "./missingBuildTool";
 import { toBuildOutcome } from "./toBuildOutcome";
 
 export async function runWatchBuild(entry: string): Promise<BuildOutcome> {
@@ -17,7 +18,7 @@ export async function runWatchBuild(entry: string): Promise<BuildOutcome> {
 	}
 	if (config.pre) runPreCommands(config.pre, cwd, true);
 
-	return toBuildOutcome(
+	const outcome = toBuildOutcome(
 		await runCommandToCompletion(
 			config.command,
 			[...(config.args ?? []), ...resolveParams(config.params, [])],
@@ -26,4 +27,11 @@ export async function runWatchBuild(entry: string): Promise<BuildOutcome> {
 			true,
 		),
 	);
+	if (outcome.kind === "built") return outcome;
+	const missingTool = missingBuildTool(
+		config.command,
+		outcome.exitCode,
+		outcome.output,
+	);
+	return missingTool ? { ...outcome, missingTool } : outcome;
 }

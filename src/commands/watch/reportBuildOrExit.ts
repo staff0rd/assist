@@ -1,3 +1,4 @@
+import { reportBuildFailure } from "./reportBuildFailure";
 import { runWatchBuild } from "./runWatchBuild";
 
 export async function reportBuildOrExit(entry: string): Promise<void> {
@@ -7,7 +8,6 @@ export async function reportBuildOrExit(entry: string): Promise<void> {
 		return;
 	}
 
-	if (outcome.output.length > 0) process.stdout.write(outcome.output);
-	console.error(`build "${entry}" failed with exit code ${outcome.exitCode}`);
+	reportBuildFailure(entry, outcome);
 	process.exit(4);
 }

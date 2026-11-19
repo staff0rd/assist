@@ -203,7 +203,7 @@ run:
     command: bash
     args:
       - -c
-      - pnpm install --frozen-lockfile && pnpm run build
+      - command -v pnpm >/dev/null 2>&1 || pnpm() { npx --yes "$(node -p "require('./package.json').packageManager")" "$@"; }; pnpm install --frozen-lockfile && pnpm run build
   - name: ios:build
     command: npm
     args:
