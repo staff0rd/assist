@@ -1,3 +1,10 @@
+## [0.1239.3](https://github.com/staff0rd/assist/compare/v0.1239.2...v0.1239.3) (2026-11-19)
+
+
+### Bug Fixes
+
+* don't bind main clone as its own worktree ([#19](https://github.com/staff0rd/assist/issues/19)) ([a73f56f](https://github.com/staff0rd/assist/commit/a73f56f4e040670a51f92b94f547bd213bbe8b6d))
+
 ## [0.1239.2](https://github.com/staff0rd/assist/compare/v0.1239.1...v0.1239.2) (2026-11-19)
 
 
