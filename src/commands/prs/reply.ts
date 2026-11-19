@@ -1,21 +1,12 @@
-import { rejectHarnessAttribution } from "../../shared/rejectHarnessAttribution";
 import { azureDevopsRemote } from "../review/azureDevopsRemote";
 import { azureDevopsThreadActions } from "./azureDevops/azureDevopsThreadActions";
 import { replyToComment } from "./replyToComment";
+import { rejectHarnessNames } from "./rejectHarnessNames";
 import { reviewProposedPrComment } from "./reviewProposedPrComment";
 import { getCurrentPrNumber, getRepoInfo, isGhNotInstalled } from "./shared";
 
-function validateBody(body: string): void {
-	const lowerBody = body.toLowerCase();
-	if (lowerBody.includes("claude") || lowerBody.includes("opus")) {
-		console.error('Error: Body must not contain "claude" or "opus"');
-		process.exit(1);
-	}
-	rejectHarnessAttribution("Body", body);
-}
-
 export async function reply(commentId: number, body: string): Promise<void> {
-	validateBody(body);
+	rejectHarnessNames("Body", body);
 
 	await reviewProposedPrComment(`Reply to comment #${commentId}`, body, null);
 

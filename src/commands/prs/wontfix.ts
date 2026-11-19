@@ -1,17 +1,8 @@
 import { execFileSync } from "node:child_process";
-import { rejectHarnessAttribution } from "../../shared/rejectHarnessAttribution";
+import { rejectHarnessNames } from "./rejectHarnessNames";
 import { resolveCommentWithReply } from "./resolveCommentWithReply";
 import { reviewProposedPrComment } from "./reviewProposedPrComment";
 import { isGhNotInstalled } from "./shared";
-
-function validateReason(reason: string): void {
-	const lowerReason = reason.toLowerCase();
-	if (lowerReason.includes("claude") || lowerReason.includes("opus")) {
-		console.error('Error: Reason must not contain "claude" or "opus"');
-		process.exit(1);
-	}
-	rejectHarnessAttribution("Reason", reason);
-}
 
 function validateShaReferences(reason: string): void {
 	// Match SHAs in markdown commit links: [7-char sha](https://github.com/owner/repo/commit/full-sha)
@@ -45,7 +36,7 @@ export async function wontfix(
 	commentId: number,
 	reason: string,
 ): Promise<void> {
-	validateReason(reason);
+	rejectHarnessNames("Reason", reason);
 	validateShaReferences(reason);
 
 	await reviewProposedPrComment(

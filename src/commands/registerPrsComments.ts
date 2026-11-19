@@ -30,11 +30,18 @@ export function registerPrsComments(prsCommand: Command): void {
 			.action(async (path: string, line: string, body: string) => {
 				const { comment: prsComment } = await import("./prs/comment");
 				const { readBodyArgument } = await import("./prs/readBodyArgument");
-				await prsComment(
-					path,
-					Number.parseInt(line, 10),
-					await readBodyArgument(body),
-				);
+				try {
+					await prsComment(
+						path,
+						Number.parseInt(line, 10),
+						await readBodyArgument(body),
+					);
+				} catch (error) {
+					console.error(
+						`Error: ${error instanceof Error ? error.message : String(error)}`,
+					);
+					process.exit(1);
+				}
 			}),
 		"/comment and /forward-comments",
 	);

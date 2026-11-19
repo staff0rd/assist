@@ -1,22 +1,16 @@
-import { rejectHarnessAttribution } from "../../shared/rejectHarnessAttribution";
+import { findHarnessNameViolation } from "./findHarnessNameViolation";
 import { postReviewComment } from "./postReviewComment";
 import { reviewProposedPrComment } from "./reviewProposedPrComment";
 import { getCurrentPrNodeId, isGhNotInstalled } from "./shared";
 
 function validateBody(body: string): void {
-	const lower = body.toLowerCase();
-	if (lower.includes("claude") || lower.includes("opus")) {
-		console.error('Error: Body must not contain "claude" or "opus"');
-		process.exit(1);
-	}
-	rejectHarnessAttribution("Body", body);
+	const violation = findHarnessNameViolation("Body", body);
+	if (violation) throw new Error(violation);
 }
 
 function validateLine(line: number): void {
-	if (!Number.isInteger(line) || line < 1) {
-		console.error("Error: Line must be a positive integer");
-		process.exit(1);
-	}
+	if (!Number.isInteger(line) || line < 1)
+		throw new Error("Line must be a positive integer");
 }
 
 type CommentOptions = {

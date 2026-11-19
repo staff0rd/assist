@@ -55,6 +55,30 @@ describe("comment thread verification", () => {
 	});
 });
 
+describe("comment body guard", () => {
+	it("posts a body naming an identifier that contains claude", async () => {
+		runGhGraphql.mockReturnValue(threadCreated());
+		vi.spyOn(console, "log").mockImplementation(() => {});
+
+		await comment("src/foo.ts", 42, "`claudeSdkChrome` may stay enabled");
+
+		expect(runGhGraphql).toHaveBeenCalled();
+	});
+
+	it("throws without posting when the body names claude", async () => {
+		await expect(comment("src/foo.ts", 42, "Fixed by Claude")).rejects.toThrow(
+			'Body must not contain "claude" or "opus"',
+		);
+		expect(runGhGraphql).not.toHaveBeenCalled();
+	});
+
+	it("throws on a non-positive line", async () => {
+		await expect(comment("src/foo.ts", 0, "body")).rejects.toThrow(
+			"Line must be a positive integer",
+		);
+	});
+});
+
 describe("comment preview", () => {
 	it("posts without a preview outside a web session", async () => {
 		runGhGraphql.mockReturnValue(threadCreated());

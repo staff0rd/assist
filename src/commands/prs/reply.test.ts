@@ -65,6 +65,12 @@ describe("reply", () => {
 		});
 	});
 
+	it("posts a body naming an identifier that contains claude", async () => {
+		await reply(123, "Renamed `claudeSdkChrome`");
+
+		expect(replyToComment).toHaveBeenCalled();
+	});
+
 	it("posts without a preview outside a web session", async () => {
 		await reply(123, "Good catch");
 
