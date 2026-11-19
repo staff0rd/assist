@@ -35,6 +35,12 @@ vi.mock("./codexSdkOptions", () => ({
 	}),
 }));
 
+async function drain(query: { events: AsyncIterable<unknown> }) {
+	const seen = [];
+	for await (const event of query.events) seen.push(event);
+	return seen;
+}
+
 function start(resumeId?: string) {
 	const abort = new AbortController();
 	const control = createSdkSessionProcess("3", abort);
@@ -78,5 +84,34 @@ describe("codexSdkDriver", () => {
 		const seen = [];
 		for await (const event of query.events) seen.push(event);
 		expect(seen).toContainEqual({ kind: "conversation", id: "thread-1" });
+	});
+
+	it("starts a new thread on /clear without sending it as a prompt", async () => {
+		const fresh = { id: null, runStreamed: vi.fn() };
+		fresh.runStreamed.mockResolvedValue({ events: threadStarted() });
+		const { query, input } = start("thread-9");
+		codex.startThread.mockReturnValueOnce(fresh);
+		input.push("/clear");
+		input.push("hi");
+		input.close();
+		const seen = await drain(query);
+		expect(codex.startThread).toHaveBeenCalledWith({
+			sandboxMode: "workspace-write",
+		});
+		expect(codex.thread.runStreamed).not.toHaveBeenCalled();
+		expect(fresh.runStreamed).toHaveBeenCalledTimes(1);
+		expect(fresh.runStreamed.mock.calls[0][0]).toBe("hi");
+		expect(seen).toContainEqual({ kind: "conversation", id: "thread-1" });
+	});
+
+	it("settles the /clear turn back to waiting", async () => {
+		const { query, input } = start();
+		input.push("/clear");
+		input.close();
+		expect(await drain(query)).toEqual([
+			{ kind: "status", status: "running" },
+			{ kind: "status", status: "waiting" },
+		]);
+		expect(codex.thread.runStreamed).not.toHaveBeenCalled();
 	});
 });

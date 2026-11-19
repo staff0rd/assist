@@ -6,13 +6,16 @@ import { withBuiltInSlashCommands } from "./withBuiltInSlashCommands";
 const commands: SlashCommand[] = [{ name: "commit", scope: "user" }];
 
 describe("withBuiltInSlashCommands", () => {
-	it("adds /clear as a built-in for claude-sdk sessions", () => {
-		expect(withBuiltInSlashCommands("claude-sdk", commands)).toContainEqual({
-			name: "clear",
-			description: "Start a new conversation in this session",
-			scope: "built-in",
-		});
-	});
+	it.each(["claude-sdk", "codex-sdk"] as const)(
+		"adds /clear as a built-in for %s sessions",
+		(harness) => {
+			expect(withBuiltInSlashCommands(harness, commands)).toContainEqual({
+				name: "clear",
+				description: "Start a new conversation in this session",
+				scope: "built-in",
+			});
+		},
+	);
 
 	it.each(["claude", "codex"] as const)(
 		"leaves %s suggestions unchanged",
