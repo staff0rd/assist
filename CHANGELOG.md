@@ -1,3 +1,10 @@
+## [0.1236.2](https://github.com/staff0rd/assist/compare/v0.1236.1...v0.1236.2) (2026-11-19)
+
+
+### Bug Fixes
+
+* guard harness names by whole word ([343b0f7](https://github.com/staff0rd/assist/commit/343b0f7afd534d46b4fc64f35f878c327011f269))
+
 ## [0.1236.1](https://github.com/staff0rd/assist/compare/v0.1236.0...v0.1236.1) (2026-11-18)
 
 
