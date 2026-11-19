@@ -4,6 +4,7 @@ import { internalCommand } from "../../shared/internalCommand";
 import { registerNodes } from "./nodes/registerNodes";
 import { registerOutputCommand } from "./registerOutputCommand";
 import { registerPreviewCommands } from "./previews/registerPreviewCommands";
+import { registerSendCommand } from "./registerSendCommand";
 import { registerSetStatusCommand } from "./registerSetStatusCommand";
 import { registerSessionsWeb } from "./registerSessionsWeb";
 import { harnessDefaultsConfigHelp } from "../backlog/harnessDefaultsConfigHelp";
@@ -58,6 +59,7 @@ export function registerSessions(program: Command): void {
 
 	registerOutputCommand(cmd);
 	registerPreviewCommands(cmd);
+	registerSendCommand(cmd);
 	registerSetStatusCommand(cmd);
 	registerNodes(cmd);
 

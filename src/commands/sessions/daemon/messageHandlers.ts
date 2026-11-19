@@ -22,6 +22,7 @@ import { handleReloadLinks } from "./handleReloadLinks";
 import { handleRestartWebServer } from "./handleRestartWebServer";
 import { handleSetStatus } from "./handleSetStatus";
 import { handleSubscribeLogs } from "./handleSubscribeLogs";
+import { handleTypeKeys } from "./handleTypeKeys";
 import { handleTypePrompt } from "./handleTypePrompt";
 import { handleTypePromptToWriter } from "./handleTypePromptToWriter";
 import { inboxHandlers } from "./inbox/inboxHandlers";
@@ -76,6 +77,7 @@ export const messageHandlers: Record<string, Handler> = {
 	...viewerHandlers,
 	...pinHandlers,
 	"type-prompt": handleTypePrompt,
+	"type-keys": handleTypeKeys,
 	"sdk-launch": handleSdkLaunch,
 	"sdk-shell": handleSdkShell,
 	"sdk-shell-stop": handleSdkShellStop,

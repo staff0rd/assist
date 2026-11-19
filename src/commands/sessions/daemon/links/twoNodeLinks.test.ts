@@ -334,6 +334,65 @@ describe("two linked nodes", () => {
 		]);
 	});
 
+	it.each([
+		["type-prompt", "typePrompt", "Sent to assist session 3"],
+		["type-keys", "typeKeys", "Sent keys to assist session 3"],
+	] as const)(
+		"forwards %s for a linked id and relays the result to the requester",
+		async (type, method, message) => {
+			const wsl = node("pc-wsl", [WINDOWS]);
+			const windows = node("pc-windows");
+			addSession(windows, "3");
+			const typed = vi.spyOn(windows.io, method);
+			const view = viewer();
+			wsl.links.reload();
+			await vi.waitFor(() =>
+				expect(wsl.links.nodes().links[0].state).toBe("connected"),
+			);
+
+			dispatchMessage(view.client, wsl, {
+				type,
+				sessionId: "pc-windows:3",
+				text: "1\r",
+				requestId: "r1",
+			});
+
+			await vi.waitFor(() =>
+				expect(view.received).toContainEqual({
+					type: "type-prompt-result",
+					ok: true,
+					message,
+					requestId: "r1",
+				}),
+			);
+			expect(typed).toHaveBeenCalledWith("3", "1\r");
+		},
+	);
+
+	it("refuses to type into a session on a disconnected link, naming its state", () => {
+		const wsl = node("pc-wsl", [{ name: "pc-windows", url: "http://gone" }]);
+		const view = viewer();
+		wsl.links.reload();
+
+		dispatchMessage(view.client, wsl, {
+			type: "type-prompt",
+			sessionId: "pc-windows:3",
+			text: "hi",
+			requestId: "r1",
+		});
+
+		expect(view.received).toEqual([
+			{
+				type: "type-prompt-result",
+				ok: false,
+				message: expect.stringContaining(
+					"Cannot reach session pc-windows:3: pc-windows link is",
+				),
+				requestId: "r1",
+			},
+		]);
+	});
+
 	it("never re-exports linked sessions under symmetric linking", async () => {
 		const wsl = node("pc-wsl", [WINDOWS]);
 		const windows = node("pc-windows", [WSL]);

@@ -50,6 +50,7 @@ const relays: Record<string, Relay> = {
 	"session-transcript": relayWithNodeSessionId,
 	transcript: relayReply,
 	dequeued: relayReply,
+	"type-prompt-result": relayReply,
 	limits: (state, msg) =>
 		state.onLimits(
 			msg.harness as HarnessKind | undefined,

@@ -1,9 +1,6 @@
-import { sendTo } from "./broadcast";
-import { daemonLog } from "./daemonLog";
-import type { Handler } from "./routed";
+import { typeIntoSessionHandler } from "./typeIntoSessionHandler";
 
-export const handleTypePrompt: Handler = (client, m, d) => {
-	const reply = m.io.typePrompt(String(d.sessionId), String(d.text ?? ""));
-	if (!reply.ok) daemonLog(`type-prompt refused: ${reply.message}`);
-	sendTo(client, { type: "type-prompt-result", ...reply });
-};
+export const handleTypePrompt = typeIntoSessionHandler(
+	"type-prompt",
+	(m, id, text) => m.io.typePrompt(id, text),
+);

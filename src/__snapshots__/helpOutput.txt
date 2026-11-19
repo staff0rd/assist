@@ -3641,6 +3641,8 @@ Commands:
                                    question form's options
   decide [options] <session-id>    Answer a session's pending preview, unblocking the command
                                    waiting on it
+  send [options] <id> <text>       Submit a prompt in a session (an id from assist sessions list,
+                                   <node>:<id> for a linked node)
   set-status [options] <status>    Report the current session's status to the sessions daemon (used
                                    by Claude Code and Codex hooks)
   nodes [options]                  List this node and every linked node with its link state
@@ -3775,6 +3777,16 @@ Options:
                      <choice> for a single question; repeat per question or multi-select choice
                      (default: [])
   -h, --help         display help for command
+
+=== assist sessions send --help
+Usage: assist sessions send [options] <id> <text>
+
+Submit a prompt in a session (an id from assist sessions list, <node>:<id> for a linked node)
+
+Options:
+  --keys      Send <text> as raw keystrokes instead of a prompt; \r, \n, \t, \e and \xHH are decoded
+              (e.g. '1\r' answers a permission prompt)
+  -h, --help  display help for command
 
 === assist sessions set-status --help
 Usage: assist sessions set-status [options] <status>

@@ -1,6 +1,5 @@
-import { createInterface } from "node:readline";
-import { connectToDaemon } from "./connectToDaemon";
 import { readDaemonMessage } from "./readDaemonMessage";
+import { withDaemonConnection } from "./withDaemonConnection";
 
 const OUTPUT_TIMEOUT_MS = 5_000;
 
@@ -24,12 +23,7 @@ type SessionOutput = {
 export async function requestSessionOutput(
 	target: OutputTarget,
 ): Promise<SessionOutput> {
-	const socket = await connectToDaemon().catch(() => {
-		throw new Error("No sessions daemon is running");
-	});
-	try {
-		const lines = createInterface({ input: socket });
-		lines.on("error", () => {});
+	return withDaemonConnection(async (socket, lines) => {
 		const reply = readDaemonMessage<OutputReply>(
 			lines,
 			OUTPUT_TIMEOUT_MS,
@@ -41,7 +35,5 @@ export async function requestSessionOutput(
 		const { sessionId, scrollback, exited, error } = await reply;
 		if (scrollback === undefined) throw new Error(error);
 		return { sessionId, scrollback, exited };
-	} finally {
-		socket.destroy();
-	}
+	});
 }
