@@ -26,6 +26,7 @@ export function publishWorkflowOutput(
 			update();
 		},
 		end: () => {
+			if (ended) return;
 			ended = true;
 			update.cancel();
 			emit({ kind: "workflow", workflow: null });

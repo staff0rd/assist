@@ -8,7 +8,11 @@ import { relaySdkActions } from "./relaySdkActions";
 
 type SdkHandle = NonNullable<SessionProcess["sdk"]>;
 
-export function createSdkRelay(label: string, backgroundTasks: boolean) {
+export function createSdkRelay(
+	label: string,
+	backgroundTasks: boolean,
+	onAttach?: () => void,
+) {
 	const listeners: ((event: SdkSessionEvent) => void)[] = [];
 	let current: SessionProcess | undefined;
 	let prefixer: (() => string) | undefined;
@@ -30,6 +34,7 @@ export function createSdkRelay(label: string, backgroundTasks: boolean) {
 		},
 		attach: (query, idle) => {
 			current = query;
+			onAttach?.();
 			if (prefixer) query.sdk?.setPrefix?.(prefixer);
 			daemonLog(
 				`${label} sdk query attached to workflow${idle ? ", awaiting input" : ""}`,
