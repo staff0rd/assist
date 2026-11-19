@@ -1,3 +1,10 @@
+## [0.1239.1](https://github.com/staff0rd/assist/compare/v0.1239.0...v0.1239.1) (2026-11-19)
+
+
+### Bug Fixes
+
+* refuse interrupt of non-SDK sessions ([af2b6f2](https://github.com/staff0rd/assist/commit/af2b6f228d9af7d8573ed888971efceb4efca6ec))
+
 # [0.1239.0](https://github.com/staff0rd/assist/compare/v0.1238.0...v0.1239.0) (2026-11-19)
 
 
