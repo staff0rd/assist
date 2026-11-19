@@ -1,3 +1,10 @@
+## [0.1239.4](https://github.com/staff0rd/assist/compare/v0.1239.3...v0.1239.4) (2026-11-19)
+
+
+### Bug Fixes
+
+* build with pinned pnpm when missing ([88e6525](https://github.com/staff0rd/assist/commit/88e65254a024e05ed5626b875c1e629b6b07e2a3))
+
 ## [0.1239.3](https://github.com/staff0rd/assist/compare/v0.1239.2...v0.1239.3) (2026-11-19)
 
 
