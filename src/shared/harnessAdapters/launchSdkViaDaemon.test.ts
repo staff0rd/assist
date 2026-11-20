@@ -7,7 +7,10 @@ vi.mock("../../commands/sessions/daemon/connectToDaemon", () => ({
 }));
 
 describe("launchSdkViaDaemon", () => {
-	afterEach(() => vi.unstubAllEnvs());
+	afterEach(() => {
+		vi.unstubAllEnvs();
+		process.exitCode = undefined;
+	});
 
 	it("refuses outside a driven daemon session without connecting", async () => {
 		vi.stubEnv("ASSIST_SDK_SESSION", "");
@@ -18,5 +21,6 @@ describe("launchSdkViaDaemon", () => {
 		});
 		await expect(done).rejects.toThrow(/sessions the assist daemon starts/);
 		expect(connectToDaemon).not.toHaveBeenCalled();
+		expect(process.exitCode).toBe(1);
 	});
 });

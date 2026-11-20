@@ -16,6 +16,9 @@ vi.mock("../../../shared/loadJson", () => ({
 }));
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
 vi.mock("./spawnPty", () => ({ spawnPty: vi.fn(() => ({ fake: "pty" })) }));
+vi.mock("./assistArgsHarness", () => ({
+	assistArgsHarness: vi.fn(() => "claude"),
+}));
 vi.mock("./hasTranscriptOnDisk", () => ({
 	hasTranscriptOnDisk: vi.fn(() => true),
 }));

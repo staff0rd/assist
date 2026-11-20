@@ -16,10 +16,12 @@ export function launchSdkViaDaemon(launch: SdkLaunch): SpawnResult {
 	};
 	const run = async () => {
 		const sessionId = process.env.ASSIST_SESSION_ID;
-		if (process.env.ASSIST_SDK_SESSION !== "1" || !sessionId)
+		if (process.env.ASSIST_SDK_SESSION !== "1" || !sessionId) {
+			process.exitCode = 1;
 			throw new Error(
 				`${harnessLabel(launch.harness)} runs workflows only in sessions the assist daemon starts; launch it from the web UI, or pick a terminal harness to run it in this terminal`,
 			);
+		}
 		socket = await connectToDaemon();
 		if (killed) {
 			socket.destroy();

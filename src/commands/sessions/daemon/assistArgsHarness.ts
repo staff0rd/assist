@@ -1,7 +1,9 @@
 import type { HarnessDefaultsType } from "../../backlog/resolveHarness";
 import { isHarnessKind } from "../../../shared/isHarnessKind";
 import type { HarnessKind } from "../../../shared/harnesses";
-import { loadConfigFrom } from "../../../shared/loadConfigFrom";
+import { loadMergedRawConfig } from "../../../shared/loadConfigFrom";
+import { assistConfigSchema } from "../../../shared/types";
+import { asRecord } from "../shared/asRecord";
 import { daemonLog } from "./daemonLog";
 
 function flagValue(args: string[]): string | undefined {
@@ -17,6 +19,23 @@ function defaultsType(args: string[]): HarnessDefaultsType | undefined {
 	return undefined;
 }
 
+function harnessIgnoringUnknownKeys(
+	raw: Record<string, unknown>,
+	type: HarnessDefaultsType | undefined,
+): HarnessKind {
+	const section = asRecord(raw.harness) ?? {};
+	const typed = type
+		? asRecord(asRecord(section.defaults)?.[type])?.harness
+		: undefined;
+	const value =
+		typed ||
+		section.engine ||
+		assistConfigSchema.shape.harness.parse(undefined).engine;
+	if (!isHarnessKind(value))
+		throw new Error(`unknown harness "${String(value)}"`);
+	return value;
+}
+
 export function assistArgsHarness(
 	args: string[],
 	cwd: string | undefined,
@@ -24,13 +43,17 @@ export function assistArgsHarness(
 	const value = flagValue(args);
 	if (value) return isHarnessKind(value) ? value : undefined;
 	try {
-		const { harness } = loadConfigFrom(cwd ?? process.cwd());
-		const type = defaultsType(args);
-		return (type && harness.defaults?.[type]?.harness) || harness.engine;
-	} catch (error) {
-		daemonLog(
-			`assist ${args.join(" ")}: harness not resolved from config (${error instanceof Error ? error.message : String(error)})`,
+		return harnessIgnoringUnknownKeys(
+			loadMergedRawConfig(cwd ?? process.cwd()),
+			defaultsType(args),
 		);
-		return undefined;
+	} catch (error) {
+		const reason = error instanceof Error ? error.message : String(error);
+		daemonLog(
+			`assist ${args.join(" ")}: harness not resolved from config (${reason})`,
+		);
+		throw new Error(
+			`could not resolve the harness from config (${reason}); if assist was upgraded since the daemon started, restart the daemon`,
+		);
 	}
 }
