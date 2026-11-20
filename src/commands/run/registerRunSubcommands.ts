@@ -7,8 +7,12 @@ export function registerRunSubcommands(runCommand: Command): void {
 		.command("list")
 		.description("List configured run commands")
 		.option("-v, --verbose", "Show full command details")
+		.option(
+			"--json",
+			"Print the merged entries as JSON, with every property and its source",
+		)
 		.action(async (opts) =>
-			(await import("../run")).listRunConfigs(!!opts.verbose),
+			(await import("./listRunConfigs")).listRunConfigs(opts),
 		);
 
 	registerRunAdd(runCommand);

@@ -431,6 +431,7 @@ List configured run commands
 
 Options:
   -v, --verbose  Show full command details
+  --json         Print the merged entries as JSON, with every property and its source
   -h, --help     display help for command
 
 === assist run add --help
