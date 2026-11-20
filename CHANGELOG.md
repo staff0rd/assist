@@ -1,3 +1,10 @@
+## [0.1244.1](https://github.com/staff0rd/assist/compare/v0.1244.0...v0.1244.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* resolve daemon harness on newer config ([dc4130c](https://github.com/staff0rd/assist/commit/dc4130c57031767b0b74ddbe2760d51d66023388))
+
 # [0.1244.0](https://github.com/staff0rd/assist/compare/v0.1243.0...v0.1244.0) (2026-11-20)
 
 
