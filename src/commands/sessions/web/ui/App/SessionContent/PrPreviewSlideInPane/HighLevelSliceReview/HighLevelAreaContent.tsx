@@ -2,8 +2,8 @@ import type { HighLevelPreviewPayload } from "../../../../../../../review/highLe
 import type { HighLevelDiffComments } from "../HighLevelDiffComments";
 import { HighLevelManualTesting } from "../HighLevelManualTesting";
 import { HighLevelAllFiles } from "./HighLevelAllFiles";
-import { HighLevelDescription } from "./HighLevelDescription";
 import type { HighLevelArea } from "./highLevelAreaCheck";
+import { HighLevelPrBodyArea } from "./HighLevelPrBodyArea";
 import { HighLevelSliceAreaContent } from "./HighLevelSliceAreaContent";
 import type { HighLevelSliceView } from "./highLevelSliceViews";
 
@@ -30,15 +30,7 @@ export function HighLevelAreaContent({
 			/>
 		);
 	if (area === "description" || area === "related")
-		return (
-			<HighLevelDescription
-				body={payload.body}
-				repo={payload.repo}
-				prNumber={payload.prNumber}
-				checks={payload.checks}
-				showChecks={area === "description"}
-			/>
-		);
+		return <HighLevelPrBodyArea area={area} payload={payload} />;
 	if (area === "all")
 		return (
 			<HighLevelAllFiles

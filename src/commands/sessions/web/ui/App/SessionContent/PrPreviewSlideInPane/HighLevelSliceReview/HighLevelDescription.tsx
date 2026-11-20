@@ -17,13 +17,11 @@ export function HighLevelDescription({
 	repo,
 	prNumber,
 	checks,
-	showChecks,
 }: {
 	body: string;
 	repo: string;
 	prNumber: number;
 	checks: HighLevelCheckResult[];
-	showChecks: boolean;
 }) {
 	const html = useMemo(
 		() =>
@@ -38,11 +36,7 @@ export function HighLevelDescription({
 		<Box
 			sx={{ display: "flex", flexDirection: "column", gap: 1.5, minWidth: 0 }}
 		>
-			{showChecks && (
-				<HighLevelDescriptionChips
-					checks={highLevelDescriptionChecks(checks)}
-				/>
-			)}
+			<HighLevelDescriptionChips checks={highLevelDescriptionChecks(checks)} />
 			{body.trim() ? (
 				<MarkdownHtml
 					className="markdown"

@@ -196,7 +196,39 @@ describe("HighLevelSliceReview", () => {
 		expect(screen.getByText("No description")).toBeTruthy();
 	});
 
-	it("shows the description beneath the Related PRs tick", () => {
+	it("lists the PRs linked in the description beneath the Related PRs tick", () => {
+		render(
+			<HighLevelReviewPane
+				preview={preview({
+					body: "Intro paragraph.\nPairs with org/web#12 and org/repo#7.",
+					checks: [
+						...checks,
+						manual("related-prs-linked", "Related PRs are linked"),
+					],
+				})}
+				onDecision={vi.fn()}
+			/>,
+		);
+
+		fireEvent.click(area(/Related PRs/));
+
+		expect(screen.getByLabelText("Related PRs are linked")).toBeTruthy();
+		const link = screen.getByRole("link", { name: "org/web#12" });
+		expect(link.getAttribute("href")).toBe(
+			"https://github.com/org/web/pull/12",
+		);
+		expect(
+			screen.getByText("Pairs with org/web#12 and org/repo#7."),
+		).toBeTruthy();
+		const list = screen.getByRole("list", {
+			name: "Linked in the description",
+		});
+		expect(within(list).getAllByRole("link")).toHaveLength(1);
+		expect(screen.queryByText("Intro paragraph.")).toBeNull();
+		expect(screen.getByRole("link", { name: /View on GitHub/ })).toBeTruthy();
+	});
+
+	it("shows an empty state when the description links no other PRs", () => {
 		render(
 			<HighLevelReviewPane
 				preview={preview({
@@ -212,8 +244,10 @@ describe("HighLevelSliceReview", () => {
 
 		fireEvent.click(area(/Related PRs/));
 
-		expect(screen.getByLabelText("Related PRs are linked")).toBeTruthy();
-		expect(screen.getByText("Pairs with web change.")).toBeTruthy();
+		expect(
+			screen.getByText("The description links no other PRs."),
+		).toBeTruthy();
+		expect(screen.queryByText("Pairs with web change.")).toBeNull();
 	});
 
 	it("still shows the description when reopening saved progress", () => {
