@@ -3,26 +3,28 @@ import type { SpawnClaudeOptions } from "../shared/spawnClaude";
 import type { RunConfig } from "../shared/types";
 import { run as backlogRun } from "./backlog/run";
 import {
+	exitNoRunConfigs,
 	findRunConfig,
 	lookupRunConfig,
 	requireRunConfigs,
 } from "./run/findRunConfig";
 import { formatConfiguredCommands } from "./run/formatConfiguredCommands";
+import { formatRunEntry } from "./run/formatRunEntry";
+import { loadSourcedRunConfigs } from "./run/loadSourcedRunConfigs";
 import { resolveParams } from "./run/resolveParams";
 import { resolveRunCwd } from "./run/resolveRunCwd";
 import { runPreCommands } from "./run/runPreCommands";
 import { spawnRunCommand } from "./run/spawnRunCommand";
 
 export function listRunConfigs(verbose: boolean): void {
-	const configs = requireRunConfigs();
-	for (const config of configs) {
-		if (verbose) {
-			const args = config.args?.length ? ` ${config.args.join(" ")}` : "";
-			console.log(`${config.name}: ${config.command}${args}`);
-		} else {
-			console.log(config.name);
-		}
+	if (!verbose) {
+		for (const config of requireRunConfigs()) console.log(config.name);
+		return;
 	}
+	const sourced = loadSourcedRunConfigs(process.cwd());
+	if (sourced.length === 0) exitNoRunConfigs();
+	for (const { config, source } of sourced)
+		console.log(formatRunEntry(config, source));
 }
 
 function execRunConfig(config: RunConfig, args: string[]): void {

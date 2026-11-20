@@ -1,12 +1,9 @@
 import { existsSync } from "node:fs";
 import { homedir } from "node:os";
 import { dirname, join, relative } from "node:path";
-import { dropUnknownConfigKeys } from "./dropUnknownConfigKeys";
 import { linkedWorktree } from "./linkedWorktree";
-import { loadRawYaml } from "./loadRawYaml";
 import { mergeRawConfigs } from "./mergeDenyRules";
-import { readConfigCacheFile } from "./readRepoConfigCache";
-import { resolveRepoLayer } from "./resolveRepoLayer";
+import { loadRawConfigLayers } from "./loadRawConfigLayers";
 import { stripLegacyConfigKeys } from "./stripLegacyConfigKeys";
 import { type AssistConfig, assistConfigSchema } from "./types";
 import { warnUnsharedAdviceRules } from "./warnUnsharedAdviceRules";
@@ -57,26 +54,22 @@ export function loadConfigFrom(
 	return assistConfigSchema.parse(loadMergedRawConfig(cwd, globalConfigPath));
 }
 
-function sharedUserLayer(
-	userDb: Record<string, unknown> | undefined,
-): Record<string, unknown> {
-	return userDb ? dropUnknownConfigKeys(userDb) : {};
-}
-
 export function loadMergedRawConfig(
 	cwd: string,
 	globalConfigPath: string = getGlobalConfigPath(),
 ): Record<string, unknown> {
-	const globalRaw = loadRawYaml(globalConfigPath);
-	const projectRaw = loadRawYaml(projectConfigPathFrom(cwd));
-	const userDb = readConfigCacheFile().user;
-	warnUnsharedAdviceRules(globalRaw, userDb);
+	const layers = loadRawConfigLayers(
+		cwd,
+		globalConfigPath,
+		projectConfigPathFrom(cwd),
+	);
+	warnUnsharedAdviceRules(layers.global, layers.userDbRaw);
 	const globalWithRepo = mergeRawConfigs(
-		mergeRawConfigs(sharedUserLayer(userDb), globalRaw),
-		resolveRepoLayer(globalRaw, cwd).override,
+		mergeRawConfigs(layers.user, layers.global),
+		layers.repo,
 	);
 	const merged = stripLegacyConfigKeys(
-		mergeRawConfigs(globalWithRepo, projectRaw),
+		mergeRawConfigs(globalWithRepo, layers.project),
 	);
 	delete merged.repos;
 	return merged;

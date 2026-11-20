@@ -3,7 +3,7 @@ import { runConfigBaseDir } from "../../shared/runConfigBaseDir";
 import { resolveRunConfigs } from "../../shared/resolveRunConfigs";
 import type { RunConfig } from "../../shared/types";
 
-function exitNoRunConfigs(): never {
+export function exitNoRunConfigs(): never {
 	console.error("No run configurations found in assist.yml");
 	process.exit(1);
 }
