@@ -1,3 +1,10 @@
+## [0.1240.1](https://github.com/staff0rd/assist/compare/v0.1240.0...v0.1240.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* disable autofill on dropdown inputs ([90eac19](https://github.com/staff0rd/assist/commit/90eac19d0022df23aeca4ee61bc7f6b663b9f3fa))
+
 # [0.1240.0](https://github.com/staff0rd/assist/compare/v0.1239.4...v0.1240.0) (2026-11-19)
 
 
