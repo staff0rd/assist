@@ -7,6 +7,9 @@ devlog:
   name: assist
 notify:
   enabled: false
+review:
+  highLevel:
+    requireLinkedIssue: false
 restructure:
   ignore:
     - "**/register*.ts"
