@@ -1,10 +1,11 @@
 import Box from "@mui/material/Box";
 import { useRef } from "react";
 import { DropdownWrapper } from "../../../DropdownWrapper";
-import { RepoList, repoName } from "../../../RepoList";
+import { RepoList } from "../../../RepoList";
 import { ChordTooltipTitle } from "../../ChordTooltipTitle";
 import { useShortcut } from "../../useShortcut";
 import { useFocusRepoPickerHotkey } from "./RepoPicker/useFocusRepoPickerHotkey";
+import { repoName } from "../../../repoName";
 
 const pickerSx = { width: 240, ml: 2 } as const;
 

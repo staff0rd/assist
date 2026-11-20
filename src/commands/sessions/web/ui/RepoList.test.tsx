@@ -13,11 +13,11 @@ afterEach(() => {
 
 const repos = ["/repos/alpha", "/repos/beta", "/repos/gamma"];
 
-function renderList() {
+function renderList(list: string[] = repos) {
 	const onSelect = vi.fn();
 	const close = vi.fn();
 	render(
-		<RepoList repos={repos} selected="" onSelect={onSelect} close={close} />,
+		<RepoList repos={list} selected="" onSelect={onSelect} close={close} />,
 	);
 	const input = screen.getByPlaceholderText("Filter repos...");
 	return { onSelect, close, input };
@@ -67,5 +67,28 @@ describe("RepoList keyboard navigation", () => {
 		fireEvent.click(screen.getByText("beta"));
 		expect(onSelect).toHaveBeenCalledWith("/repos/beta");
 		expect(close).toHaveBeenCalled();
+	});
+});
+
+describe("RepoList filtering", () => {
+	const homeRepos = [
+		"/home/stafford/git/assist",
+		"/home/stafford/git/home",
+		"/home/stafford/git/homebrew-tap",
+	];
+
+	it("matches the repo name, not parent path segments", () => {
+		const { input } = renderList(homeRepos);
+		fireEvent.change(input, { target: { value: "home" } });
+		expect(screen.getByText("home")).toBeTruthy();
+		expect(screen.getByText("homebrew-tap")).toBeTruthy();
+		expect(screen.queryByText("assist")).toBeNull();
+	});
+
+	it("does not match a query found only in a parent path segment", () => {
+		const { input } = renderList(homeRepos);
+		fireEvent.change(input, { target: { value: "stafford" } });
+		expect(screen.queryByText("assist")).toBeNull();
+		expect(screen.queryByText("home")).toBeNull();
 	});
 });

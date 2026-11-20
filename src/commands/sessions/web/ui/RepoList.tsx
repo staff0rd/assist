@@ -3,13 +3,9 @@ import Paper from "@mui/material/Paper";
 import { useEffect, useRef, useState } from "react";
 import { dropdownStyle } from "./DropdownWrapper";
 import { FilterInput } from "./FilterInput";
+import { filterReposByName } from "./filterReposByName";
 import { RepoMenuList } from "./RepoMenuList";
 import { useListKeyboardNav } from "./useListKeyboardNav";
-
-export function repoName(cwd: string): string {
-	const sep = cwd.includes("\\") ? "\\" : "/";
-	return cwd.split(sep).filter(Boolean).pop() ?? cwd;
-}
 
 const menuSx: SxProps<Theme> = {
 	...dropdownStyle,
@@ -36,9 +32,7 @@ export function RepoList({
 	}, []);
 
 	const query = filter.trim().toLowerCase();
-	const filtered = query
-		? repos.filter((cwd) => cwd.toLowerCase().includes(query))
-		: repos;
+	const filtered = filterReposByName(repos, query);
 
 	const { highlight, setHighlight, onKeyDown } = useListKeyboardNav(
 		filtered,

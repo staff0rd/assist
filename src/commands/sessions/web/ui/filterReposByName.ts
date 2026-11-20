@@ -1,4 +1,4 @@
-import { repoName } from "../../../../../../../../RepoList";
+import { repoName } from "./repoName";
 
 export function filterReposByName(repos: string[], query: string): string[] {
 	const needle = query.trim().toLowerCase();

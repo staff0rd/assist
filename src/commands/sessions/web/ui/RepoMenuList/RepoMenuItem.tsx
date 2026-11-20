@@ -1,6 +1,6 @@
 import MenuItem from "@mui/material/MenuItem";
-import { repoName } from "../RepoList";
 import { useHighlightScroll } from "../useHighlightScroll";
+import { repoName } from "../repoName";
 
 export function RepoMenuItem({
 	cwd,

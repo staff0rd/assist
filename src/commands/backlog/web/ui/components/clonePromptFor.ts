@@ -1,5 +1,5 @@
-import { repoName } from "../../../../sessions/web/ui/RepoList";
 import type { ClonePrompt } from "./launchClone";
+import { repoName } from "../../../../sessions/web/ui/repoName";
 
 export function clonePromptFor(
 	clone: { origin: string; cloneTarget: string },

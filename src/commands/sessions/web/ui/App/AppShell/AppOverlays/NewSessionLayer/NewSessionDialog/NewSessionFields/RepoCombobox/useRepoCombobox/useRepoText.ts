@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { repoName } from "../../../../../../../../RepoList";
+import { repoName } from "../../../../../../../../repoName";
 
 const displayName = (cwd: string) => (cwd ? repoName(cwd) : "");
 

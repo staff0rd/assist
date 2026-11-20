@@ -1,7 +1,7 @@
 import CheckIcon from "@mui/icons-material/Check";
 import Box from "@mui/material/Box";
 import { useState } from "react";
-import { filterReposByName } from "../../App/AppShell/AppOverlays/NewSessionLayer/NewSessionDialog/NewSessionFields/RepoCombobox/useRepoCombobox/filterReposByName";
+import { filterReposByName } from "../../filterReposByName";
 import { repoLabel } from "../../App/repoLabel";
 import { nodeListSx } from "../../HomeNodeGate/nodeListSx";
 import { PhoneSheetItem } from "../PhoneActions/PhoneSheetItem";

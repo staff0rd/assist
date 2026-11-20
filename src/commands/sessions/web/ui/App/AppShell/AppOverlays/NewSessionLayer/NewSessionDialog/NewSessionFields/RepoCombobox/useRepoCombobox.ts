@@ -1,5 +1,5 @@
 import { comboboxKeyHandler } from "./useRepoCombobox/comboboxKeyHandler";
-import { filterReposByName } from "./useRepoCombobox/filterReposByName";
+import { filterReposByName } from "../../../../../../../filterReposByName";
 import { useComboboxOpen } from "./useRepoCombobox/useComboboxOpen";
 import { useRepoText } from "./useRepoCombobox/useRepoText";
 import { useListKeyboardNav } from "../../../../../../../useListKeyboardNav";
