@@ -66,9 +66,7 @@ Display the output so the user can see what happened. If the command exits non-z
 - **Request changes** — the reason and every inline comment, each with the excerpt it was left on. The output names the working file holding the pane's markdown, collapses included. Revise **that file in place** to address the comments — never recompose the body from scratch — then re-run the command, which previews the revised file with the earlier collapses intact. Pass `--fresh` only when the working file should be thrown away and the issue re-fetched.
 - **The issue moved on GitHub** — it names the working file holding the markdown. Someone else edited the issue, so nothing was pushed; tell the user rather than re-running blind.
 
-Any preview in this skill (`edit`, `create`, `comment`) can be revised while still pending by re-running the command directly — do not stop the earlier task. The earlier task exits 0 printing `Superseded by a newer preview — no decision; ignore this result.` without touching GitHub: ignore it.
-
-In a Claude SDK session (`ASSIST_SDK_AGENT=1`) or a Codex session hosted by the assist daemon (`ASSIST_SESSION=1`), run any of these previewing commands in the foreground instead: it returns at once, so end your turn and do nothing else — the command's output and exit code arrive as your next message, and a superseded run delivers nothing.
+Run every previewing command in this skill (`edit`, `create`, `comment`) in the foreground. In a web session it returns at once, so end your turn and do nothing else — the command's output and exit code arrive as your next message, and a superseded run delivers nothing. To revise a preview while still pending, re-run the command.
 
 ## Action: create
 
@@ -91,7 +89,7 @@ Create a new issue from a free-form request (e.g. `create bug against owner/repo
 
 If a named project, label or milestone doesn't match, list the available ones and ask the user which they meant (or whether to drop it). Never guess a near match or silently omit it. For a milestone, check `gh api repos/<owner>/<repo>/milestones --jq '.[].title'` before running, or relay the list the command prints when it rejects the name.
 
-Then run the command bare, as a background task, and do no other work until it returns — in a web session it blocks on the preview pane until the user approves or rejects:
+Then run the command bare, in the foreground — in a web session it opens the preview pane and creates nothing until the user approves or rejects:
 
 ```
 assist github issue create -R <owner>/<repo> --title "<title>" --body "<body>" [--label <name>]... [--project <number>] [--status <name>] [--milestone <name>] [--type <name>] [--parent <issue>] [--screenshot '[Group/]Caption=path']... 2>&1

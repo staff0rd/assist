@@ -54,8 +54,10 @@ function clearResumeEnvInheritedFromADaemonResumedSession() {
 
 clearResumeEnvInheritedFromADaemonResumedSession();
 
-// why: a test run from a Claude SDK session would otherwise hand every preview it opens to the real daemon
+// why: a test run from a daemon-hosted session would otherwise hand every preview it opens to the real daemon
 delete process.env.ASSIST_SDK_AGENT;
+delete process.env.ASSIST_SESSION;
+delete process.env.ASSIST_SESSION_ID;
 delete process.env.ASSIST_DEFERRED_RUN;
 
 afterAll(async () => {

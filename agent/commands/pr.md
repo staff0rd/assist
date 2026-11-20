@@ -6,7 +6,7 @@ Run `assist prs raise --help` and follow its guidance exactly to compose and rai
 
 ## After a successful raise
 
-In a Claude SDK session (`ASSIST_SDK_AGENT=1`) or a Codex session hosted by the assist daemon (`ASSIST_SESSION=1`) a web-previewed raise returns at once: end your turn and do nothing else, and its outcome arrives as your next message.
+Run `assist prs raise` in the foreground. A web-previewed raise returns at once: end your turn and do nothing else, and its outcome arrives as your next message.
 
 Only once the PR has actually been placed (skip this if the raise was rejected in the web preview or errored — there is nothing to watch), start watching CI in the background so you can keep working:
 

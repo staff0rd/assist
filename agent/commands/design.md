@@ -41,7 +41,7 @@ From what the user described and answered, decide whether the item changes anyth
 
 ### Design and review
 
-If it changes the UI, do not ask whether to design it — follow Steps 1-4 above for the item's UI, applying them to what the user described and answered in place of `$ARGUMENTS`. Publish the design as an artifact, then raise each review round with `ask-design` instead of iterating in chat. Write a short markdown summary of the design (what it shows and the choices to weigh in on) to a scratch file and run, as a background task, doing no other work until it returns:
+If it changes the UI, do not ask whether to design it — follow Steps 1-4 above for the item's UI, applying them to what the user described and answered in place of `$ARGUMENTS`. Publish the design as an artifact, then raise each review round with `ask-design` instead of iterating in chat. Write a short markdown summary of the design (what it shows and the choices to weigh in on) to a scratch file and run, in the foreground:
 
 ```
 assist ask-design --url '<artifact-url>' --title '<design title>' --body - < <summary-file>
@@ -49,8 +49,7 @@ assist ask-design --url '<artifact-url>' --title '<design title>' --body - < <su
 
 - **Approved** (exit 0) — fold every printed comment into the design, republishing to the same URL, then move on.
 - **Rejected** (non-zero, printing the reason and comments) — revise the design to address each one, republish to the same artifact URL, and re-run `ask-design` for the next round. Repeat until approved.
-- To revise while a round is still pending, re-run `ask-design` directly; the earlier task exits 0 as superseded — ignore its result.
-- In a Claude SDK session (`ASSIST_SDK_AGENT=1`) or a Codex session hosted by the assist daemon (`ASSIST_SESSION=1`), run `ask-design` in the foreground instead: it returns at once, so end your turn and do nothing else — the command's output and exit code arrive as your next message, and a superseded run delivers nothing.
+- In a web session it returns at once, so end your turn and do nothing else — the command's output and exit code arrive as your next message, and a superseded run delivers nothing. To revise while a round is still pending, re-run `ask-design`.
 - If it prints the design link and exits 0 without `Approved.` (not in an assist web session), ask the user in chat instead and iterate there — editing the same file and republishing to the same URL — until they say they are happy with it.
 - Without an `Artifact` tool there is no artifact URL, and `ask-design` refuses with the reason design review is unavailable on this harness. Review in chat instead: give the user the HTML file's absolute path and iterate on the same file until they say they are happy with it, then skip the link and attach steps below and summarise the design in the item's description.
 

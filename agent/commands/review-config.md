@@ -38,7 +38,7 @@ Do not ask in chat. Write the proposal as markdown to a scratch file with the Wr
   - `db` — repo (db), this repo's override in the shared assist database, personal to the user and seen by every node (propose this unless the user has said otherwise)
   - `git` — repo (git), the repo's own `assist.yml`, a file to check in so the team reviews against the same globs; only when the user asks for it, since it leaves a new file in a repo they may not own
 
-Then run, **as a background task**, doing no other work until it returns:
+Then run, in the foreground:
 
 ```
 assist ask --title 'High-level review config' --body - < <scratch file>
@@ -46,9 +46,8 @@ assist ask --title 'High-level review config' --body - < <scratch file>
 
 - **Approved (exit 0)** — fold every printed inline comment into the answers (a comment on a glob edits or drops it; a comment on the scope switches it), then write.
 - **Rejected (non-zero exit)** — write nothing. Address the reason and each comment, re-check any changed glob still matches files, revise the scratch file and re-run `assist ask`.
-- **Superseded (exit 0)** — you re-ran `assist ask` while this one was pending, which is how to revise it; do not stop the earlier task first. Ignore this result and wait for the newer one.
 
-In a Claude SDK session (`ASSIST_SDK_AGENT=1`) or a Codex session hosted by the assist daemon (`ASSIST_SESSION=1`), run it in the foreground instead: it returns at once, so end your turn and do nothing else — the command's output and exit code arrive as your next message, and a superseded run delivers nothing.
+In a web session it returns at once, so end your turn and do nothing else — the command's output and exit code arrive as your next message, and a superseded run delivers nothing. To revise it while pending, re-run `assist ask`.
 
 Outside a web session `assist ask` only prints the markdown and exits 0 without a decision: ask the user in chat instead, and write only once they have answered.
 

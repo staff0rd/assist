@@ -13,16 +13,15 @@ requests changes, revise and confirm again before running.`;
 const WEB_CONFIRM = `You are running inside an assist web session. When you run this command the
 drafted title and body are shown automatically in a preview pane beside the
 terminal in the web UI, for the user to approve or reject there — do NOT display
-the title and body or ask for confirmation in the terminal. The command blocks
-until the user decides: on approval it creates or updates the PR and reports it;
-on rejection it exits non-zero with the reason. The reviewer may also attach
+the title and body or ask for confirmation in the terminal. Run it in the
+foreground: it returns at once, so end your turn — once the user decides, its
+outcome arrives as your next message. On approval it creates or updates the PR
+and reports it; on rejection it exits non-zero with the reason. The reviewer may also attach
 inline comments to specific spans of the preview; on rejection these are printed
 as numbered quoted-span + note pairs on stderr. Address every comment (and the
 reason), then run the command again to re-preview the revised PR. Repeat until it
 is approved. To revise the PR while its preview is still pending, re-run the
-command directly — do not stop the earlier task; it exits 0 printing "Superseded
-by a newer preview — no decision; ignore this result." without raising anything:
-ignore it. When the session captured screenshots, supply them yourself with
+command; the earlier preview is superseded and delivers nothing. When the session captured screenshots, supply them yourself with
 --screenshot rather than asking the reviewer to drag them in. The reviewer may
 also drop or paste more screenshots or video into the pane; on approval gh
 attaches them (gh ${minGhAttachVersion}+) as ungrouped images after yours in the

@@ -5,9 +5,9 @@ import { defersPreviewWait } from "./defersPreviewWait";
 
 type DeferReply = { accepted?: boolean };
 
-/* why: a Claude (SDK) or daemon-hosted Codex session takes the decision as its
- * next user turn, so the daemon blocks on the preview in place of this process
- * and the agent ends its turn instead of waiting on a background task. */
+/* why: a Claude (SDK) or daemon-hosted terminal session takes the decision as
+ * its next user turn, so the daemon blocks on the preview in place of this
+ * process and the agent ends its turn instead of waiting on a background task. */
 export async function deferToDaemon(
 	stdin: string | undefined = capturedStdin.text,
 ): Promise<boolean> {

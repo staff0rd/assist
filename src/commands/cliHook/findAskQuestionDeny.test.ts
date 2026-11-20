@@ -11,6 +11,7 @@ vi.mock("../sessions/shared/isLiveDaemonSession", () => ({
 	isLiveDaemonSession: (id: string) => mockIsLive(id),
 }));
 
+import { markActiveHarness } from "../../lib/activeHarness";
 import { claudeToolOperations } from "../../shared/harnessAdapters/claudeToolOperations";
 import { findAskQuestionDeny } from "./findAskQuestionDeny";
 
@@ -69,14 +70,30 @@ describe("findAskQuestionDeny", () => {
 		expect(decision?.permissionDecisionReason).toContain(json);
 	});
 
-	it("tells a Claude SDK session to end its turn instead of using a background task", async () => {
+	it("tells a daemon-hosted Claude terminal or SDK session to run it in the foreground and end its turn", async () => {
+		markActiveHarness("claude");
 		const pty = await findAskQuestionDeny("{}");
 		vi.stubEnv("ASSIST_SDK_AGENT", "1");
 		const sdk = await findAskQuestionDeny("{}");
+		markActiveHarness(undefined);
 
-		expect(pty?.permissionDecisionReason).toContain("as a background task");
-		expect(sdk?.permissionDecisionReason).toContain("end your turn");
-		expect(sdk?.permissionDecisionReason).not.toContain("background task");
+		for (const decision of [pty, sdk]) {
+			expect(decision?.permissionDecisionReason).toContain("in the foreground");
+			expect(decision?.permissionDecisionReason).toContain("end your turn");
+			expect(decision?.permissionDecisionReason).not.toContain(
+				"background task",
+			);
+		}
+	});
+
+	it("keeps the background task for a harness the daemon cannot deliver into", async () => {
+		markActiveHarness("pi");
+		const decision = await findAskQuestionDeny("{}");
+		markActiveHarness(undefined);
+
+		expect(decision?.permissionDecisionReason).toContain(
+			"as a background task",
+		);
 	});
 
 	it("allows outside an assist session", async () => {

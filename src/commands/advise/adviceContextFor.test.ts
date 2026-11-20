@@ -41,8 +41,27 @@ describe("adviceContextFor", () => {
 		expect(context.previewAnswerWait).toBe(true);
 	});
 
-	it("keeps the background-task preview wait for a Claude CLI session", () => {
+	it("gives a daemon-hosted Claude terminal session the returns-at-once preview wait", () => {
 		markActiveHarness("claude");
+		const context = adviceContextFor(makeRepo(), {
+			ASSIST_SESSION: "1",
+			ASSIST_SESSION_ID: "6",
+		});
+		markActiveHarness(undefined);
+
+		expect(context.deferredPreview).toBe(true);
+	});
+
+	it("keeps the background-task preview wait outside an assist session", () => {
+		markActiveHarness("claude");
+		const context = adviceContextFor(makeRepo(), {});
+		markActiveHarness(undefined);
+
+		expect(context.deferredPreview).toBe(false);
+	});
+
+	it("keeps the background-task preview wait for a harness the daemon cannot deliver into", () => {
+		markActiveHarness("pi");
 		const context = adviceContextFor(makeRepo(), {
 			ASSIST_SESSION: "1",
 			ASSIST_SESSION_ID: "6",
