@@ -1994,6 +1994,7 @@ Config:
   assist config set harness.engine <claude|claude-sdk|codex|codex-sdk|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key); codex-sdk (Codex (SDK)) drives your logged-in codex through the Codex SDK
   assist config set harness.exposeCodexActions <true|false>               # force the web UI 'with Codex' actions off even when codex is on PATH
   assist config set harness.exposePiActions <true|false>                  # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.claudeSdkChrome <true|false>                  # launch claude-sdk sessions with --chrome (Claude in Chrome); defaults to true
   assist config set harness.codexModel <model>                            # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
   assist config set harness.defaults.draft.harness <claude|codex|pi>      # harness for draft sessions (assist draft, New Session dialog) when none is picked; unset falls back to harness.engine
   assist config set harness.defaults.draft.model <model>                  # model for draft sessions (assist draft, New Session dialog) on the type's harness; unset uses the harness's own default
@@ -4052,6 +4053,7 @@ Config:
   assist config set harness.engine <claude|claude-sdk|codex|codex-sdk|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key); codex-sdk (Codex (SDK)) drives your logged-in codex through the Codex SDK
   assist config set harness.exposeCodexActions <true|false>               # force the web UI 'with Codex' actions off even when codex is on PATH
   assist config set harness.exposePiActions <true|false>                  # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.claudeSdkChrome <true|false>                  # launch claude-sdk sessions with --chrome (Claude in Chrome); defaults to true
   assist config set harness.codexModel <model>                            # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
   assist config set harness.defaults.draft.harness <claude|codex|pi>      # harness for draft sessions (assist draft, New Session dialog) when none is picked; unset falls back to harness.engine
   assist config set harness.defaults.draft.model <model>                  # model for draft sessions (assist draft, New Session dialog) on the type's harness; unset uses the harness's own default
@@ -4088,6 +4090,7 @@ Config:
   assist config set harness.engine <claude|claude-sdk|codex|codex-sdk|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key); codex-sdk (Codex (SDK)) drives your logged-in codex through the Codex SDK
   assist config set harness.exposeCodexActions <true|false>               # force the web UI 'with Codex' actions off even when codex is on PATH
   assist config set harness.exposePiActions <true|false>                  # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.claudeSdkChrome <true|false>                  # launch claude-sdk sessions with --chrome (Claude in Chrome); defaults to true
   assist config set harness.codexModel <model>                            # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
   assist config set harness.defaults.draft.harness <claude|codex|pi>      # harness for draft sessions (assist draft, New Session dialog) when none is picked; unset falls back to harness.engine
   assist config set harness.defaults.draft.model <model>                  # model for draft sessions (assist draft, New Session dialog) on the type's harness; unset uses the harness's own default
@@ -4124,6 +4127,7 @@ Config:
   assist config set harness.engine <claude|claude-sdk|codex|codex-sdk|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key); codex-sdk (Codex (SDK)) drives your logged-in codex through the Codex SDK
   assist config set harness.exposeCodexActions <true|false>               # force the web UI 'with Codex' actions off even when codex is on PATH
   assist config set harness.exposePiActions <true|false>                  # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.claudeSdkChrome <true|false>                  # launch claude-sdk sessions with --chrome (Claude in Chrome); defaults to true
   assist config set harness.codexModel <model>                            # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
 
 === assist fix-conflict --help
@@ -4147,6 +4151,7 @@ Config:
   assist config set harness.engine <claude|claude-sdk|codex|codex-sdk|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key); codex-sdk (Codex (SDK)) drives your logged-in codex through the Codex SDK
   assist config set harness.exposeCodexActions <true|false>               # force the web UI 'with Codex' actions off even when codex is on PATH
   assist config set harness.exposePiActions <true|false>                  # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.claudeSdkChrome <true|false>                  # launch claude-sdk sessions with --chrome (Claude in Chrome); defaults to true
   assist config set harness.codexModel <model>                            # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
 
 === assist refine --help
@@ -4170,6 +4175,7 @@ Config:
   assist config set harness.engine <claude|claude-sdk|codex|codex-sdk|pi> # default coding harness launched by refine and other flows; claude-sdk (Claude (SDK)) drives your logged-in claude through the Agent SDK, and signed in with a Claude plan its usage draws from the same plan usage limits as Claude Code (Anthropic's monthly API credits cover the Agent SDK only with an API key); codex-sdk (Codex (SDK)) drives your logged-in codex through the Codex SDK
   assist config set harness.exposeCodexActions <true|false>               # force the web UI 'with Codex' actions off even when codex is on PATH
   assist config set harness.exposePiActions <true|false>                  # force the web UI 'with pi' actions off even when pi is on PATH
+  assist config set harness.claudeSdkChrome <true|false>                  # launch claude-sdk sessions with --chrome (Claude in Chrome); defaults to true
   assist config set harness.codexModel <model>                            # a value routes non-review Codex launches through the LiteLLM proxy with that model (needs litellm.baseUrl and litellm.apiKey); unset, empty or codex-default uses codex's own configured provider and model, and codex-default overrides a value inherited from user or global config
 
 === assist signal --help
