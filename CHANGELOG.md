@@ -1,3 +1,15 @@
+# [0.1244.0](https://github.com/staff0rd/assist/compare/v0.1243.0...v0.1244.0) (2026-11-20)
+
+
+### Bug Fixes
+
+* run preview commands in foreground ([0847851](https://github.com/staff0rd/assist/commit/084785137b3dbad830f05b0a1952a9e03b7fdd46))
+
+
+### Features
+
+* config switch for linked-issue check ([7058b0f](https://github.com/staff0rd/assist/commit/7058b0fa8e320fae7435d317cafb337ae148529f))
+
 # [0.1243.0](https://github.com/staff0rd/assist/compare/v0.1242.1...v0.1243.0) (2026-11-20)
 
 
