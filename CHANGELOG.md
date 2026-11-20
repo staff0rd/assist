@@ -1,3 +1,11 @@
+## [0.1241.1](https://github.com/staff0rd/assist/compare/v0.1241.0...v0.1241.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* list linked PRs in Related PRs tab ([87036c9](https://github.com/staff0rd/assist/commit/87036c9d6314fc3381930eddb12612b6507282c2))
+* reap trees landed by patch ([a28dfd9](https://github.com/staff0rd/assist/commit/a28dfd94c229494dbec40fe32d4e3c04d30c1187))
+
 # [0.1241.0](https://github.com/staff0rd/assist/compare/v0.1240.1...v0.1241.0) (2026-11-20)
 
 
