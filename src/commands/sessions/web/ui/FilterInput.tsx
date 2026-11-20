@@ -19,6 +19,7 @@ export function FilterInput({
 	return (
 		<TextField
 			autoFocus={autoFocus}
+			autoComplete="off"
 			inputRef={inputRef}
 			value={value}
 			onChange={(e) => onChange(e.target.value)}

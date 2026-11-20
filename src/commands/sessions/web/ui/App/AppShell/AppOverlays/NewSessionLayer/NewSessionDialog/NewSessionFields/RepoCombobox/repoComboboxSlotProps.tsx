@@ -17,6 +17,7 @@ export function repoComboboxSlotProps(open: boolean) {
 			role: "combobox",
 			"aria-label": "Repo",
 			"aria-expanded": open,
+			autoComplete: "off",
 		},
 		input: {
 			sx: inputSx,
