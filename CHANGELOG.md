@@ -1,3 +1,10 @@
+## [0.1242.1](https://github.com/staff0rd/assist/compare/v0.1242.0...v0.1242.1) (2026-11-20)
+
+
+### Bug Fixes
+
+* filter toolbar repo picker by name ([da18aff](https://github.com/staff0rd/assist/commit/da18affd95e0d29a6f9cf7fd0f74c19f9377e6fe))
+
 # [0.1242.0](https://github.com/staff0rd/assist/compare/v0.1241.1...v0.1242.0) (2026-11-20)
 
 
