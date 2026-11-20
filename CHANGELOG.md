@@ -1,3 +1,10 @@
+# [0.1242.0](https://github.com/staff0rd/assist/compare/v0.1241.1...v0.1242.0) (2026-11-20)
+
+
+### Features
+
+* show run entry details and source ([d9bcbb7](https://github.com/staff0rd/assist/commit/d9bcbb741d79d32348cb71ee478e377c7b58525b))
+
 ## [0.1241.1](https://github.com/staff0rd/assist/compare/v0.1241.0...v0.1241.1) (2026-11-20)
 
 
