@@ -156,6 +156,48 @@ describe("checkDurability", () => {
 			reason: "unpushed commits",
 		});
 	});
+	describe("on a phase tree that landed by fast-forwarding an item tree that later rebased", () => {
+		const landedPhaseTree = {
+			status: { ok: true, out: "" },
+			"rev-parse": { ok: false },
+			branch: { ok: true, out: "" },
+			"symbolic-ref": { ok: true, out: "origin/main" },
+			reflog: { ok: true, out: "80531716 commit: fix: phase 3" },
+		};
+
+		it("is durable when every commit ahead has a patch-equivalent on the remote default", async () => {
+			gitReplies({ ...landedPhaseTree, log: { ok: true, out: "" } });
+
+			expect(await checkDurability("/git/repo-6")).toEqual({ durable: true });
+			expect(gitMock).toHaveBeenCalledWith("/git/repo-6", [
+				"log",
+				"--cherry-pick",
+				"--right-only",
+				"--no-merges",
+				"--format=%H",
+				"origin/main...HEAD",
+			]);
+		});
+
+		it("holds the tree when a commit has no patch-equivalent on the remote default", async () => {
+			gitReplies({ ...landedPhaseTree, log: { ok: true, out: "a1b2c3d4" } });
+
+			expect(await checkDurability("/git/repo-6")).toEqual({
+				durable: false,
+				reason: "unpushed commits",
+			});
+		});
+
+		it("holds the tree when the patch comparison cannot run", async () => {
+			gitReplies({ ...landedPhaseTree, log: { ok: false } });
+
+			expect(await checkDurability("/git/repo-6")).toEqual({
+				durable: false,
+				reason: "unpushed commits",
+			});
+		});
+	});
+
 	describe("on a PR branch fetched by gh pr checkout with no remote-tracking ref", () => {
 		const forkBranch = {
 			status: { ok: true, out: "" },
@@ -230,6 +272,33 @@ describe("checkDurabilitySync", () => {
 		});
 
 		expect(checkDurabilitySync("/git/repo-2")).toEqual({ durable: true });
+	});
+
+	it("is durable when every commit ahead has a patch-equivalent on the remote default", () => {
+		gitReplies({
+			status: { ok: true, out: "" },
+			"rev-parse": { ok: false },
+			branch: { ok: true, out: "" },
+			"symbolic-ref": { ok: false },
+			log: { ok: true, out: "" },
+		});
+
+		expect(checkDurabilitySync("/git/repo-6")).toEqual({ durable: true });
+	});
+
+	it("holds a tree with a commit that has no patch-equivalent on the remote default", () => {
+		gitReplies({
+			status: { ok: true, out: "" },
+			"rev-parse": { ok: false },
+			branch: { ok: true, out: "" },
+			"symbolic-ref": { ok: false },
+			log: { ok: true, out: "a1b2c3d4" },
+		});
+
+		expect(checkDurabilitySync("/git/repo-6")).toEqual({
+			durable: false,
+			reason: "unpushed commits",
+		});
 	});
 
 	it("holds a dirty tree without awaiting anything", () => {

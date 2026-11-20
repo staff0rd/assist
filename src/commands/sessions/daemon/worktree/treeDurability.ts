@@ -2,6 +2,7 @@ import { existsSync } from "node:fs";
 import { type GitResult, gitResult, gitSyncResult } from "./git";
 import { holdsNoCheckout } from "./holdsNoCheckout";
 import { tipOnRemote } from "./tipOnRemote";
+import { patchEquivalentOnRemoteDefault } from "./patchEquivalentOnRemoteDefault";
 
 type TreeState = {
 	dirty: boolean;
@@ -40,9 +41,11 @@ function* durabilityProbes(
 		if (ahead.ok && Number(ahead.out) === 0)
 			return treeDurability({ dirty, localOnlyCommits: false });
 	}
+	if (yield* tipOnRemote())
+		return treeDurability({ dirty, localOnlyCommits: false });
 	return treeDurability({
 		dirty,
-		localOnlyCommits: !(yield* tipOnRemote()),
+		localOnlyCommits: !(yield* patchEquivalentOnRemoteDefault()),
 	});
 }
 
