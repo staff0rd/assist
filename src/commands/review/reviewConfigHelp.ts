@@ -40,4 +40,9 @@ export const reviewConfigHelp: ConfigHelpEntry[] = [
 			'assist config set review.highLevel.collapsedPaths "**/*.test.*,**/generated/**"',
 		note: "comma-separated globs whose files start collapsed in the high-level changed-files tree; every other file starts expanded (default **/*.test.*,**/generated/**)",
 	},
+	{
+		key: "review.highLevel.requireLinkedIssue",
+		setter: "assist config set review.highLevel.requireLinkedIssue false",
+		note: "false drops the high-level check that the PR links the GitHub issue it resolves, for repos that do not track work in GitHub issues (default true)",
+	},
 ];

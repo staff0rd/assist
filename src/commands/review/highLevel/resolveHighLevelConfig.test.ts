@@ -78,3 +78,29 @@ describe("resolveHighLevelConfig criticalPaths", () => {
 		).toEqual([]);
 	});
 });
+
+describe("resolveHighLevelConfig requireLinkedIssue", () => {
+	it("defaults to true with no review block", () => {
+		expect(
+			resolveHighLevelConfig(assistConfigSchema.parse({})).requireLinkedIssue,
+		).toBe(true);
+	});
+
+	it("defaults to true for a highLevel block without the key", () => {
+		expect(
+			resolveHighLevelConfig(
+				assistConfigSchema.parse({ review: { highLevel: { uiPaths: [] } } }),
+			).requireLinkedIssue,
+		).toBe(true);
+	});
+
+	it("resolves false when configured off", () => {
+		expect(
+			resolveHighLevelConfig(
+				assistConfigSchema.parse({
+					review: { highLevel: { requireLinkedIssue: false } },
+				}),
+			).requireLinkedIssue,
+		).toBe(false);
+	});
+});

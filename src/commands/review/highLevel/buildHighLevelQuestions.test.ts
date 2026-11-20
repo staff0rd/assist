@@ -8,6 +8,7 @@ const unset = {
 	descriptionWordCap: 300,
 	testPaths: [],
 	collapsedPaths: [],
+	requireLinkedIssue: true,
 };
 
 function suggestionFor(

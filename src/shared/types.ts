@@ -172,6 +172,7 @@ const assistConfigShape = {
 					collapsedPaths: z
 						.array(z.string())
 						.default(["**/*.test.*", "**/generated/**"]),
+					requireLinkedIssue: z.boolean().default(true),
 				})
 				.optional(),
 		})

@@ -5,6 +5,7 @@ import { checkNoMergeConflicts } from "./checkNoMergeConflicts";
 import { checkUiEvidence } from "./checkUiEvidence";
 import {
 	type DeterministicCheckId,
+	type HighLevelCheckId,
 	highLevelChecklist,
 } from "./highLevelChecklist";
 import type {
@@ -31,9 +32,11 @@ const evaluators: Record<
 export function evaluateHighLevelChecks(
 	subject: HighLevelSubject,
 ): HighLevelCheckResult[] {
-	const checks = subject.sliced
-		? highLevelChecklist
-		: highLevelChecklist.filter((check) => check.id !== "manual-testing");
+	const omitted = new Set<HighLevelCheckId>();
+	if (!subject.sliced) omitted.add("manual-testing");
+	if (!subject.config.requireLinkedIssue)
+		omitted.add("description-links-issue");
+	const checks = highLevelChecklist.filter((check) => !omitted.has(check.id));
 	return checks.map((check) => {
 		if (check.kind === "manual")
 			return { ...check, status: "manual", reason: check.backing };

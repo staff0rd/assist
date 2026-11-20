@@ -24,6 +24,7 @@ function subject(overrides: Partial<HighLevelSubject> = {}): HighLevelSubject {
 			descriptionWordCap: 300,
 			testPaths: [],
 			collapsedPaths: [],
+			requireLinkedIssue: true,
 		},
 		...overrides,
 	};
@@ -60,6 +61,15 @@ describe("evaluateHighLevelChecks", () => {
 			evaluateHighLevelChecks(subject({ sliced })).map((result) => result.id);
 		expect(ids(true)).toContain("manual-testing");
 		expect(ids(false)).not.toContain("manual-testing");
+	});
+
+	it("omits the linked-issue check only when requireLinkedIssue is false", () => {
+		const ids = (requireLinkedIssue: boolean) =>
+			evaluateHighLevelChecks(
+				subject({ config: { ...subject().config, requireLinkedIssue } }),
+			).map((result) => result.id);
+		expect(ids(true)).toContain("description-links-issue");
+		expect(ids(false)).not.toContain("description-links-issue");
 	});
 
 	it("passes a body with a What and a Why", () => {
@@ -104,6 +114,7 @@ describe("evaluateHighLevelChecks", () => {
 				descriptionWordCap: 10,
 				testPaths: [],
 				collapsedPaths: [],
+				requireLinkedIssue: true,
 			},
 		});
 		expect(result.status).toBe("fail");
@@ -172,6 +183,7 @@ describe("evaluateHighLevelChecks", () => {
 				descriptionWordCap: 300,
 				testPaths: [],
 				collapsedPaths: [],
+				requireLinkedIssue: true,
 			},
 		});
 		expect(result.status).toBe("pass");
@@ -187,6 +199,7 @@ describe("evaluateHighLevelChecks", () => {
 				descriptionWordCap: 300,
 				testPaths: [],
 				collapsedPaths: [],
+				requireLinkedIssue: true,
 			},
 		});
 		expect(result.status).toBe("fail");
@@ -207,6 +220,7 @@ describe("evaluateHighLevelChecks", () => {
 				descriptionWordCap: 300,
 				testPaths: [],
 				collapsedPaths: [],
+				requireLinkedIssue: true,
 			},
 		});
 		expect(result.status).toBe("pass");
