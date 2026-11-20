@@ -1,3 +1,10 @@
+# [0.1243.0](https://github.com/staff0rd/assist/compare/v0.1242.1...v0.1243.0) (2026-11-20)
+
+
+### Features
+
+* add run list --json output ([c8fbe69](https://github.com/staff0rd/assist/commit/c8fbe698216b7468442bd8497e63febb9e98c91c))
+
 ## [0.1242.1](https://github.com/staff0rd/assist/compare/v0.1242.0...v0.1242.1) (2026-11-20)
 
 
