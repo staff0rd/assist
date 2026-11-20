@@ -1,3 +1,10 @@
+# [0.1241.0](https://github.com/staff0rd/assist/compare/v0.1240.1...v0.1241.0) (2026-11-20)
+
+
+### Features
+
+* --chrome for SDK sessions by default ([#21](https://github.com/staff0rd/assist/issues/21)) ([8ed33a5](https://github.com/staff0rd/assist/commit/8ed33a5a7ed9403e5c5c07d021e490fcb5819a34))
+
 ## [0.1240.1](https://github.com/staff0rd/assist/compare/v0.1240.0...v0.1240.1) (2026-11-20)
 
 
