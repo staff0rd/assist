@@ -1,3 +1,18 @@
+# [0.1245.0](https://github.com/staff0rd/assist/compare/v0.1244.3...v0.1245.0) (2026-11-21)
+
+
+### Bug Fixes
+
+* hold elapsed timer width steady ([3502698](https://github.com/staff0rd/assist/commit/35026987f382c39b90aa0ab4f34f5cb93bf0c12b))
+* size elapsed timer for hour format ([a67de78](https://github.com/staff0rd/assist/commit/a67de787414450829bf520bfef87f5e2910e4114))
+
+
+### Features
+
+* add assist verify audit check ([8216390](https://github.com/staff0rd/assist/commit/8216390c379c4214925cfd7e298d8ab9450f6105))
+* send suggested prompt from phone reply bar ([0f9d6b3](https://github.com/staff0rd/assist/commit/0f9d6b317d5f9450d2ad283d3e171a2a040bb646))
+* send suggestion from empty composer ([6974fb8](https://github.com/staff0rd/assist/commit/6974fb85ac0e12f721cf2301936b4e6d6036738d))
+
 ## [0.1244.3](https://github.com/staff0rd/assist/compare/v0.1244.2...v0.1244.3) (2026-11-21)
 
 
