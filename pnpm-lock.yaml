@@ -192,6 +192,7 @@ overrides:
   xml2js: ^0.5.0
   uuid: ^11.1.1
   dompurify: ^3.4.17
+  effect: ^3.22.1
 
 importers:
 
@@ -3379,8 +3380,8 @@ packages:
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
 
-  effect@3.21.4:
-    resolution: {integrity: sha512-B89v/xSgPbl1J2Ai2u18jxq3odpFauU1rC6/eSs4FeNHi72kwKdJp12VGigvRV2lK+kRnx+OOz41XV8guZd4gQ==}
+  effect@3.22.5:
+    resolution: {integrity: sha512-AdIU4llI19BzhJ4xUBZix7kS8oiYSlCsJ61j3UM3UyJw9ecDrsrrweDFm/Ku1nHbJWMLoynK+1Me4it3Zkmjpw==}
 
   elkjs@0.12.1:
     resolution: {integrity: sha512-IhMYKHE4S2vtx0QrhBP3lYOIKDeIiJXBrdq9MGYkuB8ZHqhrBnHNfSUndjXFewrX1CPK8chwq+2NA0K0hliYuw==}
@@ -8690,7 +8691,7 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  effect@3.21.4:
+  effect@3.22.5:
     dependencies:
       '@standard-schema/spec': 1.1.0
       fast-check: 3.23.2
@@ -10849,7 +10850,7 @@ snapshots:
       compression: 1.8.2(supports-color@7.2.0)
       depcheck: 1.4.7(supports-color@7.2.0)
       digraph-js: 2.2.4
-      effect: 3.21.4
+      effect: 3.22.5
       estree-walker: 3.0.3
       fp-ts: 2.16.11
       fs-tree-structure: 0.0.5

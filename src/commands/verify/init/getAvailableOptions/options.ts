@@ -81,4 +81,10 @@ export const options: OptionDef[] = [
 		label: "maintainability",
 		description: "Maintainability index threshold check",
 	},
+	{
+		toolKey: "audit",
+		value: "audit",
+		label: "audit",
+		description: "Dependency security advisories via pnpm/npm audit",
+	},
 ];

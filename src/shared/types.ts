@@ -126,6 +126,14 @@ const assistConfigShape = {
 	verify: z
 		.strictObject({
 			roots: z.array(z.string()).default([]),
+			audit: z
+				.strictObject({
+					level: z
+						.enum(["low", "moderate", "high", "critical"])
+						.default("high"),
+					ignore: z.array(z.string()).default([]),
+				})
+				.optional(),
 		})
 		.optional(),
 	restructure: z

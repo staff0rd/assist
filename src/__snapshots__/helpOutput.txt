@@ -2214,6 +2214,8 @@ Commands:
   init [options]       Add verify scripts to a project
   hardcoded-colors     Check for hardcoded hex colors in src/
   block-code-comments  Fail on any comment on a changed line, whether added or edited
+  audit                Fail on dependency security advisories at or above verify.audit.level (pnpm
+                       or npm, from the lockfile)
   no-venv              Check that no venv folders exist in the repo
   forbidden-strings    Check configured JSON files for values matching forbiddenStrings rules
   config-keys          Check every assistConfigSchema key is surfaced in some command's --help via
@@ -2228,10 +2230,12 @@ Commands:
 Following MakerXStudio/verify's convention, a verify:<name> / verify:<name>:fix pair runs once: fix mode runs the :fix variant (or verify:<name> when there is none), check mode runs only verify:<name> and skips a :fix with no base. VERIFY_MODE=check|fix picks the mode; otherwise a truthy CI means check, else fix.
 
 Config:
-  assist config set blockCodeComments.ignore "**/*.test.ts" # globs exempt from the block-code-comments check
-  assist config set hardcodedColors.ignore "**/theme.ts"    # globs exempt from the hardcoded-colors check
-  assist config set verify.roots.0 coach-tools              # monorepo package dirs whose package.json verify:* scripts run when files under them change
-  assist config set forbiddenStrings.0.disallowed "secret"  # per-file value rules enforced by the forbidden-strings check
+  assist config set blockCodeComments.ignore "**/*.test.ts"   # globs exempt from the block-code-comments check
+  assist config set hardcodedColors.ignore "**/theme.ts"      # globs exempt from the hardcoded-colors check
+  assist config set verify.roots.0 coach-tools                # monorepo package dirs whose package.json verify:* scripts run when files under them change
+  assist config set verify.audit.level critical               # lowest advisory severity (low, moderate, high, critical) that fails the audit check; default high
+  assist config set verify.audit.ignore.0 GHSA-xxxx-xxxx-xxxx # GHSA ids the audit check skips (still printed as ignored)
+  assist config set forbiddenStrings.0.disallowed "secret"    # per-file value rules enforced by the forbidden-strings check
 
 === assist verify list --help
 Usage: assist verify list [options]
@@ -2262,6 +2266,15 @@ Options:
 Usage: assist verify block-code-comments [options]
 
 Fail on any comment on a changed line, whether added or edited
+
+Options:
+  -h, --help  display help for command
+
+=== assist verify audit --help
+Usage: assist verify audit [options]
+
+Fail on dependency security advisories at or above verify.audit.level (pnpm or npm, from the
+lockfile)
 
 Options:
   -h, --help  display help for command

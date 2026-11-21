@@ -20,6 +20,7 @@ export type ExistingSetup = {
 	hardcodedColors: ToolStatus;
 	skott: ToolStatus;
 	maintainability: ToolStatus;
+	audit: ToolStatus;
 	hasOpenColor: boolean;
 };
 
@@ -64,6 +65,7 @@ function buildToolStatuses(pkg: PackageJson, configScriptNames: Set<string>) {
 		hardcodedColors: status("verify:hardcoded-colors", true),
 		skott: status("verify:circular-deps", true),
 		maintainability: status("verify:maintainability", true),
+		audit: status("verify:audit", true),
 	};
 }
 

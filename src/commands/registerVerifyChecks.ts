@@ -15,6 +15,12 @@ const checks = [
 			(await import("./verify/blockCodeComments")).blockCodeComments,
 	},
 	{
+		name: "audit",
+		description:
+			"Fail on dependency security advisories at or above verify.audit.level (pnpm or npm, from the lockfile)",
+		load: async () => (await import("./verify/audit")).audit,
+	},
+	{
 		name: "no-venv",
 		description: "Check that no venv folders exist in the repo",
 		load: async () => (await import("./verify/noVenv")).noVenv,

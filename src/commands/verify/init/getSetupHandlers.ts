@@ -1,4 +1,5 @@
 import type { ScriptWriter } from "../installPackage";
+import { setupAudit } from "../setup/setupAudit";
 import { setupBuild, setupTypecheck } from "../setup/setupBuild";
 import { setupDuplicateCode } from "../setup/setupDuplicateCode";
 import { setupHardcodedColors } from "../setup/setupHardcodedColors";
@@ -29,5 +30,6 @@ export function getSetupHandlers(
 		"hardcoded-colors": (p, w) => setupHardcodedColors(p, w, hasOpenColor),
 		"circular-deps": (p, w) => setupSkott(p, w),
 		maintainability: (p, w) => setupMaintainability(p, w),
+		audit: (p, w) => setupAudit(p, w),
 	};
 }

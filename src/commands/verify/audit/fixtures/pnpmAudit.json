@@ -1,0 +1,123 @@
+{
+	"advisories": {
+		"1105770": {
+			"findings": [
+				{
+					"version": "1.27.0",
+					"paths": [".>refractor>prismjs"],
+					"dev": false,
+					"optional": false,
+					"bundled": false
+				}
+			],
+			"id": 1105770,
+			"title": "PrismJS DOM Clobbering vulnerability",
+			"module_name": "prismjs",
+			"vulnerable_versions": "<1.30.0",
+			"patched_versions": ">=1.30.0",
+			"severity": "moderate",
+			"cwe": "CWE-79, CWE-94",
+			"github_advisory_id": "GHSA-x7hr-w5r2-h6wg",
+			"url": "https://github.com/advisories/GHSA-x7hr-w5r2-h6wg"
+		},
+		"1120680": {
+			"findings": [
+				{
+					"version": "0.27.7",
+					"paths": [
+						".>tsup>bundle-require>esbuild",
+						".>tsup>esbuild",
+						".>@vitest/coverage-v8>vitest>@vitest/mocker>vite>esbuild",
+						".>@vitest/coverage-v8>vitest>vite>esbuild",
+						".>vitest>@vitest/mocker>vite>esbuild",
+						".>vitest>vite>esbuild",
+						".>esbuild"
+					],
+					"dev": true,
+					"optional": false,
+					"bundled": false
+				}
+			],
+			"id": 1120680,
+			"title": "esbuild allows arbitrary file read when running the development server on Windows",
+			"module_name": "esbuild",
+			"vulnerable_versions": ">=0.27.3 <0.28.1",
+			"patched_versions": ">=0.28.1",
+			"severity": "low",
+			"cwe": "CWE-22",
+			"github_advisory_id": "GHSA-g7r4-m6w7-qqqr",
+			"url": "https://github.com/advisories/GHSA-g7r4-m6w7-qqqr"
+		},
+		"1244623": {
+			"findings": [
+				{
+					"version": "10.2.6",
+					"paths": [
+						".>ts-morph>@ts-morph/common>minimatch",
+						".>minimatch",
+						".>skott>@typescript-eslint/typescript-estree>minimatch"
+					],
+					"dev": false,
+					"optional": false,
+					"bundled": false
+				},
+				{
+					"version": "7.4.9",
+					"paths": [".>skott>depcheck>minimatch"],
+					"dev": true,
+					"optional": false,
+					"bundled": false
+				},
+				{
+					"version": "9.0.9",
+					"paths": [".>skott>ignore-walk>minimatch", ".>skott>minimatch"],
+					"dev": true,
+					"optional": false,
+					"bundled": false
+				}
+			],
+			"id": 1244623,
+			"title": "minimatch has potential denial of service via globparts amplification",
+			"module_name": "minimatch",
+			"vulnerable_versions": ">=7.0.0 <11.0.1",
+			"patched_versions": ">=11.0.1",
+			"severity": "moderate",
+			"cwe": "CWE-405",
+			"github_advisory_id": "GHSA-g3hv-75wg-m249",
+			"url": "https://github.com/advisories/GHSA-g3hv-75wg-m249"
+		},
+		"1248071": {
+			"findings": [
+				{
+					"version": "3.21.4",
+					"paths": [".>skott>effect"],
+					"dev": true,
+					"optional": false,
+					"bundled": false
+				}
+			],
+			"id": 1248071,
+			"title": "Effect: ReDoS in Schema.TemplateLiteral compiled regex",
+			"module_name": "effect",
+			"vulnerable_versions": "<=3.22.0",
+			"patched_versions": ">=3.22.1",
+			"severity": "high",
+			"cwe": "CWE-1333",
+			"github_advisory_id": "GHSA-7589-6fvf-x4pw",
+			"url": "https://github.com/advisories/GHSA-7589-6fvf-x4pw"
+		}
+	},
+	"metadata": {
+		"vulnerabilities": {
+			"info": 0,
+			"low": 1,
+			"moderate": 2,
+			"high": 1,
+			"critical": 0
+		},
+		"dependencies": 499,
+		"devDependencies": 759,
+		"optionalDependencies": 212,
+		"totalDependencies": 1289
+	}
+}

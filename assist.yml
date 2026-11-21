@@ -112,6 +112,13 @@ run:
     args:
       - verify
       - no-venv
+  - name: verify:audit
+    command: npx
+    args:
+      - tsx
+      - src/index.ts
+      - verify
+      - audit
   - name: verify:forbidden-strings
     command: assist
     args:

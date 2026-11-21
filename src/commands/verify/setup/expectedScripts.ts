@@ -7,6 +7,7 @@ export const expectedScripts: Record<string, string> = {
 	"verify:test": "vitest run --reporter=dot --silent",
 	"verify:hardcoded-colors": "assist verify hardcoded-colors",
 	"verify:no-venv": "assist verify no-venv",
+	"verify:audit": "assist verify audit",
 	"verify:maintainability":
 		"assist complexity maintainability ./src --threshold 60",
 	"verify:circular-deps":
