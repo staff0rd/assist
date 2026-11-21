@@ -94,4 +94,53 @@ describe("PhoneReplyBar", () => {
 		);
 		expect(chip()).toBeNull();
 	});
+
+	it("sends the suggestion from an empty field", () => {
+		const onSend = vi.fn();
+		render(<PhoneReplyBar suggestion="run the tests" onSend={onSend} />);
+		fireEvent.click(screen.getByRole("button", { name: "Send suggestion" }));
+		expect(onSend).toHaveBeenCalledWith("run the tests");
+	});
+
+	it("sends typed text over the suggestion", () => {
+		const onSend = vi.fn();
+		render(<PhoneReplyBar suggestion="run the tests" onSend={onSend} />);
+		type("no");
+		fireEvent.click(screen.getByRole("button", { name: "Send" }));
+		expect(onSend).toHaveBeenCalledWith("no");
+	});
+
+	it("keeps Send disabled without a suggestion", () => {
+		render(<PhoneReplyBar onSend={() => {}} />);
+		const send = screen.getByRole("button", { name: "Send" });
+		expect((send as HTMLButtonElement).disabled).toBe(true);
+	});
+
+	it("does not send the suggestion while the field is locked", () => {
+		render(
+			<PhoneReplyBar
+				suggestion="run the tests"
+				locked="Resuming conversation…"
+				onSend={() => {}}
+			/>,
+		);
+		const send = screen.getByRole("button", { name: "Send" });
+		expect((send as HTMLButtonElement).disabled).toBe(true);
+	});
+
+	it("does not send the suggestion in shell mode", () => {
+		const onSend = vi.fn();
+		const onRunShell = vi.fn();
+		render(
+			<PhoneReplyBar
+				suggestion="run the tests"
+				onSend={onSend}
+				onRunShell={onRunShell}
+			/>,
+		);
+		type("!");
+		const run = screen.getByRole("button", { name: "Run command" });
+		expect((run as HTMLButtonElement).disabled).toBe(true);
+		expect(chip()).toBeNull();
+	});
 });

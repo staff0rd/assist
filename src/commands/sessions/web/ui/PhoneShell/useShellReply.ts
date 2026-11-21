@@ -8,20 +8,23 @@ type ReplyTargets = {
 	onSend: (text: string) => void;
 	onRunShell?: (command: string) => void;
 	locked?: string;
+	suggestion?: string;
 };
 
 export function useShellReply(
 	commands: SlashCommand[],
 	draftSessionId: string | undefined,
-	{ onSend, onRunShell, locked }: ReplyTargets,
+	{ onSend, onRunShell, locked, suggestion }: ReplyTargets,
 ) {
 	const shell = useShellMode(Boolean(onRunShell));
 	const reply = useSlashReply(
 		shell.shell ? NO_COMMANDS : commands,
 		draftSessionId,
 	);
+	const pendingSuggestion =
+		shell.shell || locked || reply.text ? undefined : suggestion;
 	const send = () => {
-		const { text } = reply;
+		const text = reply.text || pendingSuggestion || "";
 		if (!text.trim() || locked) return;
 		if (shell.shell) {
 			onRunShell?.(text.trim());
@@ -29,5 +32,5 @@ export function useShellReply(
 		} else onSend(text);
 		reply.clear();
 	};
-	return { reply, shell, send };
+	return { reply, shell, send, pendingSuggestion };
 }

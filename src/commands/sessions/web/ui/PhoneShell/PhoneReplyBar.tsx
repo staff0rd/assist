@@ -29,16 +29,16 @@ export function PhoneReplyBar({
 	suggestion?: string;
 	draftSessionId?: string;
 }) {
-	const { reply, shell, send } = useShellReply(commands, draftSessionId, {
-		onSend,
-		onRunShell,
-		locked,
-	});
+	const { reply, shell, send, pendingSuggestion } = useShellReply(
+		commands,
+		draftSessionId,
+		{ onSend, onRunShell, locked, suggestion },
+	);
 	return (
 		<>
 			<PhoneReplySuggestions
 				reply={reply}
-				suggestion={shell.shell ? undefined : suggestion}
+				suggestion={pendingSuggestion}
 				locked={locked}
 			/>
 			<Box sx={phoneReplyBarSx.bar}>
@@ -50,8 +50,11 @@ export function PhoneReplyBar({
 				/>
 				{stop && <PhoneReplyStop {...stop} />}
 				<PhoneReplySend
-					disabled={Boolean(locked) || !reply.text.trim()}
+					disabled={
+						Boolean(locked) || !(reply.text.trim() || pendingSuggestion)
+					}
 					shell={shell.shell}
+					suggestion={Boolean(pendingSuggestion)}
 					onSend={send}
 				/>
 			</Box>
