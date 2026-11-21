@@ -1,3 +1,10 @@
+## [0.1244.2](https://github.com/staff0rd/assist/compare/v0.1244.1...v0.1244.2) (2026-11-21)
+
+
+### Bug Fixes
+
+* bump mermaid to 12.3 ([5705ccd](https://github.com/staff0rd/assist/commit/5705ccd710632566ec9ca5b9bb2e7945f5be5349))
+
 ## [0.1244.1](https://github.com/staff0rd/assist/compare/v0.1244.0...v0.1244.1) (2026-11-20)
 
 
