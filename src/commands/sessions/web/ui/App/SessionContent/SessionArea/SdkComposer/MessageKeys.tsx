@@ -4,11 +4,11 @@ export function MessageKeys({ suggestion }: { suggestion: boolean }) {
 		<>
 			{suggestion && (
 				<span>
-					<HintKey label="Tab" /> / <HintKey label="→" /> use suggestion
+					<HintKey label="Tab" /> / <HintKey label="→" /> edit suggestion
 				</span>
 			)}
 			<span>
-				<HintKey label="Enter" /> send
+				<HintKey label="Enter" /> send{suggestion && " suggestion"}
 			</span>
 			<span>
 				<HintKey label="Shift" />+<HintKey label="Enter" /> new line

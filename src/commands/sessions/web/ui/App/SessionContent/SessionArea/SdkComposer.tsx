@@ -34,7 +34,8 @@ export function SdkComposer({
 						running={c.running}
 						stopping={c.stopping}
 						shell={c.shell}
-						canSend={c.enabled && Boolean(c.text.trim())}
+						canSend={c.enabled && Boolean(c.text.trim() || c.suggestion)}
+						sendsSuggestion={c.enabled && Boolean(c.suggestion)}
 						onStop={c.stop}
 						onSend={c.send}
 					/>

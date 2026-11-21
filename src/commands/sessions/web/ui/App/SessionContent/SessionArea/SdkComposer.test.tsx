@@ -5,6 +5,7 @@ import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionIn
 import { bracketedPaste } from "../../../../../shared/pasteAndSubmit/bracketedPaste";
 import type { SessionInfo } from "../../../types";
 import { SdkComposer } from "./SdkComposer";
+import { RunShellCommandContext } from "./TranscriptArea/useRunShellCommand";
 
 vi.mock("../../../slashSuggestions/useSlashCommands", () => ({
 	useSlashCommands: (cwd: string | undefined) =>
@@ -292,9 +293,16 @@ describe("SdkComposer", () => {
 		const tabHint = () =>
 			screen.queryByText((_, el) =>
 				Boolean(
-					el?.matches("span") && el.textContent?.endsWith("use suggestion"),
+					el?.matches("span") && el.textContent?.endsWith("edit suggestion"),
 				),
 			);
+
+		const enterHint = () =>
+			screen
+				.getAllByText((_, el) =>
+					Boolean(el?.matches("span") && el.textContent?.startsWith("Enter")),
+				)
+				.at(-1)?.textContent;
 
 		it("shows the suggestion as ghost text in the empty field", () => {
 			const { field } = suggested();
@@ -356,7 +364,88 @@ describe("SdkComposer", () => {
 
 		it("names both keys in the hint", () => {
 			suggested();
-			expect(tabHint()?.textContent).toBe("Tab / → use suggestion");
+			expect(tabHint()?.textContent).toBe("Tab / → edit suggestion");
+			expect(enterHint()).toBe("Enter send suggestion");
+		});
+
+		it("keeps the plain Enter hint without a suggestion", () => {
+			suggested({ sdkPromptSuggestion: undefined });
+			expect(tabHint()).toBeNull();
+			expect(enterHint()).toBe("Enter send");
+		});
+
+		it("labels Send as sending the suggestion", () => {
+			suggested();
+			const button = screen.getByRole("button", { name: "Send suggestion" });
+			expect(button.hasAttribute("disabled")).toBe(false);
+			expect(button.getAttribute("title")).toBe("Send suggestion (Enter)");
+		});
+
+		it("sends the suggestion from the Send button", () => {
+			const { sendInput } = suggested();
+			fireEvent.click(screen.getByRole("button", { name: "Send suggestion" }));
+			expect(sendInput).toHaveBeenCalledWith(
+				"1",
+				bracketedPaste("commit this"),
+			);
+		});
+
+		it("sends the suggestion on Enter in an empty field", () => {
+			const { field, sendInput } = suggested();
+			fireEvent.keyDown(field, { key: "Enter" });
+			expect(sendInput).toHaveBeenCalledWith(
+				"1",
+				bracketedPaste("commit this"),
+			);
+		});
+
+		it("sends typed text over the suggestion", () => {
+			const { field, sendInput } = suggested({}, "fix");
+			expect(screen.getByRole("button", { name: "Send" })).toBeTruthy();
+			fireEvent.keyDown(field, { key: "Enter" });
+			expect(sendInput).toHaveBeenCalledWith("1", bracketedPaste("fix"));
+		});
+
+		it("keeps Send disabled without a suggestion", () => {
+			const { field, sendInput } = suggested({
+				sdkPromptSuggestion: undefined,
+			});
+			const button = screen.getByRole("button", { name: "Send" });
+			expect(button.hasAttribute("disabled")).toBe(true);
+			fireEvent.keyDown(field, { key: "Enter" });
+			expect(sendInput).not.toHaveBeenCalled();
+		});
+
+		it("sends no suggestion while resuming", () => {
+			const { field, sendInput } = suggested({ sdkResuming: true });
+			fireEvent.keyDown(field, { key: "Enter" });
+			expect(sendInput).not.toHaveBeenCalled();
+		});
+
+		it("sends no suggestion in shell mode", () => {
+			const runShell = vi.fn();
+			const sendInput = vi.fn();
+			render(
+				<RunShellCommandContext.Provider value={runShell}>
+					<SdkComposer
+						session={makeSessionInfo({
+							sdk: true,
+							cwd: "/repo",
+							status: "waiting",
+							sdkPromptSuggestion: "commit this",
+						})}
+						sendInput={sendInput}
+						interruptSession={vi.fn()}
+					/>
+				</RunShellCommandContext.Provider>,
+			);
+			const field = screen.getByLabelText(/^Message /);
+			type(field, "!");
+			const run = screen.getByRole("button", { name: "Run command" });
+			expect(run.hasAttribute("disabled")).toBe(true);
+			fireEvent.keyDown(field, { key: "Enter" });
+			expect(runShell).not.toHaveBeenCalled();
+			expect(sendInput).not.toHaveBeenCalled();
 		});
 
 		it("keeps Tab for the slash list when it is open", () => {

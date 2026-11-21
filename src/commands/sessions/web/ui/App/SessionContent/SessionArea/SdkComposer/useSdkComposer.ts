@@ -2,9 +2,8 @@ import { useSlashSuggestions } from "../../../../slashSuggestions/useSlashSugges
 import type { SessionInfo } from "../../../../types";
 import { usePersistedPrompt } from "../../../../usePersistedPrompt";
 import { composerPlaceholder } from "./composerPlaceholder";
+import { composerSendKeys } from "./composerSendKeys";
 import { heldShellCount } from "./heldShellCount";
-import { sdkComposerOnKeyDown } from "./sdkComposerOnKeyDown";
-import { sdkComposerSendStop } from "./sdkComposerSendStop";
 import { sdkComposerState } from "./sdkComposerState";
 import { shellAwareEdit } from "./shellAwareEdit";
 import { useAppendQueuedToDraft } from "./useAppendQueuedToDraft";
@@ -23,20 +22,13 @@ export function useSdkComposer(
 	useAppendQueuedToDraft(session.id, setText, slash.inputRef);
 	const state = sdkComposerState(session);
 	const suggestion = text || shell.shell ? undefined : state.suggestion;
-	const { send, stop } = sdkComposerSendStop({ text, setText }, state, shell, {
-		sessionId: session.id,
-		sendInput,
-		interruptSession,
-	});
-	const onKeyDown = sdkComposerOnKeyDown({
-		text,
+	const { send, stop, onKeyDown } = composerSendKeys(
+		{ text, setText, suggestion },
+		state,
 		shell,
 		slash,
-		suggestion,
-		running: state.running,
-		send,
-		stop,
-	});
+		{ sessionId: session.id, sendInput, interruptSession },
+	);
 	return {
 		...state,
 		placeholder: composerPlaceholder(

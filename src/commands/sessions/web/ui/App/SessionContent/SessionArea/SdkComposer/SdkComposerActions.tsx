@@ -10,6 +10,7 @@ export function SdkComposerActions({
 	stopping,
 	shell,
 	canSend,
+	sendsSuggestion,
 	onStop,
 	onSend,
 }: {
@@ -17,9 +18,11 @@ export function SdkComposerActions({
 	stopping: boolean;
 	shell: boolean;
 	canSend: boolean;
+	sendsSuggestion: boolean;
 	onStop: () => void;
 	onSend: () => void;
 }) {
+	const label = sendLabel(shell, sendsSuggestion);
 	return (
 		<>
 			{running && (
@@ -34,8 +37,8 @@ export function SdkComposerActions({
 				</IconButton>
 			)}
 			<IconButton
-				aria-label={shell ? "Run command" : "Send"}
-				title={shell ? "Run (Enter)" : "Send (Enter)"}
+				aria-label={label.aria}
+				title={`${label.title} (Enter)`}
 				sx={[sdkComposerSx.send, shell && shellSx.run]}
 				disabled={!canSend}
 				onClick={onSend}
@@ -48,4 +51,10 @@ export function SdkComposerActions({
 			</IconButton>
 		</>
 	);
+}
+
+function sendLabel(shell: boolean, sendsSuggestion: boolean) {
+	if (shell) return { aria: "Run command", title: "Run" };
+	const send = sendsSuggestion ? "Send suggestion" : "Send";
+	return { aria: send, title: send };
 }

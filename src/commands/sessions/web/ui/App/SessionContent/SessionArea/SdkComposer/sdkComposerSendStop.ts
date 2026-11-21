@@ -2,7 +2,11 @@ import { bracketedPaste } from "../../../../../../shared/pasteAndSubmit/brackete
 import type { sdkComposerState } from "./sdkComposerState";
 import type { useComposerShell } from "./useComposerShell";
 
-type Draft = { text: string; setText: (text: string) => void };
+type Draft = {
+	text: string;
+	setText: (text: string) => void;
+	suggestion: string | undefined;
+};
 
 type Targets = {
 	sessionId: string;
@@ -11,16 +15,17 @@ type Targets = {
 };
 
 export function sdkComposerSendStop(
-	{ text, setText }: Draft,
+	{ text, setText, suggestion }: Draft,
 	state: ReturnType<typeof sdkComposerState>,
 	shell: ReturnType<typeof useComposerShell>,
 	{ sessionId, sendInput, interruptSession }: Targets,
 ) {
 	return {
 		send: () => {
-			if (!text.trim() || !state.enabled) return;
-			if (shell.shell) shell.run(text.trim());
-			else sendInput(sessionId, bracketedPaste(text));
+			const message = text.trim() ? text : suggestion;
+			if (!message?.trim() || !state.enabled) return;
+			if (shell.shell) shell.run(message.trim());
+			else sendInput(sessionId, bracketedPaste(message));
 			setText("");
 		},
 		stop: () => {
