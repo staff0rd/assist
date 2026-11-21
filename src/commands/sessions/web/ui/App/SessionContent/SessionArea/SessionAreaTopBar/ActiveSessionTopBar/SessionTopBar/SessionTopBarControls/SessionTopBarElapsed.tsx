@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 import type { SessionInfo } from "../../../../../../../types";
 import { useElapsed } from "./SessionTopBarElapsed/useElapsed";
 
-export const elapsedSizer = "00m 00s";
+export const elapsedSizers = ["00m 00s", "00h 00m"];
 
 const elapsedSx = {
 	display: "inline-grid",
@@ -21,14 +21,17 @@ export function SessionTopBarElapsed({ session }: { session: SessionInfo }) {
 
 	return (
 		<Typography variant="caption" sx={elapsedSx}>
-			<Box
-				component="span"
-				aria-hidden
-				data-elapsed-sizer
-				sx={{ ...cellSx, visibility: "hidden" }}
-			>
-				{elapsedSizer}
-			</Box>
+			{elapsedSizers.map((sizer) => (
+				<Box
+					key={sizer}
+					component="span"
+					aria-hidden
+					data-elapsed-sizer
+					sx={{ ...cellSx, visibility: "hidden" }}
+				>
+					{sizer}
+				</Box>
+			))}
 			<Box component="span" sx={cellSx}>
 				{elapsed}
 			</Box>
