@@ -19,6 +19,8 @@ export async function renderMermaidDiagram(
 			mermaid.initialize({
 				startOnLoad: false,
 				theme: mode === "dark" ? "dark" : "default",
+				layout: "dagre",
+				look: "classic",
 			});
 			return mermaid.render(id, source).then((result) => result.svg);
 		});
