@@ -68,7 +68,33 @@ describe("verify audit", () => {
 		mockLoadConfig.mockReturnValue({
 			verify: { audit: { level: "high", ignore: ["GHSA-7589-6fvf-x4pw"] } },
 		});
-		expect(runAndCapture().code).toBe(0);
+		const { code, output } = runAndCapture();
+		expect(code).toBe(0);
+		expect(output).toContain("Ignored advisories (verify.audit.ignore):");
+		expect(output).toContain("high effect GHSA-7589-6fvf-x4pw");
+		expect(output).not.toContain("HIGH effect");
+	});
+
+	it("exits 0 when verify.audit.level is above every advisory", () => {
+		mockRunAudit.mockReturnValue({ stdout: pnpmFixture });
+		mockLoadConfig.mockReturnValue({
+			verify: { audit: { level: "critical", ignore: [] } },
+		});
+		const { code, output } = runAndCapture();
+		expect(code).toBe(0);
+		expect(output).toContain("No advisories at or above critical (4 below).");
+	});
+
+	it("fails on lower advisories when verify.audit.level is lowered", () => {
+		mockRunAudit.mockReturnValue({ stdout: pnpmFixture });
+		mockLoadConfig.mockReturnValue({
+			verify: { audit: { level: "moderate", ignore: [] } },
+		});
+		const { code, output } = runAndCapture();
+		expect(code).toBe(1);
+		expect(output).toContain("Advisories at or above moderate:");
+		expect(output).toContain("MODERATE minimatch");
+		expect(output).not.toContain("LOW esbuild");
 	});
 
 	it("warns and passes when the audit cannot run", () => {

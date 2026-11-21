@@ -4,6 +4,7 @@ import { describe, expect, it } from "vitest";
 import { evaluateAudit } from "./evaluateAudit";
 import { formatAuditReport } from "./formatAuditReport";
 import { parseAuditOutput } from "./parseAuditOutput";
+import type { Severity } from "./severities";
 
 const advisories =
 	parseAuditOutput(
@@ -29,6 +30,17 @@ describe("evaluateAudit", () => {
 			"prismjs",
 			"minimatch",
 		]);
+	});
+
+	it.each([
+		["low", ["effect", "prismjs", "minimatch", "esbuild"]],
+		["moderate", ["effect", "prismjs", "minimatch"]],
+		["high", ["effect"]],
+		["critical", []],
+	] as [Severity, string[]][])("fails at or above %s", (level, failing) => {
+		const result = evaluateAudit(advisories, level, []);
+		expect(result.failing.map((a) => a.packageName)).toEqual(failing);
+		expect(result.belowLevel).toHaveLength(4 - failing.length);
 	});
 
 	it("skips ignored ids but keeps them visible", () => {
