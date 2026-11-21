@@ -1,3 +1,10 @@
+## [0.1244.3](https://github.com/staff0rd/assist/compare/v0.1244.2...v0.1244.3) (2026-11-21)
+
+
+### Bug Fixes
+
+* pin followed transcript on resize ([d536b9a](https://github.com/staff0rd/assist/commit/d536b9ad95b6e03de0a156e46c509b2d709f0902))
+
 ## [0.1244.2](https://github.com/staff0rd/assist/compare/v0.1244.1...v0.1244.2) (2026-11-21)
 
 
