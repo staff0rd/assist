@@ -4,6 +4,10 @@ import type { AssistConfig } from "../../shared/types";
 import { execCommit } from "./execCommit";
 import { moveOffPlaceholder } from "./moveOffPlaceholder";
 import { pushCommit } from "./pushCommit";
+import { abortOnConflicts } from "./abortOnConflicts";
+import { commitStaged } from "./commitStaged";
+import { pullKeepingIndex } from "./pullKeepingIndex";
+import { shouldPull } from "./shouldPull";
 
 vi.mock("../../shared/db/recordSessionRefs", () => ({
 	recordSessionRefs: vi.fn(),
@@ -14,11 +18,12 @@ vi.mock("../../shared/resolveSessionItemId", () => ({
 vi.mock("../../shared/warnIfUnexpectedBranch", () => ({
 	warnIfUnexpectedBranch: vi.fn(),
 }));
-vi.mock("./shouldPull", () => ({ shouldPull: () => false }));
+vi.mock("./shouldPull", () => ({ shouldPull: vi.fn(() => false) }));
+vi.mock("./pullKeepingIndex", () => ({ pullKeepingIndex: vi.fn() }));
 vi.mock("./abortOnConflicts", () => ({ abortOnConflicts: vi.fn() }));
 vi.mock("./refuseLockedDocs", () => ({ refuseLockedDocs: vi.fn() }));
 vi.mock("./refuseLockedSchema", () => ({ refuseLockedSchema: vi.fn() }));
-vi.mock("./commitStaged", () => ({ commitStaged: () => "65888b3" }));
+vi.mock("./commitStaged", () => ({ commitStaged: vi.fn(() => "65888b3") }));
 vi.mock("./collectCommitRefs", () => ({
 	collectCommitRefs: () => [{ kind: "commit", ref: "65888b3eb" }],
 }));
@@ -69,5 +74,51 @@ describe("execCommit", () => {
 		await execCommit([], "fix: card layout", config);
 
 		expect(moveOffPlaceholder).toHaveBeenCalledWith("fix: card layout", config);
+	});
+
+	describe("while a merge is in progress", () => {
+		const merging = { merging: true };
+
+		it("concludes the merge with git's prepared message and pushes", async () => {
+			pushMock.mockImplementation(() => {});
+
+			await execCommit([], null, config, merging);
+
+			expect(commitStaged).toHaveBeenCalledWith(null);
+			expect(pushMock).toHaveBeenCalled();
+			expect(process.exit).toHaveBeenCalledWith(0);
+		});
+
+		it("commits the merge with a given message", async () => {
+			await execCommit([], "fix: merge main", config, merging);
+
+			expect(commitStaged).toHaveBeenCalledWith("fix: merge main");
+		});
+
+		it("never pulls, even with commit.pull on", async () => {
+			vi.mocked(shouldPull).mockReturnValue(true);
+
+			await execCommit(
+				[],
+				null,
+				{ commit: { pull: true } } as AssistConfig,
+				merging,
+			);
+
+			expect(shouldPull).not.toHaveBeenCalled();
+			expect(pullKeepingIndex).not.toHaveBeenCalled();
+		});
+
+		it("checks for unmerged paths", async () => {
+			await execCommit([], null, config, merging);
+
+			expect(abortOnConflicts).toHaveBeenCalledWith([], false, true);
+		});
+
+		it("does not move off the placeholder", async () => {
+			await execCommit([], "fix: merge main", config, merging);
+
+			expect(moveOffPlaceholder).not.toHaveBeenCalled();
+		});
 	});
 });

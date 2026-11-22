@@ -13,26 +13,30 @@ import { refuseLockedSchema } from "./refuseLockedSchema";
 import { commitStaged } from "./commitStaged";
 import { moveOffPlaceholder } from "./moveOffPlaceholder";
 import { stageFiles } from "./stageFiles";
+import { tryGit } from "../../shared/tryGit";
 
 export async function execCommit(
 	files: string[],
-	message: string,
+	message: string | null,
 	config: AssistConfig,
+	{ merging = false }: { merging?: boolean } = {},
 ): Promise<void> {
 	try {
-		await moveOffPlaceholder(message, config);
+		if (!merging && message !== null) await moveOffPlaceholder(message, config);
 		warnIfUnexpectedBranch(config);
-		const pulled = shouldPull(config);
+		const pulled = !merging && shouldPull(config);
 		if (pulled) {
 			pullKeepingIndex();
 		}
-		abortOnConflicts(files, pulled);
+		abortOnConflicts(files, pulled, merging);
 		if (files.length > 0) stageFiles(files);
 		await refuseLockedDocs();
 		await refuseLockedSchema();
 		const sha = commitStaged(message);
 		console.log(`Committed: ${sha}`);
-		await recordCommitActivity(message);
+		await recordCommitActivity(
+			message ?? tryGit("log", "-1", "--format=%B") ?? "",
+		);
 		if (config.commit?.push) {
 			pushCommit(config.worktree?.trunk === true);
 			console.log("Pushed to remote");

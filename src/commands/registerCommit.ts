@@ -12,7 +12,10 @@ export function registerCommit(program: Command): void {
 	const commitCommand = program
 		.command("commit")
 		.description("Create a git commit with validation")
-		.argument("<args...>", "status | <message> [files...]")
+		.argument(
+			"[args...]",
+			"status | <message> [files...] (message optional while concluding a merge)",
+		)
 		.option(
 			"--ref <ref>",
 			"Add a Ref: trailer carrying free text with a URL (repeatable)",

@@ -7,13 +7,18 @@ function abort(headline: string, guidance: string): never {
 	process.exit(1);
 }
 
-export function abortOnConflicts(files: string[], pulled: boolean): void {
-	if (pulled) {
+export function abortOnConflicts(
+	files: string[],
+	pulled: boolean,
+	merging = false,
+): void {
+	if (pulled || merging) {
 		const unmerged = findUnmergedPaths();
 		if (unmerged.length > 0) {
+			const source = merging ? "the merge" : "git pull --autostash";
 			abort(
-				`git pull --autostash left unresolved conflicts in: ${unmerged.join(", ")}`,
-				"Resolve the conflicts, then re-run the commit.",
+				`${source} left unresolved conflicts in: ${unmerged.join(", ")}`,
+				"Resolve the conflicts and stage them, then re-run the commit.",
 			);
 		}
 	}

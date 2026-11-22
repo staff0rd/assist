@@ -39,7 +39,7 @@ Commands:
   update                                 Update assist to the latest version and sync commands
   coverage                               Print global statement coverage percentage
   screenshot <process>                   Capture a screenshot of a running application window
-  commit [options] <args...>             Create a git commit with validation
+  commit [options] [args...]             Create a git commit with validation
   config                                 View and modify assist.yml configuration
   run [name] [args...]                   Run a configured command from assist.yml
   new                                    Scaffold a new project
@@ -278,12 +278,12 @@ Config:
   assist config set screenshot.outputDir ./screenshots # directory screenshots are written to (default: ./screenshots)
 
 === assist commit --help
-Usage: assist commit [options] <args...>
+Usage: assist commit [options] [args...]
 
 Create a git commit with validation
 
 Arguments:
-  args         status | <message> [files...]
+  args         status | <message> [files...] (message optional while concluding a merge)
 
 Options:
   --ref <ref>  Add a Ref: trailer carrying free text with a URL (repeatable) (default: [])
