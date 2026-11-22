@@ -1,3 +1,10 @@
+# [0.1256.0](https://github.com/staff0rd/assist/compare/v0.1255.0...v0.1256.0) (2026-11-22)
+
+
+### Features
+
+* Ctrl+Shift approves and starts yolo ([c764c23](https://github.com/staff0rd/assist/commit/c764c23234b26c293d1df51e503c645f7c8a3468))
+
 # [0.1255.0](https://github.com/staff0rd/assist/compare/v0.1254.1...v0.1255.0) (2026-11-22)
 
 
