@@ -1,3 +1,10 @@
+# [0.1247.0](https://github.com/staff0rd/assist/compare/v0.1246.0...v0.1247.0) (2026-11-22)
+
+
+### Features
+
+* check icon while Shift+Ctrl held ([073565c](https://github.com/staff0rd/assist/commit/073565c16c64e2484f09ec200a1bd0ec07db5fad))
+
 # [0.1246.0](https://github.com/staff0rd/assist/compare/v0.1245.0...v0.1246.0) (2026-11-22)
 
 
