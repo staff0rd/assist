@@ -12,10 +12,7 @@ export function startProposedRun(
 	const args = ["backlog", "run", itemId];
 	return startChainedSession(`a backlog run session for ${itemId}`, () =>
 		startOn
-			? requestAssistSession(args, startOn.cwd, {
-					node: startOn.node,
-					inheritYolo: true,
-				})
-			: requestAssistSession(args, cwd, { inheritYolo: true }),
+			? requestAssistSession(args, startOn.cwd, { node: startOn.node })
+			: requestAssistSession(args, cwd),
 	);
 }

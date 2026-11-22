@@ -261,7 +261,7 @@ describe("propose inside a web session", () => {
 		expect(mockRequestAssistSession).not.toHaveBeenCalled();
 	});
 
-	it("starts a backlog run for the new item on Approve & start", async () => {
+	it("starts a backlog run for the new item on Approve + start", async () => {
 		mockRequestPreviewDecision.mockResolvedValue({
 			decision: "approve",
 			autostart: true,
@@ -274,14 +274,13 @@ describe("propose inside a web session", () => {
 		expect(mockRequestAssistSession).toHaveBeenCalledWith(
 			["backlog", "run", `a${item.id}`],
 			process.cwd(),
-			{ inheritYolo: true },
 		);
 		expect(logSpy.mock.calls.map((c) => c.join(" ")).join("\n")).toContain(
 			`Started a backlog run session for a${item.id}.`,
 		);
 	});
 
-	it("starts the run on the node picked beside Approve & start", async () => {
+	it("starts the run on the node picked beside Approve + start", async () => {
 		mockRequestPreviewDecision.mockResolvedValue({
 			decision: "approve",
 			autostart: true,
@@ -295,7 +294,7 @@ describe("propose inside a web session", () => {
 		expect(mockRequestAssistSession).toHaveBeenCalledWith(
 			["backlog", "run", `a${item.id}`],
 			String.raw`C:\git\repo`,
-			{ node: "win", inheritYolo: true },
+			{ node: "win" },
 		);
 	});
 

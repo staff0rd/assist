@@ -1,6 +1,12 @@
 // @vitest-environment jsdom
 import { ThemeProvider } from "@mui/material/styles";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+} from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { createDesignTheme } from "../../../../../../designSystem/createDesignTheme";
 import { NodeSelectionContext } from "../../../../../../useNodeSelectionContext";
@@ -35,7 +41,18 @@ const repoSelection: RepoSelection = {
 	originOf: (cwd) => origins[cwd],
 };
 
-function renderButtons(names: string[], startOrigin?: string) {
+function shiftClickApprove() {
+	fireEvent.click(screen.getByRole("button", { name: "Approve" }), {
+		shiftKey: true,
+	});
+}
+
+function renderButtons(
+	names: string[],
+	startOrigin?: string,
+	onApprove: () => void = () => {},
+	canStart = true,
+) {
 	const onApproveAndStart = vi.fn();
 	render(
 		<ThemeProvider theme={createDesignTheme("dark")}>
@@ -59,10 +76,10 @@ function renderButtons(names: string[], startOrigin?: string) {
 			>
 				<RepoSelectionContext.Provider value={repoSelection}>
 					<PrPreviewApproveButtons
-						canStart
+						canStart={canStart}
 						startOrigin={startOrigin}
 						cwd="/git/repo"
-						onApprove={() => {}}
+						onApprove={onApprove}
 						onApproveAndStart={onApproveAndStart}
 					/>
 				</RepoSelectionContext.Provider>
@@ -87,7 +104,7 @@ describe("PrPreviewApproveButtons node picker", () => {
 		expect(
 			screen.getByRole("button", { name: "Start on node" }),
 		).toHaveProperty("textContent", "win");
-		fireEvent.click(screen.getByRole("button", { name: "Approve & start" }));
+		shiftClickApprove();
 
 		expect(onApproveAndStart).toHaveBeenCalledWith({
 			node: "win",
@@ -100,7 +117,7 @@ describe("PrPreviewApproveButtons node picker", () => {
 
 		fireEvent.click(screen.getByRole("button", { name: "Start on node" }));
 		fireEvent.click(menuItem("wsl"));
-		fireEvent.click(screen.getByRole("button", { name: "Approve & start" }));
+		shiftClickApprove();
 
 		expect(onApproveAndStart).toHaveBeenCalledWith({
 			node: "wsl",
@@ -127,7 +144,7 @@ describe("PrPreviewApproveButtons node picker", () => {
 		expect(
 			screen.getByRole("button", { name: "Start on node" }),
 		).toHaveProperty("textContent", "wsl");
-		fireEvent.click(screen.getByRole("button", { name: "Approve & start" }));
+		shiftClickApprove();
 
 		expect(onApproveAndStart).toHaveBeenCalledWith({
 			node: "wsl",
@@ -150,7 +167,7 @@ describe("PrPreviewApproveButtons node picker", () => {
 			"github.com/me/repo",
 		);
 
-		fireEvent.click(screen.getByRole("button", { name: "Approve & start" }));
+		shiftClickApprove();
 
 		expect(onApproveAndStart).toHaveBeenCalledWith({
 			node: "win",
@@ -165,7 +182,7 @@ describe("PrPreviewApproveButtons node picker", () => {
 		);
 
 		expect(screen.queryByRole("button", { name: "Start on node" })).toBeNull();
-		fireEvent.click(screen.getByRole("button", { name: "Approve & start" }));
+		shiftClickApprove();
 
 		expect(onApproveAndStart).toHaveBeenCalledWith(undefined);
 	});
@@ -174,8 +191,76 @@ describe("PrPreviewApproveButtons node picker", () => {
 		const onApproveAndStart = renderButtons(["wsl"]);
 
 		expect(screen.queryByRole("button", { name: "Start on node" })).toBeNull();
-		fireEvent.click(screen.getByRole("button", { name: "Approve & start" }));
+		shiftClickApprove();
 
 		expect(onApproveAndStart).toHaveBeenCalledWith(undefined);
+	});
+});
+
+describe("PrPreviewApproveButtons modifiers", () => {
+	it("shows a single Approve button", () => {
+		renderButtons(["wsl"]);
+
+		expect(
+			screen.getAllByRole("button").map((button) => button.textContent),
+		).toEqual(["Approve"]);
+	});
+
+	it("relabels to Approve + start while Shift is held", () => {
+		renderButtons(["wsl"]);
+
+		act(() => {
+			fireEvent.keyDown(globalThis.window, { key: "Shift", shiftKey: true });
+		});
+		expect(
+			screen.getByRole("button", { name: "Approve + start" }),
+		).toBeTruthy();
+
+		act(() => {
+			fireEvent.keyUp(globalThis.window, { key: "Shift", shiftKey: false });
+		});
+		expect(screen.getByRole("button", { name: "Approve" })).toBeTruthy();
+	});
+
+	it.each([
+		["a plain click", {}],
+		["a Ctrl-only click", { ctrlKey: true }],
+	])("approves without starting on %s", (_name, modifiers) => {
+		const onApprove = vi.fn();
+		const onApproveAndStart = renderButtons(["wsl"], undefined, onApprove);
+
+		fireEvent.click(screen.getByRole("button", { name: "Approve" }), modifiers);
+
+		expect(onApprove).toHaveBeenCalledOnce();
+		expect(onApproveAndStart).not.toHaveBeenCalled();
+	});
+
+	it("describes the Shift shortcut in its tooltip", async () => {
+		renderButtons(["wsl"]);
+
+		fireEvent.mouseOver(screen.getByRole("button", { name: "Approve" }));
+
+		expect((await screen.findByRole("tooltip")).textContent).toContain(
+			"Shift+click: Approve + start",
+		);
+	});
+
+	it("is a plain Approve that ignores Shift when the item cannot start", () => {
+		const onApprove = vi.fn();
+		const onApproveAndStart = renderButtons(
+			["wsl", "win"],
+			undefined,
+			onApprove,
+			false,
+		);
+
+		act(() => {
+			fireEvent.keyDown(globalThis.window, { key: "Shift", shiftKey: true });
+		});
+		expect(screen.queryByRole("button", { name: "Start on node" })).toBeNull();
+		shiftClickApprove();
+
+		expect(onApprove).toHaveBeenCalledOnce();
+		expect(onApproveAndStart).not.toHaveBeenCalled();
 	});
 });

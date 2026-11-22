@@ -1,8 +1,12 @@
-import { Button } from "@mui/material";
+import { Button, Tooltip } from "@mui/material";
+import type { MouseEvent } from "react";
 import type { PreviewStartTarget } from "../../../../../../../../shared/PreviewDecision";
+import { useModifiersHeld } from "../../../../../../useModifiersHeld";
 import { usePreviewPrimaryAction } from "../../../../../usePreviewPrimaryAction";
 import { StartNodePicker } from "./PrPreviewApproveButtons/StartNodePicker";
 import { useStartNodeChoice } from "./PrPreviewApproveButtons/useStartNodeChoice";
+
+const isShift = (e: { shiftKey: boolean }) => e.shiftKey;
 
 export function PrPreviewApproveButtons({
 	canStart,
@@ -19,17 +23,23 @@ export function PrPreviewApproveButtons({
 }) {
 	const primary = usePreviewPrimaryAction();
 	const startNode = useStartNodeChoice(cwd, startOrigin);
-	return (
-		<>
+	const shift = useModifiersHeld(isShift);
+	if (!canStart)
+		return (
 			<Button
 				color="primary"
-				variant={canStart ? "tonal" : "contained"}
+				variant="contained"
 				onClick={onApprove}
-				{...(canStart ? {} : primary)}
+				{...primary}
 			>
 				Approve
 			</Button>
-			{canStart && startNode.nodes && startNode.target && (
+		);
+	const onClick = (e: MouseEvent) =>
+		e.shiftKey ? onApproveAndStart(startNode.target) : onApprove();
+	return (
+		<>
+			{startNode.nodes && startNode.target && (
 				<StartNodePicker
 					nodes={startNode.nodes}
 					options={startNode.options}
@@ -37,16 +47,16 @@ export function PrPreviewApproveButtons({
 					onPick={startNode.pick}
 				/>
 			)}
-			{canStart && (
+			<Tooltip describeChild title="Shift+click: Approve + start">
 				<Button
 					color="primary"
 					variant="contained"
-					onClick={() => onApproveAndStart(startNode.target)}
+					onClick={onClick}
 					{...primary}
 				>
-					Approve & start
+					{shift ? "Approve + start" : "Approve"}
 				</Button>
-			)}
+			</Tooltip>
 		</>
 	);
 }

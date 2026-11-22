@@ -313,7 +313,7 @@ describe("useRegionFocusHotkeys", () => {
 	});
 
 	it.each([
-		["draft", "Approve & start"],
+		["draft", "Approve"],
 		["pr", "Approve"],
 	] as const)(
 		"Alt+D on a %s preview focuses its %s button, then returns to the terminal",

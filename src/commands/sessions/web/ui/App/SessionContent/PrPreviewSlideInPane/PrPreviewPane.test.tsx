@@ -974,15 +974,20 @@ describe("PrPreviewPane inline comments", () => {
 			expect(screen.getByText("Story")).toBeTruthy();
 		});
 
-		it("offers no Approve & start without the canStart marker", () => {
-			render(<PrPreviewPane preview={item} onDecision={vi.fn()} />);
+		it("Shift+click on Approve without the canStart marker sends no autostart", () => {
+			const onDecision = vi.fn();
+			render(<PrPreviewPane preview={item} onDecision={onDecision} />);
 
-			expect(
-				screen.queryByRole("button", { name: "Approve & start" }),
-			).toBeNull();
+			fireEvent.click(screen.getByRole("button", { name: "Approve" }), {
+				shiftKey: true,
+			});
+			expect(onDecision).toHaveBeenCalledWith(
+				"approve",
+				expect.not.objectContaining({ autostart: true }),
+			);
 		});
 
-		it("Approve & start sends autostart on a startable preview", () => {
+		it("Shift+click on Approve sends autostart on a startable preview", () => {
 			const onDecision = vi.fn();
 			render(
 				<PrPreviewPane
@@ -991,7 +996,9 @@ describe("PrPreviewPane inline comments", () => {
 				/>,
 			);
 
-			fireEvent.click(screen.getByRole("button", { name: "Approve & start" }));
+			fireEvent.click(screen.getByRole("button", { name: "Approve" }), {
+				shiftKey: true,
+			});
 			expect(onDecision).toHaveBeenCalledWith(
 				"approve",
 				expect.objectContaining({ autostart: true }),

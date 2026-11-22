@@ -55,7 +55,7 @@ export function PhonePreviewDecisions({
 						disabled={sending}
 						onClick={() => onApproveAndStart(startNode.target)}
 					>
-						Approve & start
+						Approve + start
 					</Button>
 				)}
 			</Box>

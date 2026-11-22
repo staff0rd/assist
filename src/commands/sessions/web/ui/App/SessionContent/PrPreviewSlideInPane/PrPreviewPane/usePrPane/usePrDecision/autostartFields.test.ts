@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { autostartFields } from "./autostartFields";
 
 describe("autostartFields", () => {
-	it("carries the picked node and its clone on Approve & start", () => {
+	it("carries the picked node and its clone on Approve + start", () => {
 		expect(
 			autostartFields(true, { node: "win", cwd: "C:\\git\\repo" }),
 		).toEqual({

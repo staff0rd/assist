@@ -66,7 +66,7 @@ describe("PhoneSessionPreview", () => {
 
 	it.each([
 		["Approve", "approve", undefined],
-		["Approve & start", "approve", true],
+		["Approve + start", "approve", true],
 		["Reject", "reject", undefined],
 	])("sends %s from the card", (name, decision, autostart) => {
 		const onDecision = renderPreview(backlogItem);
@@ -78,15 +78,15 @@ describe("PhoneSessionPreview", () => {
 		expect(details.comments).toEqual([]);
 	});
 
-	it("offers Approve & start only when the item can start", () => {
+	it("offers Approve + start only when the item can start", () => {
 		renderPreview({ ...backlogItem, canStart: false });
-		expect(card().queryByRole("button", { name: "Approve & start" })).toBe(
+		expect(card().queryByRole("button", { name: "Approve + start" })).toBe(
 			null,
 		);
 		renderPreview({ ...backlogItem, kind: "pr", requestId: "r2" });
 		expect(
 			screen.getAllByTestId("phone-preview-card")[1]?.textContent,
-		).not.toContain("Approve & start");
+		).not.toContain("Approve + start");
 	});
 
 	it("opens the review sheet with the rendered body and rejects with a reason", () => {
@@ -107,7 +107,7 @@ describe("PhoneSessionPreview", () => {
 	it("approves and starts from the sheet", () => {
 		const onDecision = renderPreview(backlogItem);
 		fireEvent.click(card().getByRole("button", { name: "Review full item" }));
-		fireEvent.click(sheet().getByRole("button", { name: "Approve & start" }));
+		fireEvent.click(sheet().getByRole("button", { name: "Approve + start" }));
 		expect(onDecision).toHaveBeenCalledWith(
 			"approve",
 			expect.objectContaining({ autostart: true }),
@@ -218,7 +218,7 @@ describe("PhoneSessionPreview node picker", () => {
 		expect(
 			card().getByRole("button", { name: "Start on node" }).textContent,
 		).toBe("win");
-		fireEvent.click(card().getByRole("button", { name: "Approve & start" }));
+		fireEvent.click(card().getByRole("button", { name: "Approve + start" }));
 
 		expect(onDecision).toHaveBeenCalledWith(
 			"approve",
@@ -235,7 +235,7 @@ describe("PhoneSessionPreview node picker", () => {
 		fireEvent.click(card().getByRole("button", { name: "Review full item" }));
 		fireEvent.click(sheet().getByRole("button", { name: "Start on node" }));
 		fireEvent.click(menuItem("wsl"));
-		fireEvent.click(sheet().getByRole("button", { name: "Approve & start" }));
+		fireEvent.click(sheet().getByRole("button", { name: "Approve + start" }));
 
 		expect(onDecision).toHaveBeenCalledWith(
 			"approve",
