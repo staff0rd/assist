@@ -118,6 +118,7 @@ describe("add-phase", () => {
 		expect(body).toContain("- Reject once, then approve");
 		expect(await getPhases()).toEqual([
 			{ idx: 0, name: "Close the bypass paths" },
+			{ idx: 1, name: "Review" },
 		]);
 	});
 

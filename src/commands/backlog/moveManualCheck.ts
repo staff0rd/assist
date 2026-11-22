@@ -1,21 +1,7 @@
-import { and, eq } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
-import { planPhases, planTasks } from "../../shared/db/schema";
-import { buildReviewPhase } from "./buildReviewPhase";
-import { serializeManualChecks } from "./serializeManualChecks";
+import { appendManualChecks } from "./appendManualChecks";
 import type { BacklogItem } from "./types";
-
-function setManualChecks(
-	tx: Pick<Db, "update">,
-	itemId: number,
-	phaseIdx: number,
-	checks: string[],
-) {
-	return tx
-		.update(planPhases)
-		.set({ manualChecks: serializeManualChecks(checks) })
-		.where(and(eq(planPhases.itemId, itemId), eq(planPhases.idx, phaseIdx)));
-}
+import { setManualChecks } from "./setManualChecks";
 
 export async function moveManualCheck(
 	orm: Db,
@@ -31,28 +17,6 @@ export async function moveManualCheck(
 
 	await orm.transaction(async (tx) => {
 		await setManualChecks(tx, item.id, fromIdx, from);
-		const target = plan[toIdx];
-		if (target) {
-			await setManualChecks(tx, item.id, toIdx, [
-				...(target.manualChecks ?? []),
-				check,
-			]);
-			return;
-		}
-		const review = buildReviewPhase();
-		await tx.insert(planPhases).values({
-			itemId: item.id,
-			idx: toIdx,
-			name: review.name,
-			manualChecks: serializeManualChecks([check]),
-		});
-		await tx.insert(planTasks).values(
-			review.tasks.map(({ task }, i) => ({
-				itemId: item.id,
-				phaseIdx: toIdx,
-				idx: i,
-				task,
-			})),
-		);
+		await appendManualChecks(tx, item.id, toIdx, plan[toIdx], [check]);
 	});
 }

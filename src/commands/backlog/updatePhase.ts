@@ -2,6 +2,7 @@ import chalk from "chalk";
 import { formatItemId } from "./formatItemId";
 import { applyPhaseUpdate } from "./applyPhaseUpdate";
 import { findPhase } from "./findPhase";
+import { foldStoredManualChecks } from "./foldStoredManualChecks";
 import {
 	resolvePhaseFields,
 	type UpdatePhaseOptions,
@@ -25,6 +26,7 @@ export async function updatePhase(
 
 	const { name, task, manualCheck } = resolved.fields;
 	await applyPhaseUpdate(orm, itemId, phaseIdx, { name, task, manualCheck });
+	await foldStoredManualChecks(orm, itemId);
 
 	const fields = [
 		name && "name",

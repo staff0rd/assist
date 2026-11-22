@@ -159,9 +159,10 @@ describe("update-plan outside a web session", () => {
 		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
 		expect(await getPhases()).toEqual([
 			{ idx: 0, name: "Wire the command", manualChecks: null },
+			{ idx: 1, name: "Preview the plan", manualChecks: null },
 			{
-				idx: 1,
-				name: "Preview the plan",
+				idx: 2,
+				name: "Review",
 				manualChecks: JSON.stringify(["Approve the pane"]),
 			},
 		]);
@@ -212,9 +213,10 @@ describe("update-plan inside a web session", () => {
 
 		expect(await getPhases()).toEqual([
 			{ idx: 0, name: "Wire the command", manualChecks: null },
+			{ idx: 1, name: "Preview the plan", manualChecks: null },
 			{
-				idx: 1,
-				name: "Preview the plan",
+				idx: 2,
+				name: "Review",
 				manualChecks: JSON.stringify(["Approve the pane"]),
 			},
 		]);
@@ -222,6 +224,11 @@ describe("update-plan inside a web session", () => {
 			{ phaseIdx: 0, idx: 0, task: "Register update-plan" },
 			{ phaseIdx: 1, idx: 0, task: "Render the phases" },
 			{ phaseIdx: 1, idx: 1, task: "Await approval" },
+			{
+				phaseIdx: 2,
+				idx: 0,
+				task: "Verify acceptance criteria, confirm manual checks, commit, mark done, and signal phase-done.",
+			},
 		]);
 	});
 
@@ -247,6 +254,7 @@ describe("update-plan inside a web session", () => {
 		expect((await getPhases()).map((p) => p.name)).toEqual([
 			"Wire the command",
 			"Preview the plan",
+			"Review",
 		]);
 		expect(mockRequestAssistSession).toHaveBeenCalledWith(
 			["backlog", "run", "a1"],

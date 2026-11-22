@@ -1,22 +1,27 @@
-import type { Db } from "../../shared/db/Db";
+import type { BacklogDatabase } from "../../shared/db/Db";
+import { planPhases, planTasks } from "../../shared/db/schema";
 import { buildReviewPhase } from "./buildReviewPhase";
-import { insertPhaseAt } from "./insertPhaseAt";
 import { serializeManualChecks } from "./serializeManualChecks";
 
 export async function insertReviewPhase(
-	orm: Db,
+	db: BacklogDatabase,
 	itemId: number,
 	phaseIdx: number,
 	checks: string[],
 ): Promise<void> {
 	const review = buildReviewPhase();
-	await insertPhaseAt(
-		orm,
+	await db.insert(planPhases).values({
 		itemId,
-		phaseIdx,
-		review.name,
-		review.tasks.map(({ task }) => task),
-		serializeManualChecks(checks),
-		undefined,
+		idx: phaseIdx,
+		name: review.name,
+		manualChecks: serializeManualChecks(checks),
+	});
+	await db.insert(planTasks).values(
+		review.tasks.map(({ task }, idx) => ({
+			itemId,
+			phaseIdx,
+			idx,
+			task,
+		})),
 	);
 }

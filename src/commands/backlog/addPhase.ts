@@ -2,12 +2,11 @@ import chalk from "chalk";
 import { parseAddPhaseDependsOn } from "./dependsOn/parseAddPhaseDependsOn";
 import { ensureRemoteOrigin } from "./ensureRemoteOrigin";
 import { formatItemId } from "./formatItemId";
-import { insertPhaseAt } from "./insertPhaseAt";
 import { resolveInsertPosition } from "./resolveInsertPosition";
-import { serializeManualChecks } from "./serializeManualChecks";
 import { findOneItem } from "./shared";
 import { requireTasks } from "./addPhase/requireTasks";
 import { reviewProposedPhase } from "./addPhase/reviewProposedPhase";
+import { storeAddedPhase } from "./addPhase/storeAddedPhase";
 
 export async function addPhase(
 	id: string,
@@ -43,15 +42,17 @@ export async function addPhase(
 		dependsOn: deps.dependsOn,
 	});
 
-	await insertPhaseAt(
+	await storeAddedPhase(
 		orm,
 		itemId,
 		phaseIdx,
-		name,
-		tasks,
-		serializeManualChecks(options.manualCheck),
+		{
+			name,
+			tasks,
+			manualChecks: options.manualCheck,
+			dependsOn: deps.stored,
+		},
 		found.item.currentPhase,
-		deps.stored,
 	);
 
 	const verb = options.position !== undefined ? "Inserted" : "Added";

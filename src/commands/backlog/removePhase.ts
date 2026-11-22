@@ -4,6 +4,7 @@ import { planPhases, planTasks } from "../../shared/db/schema";
 import { remapDependsOnAround } from "./dependsOn/remapDependsOnAround";
 import { formatItemId } from "./formatItemId";
 import { findPhase } from "./findPhase";
+import { foldStoredManualChecks } from "./foldStoredManualChecks";
 import { adjustCurrentPhase, reindexPhases } from "./reindexPhases";
 
 export async function removePhase(id: string, phase: string): Promise<void> {
@@ -31,6 +32,7 @@ export async function removePhase(id: string, phase: string): Promise<void> {
 			},
 		);
 		await adjustCurrentPhase(tx, item, phaseIdx);
+		await foldStoredManualChecks(tx, itemId);
 	});
 
 	console.log(

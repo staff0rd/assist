@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import type { Db } from "../../../shared/db/Db";
 import { items, planPhases, planTasks } from "../../../shared/db/schema";
 import { toStoredDependsOn } from "../dependsOn/toStoredDependsOn";
+import { withFoldedReview } from "./withFoldedReview";
 import { serializeManualChecks } from "../serializeManualChecks";
 import { clampCurrentPhase } from "./clampCurrentPhase";
 import { loadRunStatesByName } from "./loadRunStatesByName";
@@ -10,12 +11,13 @@ import type { PlanUpdatePhase } from "./planUpdateSchema";
 export async function replacePlan(
 	orm: Db,
 	itemId: number,
-	phases: PlanUpdatePhase[],
+	authored: PlanUpdatePhase[],
 	currentPhase: number | undefined,
 ): Promise<void> {
 	await orm.transaction(async (tx) => {
 		// why: keep in-flight and finished run state across a mid-run plan rewrite, matched by phase name.
 		const runStates = await loadRunStatesByName(tx, itemId);
+		const phases = await withFoldedReview(tx, itemId, authored);
 		await tx.delete(planTasks).where(eq(planTasks.itemId, itemId));
 		await tx.delete(planPhases).where(eq(planPhases.itemId, itemId));
 
@@ -38,7 +40,7 @@ export async function replacePlan(
 		if (tasks.length > 0) await tx.insert(planTasks).values(tasks);
 
 		if (currentPhase === undefined) return;
-		const clamped = clampCurrentPhase(currentPhase, phases.length);
+		const clamped = clampCurrentPhase(currentPhase, authored.length);
 		if (clamped === currentPhase) return;
 		await tx
 			.update(items)
