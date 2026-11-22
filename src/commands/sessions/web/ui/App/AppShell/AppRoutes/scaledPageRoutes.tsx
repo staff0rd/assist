@@ -1,4 +1,5 @@
 import { Route } from "react-router";
+import { AutopilotView } from "./AutopilotView";
 import { BackupsView } from "./BackupsView";
 import { ConfigView } from "../../ConfigView";
 import { ConnectMobileView } from "./ConnectMobileView";
@@ -30,6 +31,7 @@ export function scaledPageRoutes(socket: SessionSocket) {
 			/>
 			<Route path="news" element={<NewsView />} />
 			<Route path="inbox" element={<InboxView />} />
+			<Route path="autopilot" element={<AutopilotView />} />
 			<Route path="releases" element={<ReleasesView />} />
 			<Route path="rules" element={<RulesRoute socket={socket} />} />
 			<Route path="usage" element={<UsageHistoryView />} />

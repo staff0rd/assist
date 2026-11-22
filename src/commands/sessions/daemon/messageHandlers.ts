@@ -2,6 +2,7 @@ import type { HarnessKind } from "../../../shared/harnesses";
 import type { RateLimits } from "../../../shared/RateLimits";
 import { handleAutoUpdate } from "./autoUpdate/handleAutoUpdate";
 import { handleAutoUpdateControl } from "./autoUpdate/handleAutoUpdateControl";
+import { autopilotHandlers } from "./autopilot/autopilotHandlers";
 import { sendTo } from "./broadcast";
 import { handleHelloRequest } from "./handleHelloRequest";
 import { handleDequeue } from "./handleDequeue";
@@ -52,6 +53,7 @@ export const messageHandlers: Record<string, Handler> = {
 	"auto-update-control": handleAutoUpdateControl,
 	"search-history": (client, _m, d) => handleSearchHistory(client, d),
 	...inboxHandlers,
+	...autopilotHandlers,
 	"reload-links": handleReloadLinks,
 	create: creator(true, spawnCreate),
 	"create-run": handleCreateRun,

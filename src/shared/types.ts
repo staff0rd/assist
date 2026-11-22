@@ -217,6 +217,13 @@ const assistConfigShape = {
 			intervalMinutes: z.number().int().positive().optional(),
 		})
 		.optional(),
+	autopilot: z
+		.strictObject({
+			intervalMinutes: z.number().int().positive().optional(),
+			prompt: z.string().optional(),
+			node: z.string().optional(),
+		})
+		.optional(),
 	autoUpdate: z
 		.strictObject({
 			enabled: z.boolean().default(true),

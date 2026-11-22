@@ -23,4 +23,5 @@ export const daemonPaths = {
 	viewerSize: join(DAEMON_DIR, "viewer-size.json"),
 	promptJournal: join(DAEMON_DIR, "prompt-journal.jsonl"),
 	transcriptEchoes: join(DAEMON_DIR, "transcript-echoes"),
+	autopilot: join(DAEMON_DIR, "autopilot.json"),
 };

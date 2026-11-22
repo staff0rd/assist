@@ -15,6 +15,7 @@ let mac = false;
 vi.mock("../../isMacPlatform", () => ({ isMacPlatform: () => mac }));
 
 const configuredByCwd: Record<string, boolean> = {};
+const autopilotByCwd: Record<string, boolean> = {};
 let showNewsInNav = false;
 let inboxMessages: { id: string }[] = [];
 const fetchMock = vi.fn(async (url: string) => {
@@ -22,6 +23,10 @@ const fetchMock = vi.fn(async (url: string) => {
 	if (parsed.pathname === "/api/news/nav")
 		return Response.json({ showInNav: showNewsInNav });
 	if (parsed.pathname === "/api/inbox") return Response.json(inboxMessages);
+	if (parsed.pathname === "/api/autopilot/configured")
+		return Response.json({
+			configured: autopilotByCwd[parsed.searchParams.get("cwd") ?? ""] ?? false,
+		});
 	const cwd = parsed.searchParams.get("cwd") ?? "";
 	return Response.json({ configured: configuredByCwd[cwd] ?? false });
 });
@@ -38,6 +43,7 @@ beforeEach(() => {
 	vi.stubGlobal("fetch", fetchMock);
 	configuredByCwd["/with"] = true;
 	configuredByCwd["/without"] = false;
+	autopilotByCwd["/with"] = false;
 	showNewsInNav = false;
 	inboxMessages = [];
 });
@@ -184,6 +190,27 @@ describe("NavTabs", () => {
 		render(ui("/with", "/sessions"));
 		await waitFor(releasesChecked);
 		expect(tabLabels()).toEqual(["Sessions", "Backlog", "Next", "Inbox"]);
+	});
+
+	it("shows the Autopilot tab after Next when the repo has autopilot configured", async () => {
+		autopilotByCwd["/with"] = true;
+		render(ui("/with", "/autopilot"));
+		await waitFor(() =>
+			expect(tabLabels()).toEqual([
+				"Sessions",
+				"Backlog",
+				"Next",
+				"Autopilot",
+				"Releases",
+				"Inbox",
+			]),
+		);
+		expect(selectedLabel()).toBe("Autopilot");
+	});
+
+	it("redirects /autopilot to /sessions when autopilot is not configured", async () => {
+		render(ui("/without", "/autopilot"));
+		await waitFor(() => expect(currentPath()).toBe("/sessions"));
 	});
 
 	it("redirects a deep link under /releases to /sessions when not configured", async () => {

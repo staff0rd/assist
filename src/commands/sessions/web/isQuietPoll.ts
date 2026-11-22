@@ -2,6 +2,7 @@ const POLLED_PATHS = new Set([
 	"/api/git-status",
 	"/api/updates",
 	"/api/updates/history",
+	"/api/autopilot/status",
 ]);
 
 export function isQuietPoll(pathname: string, status: number): boolean {

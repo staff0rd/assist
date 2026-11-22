@@ -27,6 +27,7 @@ import { registerSchema } from "./commands/registerSchema";
 import { registerDotnet } from "./commands/registerDotnet";
 import { registerEditHook } from "./commands/registerEditHook";
 import { registerGithub } from "./commands/registerGithub";
+import { registerAutopilot } from "./commands/registerAutopilot";
 import { registerInbox } from "./commands/registerInbox";
 import { registerJira } from "./commands/registerJira";
 import { registerLaunch } from "./commands/registerLaunch";
@@ -80,6 +81,7 @@ export const programRegistrars: ((program: Command) => void)[] = [
 	registerPiHook,
 	registerEditHook,
 	registerGithub,
+	registerAutopilot,
 	registerInbox,
 	registerJira,
 	registerMermaid,

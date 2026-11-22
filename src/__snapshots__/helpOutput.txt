@@ -69,6 +69,8 @@ Commands:
   edit-hook                              PreToolUse hook that blocks edits to the maintainability
                                          override marker and edits that introduce code comments
   github                                 GitHub organisation utilities
+  autopilot                              Scheduled launches of a prompt in a repo, run by the
+                                         sessions daemon
   inbox                                  Triage Gmail and Slack for human messages needing a reply
   jira                                   Jira utilities
   mermaid                                Render mermaid diagrams from markdown files
@@ -1047,6 +1049,31 @@ No label is touched unless --strip-label names it; each one is repeatable, match
 The target is owner/repo#number, a github.com issue URL, or a bare number with --repo.
 Without --apply nothing is written. With --apply each write is announced before it is issued, and the subtree is re-walked afterwards so any residual drift fails the run.
 Anything nested below the leaf level fails the run before a single write, naming the offender and its parent.
+
+=== assist autopilot --help
+Usage: assist autopilot [options] [command]
+
+Scheduled launches of a prompt in a repo, run by the sessions daemon
+
+Options:
+  -h, --help      display help for command
+
+Commands:
+  status          Print each autopilot repo's schedule: state, interval, next and last tick
+  help [command]  display help for command
+
+Config:
+  assist config set autopilot.intervalMinutes 60 --repo # minutes between scheduled autopilot launches in this repo; nothing is scheduled while it, autopilot.prompt or autopilot.node is unset
+  assist config set autopilot.prompt /helm --repo       # prompt each scheduled autopilot session starts with
+  assist config set autopilot.node <node name> --repo   # the one node (sessions.nodeName, else its hostname) whose daemon runs this repo's schedule; unset means no node runs it
+
+=== assist autopilot status --help
+Usage: assist autopilot status [options]
+
+Print each autopilot repo's schedule: state, interval, next and last tick
+
+Options:
+  -h, --help  display help for command
 
 === assist inbox --help
 Usage: assist inbox [options] [command]

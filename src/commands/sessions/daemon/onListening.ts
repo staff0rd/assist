@@ -1,4 +1,5 @@
 import { unlinkSync, writeFileSync } from "node:fs";
+import { startAutopilot } from "./autopilot/startAutopilot";
 import { daemonLog } from "./daemonLog";
 import { daemonPaths } from "./daemonPaths";
 import type { SessionManager } from "./SessionManager";
@@ -31,6 +32,8 @@ export function onListening(
 			: "no persisted sessions to restore",
 	);
 	daemonLog(`listening on ${daemonPaths.socket}`);
+	// why: after restore, so a restored autopilot run reads as live and is not relaunched
+	startAutopilot(manager);
 	manager.links.reload();
 	manager.startAutoUpdate();
 	checkAutoExit(manager.isIdle());

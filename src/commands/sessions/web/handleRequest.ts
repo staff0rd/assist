@@ -35,6 +35,9 @@ import { handleDynamicRoute } from "./handleDynamicRoute";
 import { harnessCapabilities } from "./harnessCapabilities";
 import { health } from "./health";
 import { historySearch } from "./historySearch";
+import { autopilotConfigured } from "./autopilot/autopilotConfigured";
+import { autopilotStatus } from "./autopilot/autopilotStatus";
+import { controlAutopilot } from "./autopilot/controlAutopilot";
 import { inboxStatus } from "./inbox/inboxStatus";
 import { listInbox } from "./inbox/listInbox";
 import { scanInbox } from "./inbox/scanInbox";
@@ -163,6 +166,9 @@ const routes: Record<string, Handler> = {
 	"GET /api/inbox": listInbox,
 	"GET /api/inbox/status": inboxStatus,
 	"POST /api/inbox/scan": scanInbox,
+	"GET /api/autopilot/configured": autopilotConfigured,
+	"GET /api/autopilot/status": autopilotStatus,
+	"POST /api/autopilot/control": controlAutopilot,
 	"GET /api/news/items": listNewsItems,
 	"GET /api/news/nav": newsNavConfig,
 	"GET /api/releases/state": releasesState,

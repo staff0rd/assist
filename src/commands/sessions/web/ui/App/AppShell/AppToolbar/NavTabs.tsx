@@ -2,11 +2,12 @@ import Tabs from "@mui/material/Tabs";
 import { useCallback, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { NavTab } from "./NavTabs/NavTab";
+import { useAutopilotConfigured } from "./NavTabs/useAutopilotConfigured";
 import { useInboxCount } from "./NavTabs/useInboxCount";
 import { useNavTabHotkey } from "./NavTabs/useNavTabHotkey";
 import { useNewsShownInNav } from "./NavTabs/useNewsShownInNav";
 import { useReleasesConfigured } from "./NavTabs/useReleasesConfigured";
-import { useReleasesRedirect } from "./NavTabs/useReleasesRedirect";
+import { useUnconfiguredRedirect } from "./NavTabs/useUnconfiguredRedirect";
 import { visibleTabs } from "./NavTabs/visibleTabs";
 
 const navTabsSx = { mx: "6px" };
@@ -17,11 +18,14 @@ export function NavTabs({ cwd }: { cwd: string }) {
 	const releasesConfigured = useReleasesConfigured(cwd);
 	const newsShownInNav = useNewsShownInNav();
 	const inboxCount = useInboxCount();
-	useReleasesRedirect(releasesConfigured);
+	const autopilotConfigured = useAutopilotConfigured(cwd);
+	useUnconfiguredRedirect(releasesConfigured, "/releases");
+	useUnconfiguredRedirect(autopilotConfigured, "/autopilot");
 	const showReleases = releasesConfigured === true;
+	const showAutopilot = autopilotConfigured === true;
 	const tabs = useMemo(
-		() => visibleTabs(showReleases, newsShownInNav),
-		[showReleases, newsShownInNav],
+		() => visibleTabs(showReleases, newsShownInNav, showAutopilot),
+		[showReleases, newsShownInNav, showAutopilot],
 	);
 	const paths = useMemo(() => tabs.map((t) => t.path), [tabs]);
 	const tabIndex = tabs.findIndex((t) => location.pathname.startsWith(t.path));
