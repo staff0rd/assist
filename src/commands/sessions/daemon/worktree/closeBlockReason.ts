@@ -9,7 +9,7 @@ export async function closeBlockReason(
 	sessionId: string,
 	tree: ClosingTree,
 ): Promise<CloseBlock | undefined> {
-	const durability = await checkDurability(tree.path);
+	const durability = await checkDurability(tree.path, tree.itemTree);
 	if (!durability.durable) return { reason: durability.reason, live: false };
 	if (durability.gone) {
 		daemonLog(

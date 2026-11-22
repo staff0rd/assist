@@ -16,6 +16,7 @@ import { deleteWorktreeBranch } from "./deleteWorktreeBranch";
 export async function reapWorktree(
 	worktreePath: string,
 	force = false,
+	itemTree?: string,
 ): Promise<TreeRemoval> {
 	if (!existsSync(worktreePath)) {
 		await removeBindMountContainers(worktreePath);
@@ -26,7 +27,7 @@ export async function reapWorktree(
 		return { removed: true };
 	}
 	if (!force) {
-		const durability = await checkDurability(worktreePath);
+		const durability = await checkDurability(worktreePath, itemTree);
 		if (!durability.durable) {
 			daemonLog(`worktree ${worktreePath} not reaped: ${durability.reason}`);
 			return { removed: false, reason: durability.reason };

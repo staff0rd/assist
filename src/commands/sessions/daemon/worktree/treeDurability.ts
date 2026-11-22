@@ -1,8 +1,8 @@
 import { existsSync } from "node:fs";
 import { type GitResult, gitResult, gitSyncResult } from "./git";
 import { holdsNoCheckout } from "./holdsNoCheckout";
-import { tipOnRemote } from "./tipOnRemote";
-import { patchEquivalentOnRemoteDefault } from "./patchEquivalentOnRemoteDefault";
+import { commitsHeldElsewhere } from "./commitsHeldElsewhere";
+import { liveItemTreeHead } from "./liveItemTreeHead";
 
 type TreeState = {
 	dirty: boolean;
@@ -24,28 +24,16 @@ export function treeDurability(state: TreeState): Durability {
 
 function* durabilityProbes(
 	cwd: string,
+	itemTreeHead?: string,
 ): Generator<string[], Durability, GitResult> {
 	const status = yield ["status", "--porcelain"];
 	if (!status.ok && notACheckout(cwd, status.error)) return treeIsGone;
 	if (!status.ok)
 		return { durable: false, reason: `tree state unreadable: ${status.error}` };
 	const dirty = status.out !== "";
-	const upstream = yield [
-		"rev-parse",
-		"--abbrev-ref",
-		"--symbolic-full-name",
-		"@{upstream}",
-	];
-	if (upstream.ok && upstream.out) {
-		const ahead = yield ["rev-list", "--count", "@{upstream}..HEAD"];
-		if (ahead.ok && Number(ahead.out) === 0)
-			return treeDurability({ dirty, localOnlyCommits: false });
-	}
-	if (yield* tipOnRemote())
-		return treeDurability({ dirty, localOnlyCommits: false });
 	return treeDurability({
 		dirty,
-		localOnlyCommits: !(yield* patchEquivalentOnRemoteDefault()),
+		localOnlyCommits: !(yield* commitsHeldElsewhere(itemTreeHead)),
 	});
 }
 
@@ -53,9 +41,12 @@ function notACheckout(cwd: string, error: string): boolean {
 	return holdsNoCheckout(cwd) && /not a git repository/i.test(error);
 }
 
-export async function checkDurability(cwd: string): Promise<Durability> {
+export async function checkDurability(
+	cwd: string,
+	itemTree?: string,
+): Promise<Durability> {
 	if (!existsSync(cwd)) return treeIsGone;
-	const probes = durabilityProbes(cwd);
+	const probes = durabilityProbes(cwd, await liveItemTreeHead(itemTree));
 	let step = probes.next();
 	while (!step.done) step = probes.next(await gitResult(cwd, step.value));
 	return step.value;

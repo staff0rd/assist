@@ -37,7 +37,7 @@ export async function resolveCloseDurability(
 		);
 		return;
 	}
-	if (tree.removable) await reapWorktree(tree.path);
+	if (tree.removable) await reapWorktree(tree.path, false, tree.itemTree);
 	if (session.worktree) session.releasedFromClone = session.worktree.clone;
 	session.worktree = undefined;
 	session.undurable = undefined;

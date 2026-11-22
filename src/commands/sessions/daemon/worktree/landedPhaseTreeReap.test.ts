@@ -10,6 +10,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { makeSession } from "../../../../test/mothers/makeSession";
+import type { Session } from "../types";
 import { resolveCloseDurability } from "./resolveCloseDurability";
 import { checkDurability, checkDurabilitySync } from "./treeDurability";
 
@@ -80,7 +81,7 @@ function landedPhase() {
 		gitIn(itemTree)("push", "origin", "HEAD:main");
 		gitIn(phaseTree)("fetch", "origin");
 	};
-	return { clone, phaseTree, rebaseAndPush, git: gitIn(phaseTree) };
+	return { clone, itemTree, phaseTree, rebaseAndPush, git: gitIn(phaseTree) };
 }
 
 describe("a phase tree landed into an item tree that rebased before pushing", () => {
@@ -142,5 +143,82 @@ describe("a phase tree landed into an item tree that rebased before pushing", ()
 		expect(session.worktree).toBeUndefined();
 		expect(existsSync(phaseTree)).toBe(false);
 		expect(gitIn(clone)("branch", "--list", "repo-6")).toBe("");
+	});
+});
+
+function runPhaseSession(clone: string, phaseTree: string, itemTree: string) {
+	return makeSession({
+		id: "6",
+		commandType: "assist",
+		assistArgs: ["backlog", "run-phase", "a1", "3", "--item-tree", itemTree],
+		status: "running",
+		closing: true,
+		cwd: phaseTree,
+		worktree: { path: phaseTree, clone },
+	});
+}
+
+function closeSettled(session: Session) {
+	return async () => {
+		const finalize = vi.fn();
+		await resolveCloseDurability(session, finalize, vi.fn());
+		session.gitWatcher?.close();
+		session.gitWatcher = undefined;
+		return finalize;
+	};
+}
+
+describe("a run-phase session landed into an item tree that has not pushed", () => {
+	it("treats the phase tree as durable against its item tree", async () => {
+		const { phaseTree, itemTree } = landedPhase();
+
+		expect(await checkDurability(phaseTree, itemTree)).toEqual({
+			durable: true,
+		});
+	});
+
+	it("closes the session and reaps its worktree and branch", async () => {
+		const { clone, itemTree, phaseTree } = landedPhase();
+		const session = runPhaseSession(clone, phaseTree, itemTree);
+
+		const finalize = await closeSettled(session)();
+
+		expect(finalize).toHaveBeenCalledOnce();
+		expect(session.undurable).toBeUndefined();
+		expect(session.worktree).toBeUndefined();
+		expect(existsSync(phaseTree)).toBe(false);
+		expect(gitIn(clone)("branch", "--list", "repo-6")).toBe("");
+	});
+
+	it("holds the phase tree when it has a commit the item tree lacks", async () => {
+		const { clone, itemTree, phaseTree } = landedPhase();
+		commitFile(phaseTree, "stray.ts", "fix: never landed");
+		const session = runPhaseSession(clone, phaseTree, itemTree);
+
+		const finalize = await closeSettled(session)();
+
+		expect(finalize).not.toHaveBeenCalled();
+		expect(session.undurable?.reason).toBe("unpushed commits");
+		expect(existsSync(phaseTree)).toBe(true);
+	});
+
+	it("holds the phase tree when it has uncommitted changes", async () => {
+		const { phaseTree, itemTree } = landedPhase();
+		writeFileSync(join(phaseTree, "wip.ts"), "wip");
+
+		expect(await checkDurability(phaseTree, itemTree)).toEqual({
+			durable: false,
+			reason: "uncommitted changes",
+		});
+	});
+
+	it("falls back to the remote check when the item tree is gone", async () => {
+		const { clone, itemTree, phaseTree } = landedPhase();
+		gitIn(clone)("worktree", "remove", "--force", itemTree);
+
+		expect(await checkDurability(phaseTree, itemTree)).toEqual({
+			durable: false,
+			reason: "unpushed commits",
+		});
 	});
 });
