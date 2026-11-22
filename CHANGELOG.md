@@ -1,3 +1,11 @@
+# [0.1248.0](https://github.com/staff0rd/assist/compare/v0.1247.0...v0.1248.0) (2026-11-22)
+
+
+### Features
+
+* auto-started run inherits yolo ([5a3accc](https://github.com/staff0rd/assist/commit/5a3accc2b79d16b64642f97bdaf2971781b4dd5e))
+* Shift+Ctrl+click starts yolo session ([6111ef3](https://github.com/staff0rd/assist/commit/6111ef32cc158da4be43dddf4f62a6f645b7123f))
+
 # [0.1247.0](https://github.com/staff0rd/assist/compare/v0.1246.0...v0.1247.0) (2026-11-22)
 
 
