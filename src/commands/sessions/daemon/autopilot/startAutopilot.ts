@@ -11,7 +11,7 @@ export function startAutopilot(manager: SessionManager): () => void {
 				manager.session(sessionId),
 				manager.autopilotRun(sessionId),
 			),
-		launch: (cwd, prompt) =>
-			manager.spawn({ prompt, cwd }, { autopilot: true }),
+		launch: ({ cwd, prompt, harness, model }) =>
+			manager.spawn({ prompt, cwd, harness, model }, { autopilot: true }),
 	});
 }

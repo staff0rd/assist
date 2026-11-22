@@ -10,7 +10,7 @@ export function launchAutopilotRun(
 	trigger: "scheduled" | "manual",
 ): void {
 	try {
-		const sessionId = deps.launch(target.cwd, target.prompt);
+		const sessionId = deps.launch(target);
 		daemonLog(
 			`autopilot: ${target.cwd} launched ${sessionId} (${trigger}): ${target.prompt}`,
 		);
