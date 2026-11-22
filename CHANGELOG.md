@@ -1,3 +1,10 @@
+## [0.1256.1](https://github.com/staff0rd/assist/compare/v0.1256.0...v0.1256.1) (2026-11-22)
+
+
+### Bug Fixes
+
+* autopilot launches use repo harness ([52c4f56](https://github.com/staff0rd/assist/commit/52c4f560a18204694f787d0eeb3130e4d8167e98))
+
 # [0.1256.0](https://github.com/staff0rd/assist/compare/v0.1255.0...v0.1256.0) (2026-11-22)
 
 
