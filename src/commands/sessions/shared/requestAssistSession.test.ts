@@ -103,3 +103,20 @@ describe("requestAssistSession inheriting yolo", () => {
 		);
 	});
 });
+
+describe("requestAssistSession with yolo", () => {
+	it("launches the session in yolo on the targeted node", async () => {
+		process.env.ASSIST_SESSION_ID = "7";
+
+		await requestAssistSession(["backlog", "run", "a1"], "/win/repo", {
+			node: "win",
+			yolo: true,
+		});
+
+		const request = mockRequestSession.mock.calls[0]?.[0];
+		expect(request).toEqual(
+			expect.objectContaining({ node: "win", yolo: true }),
+		);
+		expect(request).not.toHaveProperty("yoloFrom");
+	});
+});

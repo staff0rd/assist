@@ -25,7 +25,7 @@ export function PrPreviewActions({
 	onChainChange: (chain: PrPreviewChain) => void;
 	onApprove: () => void;
 	cwd?: string | undefined;
-	onApproveAndStart: (startOn?: PreviewStartTarget) => void;
+	onApproveAndStart: (startOn?: PreviewStartTarget, yolo?: boolean) => void;
 	onReject: () => void;
 	onRequestChanges: () => void;
 }) {

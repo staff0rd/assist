@@ -106,10 +106,13 @@ describe("PrPreviewApproveButtons node picker", () => {
 		).toHaveProperty("textContent", "win");
 		shiftClickApprove();
 
-		expect(onApproveAndStart).toHaveBeenCalledWith({
-			node: "win",
-			cwd: String.raw`C:\git\repo`,
-		});
+		expect(onApproveAndStart).toHaveBeenCalledWith(
+			{
+				node: "win",
+				cwd: String.raw`C:\git\repo`,
+			},
+			false,
+		);
 	});
 
 	it("starts on another picked node in its clone", () => {
@@ -119,10 +122,13 @@ describe("PrPreviewApproveButtons node picker", () => {
 		fireEvent.click(menuItem("wsl"));
 		shiftClickApprove();
 
-		expect(onApproveAndStart).toHaveBeenCalledWith({
-			node: "wsl",
-			cwd: "/git/repo",
-		});
+		expect(onApproveAndStart).toHaveBeenCalledWith(
+			{
+				node: "wsl",
+				cwd: "/git/repo",
+			},
+			false,
+		);
 	});
 
 	it("disables a node with no clone of the repo", () => {
@@ -146,10 +152,13 @@ describe("PrPreviewApproveButtons node picker", () => {
 		).toHaveProperty("textContent", "wsl");
 		shiftClickApprove();
 
-		expect(onApproveAndStart).toHaveBeenCalledWith({
-			node: "wsl",
-			cwd: "/git/other",
-		});
+		expect(onApproveAndStart).toHaveBeenCalledWith(
+			{
+				node: "wsl",
+				cwd: "/git/other",
+			},
+			false,
+		);
 	});
 
 	it("offers nodes by their clone of the item's repo", () => {
@@ -169,10 +178,13 @@ describe("PrPreviewApproveButtons node picker", () => {
 
 		shiftClickApprove();
 
-		expect(onApproveAndStart).toHaveBeenCalledWith({
-			node: "win",
-			cwd: String.raw`C:\git\repo`,
-		});
+		expect(onApproveAndStart).toHaveBeenCalledWith(
+			{
+				node: "win",
+				cwd: String.raw`C:\git\repo`,
+			},
+			false,
+		);
 	});
 
 	it("sends no node when no clone of the item's repo is known", () => {
@@ -184,7 +196,7 @@ describe("PrPreviewApproveButtons node picker", () => {
 		expect(screen.queryByRole("button", { name: "Start on node" })).toBeNull();
 		shiftClickApprove();
 
-		expect(onApproveAndStart).toHaveBeenCalledWith(undefined);
+		expect(onApproveAndStart).toHaveBeenCalledWith(undefined, false);
 	});
 
 	it("shows no picker and sends no node with a single node", () => {
@@ -193,7 +205,7 @@ describe("PrPreviewApproveButtons node picker", () => {
 		expect(screen.queryByRole("button", { name: "Start on node" })).toBeNull();
 		shiftClickApprove();
 
-		expect(onApproveAndStart).toHaveBeenCalledWith(undefined);
+		expect(onApproveAndStart).toHaveBeenCalledWith(undefined, false);
 	});
 });
 
@@ -222,6 +234,37 @@ describe("PrPreviewApproveButtons modifiers", () => {
 		expect(screen.getByRole("button", { name: "Approve" })).toBeTruthy();
 	});
 
+	it("relabels to Approve + start + yolo while Ctrl+Shift is held", () => {
+		renderButtons(["wsl"]);
+
+		act(() => {
+			fireEvent.keyDown(globalThis.window, { key: "Shift", shiftKey: true });
+			fireEvent.keyDown(globalThis.window, {
+				key: "Control",
+				shiftKey: true,
+				ctrlKey: true,
+			});
+		});
+
+		expect(
+			screen.getByRole("button", { name: "Approve + start + yolo" }),
+		).toBeTruthy();
+	});
+
+	it("starts the run in yolo on the picked node on Ctrl+Shift+click", () => {
+		const onApproveAndStart = renderButtons(["wsl", "win"]);
+
+		fireEvent.click(screen.getByRole("button", { name: "Approve" }), {
+			shiftKey: true,
+			ctrlKey: true,
+		});
+
+		expect(onApproveAndStart).toHaveBeenCalledWith(
+			{ node: "win", cwd: String.raw`C:\git\repo` },
+			true,
+		);
+	});
+
 	it.each([
 		["a plain click", {}],
 		["a Ctrl-only click", { ctrlKey: true }],
@@ -235,14 +278,14 @@ describe("PrPreviewApproveButtons modifiers", () => {
 		expect(onApproveAndStart).not.toHaveBeenCalled();
 	});
 
-	it("describes the Shift shortcut in its tooltip", async () => {
+	it("describes the Shift and Ctrl+Shift shortcuts in its tooltip", async () => {
 		renderButtons(["wsl"]);
 
 		fireEvent.mouseOver(screen.getByRole("button", { name: "Approve" }));
 
-		expect((await screen.findByRole("tooltip")).textContent).toContain(
-			"Shift+click: Approve + start",
-		);
+		const tooltip = (await screen.findByRole("tooltip")).textContent;
+		expect(tooltip).toContain("Shift+click: Approve + start");
+		expect(tooltip).toContain("Ctrl+Shift+click: Approve + start + yolo");
 	});
 
 	it("is a plain Approve that ignores Shift when the item cannot start", () => {

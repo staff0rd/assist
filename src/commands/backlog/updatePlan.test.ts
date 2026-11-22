@@ -259,6 +259,7 @@ describe("update-plan inside a web session", () => {
 		expect(mockRequestAssistSession).toHaveBeenCalledWith(
 			["backlog", "run", "a1"],
 			process.cwd(),
+			undefined,
 		);
 		expect(logSpy.mock.calls.map((c) => c.join(" ")).join("\n")).toContain(
 			"Started a backlog run session for a1.",
@@ -283,6 +284,24 @@ describe("update-plan inside a web session", () => {
 		);
 	});
 
+	it("starts the run in yolo on Approve + start + yolo", async () => {
+		await seedItem();
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			autostart: true,
+			startYolo: true,
+		});
+		mockRequestAssistSession.mockResolvedValue("8");
+
+		await updatePlan("a1", { json: writePayload(restructured) });
+
+		expect(mockRequestAssistSession).toHaveBeenCalledWith(
+			["backlog", "run", "a1"],
+			process.cwd(),
+			{ yolo: true },
+		);
+	});
+
 	it("starts an item from another repo in that repo's clone", async () => {
 		await seedItem(undefined, "github.com/me/other");
 		mockRequestPreviewDecision.mockResolvedValue({
@@ -302,6 +321,7 @@ describe("update-plan inside a web session", () => {
 		expect(mockRequestAssistSession).toHaveBeenCalledWith(
 			["backlog", "run", "a1"],
 			"/git/other",
+			undefined,
 		);
 	});
 

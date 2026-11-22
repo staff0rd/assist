@@ -6,9 +6,12 @@ export type Autostart = boolean | PreviewStartTarget;
 export function autostartFields(
 	approved: boolean,
 	autostart: Autostart,
-): Pick<PrDecisionDetails, "autostart" | "startOn"> {
+	startYolo = false,
+): Pick<PrDecisionDetails, "autostart" | "startOn" | "startYolo"> {
 	if (!approved || autostart === false) return {};
-	return autostart === true
-		? { autostart: true }
-		: { autostart: true, startOn: autostart };
+	return {
+		autostart: true,
+		...(autostart !== true && { startOn: autostart }),
+		...(startYolo && { startYolo: true }),
+	};
 }

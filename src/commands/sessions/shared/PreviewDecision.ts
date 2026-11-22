@@ -44,6 +44,7 @@ export type PreviewDecisionFields = {
 	autoMerge?: boolean;
 	autostart?: boolean;
 	startOn?: PreviewStartTarget;
+	startYolo?: boolean;
 	selection?: PreviewSelection;
 	checklist?: PreviewChecklistItem[];
 	reviewEvent?: PreviewReviewEvent;

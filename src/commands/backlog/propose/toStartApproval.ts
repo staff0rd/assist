@@ -6,11 +6,14 @@ import type {
 export type StartApproval = {
 	autostart: boolean;
 	startOn?: PreviewStartTarget;
+	yolo?: boolean;
 };
 
 export function toStartApproval(decision: PreviewDecision): StartApproval {
 	const autostart = decision.autostart === true;
-	return autostart && decision.startOn
-		? { autostart, startOn: decision.startOn }
-		: { autostart };
+	return {
+		autostart,
+		...(autostart && decision.startOn && { startOn: decision.startOn }),
+		...(autostart && decision.startYolo === true && { yolo: true }),
+	};
 }

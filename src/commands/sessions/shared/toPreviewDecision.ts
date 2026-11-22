@@ -39,6 +39,7 @@ export function toPreviewDecision(
 		autoMerge: msg.autoMerge === true,
 		autostart: msg.autostart === true,
 		startOn: msg.autostart === true ? toStartTarget(msg.startOn) : undefined,
+		startYolo: msg.autostart === true && msg.startYolo === true,
 		selection: toSelection(msg.selection),
 		checklist: toChecklist(msg.checklist),
 		reviewEvent: REVIEW_EVENTS.find((event) => event === msg.reviewEvent),

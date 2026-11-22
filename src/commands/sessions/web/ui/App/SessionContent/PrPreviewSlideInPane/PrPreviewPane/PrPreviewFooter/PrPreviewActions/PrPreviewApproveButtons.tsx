@@ -1,12 +1,11 @@
 import { Button, Tooltip } from "@mui/material";
 import type { MouseEvent } from "react";
 import type { PreviewStartTarget } from "../../../../../../../../shared/PreviewDecision";
-import { useModifiersHeld } from "../../../../../../useModifiersHeld";
 import { usePreviewPrimaryAction } from "../../../../../usePreviewPrimaryAction";
 import { StartNodePicker } from "./PrPreviewApproveButtons/StartNodePicker";
 import { useStartNodeChoice } from "./PrPreviewApproveButtons/useStartNodeChoice";
-
-const isShift = (e: { shiftKey: boolean }) => e.shiftKey;
+import { ApproveShortcuts } from "./PrPreviewApproveButtons/ApproveShortcuts";
+import { useApproveLabel } from "./PrPreviewApproveButtons/useApproveLabel";
 
 export function PrPreviewApproveButtons({
 	canStart,
@@ -19,11 +18,11 @@ export function PrPreviewApproveButtons({
 	startOrigin?: string | undefined;
 	cwd?: string | undefined;
 	onApprove: () => void;
-	onApproveAndStart: (startOn?: PreviewStartTarget) => void;
+	onApproveAndStart: (startOn?: PreviewStartTarget, yolo?: boolean) => void;
 }) {
 	const primary = usePreviewPrimaryAction();
 	const startNode = useStartNodeChoice(cwd, startOrigin);
-	const shift = useModifiersHeld(isShift);
+	const label = useApproveLabel();
 	if (!canStart)
 		return (
 			<Button
@@ -36,7 +35,7 @@ export function PrPreviewApproveButtons({
 			</Button>
 		);
 	const onClick = (e: MouseEvent) =>
-		e.shiftKey ? onApproveAndStart(startNode.target) : onApprove();
+		e.shiftKey ? onApproveAndStart(startNode.target, e.ctrlKey) : onApprove();
 	return (
 		<>
 			{startNode.nodes && startNode.target && (
@@ -47,14 +46,14 @@ export function PrPreviewApproveButtons({
 					onPick={startNode.pick}
 				/>
 			)}
-			<Tooltip describeChild title="Shift+click: Approve + start">
+			<Tooltip describeChild title={<ApproveShortcuts />}>
 				<Button
 					color="primary"
 					variant="contained"
 					onClick={onClick}
 					{...primary}
 				>
-					{shift ? "Approve + start" : "Approve"}
+					{label}
 				</Button>
 			</Tooltip>
 		</>

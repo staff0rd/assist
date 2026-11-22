@@ -9,6 +9,7 @@ const FORWARDED = [
 	"autoMerge",
 	"autostart",
 	"startOn",
+	"startYolo",
 	"checklist",
 	"reviewEvent",
 	"reviewComments",

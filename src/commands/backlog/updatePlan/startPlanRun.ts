@@ -19,7 +19,7 @@ export async function startPlanRun(
 	approval: StartApproval,
 ): Promise<void> {
 	if (!approval.autostart) return;
-	if (approval.startOn) return startProposedRun(item.id, approval.startOn);
+	if (approval.startOn) return startProposedRun(item.id, approval);
 	const cwd = itemRepoCwd(item.origin);
 	if (!cwd) {
 		console.log(
@@ -29,5 +29,5 @@ export async function startPlanRun(
 		);
 		return;
 	}
-	await startProposedRun(item.id, undefined, cwd);
+	await startProposedRun(item.id, approval, cwd);
 }

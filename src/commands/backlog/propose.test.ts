@@ -274,6 +274,7 @@ describe("propose inside a web session", () => {
 		expect(mockRequestAssistSession).toHaveBeenCalledWith(
 			["backlog", "run", `a${item.id}`],
 			process.cwd(),
+			undefined,
 		);
 		expect(logSpy.mock.calls.map((c) => c.join(" ")).join("\n")).toContain(
 			`Started a backlog run session for a${item.id}.`,
@@ -295,6 +296,43 @@ describe("propose inside a web session", () => {
 			["backlog", "run", `a${item.id}`],
 			String.raw`C:\git\repo`,
 			{ node: "win" },
+		);
+	});
+
+	it("starts the run in yolo on Approve + start + yolo", async () => {
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			autostart: true,
+			startYolo: true,
+		});
+		mockRequestAssistSession.mockResolvedValue("8");
+
+		await propose({ json: writePayload(bug) });
+
+		const [item] = await allItems();
+		expect(mockRequestAssistSession).toHaveBeenCalledWith(
+			["backlog", "run", `a${item.id}`],
+			process.cwd(),
+			{ yolo: true },
+		);
+	});
+
+	it("starts the run in yolo on the picked node", async () => {
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			autostart: true,
+			startYolo: true,
+			startOn: { node: "win", cwd: String.raw`C:\git\repo` },
+		});
+		mockRequestAssistSession.mockResolvedValue("8");
+
+		await propose({ json: writePayload(bug) });
+
+		const [item] = await allItems();
+		expect(mockRequestAssistSession).toHaveBeenCalledWith(
+			["backlog", "run", `a${item.id}`],
+			String.raw`C:\git\repo`,
+			{ node: "win", yolo: true },
 		);
 	});
 

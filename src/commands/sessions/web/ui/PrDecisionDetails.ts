@@ -10,6 +10,7 @@ export type PrDecisionDetails = PrPreviewChain &
 		| "body"
 		| "autostart"
 		| "startOn"
+		| "startYolo"
 		| "selection"
 		| "checklist"
 		| "reviewEvent"

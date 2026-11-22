@@ -48,7 +48,7 @@ export async function propose(options: ProposeOptions): Promise<void> {
 		if (!approval) return;
 
 		const id = await saveProposedItem(item, tracker);
-		if (approval.autostart) await startProposedRun(id, approval.startOn);
+		if (approval.autostart) await startProposedRun(id, approval);
 	} finally {
 		tracker?.close();
 	}

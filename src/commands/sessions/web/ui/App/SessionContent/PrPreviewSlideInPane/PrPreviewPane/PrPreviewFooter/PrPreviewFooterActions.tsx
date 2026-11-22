@@ -32,8 +32,8 @@ export function PrPreviewFooterActions({
 			onChainChange={onChainChange}
 			onApprove={() => onDecision("approve", sent())}
 			cwd={cwd}
-			onApproveAndStart={(startOn) =>
-				onDecision("approve", sent(), startOn ?? true)
+			onApproveAndStart={(startOn, yolo) =>
+				onDecision("approve", sent(), startOn ?? true, yolo)
 			}
 			onReject={() => onDecision("reject", [])}
 			onRequestChanges={() => onDecision("reject", sent())}

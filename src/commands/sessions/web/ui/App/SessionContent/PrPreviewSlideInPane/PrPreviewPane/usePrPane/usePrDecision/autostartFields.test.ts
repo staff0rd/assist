@@ -15,8 +15,21 @@ describe("autostartFields", () => {
 		expect(autostartFields(true, true)).toEqual({ autostart: true });
 	});
 
+	it("flags a yolo start on Approve + start + yolo", () => {
+		expect(autostartFields(true, { node: "win", cwd: "/r" }, true)).toEqual({
+			autostart: true,
+			startOn: { node: "win", cwd: "/r" },
+			startYolo: true,
+		});
+		expect(autostartFields(true, true, true)).toEqual({
+			autostart: true,
+			startYolo: true,
+		});
+	});
+
 	it("sends nothing on a plain approve or a reject", () => {
 		expect(autostartFields(true, false)).toEqual({});
 		expect(autostartFields(false, { node: "win", cwd: "/r" })).toEqual({});
+		expect(autostartFields(false, true, true)).toEqual({});
 	});
 });

@@ -22,6 +22,7 @@ export type PrPreviewFooterProps = {
 		decision: "approve" | "reject",
 		comments: PrPreviewComment[],
 		autostart?: Autostart,
+		startYolo?: boolean,
 	) => void;
 	chain?: PrPreviewChain | undefined;
 	editable: boolean;

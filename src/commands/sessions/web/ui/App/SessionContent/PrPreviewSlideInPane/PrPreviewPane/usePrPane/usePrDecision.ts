@@ -48,6 +48,7 @@ export function usePrDecision(
 		decision: "approve" | "reject",
 		comments: PrPreviewComment[],
 		autostart: Autostart = false,
+		startYolo = false,
 	) => {
 		const approved = decision === "approve";
 		onDecision(decision, {
@@ -58,7 +59,7 @@ export function usePrDecision(
 				approved ? screenshots.attachments() : [],
 				editedBody(),
 			),
-			...autostartFields(approved, autostart),
+			...autostartFields(approved, autostart, startYolo),
 		});
 		clearPersistedComments(requestId);
 		if (approved) {
