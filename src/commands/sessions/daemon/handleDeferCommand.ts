@@ -11,6 +11,11 @@ export const handleDeferCommand: Handler = (client, m, d) => {
 	const id = String(d.sessionId);
 	const argv = Array.isArray(d.argv) ? d.argv.map(String) : [];
 	const label = deferredCommandLabel(argv);
+	if (argv.length === 0) {
+		daemonLog(`defer-command declined: session ${id} sent an empty argv`);
+		sendTo(client, { type: "defer-command-result", accepted: false });
+		return;
+	}
 	const session = m.session(id);
 	if (!session?.pty || session.status === "done") {
 		daemonLog(

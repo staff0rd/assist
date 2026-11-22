@@ -7,7 +7,10 @@ import type { SessionManager } from "./SessionManager";
 import { daemonRestartInterruption } from "./SessionInterruption";
 import type { Session } from "./types";
 
-vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
+const mockLog = vi.fn();
+vi.mock("./daemonLog", () => ({
+	daemonLog: (...args: unknown[]) => mockLog(...args),
+}));
 
 const mockRun = vi.fn();
 vi.mock("./runDeferredCommand", () => ({
@@ -77,6 +80,22 @@ describe("defer-command handler", () => {
 		expect(replies(client)).toEqual([
 			{ type: "defer-command-result", accepted: false },
 		]);
+	});
+
+	it("declines an empty argv instead of running bare assist", () => {
+		const client = { send: vi.fn() };
+		const { sessions, manager } = managerWith({ send: vi.fn() });
+
+		handleDeferCommand(client, manager, { ...request, argv: [] });
+
+		expect(mockRun).not.toHaveBeenCalled();
+		expect(sessions.get("7")?.deferredCommands).toBeUndefined();
+		expect(replies(client)).toEqual([
+			{ type: "defer-command-result", accepted: false },
+		]);
+		expect(mockLog).toHaveBeenCalledWith(
+			"defer-command declined: session 7 sent an empty argv",
+		);
 	});
 
 	it("runs the command and delivers its decision as the session's next message", () => {

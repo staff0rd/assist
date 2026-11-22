@@ -1,11 +1,14 @@
 import { homedir } from "node:os";
 import { basename, join } from "node:path";
+import { daemonDir } from "./daemonDir";
 
-const DAEMON_DIR = join(homedir(), ".assist", "daemon");
+const DAEMON_DIR = daemonDir();
 
 function perUserWindowsPipe(): string {
-	const user = basename(homedir()).replace(/[^\w.-]/g, "_");
-	return String.raw`\\.\pipe\assist-sessions-daemon-${user}`;
+	const suffix = process.env.ASSIST_DAEMON_DIR
+		? DAEMON_DIR
+		: basename(homedir());
+	return String.raw`\\.\pipe\assist-sessions-daemon-${suffix.replace(/[^\w.-]/g, "_")}`;
 }
 
 export const daemonPaths = {

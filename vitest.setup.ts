@@ -46,6 +46,8 @@ vi.mock("./src/commands/sessions/daemon/worktree/docker", () => ({
 const storeDir = mkdtempSync(join(tmpdir(), "assist-test-store-"));
 process.env.ASSIST_STORE_DIR = storeDir;
 process.env.ASSIST_WATCHER_LOG_DIR = join(storeDir, "watchers");
+// why: a test's fake session id would otherwise reach a live session through the real daemon socket
+process.env.ASSIST_DAEMON_DIR = join(storeDir, "daemon");
 
 function clearResumeEnvInheritedFromADaemonResumedSession() {
 	delete process.env.ASSIST_RESUME_PROMPT;
