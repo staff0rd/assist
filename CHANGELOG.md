@@ -1,3 +1,16 @@
+# [0.1253.0](https://github.com/staff0rd/assist/compare/v0.1252.0...v0.1253.0) (2026-11-22)
+
+
+### Bug Fixes
+
+* keep tests off the real daemon ([d29bbce](https://github.com/staff0rd/assist/commit/d29bbce6f31765dac65f25ac126f79216c5f35c1))
+
+
+### Features
+
+* autopilot runs auto-accept previews ([e1f5ed5](https://github.com/staff0rd/assist/commit/e1f5ed542ac24c1f30cf8378b767b664683ac151))
+* point merges at assist commit ([9b2e57b](https://github.com/staff0rd/assist/commit/9b2e57b734ec7fa6490aa625f89c134a10b74089))
+
 # [0.1252.0](https://github.com/staff0rd/assist/compare/v0.1251.0...v0.1252.0) (2026-11-22)
 
 
