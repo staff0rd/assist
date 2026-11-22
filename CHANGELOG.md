@@ -1,3 +1,10 @@
+# [0.1251.0](https://github.com/staff0rd/assist/compare/v0.1250.0...v0.1251.0) (2026-11-22)
+
+
+### Features
+
+* fold last checks on every plan write ([85a9558](https://github.com/staff0rd/assist/commit/85a95585a79454df62684a52f2e7f5cfe8054cf9))
+
 # [0.1250.0](https://github.com/staff0rd/assist/compare/v0.1249.0...v0.1250.0) (2026-11-22)
 
 
