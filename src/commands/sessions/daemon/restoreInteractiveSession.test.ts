@@ -13,6 +13,7 @@ vi.mock("./sdk/claude/spawnClaudeSdk", () => ({
 	spawnClaudeSdk: vi.fn(() => ({ sdk: {} })),
 }));
 vi.mock("./daemonLog", () => ({ daemonLog: vi.fn() }));
+vi.mock("./spawnPty", () => ({ spawnPty: vi.fn(() => "assist-pty") }));
 vi.mock("./hasTranscriptOnDisk", () => ({
 	hasTranscriptOnDisk: vi.fn(() => true),
 }));
@@ -30,9 +31,11 @@ import { restoreInteractiveSession } from "./restoreInteractiveSession";
 import { spawnClaude } from "./spawnClaude";
 import { spawnClaudeSdk } from "./sdk/claude/spawnClaudeSdk";
 import { spawnCodex } from "./spawnCodex";
+import { spawnPty } from "./spawnPty";
 
 const mockSpawnClaude = spawnClaude as unknown as MockInstance;
 const mockSpawnCodex = spawnCodex as unknown as MockInstance;
+const mockSpawnPty = spawnPty as unknown as MockInstance;
 const mockHasTranscriptOnDisk = hasTranscriptOnDisk as unknown as MockInstance;
 
 function persistedSession(
@@ -139,7 +142,7 @@ describe("restoreInteractiveSession", () => {
 			);
 		});
 
-		it("leaves an assist session as a retryable stub it can relaunch from its args", () => {
+		it("relaunches an assist session fresh from its args", () => {
 			const session = restore(
 				persistedSession({
 					commandType: "assist",
@@ -150,8 +153,13 @@ describe("restoreInteractiveSession", () => {
 			);
 
 			expect(mockSpawnClaude).not.toHaveBeenCalled();
-			expect(session.status).toBe("done");
-			expect(session.restored).toBe(false);
+			expect(mockSpawnPty).toHaveBeenCalledWith(
+				["assist", "refine", "--harness", "pi", "a279"],
+				"/repo",
+				"1",
+				undefined,
+			);
+			expect(session.status).toBe("running");
 		});
 	});
 

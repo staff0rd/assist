@@ -5,9 +5,11 @@ import type { RestoreStatus } from "./deriveRestoreStatus";
 import { errorSession } from "./errorSession";
 import type { PersistedSession } from "./loadPersistedSessions";
 import type { restoreBase } from "./restoreBase";
+import { relaunchWrapperSession } from "./relaunchWrapperSession";
 import { restoreConversation } from "./restoreConversation";
 import { restoreServerRun } from "./restoreServerRun";
 import { unresumableReason } from "./unresumableReason";
+import { notRestoredStub } from "./notRestoredStub";
 
 type RestoreBase = ReturnType<typeof restoreBase>;
 
@@ -37,12 +39,20 @@ export function restoreInteractiveSession(
 		return unrecoverableClaude(id, persisted);
 	}
 
+	/* why: an assist session interrupted before it bound a resumable conversation
+	 * never ran to completion; a "done" stub would read as finished and release its
+	 * tree as landed work (a1860), so re-run it from its stored args instead. */
+	if (persisted.commandType === "assist" && persisted.assistArgs)
+		return relaunchWrapperSession(
+			id,
+			{ ...persisted, assistArgs: persisted.assistArgs },
+			base,
+			status,
+		);
+
 	const serverRun = restoreServerRun(id, persisted, base);
 	if (serverRun) return serverRun;
 
-	/* why: run/assist sessions can be re-launched from their stored args, so a
-	 * retryable "done" card is recoverable — only the unrecoverable claude case
-	 * above is an error. */
 	return notRestoredStub(base, persisted);
 }
 
@@ -55,22 +65,4 @@ function unrecoverableClaude(id: string, persisted: PersistedSession): Session {
 	if (harnessAdapter(persisted.harness).conversation.discover && persisted.cwd)
 		session.discoverOnRestore = true;
 	return session;
-}
-
-function notRestoredStub(
-	base: RestoreBase,
-	persisted: PersistedSession,
-): Session {
-	return {
-		...base,
-		status: "done",
-		startedAt: persisted.startedAt,
-		runningMs: persisted.runningMs ?? 0,
-		runningSince: null,
-		waitingSince: null,
-		pty: null,
-		runName: persisted.runName,
-		runArgs: persisted.runArgs,
-		restored: false,
-	};
 }

@@ -660,21 +660,28 @@ describe("restoreSession", () => {
 		expect(session.assistArgs).toEqual(["draft"]);
 	});
 
-	it("returns a not-restored stub for an assist session, keeping retry args", () => {
+	it("relaunches an interrupted `assist review --high-level` with no conversation instead of restoring it as done", () => {
+		findTranscriptPathSyncMock.mockReturnValue(undefined);
 		const persisted: PersistedSession = {
-			name: "repo/assist draft",
+			name: "repo/assist review",
 			commandType: "assist",
+			status: "running",
 			cwd: "/home/user/repo",
 			startedAt: 123,
-			assistArgs: ["draft"],
+			assistArgs: ["review", "--high-level", "1458"],
 		};
 
 		const session = restoreSession("3", persisted);
 
-		expect(spawnClaudeMock).not.toHaveBeenCalled();
-		expect(session.status).toBe("done");
-		expect(session.restored).toBe(false);
-		expect(session.assistArgs).toEqual(["draft"]);
+		expect(spawnPtyMock).toHaveBeenCalledWith(
+			["assist", "review", "--high-level", "1458"],
+			"/home/user/repo",
+			"3",
+			undefined,
+		);
+		expect(session.status).not.toBe("done");
+		expect(session.status).toBe("running");
+		expect(session.assistArgs).toEqual(["review", "--high-level", "1458"]);
 	});
 
 	it("returns a cleanly completed card for a restored update session", () => {
