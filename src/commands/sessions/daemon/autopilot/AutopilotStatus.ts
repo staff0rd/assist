@@ -1,4 +1,8 @@
-import type { AutopilotRun, AutopilotTick } from "./AutopilotRecord";
+import type {
+	AutopilotFollowUp,
+	AutopilotRun,
+	AutopilotTick,
+} from "./AutopilotRecord";
 
 export type AutopilotStatus = {
 	cwd: string;
@@ -10,5 +14,6 @@ export type AutopilotStatus = {
 	paused: boolean;
 	running: AutopilotRun | null;
 	nextTickAt: string | null;
+	followUp: AutopilotFollowUp | null;
 	lastTick: AutopilotTick | null;
 };

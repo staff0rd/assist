@@ -14,6 +14,15 @@ export function startAutopilot(manager: SessionManager): () => void {
 					.autopilotSessions()
 					.filter((session) => session.autopilot === sessionId),
 			),
+		sessionLink: (sessionId) => {
+			const session = manager.session(sessionId);
+			return (
+				session && {
+					launchedFrom: session.launchedFrom,
+					itemId: session.activity?.itemId,
+				}
+			);
+		},
 		launch: ({ cwd, prompt, harness, model }) =>
 			manager.spawn({ prompt, cwd, harness, model }, { autopilot: true }),
 		closeIdle: () =>

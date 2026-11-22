@@ -23,6 +23,21 @@ export const autopilotHandlers: Record<string, Handler> = {
 				: { statuses: autopilotScheduler.statuses() }),
 		});
 	},
+	"autopilot-follow-up": (client, _manager, data) => {
+		const { sessionId, delayMs } = data;
+		const result =
+			typeof sessionId === "string" &&
+			typeof delayMs === "number" &&
+			delayMs > 0
+				? autopilotScheduler.followUp(sessionId, delayMs)
+				: {
+						ok: false,
+						error:
+							"autopilot-follow-up needs a sessionId and a positive delayMs",
+					};
+		if (!result.ok) daemonLog(`autopilot: follow-up refused: ${result.error}`);
+		sendTo(client, { type: "autopilot-follow-up", ...result });
+	},
 	"autopilot-control": (client, _manager, data) => {
 		const { cwd, action } = data;
 		if (typeof cwd !== "string" || !isAction(action)) {

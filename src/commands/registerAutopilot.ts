@@ -17,5 +17,13 @@ export function registerAutopilot(program: Command): void {
 		)
 		.action(lazyAction(() => import("./autopilot/status"), "status"));
 
+	autopilotCommand
+		.command("follow-up")
+		.description(
+			"From an autopilot session (or a run it started), set the next tick to fire after <duration> (e.g. 30m, 2h) instead of at the interval",
+		)
+		.argument("<duration>", "delay before the next tick: 30s, 30m or 2h")
+		.action(lazyAction(() => import("./autopilot/followUp"), "followUp"));
+
 	configHelp(autopilotCommand, autopilotConfigHelp);
 }

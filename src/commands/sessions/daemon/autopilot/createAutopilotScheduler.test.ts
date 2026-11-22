@@ -29,11 +29,13 @@ describe("createAutopilotScheduler", () => {
 	let path: string;
 	let states: Record<string, AutopilotSessionState>;
 	let launched: number;
+	let links: Record<string, { launchedFrom?: string; itemId?: number }>;
 	let stop: () => void = () => {};
 
 	const deps = () => ({
 		localNode: () => "mac",
 		sessionState: (id: string) => states[id] ?? "ended",
+		sessionLink: (id: string) => links[id],
 		launch: () => {
 			launched += 1;
 			states[`s${launched}`] = "live";
@@ -54,6 +56,7 @@ describe("createAutopilotScheduler", () => {
 		path = join(dir, "autopilot.json");
 		states = {};
 		launched = 0;
+		links = {};
 		targets = [target];
 	});
 
@@ -122,5 +125,41 @@ describe("createAutopilotScheduler", () => {
 			{ outcome: "finished", reason: "session errored" },
 			{ outcome: "launched", trigger: "manual", sessionId: "s2" },
 		]);
+	});
+
+	it("fires at a follow-up requested by a backlog run the autopilot session started", async () => {
+		const scheduler = start();
+		links.b1 = { launchedFrom: "s1", itemId: 42 };
+		expect(scheduler.followUp("b1", 10 * 60_000)).toMatchObject({
+			ok: true,
+			cwd: "/repo",
+		});
+		expect(scheduler.status("/repo")?.followUp).toMatchObject({
+			sessionId: "b1",
+			item: "a42",
+		});
+		expect(scheduler.status("/repo")?.nextTickAt).toBe(
+			scheduler.status("/repo")?.followUp?.at,
+		);
+		states.s1 = "ended";
+		await vi.advanceTimersByTimeAsync(10 * 60_000);
+		expect(outcomes()).toEqual(["launched", "finished", "launched"]);
+		expect(saved()["/repo"].followUp).toBeUndefined();
+	});
+
+	it("skips a follow-up tick while the run is still live", async () => {
+		const scheduler = start();
+		scheduler.followUp("s1", 5 * 60_000);
+		await vi.advanceTimersByTimeAsync(5 * 60_000);
+		expect(outcomes()).toEqual(["launched", "skipped"]);
+		expect(saved()["/repo"].followUp).toBeUndefined();
+	});
+
+	it("refuses a follow-up from a session outside the autopilot run", () => {
+		const scheduler = start();
+		expect(scheduler.followUp("other", 60_000)).toEqual({
+			ok: false,
+			error: "session other is not an autopilot session or a run it started",
+		});
 	});
 });

@@ -10,9 +10,17 @@ export type AutopilotTick = {
 
 export type AutopilotRun = { sessionId: string; startedAt: string };
 
+export type AutopilotFollowUp = {
+	at: string;
+	requestedAt: string;
+	sessionId: string;
+	item?: string;
+};
+
 export type AutopilotRepoRecord = {
 	paused: boolean;
 	current?: AutopilotRun;
+	followUp?: AutopilotFollowUp;
 	ticks: AutopilotTick[];
 };
 

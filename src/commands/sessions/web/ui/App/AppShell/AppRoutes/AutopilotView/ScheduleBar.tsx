@@ -1,11 +1,12 @@
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import Paper from "@mui/material/Paper";
-import Typography from "@mui/material/Typography";
 import { autopilotState } from "../../../../../../../autopilot/autopilotState";
 import { describeTick } from "../../../../../../../autopilot/describeTick";
 import type { AutopilotStatus } from "../../../../../../daemon/autopilot/AutopilotStatus";
 import { autopilotStateColor } from "./autopilotStateColor";
+import { nextTickLabel } from "./nextTickLabel";
+import { Field } from "./Field";
 
 const barSx = {
 	display: "flex",
@@ -31,24 +32,6 @@ function time(iso: string): string {
 		hour: "2-digit",
 		minute: "2-digit",
 	});
-}
-
-function nextTickLabel(status: AutopilotStatus): string {
-	if (status.nextTickAt) return time(status.nextTickAt);
-	return status.paused ? "none while paused" : "none on this node";
-}
-
-function Field({ label, value }: { label: string; value: string }) {
-	return (
-		<Box>
-			<Typography component="dt" variant="caption" color="text.secondary">
-				{label}
-			</Typography>
-			<Typography component="dd" variant="body2" sx={{ m: 0 }}>
-				{value}
-			</Typography>
-		</Box>
-	);
 }
 
 export function ScheduleBar({ status }: { status: AutopilotStatus }) {

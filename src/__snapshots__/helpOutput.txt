@@ -1056,11 +1056,13 @@ Usage: assist autopilot [options] [command]
 Scheduled launches of a prompt in a repo, run by the sessions daemon
 
 Options:
-  -h, --help      display help for command
+  -h, --help            display help for command
 
 Commands:
-  status          Print each autopilot repo's schedule: state, interval, next and last tick
-  help [command]  display help for command
+  status                Print each autopilot repo's schedule: state, interval, next and last tick
+  follow-up <duration>  From an autopilot session (or a run it started), set the next tick to fire
+                        after <duration> (e.g. 30m, 2h) instead of at the interval
+  help [command]        display help for command
 
 Config:
   assist config set autopilot.intervalMinutes 60 --repo # minutes between scheduled autopilot launches in this repo; nothing is scheduled while it, autopilot.prompt or autopilot.node is unset
@@ -1071,6 +1073,18 @@ Config:
 Usage: assist autopilot status [options]
 
 Print each autopilot repo's schedule: state, interval, next and last tick
+
+Options:
+  -h, --help  display help for command
+
+=== assist autopilot follow-up --help
+Usage: assist autopilot follow-up [options] <duration>
+
+From an autopilot session (or a run it started), set the next tick to fire after <duration> (e.g.
+30m, 2h) instead of at the interval
+
+Arguments:
+  duration    delay before the next tick: 30s, 30m or 2h
 
 Options:
   -h, --help  display help for command

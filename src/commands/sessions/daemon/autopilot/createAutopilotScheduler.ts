@@ -1,4 +1,3 @@
-import { daemonLog } from "../daemonLog";
 import type { AutopilotDeps } from "./AutopilotDeps";
 import type { AutopilotStarted } from "./AutopilotStarted";
 import type { AutopilotStatus } from "./AutopilotStatus";
@@ -11,9 +10,14 @@ import {
 } from "./createAutopilotStore";
 import { listAutopilotTargets } from "./listAutopilotTargets";
 import {
+	type AutopilotFollowUpResult,
+	requestAutopilotFollowUp,
+} from "./requestAutopilotFollowUp";
+import {
 	type AutopilotControlResult,
 	runAutopilotNow,
 } from "./runAutopilotNow";
+import { setAutopilotPaused } from "./setAutopilotPaused";
 import { tickAutopilotRepo } from "./tickAutopilotRepo";
 
 const CHECK_MS = 60_000;
@@ -46,13 +50,9 @@ export function createAutopilotScheduler(
 			controlAutopilotTarget(started, cwd, ({ runs }, target) =>
 				runAutopilotNow(runs, target),
 			),
+		followUp: (sessionId: string, delayMs: number): AutopilotFollowUpResult =>
+			requestAutopilotFollowUp(store, started, sessionId, delayMs),
 		setPaused: (cwd: string, paused: boolean): AutopilotControlResult =>
-			controlAutopilotTarget(started, cwd, (_, target) => {
-				daemonLog(`autopilot: ${target.cwd} ${paused ? "paused" : "resumed"}`);
-				store.update(target.cwd, (repo) => {
-					repo.paused = paused;
-				});
-				return { ok: true };
-			}),
+			setAutopilotPaused(store, started, cwd, paused),
 	};
 }

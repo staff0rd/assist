@@ -7,5 +7,8 @@ export function autopilotNextTickAt(
 	const last = [...repo.ticks]
 		.reverse()
 		.find((tick) => tick.outcome !== "finished");
-	return last ? Date.parse(last.at) + intervalMinutes * 60_000 : 0;
+	const scheduled = last ? Date.parse(last.at) + intervalMinutes * 60_000 : 0;
+	return repo.followUp
+		? Math.min(scheduled, Date.parse(repo.followUp.at))
+		: scheduled;
 }

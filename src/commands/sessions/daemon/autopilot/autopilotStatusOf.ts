@@ -25,6 +25,7 @@ export function autopilotStatusOf(
 		nextTickAt: scheduled
 			? new Date(Math.max(next, Date.now())).toISOString()
 			: null,
+		followUp: scheduled ? (repo.followUp ?? null) : null,
 		lastTick: repo.ticks.at(-1) ?? null,
 	};
 }

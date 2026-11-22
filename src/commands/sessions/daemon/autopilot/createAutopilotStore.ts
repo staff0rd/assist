@@ -30,6 +30,7 @@ export function createAutopilotStore(path: string = daemonPaths.autopilot) {
 			record = loadAutopilotRecord(path);
 		},
 		repo,
+		cwds: (): string[] => Object.keys(record),
 		update,
 		addTick(
 			cwd: string,
@@ -38,6 +39,7 @@ export function createAutopilotStore(path: string = daemonPaths.autopilot) {
 		): void {
 			update(cwd, (next) => {
 				next.ticks.push({ at: new Date().toISOString(), ...tick });
+				if (tick.outcome !== "finished") next.followUp = undefined;
 				mutate?.(next);
 			});
 		},
