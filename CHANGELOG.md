@@ -1,3 +1,10 @@
+# [0.1255.0](https://github.com/staff0rd/assist/compare/v0.1254.1...v0.1255.0) (2026-11-22)
+
+
+### Features
+
+* Shift-driven Approve on item preview ([c800042](https://github.com/staff0rd/assist/commit/c800042edf17f29363f440f554c674b636701584))
+
 ## [0.1254.1](https://github.com/staff0rd/assist/compare/v0.1254.0...v0.1254.1) (2026-11-22)
 
 
