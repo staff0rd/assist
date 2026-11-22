@@ -1,3 +1,10 @@
+# [0.1249.0](https://github.com/staff0rd/assist/compare/v0.1248.0...v0.1249.0) (2026-11-22)
+
+
+### Features
+
+* scheduled autopilot launches ([1ac9a4f](https://github.com/staff0rd/assist/commit/1ac9a4f7d554c6097c14b93f5dba0b2f5d6c968c))
+
 # [0.1248.0](https://github.com/staff0rd/assist/compare/v0.1247.0...v0.1248.0) (2026-11-22)
 
 
