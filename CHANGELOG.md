@@ -1,3 +1,11 @@
+## [0.1254.1](https://github.com/staff0rd/assist/compare/v0.1254.0...v0.1254.1) (2026-11-22)
+
+
+### Bug Fixes
+
+* disarm held-stop recheck on discard ([3f16b8a](https://github.com/staff0rd/assist/commit/3f16b8a75bd6ff4c82df52a8c8c87389f53cbb53))
+* relaunch assist sessions with no convo ([1579a1f](https://github.com/staff0rd/assist/commit/1579a1fcf6190258eb61de769f5c4fe56832d5af))
+
 # [0.1254.0](https://github.com/staff0rd/assist/compare/v0.1253.1...v0.1254.0) (2026-11-22)
 
 
