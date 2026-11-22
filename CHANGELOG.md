@@ -1,3 +1,10 @@
+# [0.1252.0](https://github.com/staff0rd/assist/compare/v0.1251.0...v0.1252.0) (2026-11-22)
+
+
+### Features
+
+* assist commit concludes an in-progress merge ([78f6c6d](https://github.com/staff0rd/assist/commit/78f6c6d787fc133845b59b1578287d9b5bf20677))
+
 # [0.1251.0](https://github.com/staff0rd/assist/compare/v0.1250.0...v0.1251.0) (2026-11-22)
 
 
