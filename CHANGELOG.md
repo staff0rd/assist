@@ -1,3 +1,10 @@
+# [0.1250.0](https://github.com/staff0rd/assist/compare/v0.1249.0...v0.1250.0) (2026-11-22)
+
+
+### Features
+
+* fold last checks into Review ([b49fb57](https://github.com/staff0rd/assist/commit/b49fb57ad42fb97ab7b0ef0692a2e1571c87fea3))
+
 # [0.1249.0](https://github.com/staff0rd/assist/compare/v0.1248.0...v0.1249.0) (2026-11-22)
 
 
