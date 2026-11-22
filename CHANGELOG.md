@@ -1,3 +1,10 @@
+# [0.1254.0](https://github.com/staff0rd/assist/compare/v0.1253.1...v0.1254.0) (2026-11-22)
+
+
+### Features
+
+* fold todo items' last checks (db 15) ([2339385](https://github.com/staff0rd/assist/commit/233938544c8842d079d1dec0a10d664d7e83df61))
+
 ## [0.1253.1](https://github.com/staff0rd/assist/compare/v0.1253.0...v0.1253.1) (2026-11-22)
 
 
