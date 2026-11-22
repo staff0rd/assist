@@ -1,3 +1,10 @@
+# [0.1246.0](https://github.com/staff0rd/assist/compare/v0.1245.0...v0.1246.0) (2026-11-22)
+
+
+### Features
+
+* Shift+Ctrl+click close marks done ([6ca2743](https://github.com/staff0rd/assist/commit/6ca2743c14001a58558a64d88b949b6aefdf99a3))
+
 # [0.1245.0](https://github.com/staff0rd/assist/compare/v0.1244.3...v0.1245.0) (2026-11-21)
 
 
