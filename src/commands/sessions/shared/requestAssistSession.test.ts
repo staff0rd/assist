@@ -73,3 +73,28 @@ describe("requestAssistSession on a named node", () => {
 		});
 	});
 });
+
+describe("requestAssistSession inheriting yolo", () => {
+	it("names the requesting session so the daemon can pass on its yolo", async () => {
+		process.env.ASSIST_SESSION_ID = "7";
+
+		await requestAssistSession(["backlog", "run", "a1"], "/win/repo", {
+			node: "win",
+			inheritYolo: true,
+		});
+
+		expect(mockRequestSession).toHaveBeenCalledWith(
+			expect.objectContaining({ node: "win", yoloFrom: "7" }),
+		);
+	});
+
+	it("sends no yoloFrom unless asked to inherit", async () => {
+		process.env.ASSIST_SESSION_ID = "7";
+
+		await requestAssistSession(["review", "42"], "/git/repo");
+
+		expect(mockRequestSession.mock.calls[0]?.[0]).not.toHaveProperty(
+			"yoloFrom",
+		);
+	});
+});

@@ -11,6 +11,10 @@ let claudeCode = false;
 
 const mockRequestPreviewDecision = vi.fn();
 
+vi.mock("../sessions/daemon/requestDaemonReply", () => ({
+	requestDaemonReply: vi.fn(async () => undefined),
+}));
+
 vi.mock("../../shared/db/getDb", () => ({
 	getDb: () => Promise.resolve(orm),
 }));

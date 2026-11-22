@@ -21,6 +21,10 @@ import { updatePlan } from "./updatePlan";
 const mockRequestPreviewDecision = vi.fn();
 const mockFindOneItem = findOneItem as unknown as MockInstance;
 
+vi.mock("../sessions/daemon/requestDaemonReply", () => ({
+	requestDaemonReply: vi.fn(async () => undefined),
+}));
+
 vi.mock("./shared", () => ({
 	findOneItem: vi.fn(),
 	getOrigin: () => "test",
@@ -247,6 +251,7 @@ describe("update-plan inside a web session", () => {
 		expect(mockRequestAssistSession).toHaveBeenCalledWith(
 			["backlog", "run", "a1"],
 			process.cwd(),
+			{ inheritYolo: true },
 		);
 		expect(logSpy.mock.calls.map((c) => c.join(" ")).join("\n")).toContain(
 			"Started a backlog run session for a1.",
@@ -267,7 +272,7 @@ describe("update-plan inside a web session", () => {
 		expect(mockRequestAssistSession).toHaveBeenCalledWith(
 			["backlog", "run", "a1"],
 			String.raw`C:\git\repo`,
-			{ node: "win" },
+			{ node: "win", inheritYolo: true },
 		);
 	});
 
@@ -290,6 +295,7 @@ describe("update-plan inside a web session", () => {
 		expect(mockRequestAssistSession).toHaveBeenCalledWith(
 			["backlog", "run", "a1"],
 			"/git/other",
+			{ inheritYolo: true },
 		);
 	});
 

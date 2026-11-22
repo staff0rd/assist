@@ -1,5 +1,6 @@
 import { type SessionClient, sendTo } from "./broadcast";
 import { daemonLog } from "./daemonLog";
+import { inheritYolo } from "./inheritYolo";
 import type { SessionManager } from "./SessionManager";
 
 type Msg = Record<string, unknown>;
@@ -28,6 +29,7 @@ export function creator(
 		reply(client, d, { error: `${d.type} failed: ${reason}` });
 	};
 	return (client, m, d) => {
+		inheritYolo(d, m.session);
 		if (m.links.route(client, d)) return;
 		let result: SpawnResult | Promise<SpawnResult>;
 		try {

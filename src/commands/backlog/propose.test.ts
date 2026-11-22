@@ -273,6 +273,7 @@ describe("propose inside a web session", () => {
 		expect(mockRequestAssistSession).toHaveBeenCalledWith(
 			["backlog", "run", `a${item.id}`],
 			process.cwd(),
+			{ inheritYolo: true },
 		);
 		expect(logSpy.mock.calls.map((c) => c.join(" ")).join("\n")).toContain(
 			`Started a backlog run session for a${item.id}.`,
@@ -293,7 +294,7 @@ describe("propose inside a web session", () => {
 		expect(mockRequestAssistSession).toHaveBeenCalledWith(
 			["backlog", "run", `a${item.id}`],
 			String.raw`C:\git\repo`,
-			{ node: "win" },
+			{ node: "win", inheritYolo: true },
 		);
 	});
 
