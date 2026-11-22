@@ -1,3 +1,10 @@
+## [0.1253.1](https://github.com/staff0rd/assist/compare/v0.1253.0...v0.1253.1) (2026-11-22)
+
+
+### Bug Fixes
+
+* reap phase trees landed in item tree ([e1069cd](https://github.com/staff0rd/assist/commit/e1069cde850bc9fe1bd521a5b8f3c9b0566965aa))
+
 # [0.1253.0](https://github.com/staff0rd/assist/compare/v0.1252.0...v0.1253.0) (2026-11-22)
 
 
