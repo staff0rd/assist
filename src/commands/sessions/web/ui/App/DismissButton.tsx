@@ -1,13 +1,14 @@
-import CloseIcon from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton";
 import { ErrorSnackbar } from "../ErrorSnackbar";
 import { StopCardActivation } from "../StopCardActivation";
 import { useShiftSkipConfirm } from "../useShiftSkipConfirm";
+import { DismissIcon } from "./DismissButton/DismissIcon";
 import { DismissConfirmDialog } from "./DismissButton/DismissConfirmDialog";
 import {
 	type DismissBacklog,
 	useDismissMarkDone,
 } from "./DismissButton/useDismissMarkDone";
+import { useMarkDoneArmed } from "./DismissButton/useMarkDoneArmed";
 import type { ChildDismiss, DismissOptions, SessionStatus } from "../types";
 
 export function DismissButton({
@@ -33,16 +34,18 @@ export function DismissButton({
 		childDismiss,
 		triggerHandlers,
 	);
+	const { armed, hoverHandlers } = useMarkDoneArmed(!!backlog);
 
 	return (
 		<>
 			<IconButton
 				size="small"
 				{...markDone.triggerHandlers}
+				{...hoverHandlers}
 				title={withHint(`Dismiss session ${id}`, markDone.hint)}
 				sx={{ color: "text.disabled", "&:hover": { color: "text.primary" } }}
 			>
-				<CloseIcon sx={{ fontSize: 16 }} />
+				<DismissIcon markDone={armed} />
 			</IconButton>
 			{confirming && (
 				<DismissConfirmDialog

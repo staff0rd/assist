@@ -2,6 +2,7 @@ import type { KeyboardEvent, MouseEvent } from "react";
 import { formatItemId } from "../../../../../backlog/formatItemId";
 import type { BacklogTarget } from "../../backlogTarget";
 import type { ChildDismiss, DismissOptions } from "../../types";
+import { isMarkDoneChord } from "./isMarkDoneChord";
 import { useMarkItemDone } from "../SessionContent/SessionActionButtons/useMarkItemDone";
 
 export type DismissBacklog = {
@@ -14,9 +15,6 @@ type TriggerHandlers = {
 	onClick: (e: MouseEvent<HTMLElement>) => void;
 	onKeyDown: (e: KeyboardEvent<HTMLElement>) => void;
 };
-
-const isMarkDoneChord = (e: { shiftKey: boolean; ctrlKey: boolean }) =>
-	e.shiftKey && e.ctrlKey;
 
 export function useDismissMarkDone(
 	backlog: DismissBacklog | undefined,
