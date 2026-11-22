@@ -1,17 +1,9 @@
 import { getDb } from "../../shared/db/getDb";
 import { insertItem } from "./insertItem";
+import { type NewItemPhase, insertNewItemPhases } from "./insertNewItemPhases";
 import { insertPhaseAt } from "./insertPhaseAt";
-import { toStoredDependsOn } from "./dependsOn/toStoredDependsOn";
-import { serializeManualChecks } from "./serializeManualChecks";
 import { getOrigin } from "./shared";
 import type { BacklogType } from "./types";
-
-type NewItemPhase = {
-	name: string;
-	tasks: string[];
-	manualChecks?: string[];
-	dependsOn?: number[];
-};
 
 type NewItemFields = {
 	type: BacklogType;
@@ -38,20 +30,8 @@ export async function createItemWithDefaults(
 		getOrigin(),
 	);
 
-	const phases = fields.phases ?? [];
-	if (phases.length > 0) {
-		for (const [idx, phase] of phases.entries()) {
-			await insertPhaseAt(
-				orm,
-				id,
-				idx,
-				phase.name,
-				phase.tasks,
-				serializeManualChecks(phase.manualChecks),
-				undefined,
-				toStoredDependsOn(phase.dependsOn, idx),
-			);
-		}
+	if (fields.phases?.length) {
+		await insertNewItemPhases(orm, id, fields.phases);
 	} else if (fields.type === "bug") {
 		await insertPhaseAt(orm, id, 0, "Fix", ["Fix the bug"], null, undefined);
 	}

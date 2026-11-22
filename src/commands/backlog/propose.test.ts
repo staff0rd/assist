@@ -187,6 +187,7 @@ describe("propose by an agent outside a web session", () => {
 		).toEqual([
 			{ idx: 0, name: "Render the plan" },
 			{ idx: 1, name: "Insert the phases" },
+			{ idx: 2, name: "Review" },
 		]);
 	});
 });
@@ -347,9 +348,10 @@ describe("propose inside a web session", () => {
 				.orderBy(asc(planPhases.idx)),
 		).toEqual([
 			{ idx: 0, name: "Render the plan", manualChecks: null },
+			{ idx: 1, name: "Insert the phases", manualChecks: null },
 			{
-				idx: 1,
-				name: "Insert the phases",
+				idx: 2,
+				name: "Review",
 				manualChecks: JSON.stringify(["Run /draft end to end"]),
 			},
 		]);
@@ -367,6 +369,11 @@ describe("propose inside a web session", () => {
 			{ phaseIdx: 0, idx: 0, task: "Extend the payload" },
 			{ phaseIdx: 0, idx: 1, task: "Render it" },
 			{ phaseIdx: 1, idx: 0, task: "Write every phase" },
+			{
+				phaseIdx: 2,
+				idx: 0,
+				task: "Verify acceptance criteria, confirm manual checks, commit, mark done, and signal phase-done.",
+			},
 		]);
 	});
 
@@ -590,7 +597,11 @@ describe("propose in a Claude SDK session", () => {
 				.from(planPhases)
 				.where(eq(planPhases.itemId, item.id))
 				.orderBy(asc(planPhases.idx)),
-		).toEqual([{ name: "Render the plan" }, { name: "Insert the phases" }]);
+		).toEqual([
+			{ name: "Render the plan" },
+			{ name: "Insert the phases" },
+			{ name: "Review" },
+		]);
 		expect(logSpy.mock.calls.map((c) => c.join(" ")).join("\n")).toContain(
 			"Added item",
 		);
