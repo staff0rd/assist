@@ -10,6 +10,7 @@ import {
 	askCheckInputSchema,
 	CHECK_RESULT_KEY,
 } from "./sessions/shared/askCheckInputSchema";
+import { autoAnsweredBy } from "./sessions/shared/autoAnsweredBy";
 import { awaitPreviewApproval } from "./sessions/shared/awaitPreviewApproval";
 
 export async function askCheck(options: {
@@ -48,6 +49,6 @@ export async function askCheck(options: {
 	console.log(
 		bump && answers[CHECK_RESULT_KEY] === "later"
 			? await applyCheckBump(bump, check.title, answers)
-			: formatAskCheckAnswer(check.title, answers, decision.yolo === true),
+			: formatAskCheckAnswer(check.title, answers, autoAnsweredBy(decision)),
 	);
 }

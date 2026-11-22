@@ -1,13 +1,17 @@
 import { resolveNodeName } from "../../shared/resolveNodeName";
 import type { SessionManager } from "../SessionManager";
 import { autopilotScheduler } from "./autopilotScheduler";
-import { autopilotSessionState } from "./autopilotSessionState";
+import { autopilotRunState } from "./autopilotRunState";
 
 export function startAutopilot(manager: SessionManager): () => void {
 	return autopilotScheduler.start({
 		localNode: resolveNodeName,
 		sessionState: (sessionId) =>
-			autopilotSessionState(manager.session(sessionId)),
-		launch: (cwd, prompt) => manager.spawn({ prompt, cwd }),
+			autopilotRunState(
+				manager.session(sessionId),
+				manager.autopilotRun(sessionId),
+			),
+		launch: (cwd, prompt) =>
+			manager.spawn({ prompt, cwd }, { autopilot: true }),
 	});
 }

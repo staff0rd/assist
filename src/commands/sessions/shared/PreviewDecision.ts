@@ -52,6 +52,7 @@ export type PreviewDecisionFields = {
 	restart?: boolean;
 	answers?: Record<string, string>;
 	yolo?: boolean;
+	autopilot?: boolean;
 };
 
 export type PreviewDecision = PreviewDecisionFields & {

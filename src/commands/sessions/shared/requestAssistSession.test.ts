@@ -31,6 +31,7 @@ describe("requestAssistSession", () => {
 			assistArgs: ["review-pr-comments", "42"],
 			cwd: "/git/repo",
 			inPlace: true,
+			autopilotFrom: "7",
 			launchedFrom: "7",
 		});
 	});
@@ -53,6 +54,9 @@ describe("requestAssistSession", () => {
 		expect(mockRequestSession).toHaveBeenCalledWith(
 			expect.objectContaining({ launchedFrom: undefined }),
 		);
+		expect(mockRequestSession.mock.calls[0]?.[0]).not.toHaveProperty(
+			"autopilotFrom",
+		);
 	});
 });
 
@@ -69,6 +73,7 @@ describe("requestAssistSession on a named node", () => {
 			assistArgs: ["backlog", "run", "a1"],
 			cwd: "/win/repo",
 			inPlace: false,
+			autopilotFrom: "7",
 			node: "win",
 		});
 	});

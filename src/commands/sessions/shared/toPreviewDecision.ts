@@ -47,5 +47,6 @@ export function toPreviewDecision(
 		restart: msg.restart === true,
 		answers: toAnswers(msg.answers),
 		yolo: msg.yolo === true,
+		autopilot: msg.autopilot === true,
 	};
 }

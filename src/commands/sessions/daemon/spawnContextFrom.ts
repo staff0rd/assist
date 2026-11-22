@@ -6,5 +6,6 @@ export function spawnContextFrom(d: Record<string, unknown>): SpawnContext {
 			(d.launchedFrom as string | undefined) ??
 			(d.joinSessionId as string | undefined),
 		...(d.yolo === true && { yolo: true }),
+		...(typeof d.autopilot === "string" && { autopilot: d.autopilot }),
 	};
 }

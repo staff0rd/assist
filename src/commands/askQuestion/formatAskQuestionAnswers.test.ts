@@ -22,7 +22,11 @@ describe("formatAskQuestionAnswers", () => {
 
 	it("says yolo mode answered when the decision came from yolo", () => {
 		expect(
-			formatAskQuestionAnswers(questions, { "Pick?": "A (Recommended)" }, true),
+			formatAskQuestionAnswers(
+				questions,
+				{ "Pick?": "A (Recommended)" },
+				"yolo",
+			),
 		).toMatch(
 			/^Yolo mode answered your questions .*"Pick\?"="A \(Recommended\)"/,
 		);

@@ -1,5 +1,6 @@
 import { type SessionClient, sendTo } from "./broadcast";
 import { daemonLog } from "./daemonLog";
+import { inheritAutopilot } from "./inheritAutopilot";
 import { inheritYolo } from "./inheritYolo";
 import type { SessionManager } from "./SessionManager";
 
@@ -30,6 +31,7 @@ export function creator(
 	};
 	return (client, m, d) => {
 		inheritYolo(d, m.session);
+		inheritAutopilot(d, m.session);
 		if (m.links.route(client, d)) return;
 		let result: SpawnResult | Promise<SpawnResult>;
 		try {

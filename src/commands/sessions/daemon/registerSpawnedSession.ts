@@ -15,6 +15,9 @@ export function registerSpawnedSession(
 ): string {
 	if (context?.launchedFrom) session.launchedFrom = context.launchedFrom;
 	if (context?.yolo) session.yolo = true;
+	if (context?.autopilot)
+		session.autopilot =
+			context.autopilot === true ? session.id : context.autopilot;
 	sessions.set(session.id, session);
 	wirePtyEvents(session, clients, onStatusChange, notify);
 	notify();

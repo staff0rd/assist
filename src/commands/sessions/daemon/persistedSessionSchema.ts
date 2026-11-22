@@ -34,6 +34,7 @@ export const persistedSessionSchema = z.object({
 	autoAdvance: z.boolean().optional(),
 	autoApprove: z.boolean().optional(),
 	yolo: z.boolean().optional(),
+	autopilot: z.string().optional(),
 	reviewStarted: z.boolean().optional(),
 	highLevelReviewHead: z.string().optional(),
 	launchedFrom: z.string().optional(),

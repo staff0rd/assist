@@ -6,6 +6,7 @@ import { rejectLongQuestions } from "./askQuestion/rejectLongQuestions";
 import { requireQuestionSession } from "./askQuestion/requireQuestionSession";
 import { readJsonPayload } from "./backlog/readJsonPayload";
 import { askQuestionInputSchema } from "./sessions/shared/askQuestionInputSchema";
+import { autoAnsweredBy } from "./sessions/shared/autoAnsweredBy";
 import { awaitPreviewApproval } from "./sessions/shared/awaitPreviewApproval";
 
 export async function askQuestion(options: { json: string }): Promise<void> {
@@ -45,7 +46,7 @@ export async function askQuestion(options: { json: string }): Promise<void> {
 		formatAskQuestionAnswers(
 			questions,
 			decision.answers ?? {},
-			decision.yolo === true,
+			autoAnsweredBy(decision),
 		),
 	);
 }

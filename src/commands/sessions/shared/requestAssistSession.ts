@@ -20,6 +20,7 @@ export function requestAssistSession(
 		inPlace: options?.inPlace === true,
 		...(options?.startPoint && { startPoint: options.startPoint }),
 		...(options?.inheritYolo && parentId && { yoloFrom: parentId }),
+		...(parentId && { autopilotFrom: parentId }),
 		// A bare launchedFrom pins the launch to this daemon, so a node-targeted launch drops it.
 		...(node
 			? { node }

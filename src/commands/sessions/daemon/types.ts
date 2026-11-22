@@ -28,7 +28,12 @@ export type OnStatusChange = (
 	exitCode?: number,
 ) => void;
 
-export type SpawnContext = { launchedFrom?: string; yolo?: boolean };
+export type SpawnContext = {
+	launchedFrom?: string;
+	yolo?: boolean;
+	/** The autopilot run's root session id, or true for the root itself. */
+	autopilot?: string | true;
+};
 
 export type SpawnSession = (
 	create: (id: string) => Session,
@@ -96,6 +101,8 @@ export type Session = SdkViewState & {
 	autoAdvance?: boolean;
 	autoApprove?: boolean;
 	yolo?: boolean;
+	/** Root session id of the autopilot run this session belongs to. */
+	autopilot?: string;
 	starred?: boolean;
 	divergenceEscalation?: boolean;
 	design?: boolean;

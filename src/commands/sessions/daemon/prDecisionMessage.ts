@@ -16,6 +16,7 @@ const FORWARDED = [
 	"restart",
 	"answers",
 	"yolo",
+	"autopilot",
 ] as const;
 
 export function prDecisionMessage(
