@@ -46,7 +46,7 @@ const PATTERN_DENIES: {
 	{
 		pattern: "git commit",
 		message:
-			"Do not run 'git commit' directly. Use 'assist commit \"<message>\"' instead.",
+			"Do not run 'git commit' directly. Use 'assist commit \"<message>\"' instead. To conclude an in-progress merge, run 'assist commit' with no message — it keeps git's prepared merge message.",
 	},
 	{
 		pattern: "npm run",

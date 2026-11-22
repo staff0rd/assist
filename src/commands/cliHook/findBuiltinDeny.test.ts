@@ -368,6 +368,14 @@ describe("findBuiltinDeny git commit", () => {
 		);
 	});
 
+	it("denies a merge-concluding 'git commit --no-edit' and points at 'assist commit' with no message", () => {
+		const decision = findBuiltinDeny(["git commit --no-edit"]);
+		expect(decision?.permissionDecision).toBe("deny");
+		expect(decision?.permissionDecisionReason).toContain(
+			"To conclude an in-progress merge, run 'assist commit' with no message",
+		);
+	});
+
 	it("does not deny 'assist commit'", () => {
 		expect(findBuiltinDeny(['assist commit "fix: x"'])).toBeUndefined();
 	});

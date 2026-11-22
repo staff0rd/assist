@@ -192,7 +192,7 @@ describe("cliHook built-in deny hardening", () => {
 					hookEventName: "PreToolUse",
 					permissionDecision: "deny",
 					permissionDecisionReason:
-						"Do not run 'git commit' directly. Use 'assist commit \"<message>\"' instead.",
+						"Do not run 'git commit' directly. Use 'assist commit \"<message>\"' instead. To conclude an in-progress merge, run 'assist commit' with no message — it keeps git's prepared merge message.",
 				},
 			}),
 		);

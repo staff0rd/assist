@@ -61,14 +61,14 @@ Run `/verify`. Fix anything it reports — a merge that compiles on each side ca
 
 Do not proceed to Step M4 until verify passes.
 
-## Step M4: Commit and push
+## Step M4: Conclude the merge and push
 
 ```
-git commit --no-edit
+assist commit
 git push
 ```
 
-`--no-edit` keeps git's generated merge message. Do not use `/commit` here — this is a merge commit, not a feature commit.
+With a merge in progress and no message, `assist commit` concludes it with git's prepared merge message. It refuses while unmerged paths or conflict markers remain — resolve them and re-run.
 
 Report the resolved files and the pushed SHA when done.
 
