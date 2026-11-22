@@ -1,8 +1,13 @@
+import { backlogTarget } from "../../../../../../backlogTarget";
 import { cardCloseClassName } from "../../../../../cardCloseClassName";
 import { DiscardButton } from "./CardCloseActions/DiscardButton";
 import { DismissButton } from "../../../../../DismissButton";
 import { RestartButton } from "../../../../../RestartButton";
-import type { ChildDismiss, SessionInfo } from "../../../../../../types";
+import type {
+	ChildDismiss,
+	DismissOptions,
+	SessionInfo,
+} from "../../../../../../types";
 
 export function CardCloseActions({
 	session,
@@ -14,12 +19,13 @@ export function CardCloseActions({
 	session: SessionInfo;
 	onRestart?: () => void;
 	onStartOver?: () => void;
-	onDismiss: () => void;
+	onDismiss: (opts?: DismissOptions) => void;
 	childDismiss?: ChildDismiss;
 }) {
 	const { status, id, harness } = session;
 	if (session.closing) return null;
-	if (status !== "stopped")
+	if (status !== "stopped") {
+		const target = backlogTarget(session);
 		return (
 			<span className={cardCloseClassName}>
 				<DismissButton
@@ -27,9 +33,11 @@ export function CardCloseActions({
 					status={status}
 					onDismiss={onDismiss}
 					childDismiss={childDismiss}
+					backlog={target && { target, cwd: session.cwd, node: session.node }}
 				/>
 			</span>
 		);
+	}
 	return (
 		<>
 			{session.undurable && (

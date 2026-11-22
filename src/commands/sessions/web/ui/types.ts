@@ -29,7 +29,7 @@ export type CardHeaderProps = {
 	onRetry?: (replace?: boolean) => void;
 	onRestart?: () => void;
 	onStartOver?: () => void;
-	onDismiss: () => void;
+	onDismiss: (opts?: DismissOptions) => void;
 	childDismiss?: ChildDismiss;
 };
 

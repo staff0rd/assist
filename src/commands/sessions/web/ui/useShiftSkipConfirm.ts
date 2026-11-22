@@ -1,6 +1,6 @@
 import { type KeyboardEvent, type MouseEvent, useState } from "react";
 
-const shiftSkipHint = "(Shift skips confirmation)";
+const shiftSkipHint = "Shift skips confirmation";
 
 export function useShiftSkipConfirm(
 	skip: () => void,
@@ -27,6 +27,7 @@ export function useShiftSkipConfirm(
 				skip();
 			},
 		},
-		withHint: (title: string) => `${title} ${shiftSkipHint}`,
+		withHint: (title: string, extraHint?: string) =>
+			`${title} (${[shiftSkipHint, extraHint].filter(Boolean).join(", ")})`,
 	};
 }
