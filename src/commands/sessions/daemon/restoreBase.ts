@@ -23,6 +23,7 @@ export function restoreBase(id: string, persisted: PersistedSession) {
 		model: persisted.model,
 		autoAdvance: restoredAutoAdvance(id, persisted),
 		autoApprove: persisted.autoApprove,
+		yolo: persisted.yolo,
 		reviewStarted: persisted.reviewStarted,
 		highLevelReviewHead: persisted.highLevelReviewHead,
 		launchedFrom: persisted.launchedFrom,

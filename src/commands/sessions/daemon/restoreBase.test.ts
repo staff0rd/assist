@@ -22,6 +22,11 @@ describe("restoreBase", () => {
 		expect(restoreBase("1", persisted({ starred: true })).starred).toBe(true);
 	});
 
+	it("keeps the per-session yolo flag", () => {
+		expect(restoreBase("1", persisted({ yolo: true })).yolo).toBe(true);
+		expect(restoreBase("1", persisted()).yolo).toBeUndefined();
+	});
+
 	it("keeps the divergence escalation flag", () => {
 		expect(
 			restoreBase("1", persisted({ divergenceEscalation: true }))

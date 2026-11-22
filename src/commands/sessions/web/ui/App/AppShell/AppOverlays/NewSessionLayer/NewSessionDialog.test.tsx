@@ -785,6 +785,61 @@ describe("NewSessionDialog Shift+click auto start", () => {
 		});
 	});
 
+	it.each([
+		["draft", ["draft", "--once", "--harness", "claude", "--no-model"]],
+		["bug", ["bug", "--once", "--harness", "claude", "--no-model"]],
+	] as const)(
+		"launches a Shift+Ctrl+clicked %s with Auto start, open and yolo",
+		(mode, args) => {
+			const { onCreateAssist } = renderDialog(mode);
+
+			fireEvent.click(submitButton(), { shiftKey: true, ctrlKey: true });
+
+			expect(onCreateAssist).toHaveBeenCalledWith(args, "/git/beta", {
+				autoApprove: true,
+				open: true,
+				yolo: true,
+			});
+		},
+	);
+
+	it("launches a Shift+Ctrl+clicked prompt and design session open with yolo", () => {
+		const prompt = renderDialog();
+		fireEvent.click(submitButton(), { shiftKey: true, ctrlKey: true });
+		expect(prompt.onCreate).toHaveBeenCalledWith(
+			"",
+			"/git/beta",
+			undefined,
+			true,
+			undefined,
+			true,
+		);
+		cleanup();
+
+		const design = renderDialog("design");
+		fireEvent.click(submitButton(), { shiftKey: true, ctrlKey: true });
+		expect(design.onCreateDesign).toHaveBeenCalledWith(
+			"claude",
+			"",
+			"/git/beta",
+			undefined,
+			true,
+			undefined,
+			true,
+		);
+	});
+
+	it("ignores Ctrl without Shift on the submit click", () => {
+		const { onCreateAssist } = renderDialog("draft");
+
+		fireEvent.click(submitButton(), { ctrlKey: true });
+
+		expect(onCreateAssist).toHaveBeenCalledWith(
+			["draft", "--once", "--harness", "claude", "--no-model"],
+			"/git/beta",
+		);
+	});
+
 	it("launches draft with Auto start off on a plain click", () => {
 		const { onCreateAssist } = renderDialog("draft");
 

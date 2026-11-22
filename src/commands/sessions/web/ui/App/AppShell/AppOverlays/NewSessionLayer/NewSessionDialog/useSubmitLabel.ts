@@ -9,8 +9,9 @@ export function useSubmitLabel(
 	targetKind: string,
 	mode: NewSessionMode,
 ): string {
-	const shiftHeld = useShiftHeld();
+	const { shift, ctrl } = useShiftHeld();
 	if (targetKind === "clone") return "Clone";
-	const autoStart = shiftHeld ? autoStartLabel(mode) : undefined;
-	return autoStart ?? newSessionModes[mode].submitLabel;
+	const autoStart = shift ? autoStartLabel(mode) : undefined;
+	const label = autoStart ?? newSessionModes[mode].submitLabel;
+	return shift && ctrl ? `${label} + yolo` : label;
 }

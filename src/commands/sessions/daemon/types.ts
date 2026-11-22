@@ -28,7 +28,7 @@ export type OnStatusChange = (
 	exitCode?: number,
 ) => void;
 
-export type SpawnContext = { launchedFrom?: string };
+export type SpawnContext = { launchedFrom?: string; yolo?: boolean };
 
 export type SpawnSession = (
 	create: (id: string) => Session,
@@ -95,6 +95,7 @@ export type Session = SdkViewState & {
 	deferredCommands?: PendingDeferredCommand[];
 	autoAdvance?: boolean;
 	autoApprove?: boolean;
+	yolo?: boolean;
 	starred?: boolean;
 	divergenceEscalation?: boolean;
 	design?: boolean;

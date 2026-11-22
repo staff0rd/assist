@@ -1,4 +1,3 @@
-import type { ResizeMode } from "./ResizeFn";
 import type { DismissOptions } from "./types";
 import { viewerId } from "./viewerId";
 
@@ -12,6 +11,7 @@ export type AssistLaunchMeta = {
 	node?: string;
 	autoApprove?: boolean;
 	open?: boolean;
+	yolo?: boolean;
 };
 
 export function resumeSessionAction(send: SendFn) {
@@ -119,17 +119,4 @@ export function setStarredAction(send: SendFn) {
 export function inputAction(send: SendFn) {
 	return (sessionId: string, data: string) =>
 		send({ type: "input", sessionId, data, viewerId });
-}
-
-export function resizeAction(send: SendFn) {
-	return (sessionId: string, cols: number, rows: number, mode?: ResizeMode) =>
-		send({
-			type: "resize",
-			sessionId,
-			cols,
-			rows,
-			viewerId,
-			claim: mode === "claim",
-			refresh: mode === "refresh",
-		});
 }

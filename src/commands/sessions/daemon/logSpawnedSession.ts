@@ -6,7 +6,8 @@ export function logSpawnedSession(session: Session): void {
 		? ` launched from ${session.launchedFrom}`
 		: "";
 	const autoApprove = session.autoApprove ? " auto-approve" : "";
+	const yolo = session.yolo ? " yolo" : "";
 	daemonLog(
-		`session ${session.id} spawned: ${session.name} [${session.commandType}] ${session.cwd ?? ""}${launchedFrom}${autoApprove}`,
+		`session ${session.id} spawned: ${session.name} [${session.commandType}] ${session.cwd ?? ""}${launchedFrom}${autoApprove}${yolo}`,
 	);
 }

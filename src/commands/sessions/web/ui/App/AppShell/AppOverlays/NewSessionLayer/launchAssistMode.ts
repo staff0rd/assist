@@ -13,10 +13,11 @@ export function launchAssistMode(
 		node,
 		autoApprove,
 		open,
+		yolo,
 	}: NewSessionLaunch & { mode: "draft" | "bug" },
 	onCreateAssist: NewSessionLaunchers["onCreateAssist"],
 ) {
-	const assistMeta = assistMetaFor(mode, node, autoApprove, open);
+	const assistMeta = assistMetaFor(mode, { node, autoApprove, open, yolo });
 	const modelArgs = model ? ["--model", model] : ["--no-model"];
 	dispatchMode(
 		newSessionModes[mode].sessionMode,

@@ -36,8 +36,12 @@ function preview(questions: unknown[], kind = "question") {
 	};
 }
 
-function run(d: Record<string, unknown>) {
-	const session = makeSession({ id: "1", cwd: "/repo" });
+function run(d: Record<string, unknown>, yoloSession = false) {
+	const session = makeSession({
+		id: "1",
+		cwd: "/repo",
+		...(yoloSession && { yolo: true }),
+	});
 	const coord = new PrPreviewCoordinator(new Map([["1", session]]), vi.fn());
 	const waiter = makeClient();
 	coord.set(waiter, d);
@@ -99,6 +103,22 @@ describe("yoloAnswerPreview", () => {
 		expect(waiter.sent).toEqual([]);
 	});
 
+	it("answers for a yolo session when yolo is off for the repo", () => {
+		yolo.on = false;
+		const { session, waiter } = run(
+			preview([question("A (Recommended)", "B")]),
+			true,
+		);
+		expect(session.pendingPrPreview).toBeUndefined();
+		expect(waiter.sent).toEqual([
+			expect.objectContaining({
+				type: "pr-decision",
+				yolo: true,
+				answers: { "Pick A (Recommended)?": "A (Recommended)" },
+			}),
+		]);
+	});
+
 	it("ignores non-question previews", () => {
 		const { session, waiter } = run(
 			preview([question("A (Recommended)", "B")], "ask"),
@@ -131,6 +151,18 @@ describe("yoloAnswerPreview", () => {
 					yolo: true,
 					answers: { result: "works" },
 				}),
+			]);
+		});
+
+		it("marks a mid-plan check Works for a yolo session when yolo is off", () => {
+			yolo.on = false;
+			const { session, waiter } = run(
+				check([{ number: 3, name: "Review" }]),
+				true,
+			);
+			expect(session.pendingPrPreview).toBeUndefined();
+			expect(waiter.sent).toEqual([
+				expect.objectContaining({ answers: { result: "works" } }),
 			]);
 		});
 

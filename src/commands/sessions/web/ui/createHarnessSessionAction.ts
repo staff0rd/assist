@@ -1,13 +1,18 @@
 type SendFn = (msg: object) => void;
 
+type CreateFlags = {
+	node?: string;
+	open?: boolean;
+	model?: string;
+	yolo?: boolean;
+};
+
 function sendCreate(
 	send: SendFn,
 	extra: object,
 	prompt: string,
-	cwd?: string,
-	node?: string,
-	open?: boolean,
-	model?: string,
+	cwd: string | undefined,
+	{ node, open, model, yolo }: CreateFlags,
 ) {
 	send({
 		type: "create",
@@ -17,6 +22,7 @@ function sendCreate(
 		...(model ? { model } : {}),
 		...(node ? { node } : {}),
 		...(open ? { open: true } : {}),
+		...(yolo ? { yolo: true } : {}),
 	});
 }
 
@@ -28,8 +34,14 @@ export function createDesignSessionAction(send: SendFn) {
 		node?: string,
 		open?: boolean,
 		model?: string,
+		yolo?: boolean,
 	) =>
-		sendCreate(send, { design: true, harness }, prompt, cwd, node, open, model);
+		sendCreate(send, { design: true, harness }, prompt, cwd, {
+			node,
+			open,
+			model,
+			yolo,
+		});
 }
 
 export function createHarnessSessionAction(send: SendFn) {
@@ -40,6 +52,12 @@ export function createHarnessSessionAction(send: SendFn) {
 		node?: string,
 		open?: boolean,
 		model?: string,
+		yolo?: boolean,
 	) =>
-		sendCreate(send, { harness, auto: true }, prompt, cwd, node, open, model);
+		sendCreate(send, { harness, auto: true }, prompt, cwd, {
+			node,
+			open,
+			model,
+			yolo,
+		});
 }

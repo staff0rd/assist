@@ -3,7 +3,6 @@ import {
 	createRunAction,
 	inputAction,
 	interruptSessionAction,
-	resizeAction,
 	setAutoAdvanceAction,
 	setAutoApproveAction,
 	setStarredAction,
@@ -18,6 +17,7 @@ import { dequeueMessageAction } from "../dequeueMessageAction";
 import { runShellCommandAction } from "../runShellCommandAction";
 import { stopShellCommandAction } from "../stopShellCommandAction";
 import { discardShellResultAction } from "../discardShellResultAction";
+import { resizeAction } from "../resizeAction";
 
 type SendFn = (msg: object) => void;
 type OutputHandler = (data: string) => void;

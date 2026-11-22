@@ -33,7 +33,7 @@ describe("submitDraft", () => {
 				},
 			},
 			l,
-			true,
+			{ open: true },
 		);
 
 		expect(l.onCreateAssist).toHaveBeenCalledWith(
@@ -51,14 +51,13 @@ describe("submitDraft", () => {
 			{ harness: "claude" },
 			{ kind: "launch", cwd: "/git/app" },
 			l,
-			true,
+			{ open: true },
 		);
 		submitDraft(
 			draft,
 			{ harness: "claude" },
 			{ kind: "launch", cwd: "/git/app" },
 			l,
-			false,
 		);
 
 		expect(l.onCreateAssist).toHaveBeenNthCalledWith(
@@ -82,7 +81,7 @@ describe("submitDraft", () => {
 			{ harness: "claude" },
 			{ kind: "launch", cwd: "/git/app" },
 			l,
-			true,
+			{ open: true },
 		);
 
 		expect(l.onCreateAssist).toHaveBeenCalledWith(
@@ -106,13 +105,12 @@ describe("submitDraft", () => {
 			} as NewSessionDraft;
 			const target = { kind: "launch", cwd: "/git/app" } as const;
 
-			submitDraft(prompt, { harness }, target, l, true);
+			submitDraft(prompt, { harness }, target, l, { open: true });
 			submitDraft(
 				{ ...prompt, node: "pc" } as NewSessionDraft,
 				{ harness },
 				target,
 				l,
-				false,
 			);
 
 			expect(l[launcher]).toHaveBeenNthCalledWith(
@@ -150,6 +148,49 @@ describe("submitDraft", () => {
 			undefined,
 			false,
 			"opus",
+		);
+	});
+
+	it("passes yolo with auto start and open on a draft", () => {
+		const l = launchers();
+
+		submitDraft(
+			draft,
+			{ harness: "claude" },
+			{ kind: "launch", cwd: "/git/app" },
+			l,
+			{ open: true, yolo: true },
+		);
+
+		expect(l.onCreateAssist).toHaveBeenCalledWith(
+			["draft", "--once", "--harness", "claude", "--no-model"],
+			"/git/app",
+			{ autoApprove: true, open: true, yolo: true },
+		);
+	});
+
+	it.each([
+		["prompt", "onCreateHarness"],
+		["design", "onCreateDesign"],
+	] as const)("passes yolo to a %s session", (mode, launcher) => {
+		const l = launchers();
+
+		submitDraft(
+			{ ...draft, mode, prompt: "go" } as NewSessionDraft,
+			{ harness: "claude" },
+			{ kind: "launch", cwd: "/git/app" },
+			l,
+			{ open: true, yolo: true },
+		);
+
+		expect(l[launcher]).toHaveBeenCalledWith(
+			"claude",
+			"go",
+			"/git/app",
+			undefined,
+			true,
+			undefined,
+			true,
 		);
 	});
 });

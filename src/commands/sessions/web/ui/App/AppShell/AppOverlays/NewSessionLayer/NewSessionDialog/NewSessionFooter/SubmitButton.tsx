@@ -12,6 +12,7 @@ export const FOOTER_HINTS = [
 	["Enter", "start"],
 	["Shift+Enter", "newline"],
 	["Shift+click", "start & open"],
+	["Shift+Ctrl+click", "start, open & yolo"],
 	["Esc", "close"],
 ] as const;
 

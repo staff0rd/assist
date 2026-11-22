@@ -11,12 +11,14 @@ type DraftTarget = ReturnType<typeof useDraftRepos>["target"];
 
 export type HarnessLaunch = { harness: HarnessKind; model?: string };
 
+export type SubmitFlags = { open?: boolean; yolo?: boolean };
+
 export function submitDraft(
 	draft: NewSessionDraft,
 	{ harness, model }: HarnessLaunch,
 	target: DraftTarget,
 	launchers: NewSessionLaunchers,
-	shiftClicked = false,
+	{ open = false, yolo = false }: SubmitFlags = {},
 ): boolean {
 	if (target.kind === "blocked" || draft.modePending) return false;
 	if (target.kind === "clone") {
@@ -31,8 +33,9 @@ export function submitDraft(
 			prompt: draft.prompt,
 			cwd: target.cwd,
 			node: draft.node,
-			autoApprove: shiftClicked,
-			open: shiftClicked,
+			autoApprove: open,
+			open,
+			yolo,
 		},
 		launchers,
 	);

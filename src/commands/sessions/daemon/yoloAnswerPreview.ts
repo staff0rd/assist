@@ -24,7 +24,7 @@ export function yoloAnswerPreview(
 	const rule = preview?.kind ? yoloRules[preview.kind] : undefined;
 	if (!preview || !rule) return false;
 	const answers = rule(preview.body);
-	if (!answers || !yoloEnabled(session.cwd)) return false;
+	if (!answers || !(session.yolo || yoloEnabled(session.cwd))) return false;
 	daemonLog(
 		`pr-preview yolo answer: id=${session.id} requestId=${preview.requestId} kind=${preview.kind} answers=${JSON.stringify(answers)}`,
 	);

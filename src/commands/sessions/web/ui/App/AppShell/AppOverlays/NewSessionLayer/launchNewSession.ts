@@ -12,6 +12,7 @@ export type NewSessionLaunchers = {
 		node?: string,
 		open?: boolean,
 		model?: string,
+		yolo?: boolean,
 	) => void;
 	onCreateHarness: (
 		harness: string,
@@ -20,6 +21,7 @@ export type NewSessionLaunchers = {
 		node?: string,
 		open?: boolean,
 		model?: string,
+		yolo?: boolean,
 	) => void;
 	onCreateAssist: (
 		args: string[],
@@ -37,6 +39,7 @@ export type NewSessionLaunch = {
 	node?: string;
 	autoApprove?: boolean;
 	open?: boolean;
+	yolo?: boolean;
 };
 
 export function launchNewSession(
@@ -49,11 +52,12 @@ export function launchNewSession(
 		node,
 		autoApprove,
 		open,
+		yolo,
 	}: NewSessionLaunch,
 	launchers: NewSessionLaunchers,
 ) {
 	const target = cwd || undefined;
-	const createArgs = createArgsFor(node, open, model);
+	const createArgs = createArgsFor(node, open, model, yolo);
 	if (mode === "prompt") {
 		launchers.onCreateHarness(harness, prompt, target, ...createArgs);
 		return;
@@ -63,7 +67,7 @@ export function launchNewSession(
 		return;
 	}
 	launchAssistMode(
-		{ mode, harness, model, prompt, cwd, node, autoApprove, open },
+		{ mode, harness, model, prompt, cwd, node, autoApprove, open, yolo },
 		launchers.onCreateAssist,
 	);
 }

@@ -1,20 +1,21 @@
 import { useEffect, useState } from "react";
 import type { NewSessionDraft } from "../../useNewSessionDraft";
+import type { SubmitFlags } from "./submitDraft";
 
 export function useQueuedSubmit(
 	draft: NewSessionDraft,
-	submit: (autoApprove: boolean) => void,
+	submit: (flags: SubmitFlags) => void,
 ) {
-	const [queued, setQueued] = useState<{ autoApprove: boolean } | null>(null);
+	const [queued, setQueued] = useState<SubmitFlags | null>(null);
 
 	useEffect(() => {
 		if (!queued || draft.modePending) return;
 		setQueued(null);
-		if (!draft.modeError) submit(queued.autoApprove);
+		if (!draft.modeError) submit(queued);
 	}, [queued, draft.modePending, draft.modeError, submit]);
 
-	return (autoApprove: boolean) => {
-		if (draft.modePending) setQueued({ autoApprove });
-		else submit(autoApprove);
+	return (flags: SubmitFlags) => {
+		if (draft.modePending) setQueued(flags);
+		else submit(flags);
 	};
 }
