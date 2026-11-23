@@ -1,3 +1,10 @@
+# [0.1264.0](https://github.com/staff0rd/assist/compare/v0.1263.0...v0.1264.0) (2026-11-23)
+
+
+### Features
+
+* autopilot runs record a four-line summary ([933dec7](https://github.com/staff0rd/assist/commit/933dec751548f39f6b101fd080b0928424413796))
+
 # [0.1263.0](https://github.com/staff0rd/assist/compare/v0.1262.0...v0.1263.0) (2026-11-23)
 
 
