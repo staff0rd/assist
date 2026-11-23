@@ -3,6 +3,8 @@ const POLLED_PATHS = new Set([
 	"/api/updates",
 	"/api/updates/history",
 	"/api/autopilot/status",
+	"/api/autopilot/configured",
+	"/api/releases/configured",
 ]);
 
 export function isQuietPoll(pathname: string, status: number): boolean {

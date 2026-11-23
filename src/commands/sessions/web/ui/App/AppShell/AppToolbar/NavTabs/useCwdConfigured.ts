@@ -6,6 +6,9 @@ import { withNode } from "../../../../withNode";
 
 type Result = { key: string; configured: boolean | undefined };
 
+// why: config set from a terminal has no push channel to the page, so re-check while it is open
+const RECHECK_MS = 30_000;
+
 async function fetchConfigured(
 	path: string,
 	cwd: string,
@@ -30,16 +33,22 @@ export function useCwdConfigured(
 	useEffect(() => {
 		if (!cwd) return;
 		let cancelled = false;
-		fetchConfigured(path, cwd, node)
-			.catch((error: unknown) => {
-				reportCaughtError(error, path);
-				return undefined;
-			})
-			.then((configured) => {
-				if (!cancelled) setResult({ key, configured });
-			});
+		const check = () =>
+			fetchConfigured(path, cwd, node)
+				.catch((error: unknown) => {
+					reportCaughtError(error, path);
+					return undefined;
+				})
+				.then((configured) => {
+					if (!cancelled) setResult({ key, configured });
+				});
+		void check();
+		const timer = setInterval(check, RECHECK_MS);
+		globalThis.addEventListener("focus", check);
 		return () => {
 			cancelled = true;
+			clearInterval(timer);
+			globalThis.removeEventListener("focus", check);
 		};
 	}, [path, cwd, node, key]);
 
