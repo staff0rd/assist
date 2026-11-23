@@ -34,13 +34,20 @@ export async function placePr(
 ): Promise<void> {
 	const args =
 		prNumber !== null
-			? buildEditArgs(prNumber, title, body, attachments)
+			? buildEditArgs(prNumber, title, body, attachments, options.repo)
 			: buildCreateArgs(title, body, options, attachments);
 
 	try {
 		if (prNumber === null && !options.head) ensureBranchPushed();
 	} catch {
 		process.exit(1);
+	}
+	if (options.repo) {
+		console.log(
+			prNumber === null
+				? `Raising pull request against ${options.repo}`
+				: `Updating pull request #${prNumber} in ${options.repo}`,
+		);
 	}
 	process.stdout.write(runGhWithAttachments(args, attachments));
 

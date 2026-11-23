@@ -1,6 +1,7 @@
 import { execFileSync, execSync } from "node:child_process";
 import { currentPrSelector } from "./currentPrSelector";
 import { getPreferredRemoteRepo } from "./getPreferredRemoteRepo";
+import { type BaseRepoMode, resolveBaseRepo } from "./resolveBaseRepo";
 
 export function isGhNotInstalled(error: unknown): boolean {
 	if (error instanceof Error) {
@@ -25,8 +26,8 @@ export function getCurrentBranch(): string {
 	}).trim();
 }
 
-function viewCurrentPr<T>(fields: string): T {
-	const { org, repo } = getRepoInfo();
+export function viewCurrentPr<T>(fields: string, baseRepo?: BaseRepoMode): T {
+	const { org, repo } = resolveBaseRepo(baseRepo)?.base ?? getRepoInfo();
 	const selector = currentPrSelector(getCurrentBranch(), org);
 	return JSON.parse(
 		execFileSync(
@@ -82,15 +83,8 @@ export function getCurrentPrNodeId(): string {
 }
 
 export function findCurrentPrNumber(): number | null {
-	return findCurrentPr()?.number ?? null;
-}
-
-export function findCurrentPr(): {
-	number: number;
-	state: "OPEN" | "CLOSED" | "MERGED";
-} | null {
 	try {
-		return viewCurrentPr("number,state");
+		return viewCurrentPr<{ number: number }>("number").number;
 	} catch (error) {
 		if (error instanceof Error && error.message.includes("no pull requests")) {
 			return null;

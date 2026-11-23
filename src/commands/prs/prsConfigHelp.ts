@@ -21,6 +21,11 @@ export const prsRaiseConfigHelp: ConfigHelpEntry[] = [
 		setter: "assist config set prs.reviewAfterRaise false",
 		note: "the PR preview pane's Review PR toggle starts checked (default true)",
 	},
+	{
+		key: "prs.baseRepo",
+		setter: "assist config set prs.baseRepo origin",
+		note: "repo PR commands target in a fork clone: auto (the parent when origin is a fork, default), origin (the fork) or parent; 'assist prs raise --base-repo' overrides it for one PR",
+	},
 ];
 
 export const prsConfigHelp: ConfigHelpEntry[] = [

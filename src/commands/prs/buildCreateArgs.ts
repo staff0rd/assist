@@ -12,6 +12,8 @@ export type CreateOptions = {
 	assignee?: string[];
 	reviewer?: string[];
 	milestone?: string;
+	repo?: string;
+	forkHead?: string;
 };
 
 export function buildCreateArgs(
@@ -31,8 +33,9 @@ export function buildCreateArgs(
 	];
 
 	const valueFlags = [
+		["--repo", options.repo],
 		["--base", options.base],
-		["--head", options.head],
+		["--head", options.head ?? options.forkHead],
 		["--milestone", options.milestone],
 	] as const;
 	for (const [flag, value] of valueFlags) {

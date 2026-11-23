@@ -1269,6 +1269,7 @@ Config:
   assist config set prs.promptGithub true      # 'assist prs raise' help asks the user for a GitHub issue to --resolves (default false)
   assist config set prs.draft true             # 'assist prs raise' creates a draft PR when neither --draft nor --no-draft is passed (default false)
   assist config set prs.reviewAfterRaise false # the PR preview pane's Review PR toggle starts checked (default true)
+  assist config set prs.baseRepo origin        # repo PR commands target in a fork clone: auto (the parent when origin is a fork, default), origin (the fork) or parent; 'assist prs raise --base-repo' overrides it for one PR
 
 === assist prs raise --help
 Usage: assist prs raise [options]
@@ -1287,6 +1288,8 @@ Options:
   --force                  Overwrite the title and body of an existing pull request
   -B, --base <branch>      Branch into which the pull request merges
   -H, --head <branch>      Branch that contains the commits
+  --base-repo <repo>       Repo to raise this pull request in, overriding prs.baseRepo: the fork
+                           (origin) or its parent (choices: "origin", "parent")
   -d, --draft              Mark the pull request as a draft
   --no-draft               Create a ready-for-review pull request, overriding prs.draft
   -w, --web                Open the browser to create the pull request
@@ -1403,6 +1406,7 @@ Config:
   assist config set prs.promptGithub true      # 'assist prs raise' help asks the user for a GitHub issue to --resolves (default false)
   assist config set prs.draft true             # 'assist prs raise' creates a draft PR when neither --draft nor --no-draft is passed (default false)
   assist config set prs.reviewAfterRaise false # the PR preview pane's Review PR toggle starts checked (default true)
+  assist config set prs.baseRepo origin        # repo PR commands target in a fork clone: auto (the parent when origin is a fork, default), origin (the fork) or parent; 'assist prs raise --base-repo' overrides it for one PR
 
 === assist prs status --help
 Usage: assist prs status [options] <repo...>
