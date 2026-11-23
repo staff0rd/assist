@@ -1,16 +1,20 @@
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import { phoneEmptySx } from "../phoneEmptySx";
+import { PhoneAutopilotItems } from "./PhoneAutopilotItems";
 import { PhoneFailureBanner } from "./PhoneFailureBanner";
 import { PhoneScheduleCard } from "./PhoneScheduleCard";
 import { phoneAutopilotSx as sx } from "./phoneAutopilotSx";
 import type { PhoneAutopilot } from "./usePhoneAutopilot";
+import { usePhoneItemHandlers } from "./usePhoneItemHandlers";
 
 export function PhoneAutopilotBody({
-	autopilot: { repos, state, actions },
+	autopilot,
 }: {
 	autopilot: PhoneAutopilot;
 }) {
+	const { repos, state, actions } = autopilot;
+	const handlers = usePhoneItemHandlers(autopilot);
 	if (repos.length === 0)
 		return (
 			<Box sx={phoneEmptySx}>Autopilot isn't configured on this node.</Box>
@@ -34,6 +38,11 @@ export function PhoneAutopilotBody({
 						via={state.via}
 						busy={actions.busy}
 						onAction={(action) => void actions.run(action)}
+					/>
+					<PhoneAutopilotItems
+						status={state.status}
+						items={state.items}
+						handlers={handlers}
 					/>
 				</>
 			) : (

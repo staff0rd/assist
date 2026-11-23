@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import type { AutopilotItemView } from "../../../../../autopilot/AutopilotItemView";
 import { itemRowSx } from "./itemRowSx";
+import { remainingPhasesText } from "./remainingPhasesText";
 
 export function RemainingPhases({
 	remaining,
@@ -13,11 +14,7 @@ export function RemainingPhases({
 			<Box component="span" sx={itemRowSx.key}>
 				next
 			</Box>
-			{remaining
-				.map((phase) =>
-					phase.number === null ? phase.name : `${phase.number} ${phase.name}`,
-				)
-				.join(" · ")}
+			{remainingPhasesText(remaining)}
 		</Box>
 	);
 }
