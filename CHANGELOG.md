@@ -1,3 +1,11 @@
+# [0.1257.0](https://github.com/staff0rd/assist/compare/v0.1256.7...v0.1257.0) (2026-11-23)
+
+
+### Features
+
+* agent-set autopilot follow-ups ([c5655a3](https://github.com/staff0rd/assist/commit/c5655a32b4c3fd7ccd15bc81998c2756449c35ac))
+* autopilot running and delivered views ([d9782ab](https://github.com/staff0rd/assist/commit/d9782ab137b71bfc71bef431f2affc39a6e08ce5))
+
 ## [0.1256.7](https://github.com/staff0rd/assist/compare/v0.1256.6...v0.1256.7) (2026-11-23)
 
 
