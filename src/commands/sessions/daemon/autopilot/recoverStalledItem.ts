@@ -1,5 +1,6 @@
 import { formatItemId } from "../../../backlog/formatItemId";
 import { daemonLog } from "../daemonLog";
+import { findStalledItem } from "./findStalledItem";
 import type { AutopilotStarted } from "./AutopilotStarted";
 import type { AutopilotStore } from "./createAutopilotStore";
 import type { AutopilotTarget } from "./readAutopilotTarget";
@@ -8,21 +9,18 @@ import { resumeItemPrompt } from "./resumeItemPrompt";
 /** Resume an item a run left unfinished; pause if it stalls again. True when it acted. */
 export function recoverStalledItem(
 	store: AutopilotStore,
-	{ runs, items }: AutopilotStarted,
+	started: AutopilotStarted,
 	target: AutopilotTarget,
 ): boolean {
+	const { runs } = started;
 	runs.settle(target.cwd);
 	const repo = store.repo(target.cwd);
 	if (repo.paused || runs.liveRun(target.cwd)) return false;
-	const lastEnd = repo.ticks.filter((t) => t.outcome === "finished").at(-1)?.at;
-	if (!lastEnd) return false;
-	const stalled = repo.items?.find(
-		(item) => !item.stopped && items.status(item.id, lastEnd) === "in-progress",
-	);
+	const stalled = findStalledItem(repo, started);
 	if (!stalled) return false;
 	const id = formatItemId(stalled.id);
 	if ((stalled.resumes ?? 0) >= 1) {
-		const reason = `${id} stalled again after it was resumed`;
+		const reason = `${id} is still not done, and nothing is running it, after autopilot already resumed it once`;
 		daemonLog(`autopilot: ${target.cwd} paused: ${reason}`);
 		store.update(target.cwd, (next) => {
 			next.paused = true;

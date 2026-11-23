@@ -42,6 +42,8 @@ describe("createAutopilotScheduler", () => {
 		sessionLink: (id: string) => links[id],
 		runItems: () => runItems,
 		stopSession: (id: string) => stopped.push(id),
+		itemSessions: (id: number) =>
+			runItems.filter((run) => run.itemId === id).map((run) => run.sessionId),
 		itemStatuses: async () => itemStatus,
 		launch: () => {
 			launched += 1;
@@ -242,9 +244,25 @@ describe("createAutopilotScheduler", () => {
 		expect(launched).toBe(2);
 		expect(scheduler.status("/repo")).toMatchObject({
 			paused: true,
-			pauseReason: "a7 stalled again after it was resumed",
+			pauseReason:
+				"a7 is still not done, and nothing is running it, after autopilot already resumed it once",
 		});
 		scheduler.setPaused("/repo", false);
 		expect(scheduler.status("/repo")?.pauseReason).toBeNull();
+	});
+
+	it("never resumes an item while a session still runs it, and trusts no status read before it ended", async () => {
+		start();
+		runItems = [{ itemId: 7, sessionId: "b1", live: true }];
+		itemStatus = new Map([[7, "in-progress"]]);
+		await vi.advanceTimersByTimeAsync(60_000);
+		states.s1 = "ended";
+		await vi.advanceTimersByTimeAsync(5 * 60_000);
+		expect(launched).toBe(1);
+		itemStatus = new Map([[7, "done"]]);
+		runItems = [];
+		await vi.advanceTimersByTimeAsync(5 * 60_000);
+		expect(launched).toBe(1);
+		expect(saved()["/repo"].paused).toBe(false);
 	});
 });

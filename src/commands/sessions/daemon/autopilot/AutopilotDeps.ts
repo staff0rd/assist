@@ -17,6 +17,8 @@ export type AutopilotDeps = {
 	/** Sessions in the autopilot run rooted at rootId that run a backlog item. */
 	runItems: (rootId: string) => AutopilotRunItem[];
 	stopSession: (sessionId: string) => void;
+	/** Sessions, in any run, still running the given backlog item. */
+	itemSessions: (itemId: number) => string[];
 	/** Backlog statuses of the given items, read from the database. */
 	itemStatuses?: (ids: number[]) => Promise<Map<number, string>>;
 	closeIdle?: () => void;
