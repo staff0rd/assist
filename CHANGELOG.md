@@ -1,3 +1,10 @@
+## [0.1256.4](https://github.com/staff0rd/assist/compare/v0.1256.3...v0.1256.4) (2026-11-23)
+
+
+### Bug Fixes
+
+* retry pushes rejected by upstream ([5d60e68](https://github.com/staff0rd/assist/commit/5d60e68912caad14e7238fe9e9f110666b49f5d6))
+
 ## [0.1256.3](https://github.com/staff0rd/assist/compare/v0.1256.2...v0.1256.3) (2026-11-23)
 
 
