@@ -1,4 +1,5 @@
 import type { AutopilotStarted } from "./AutopilotStarted";
+import { clearStaleRuns } from "./clearStaleRuns";
 import type { AutopilotStore } from "./createAutopilotStore";
 import { listAutopilotTargets } from "./listAutopilotTargets";
 import { recordAutopilotItems } from "./recordAutopilotItems";
@@ -10,8 +11,14 @@ export function tickAutopilot(
 	started: AutopilotStarted | undefined,
 ): void {
 	if (!started) return;
-	for (const target of listAutopilotTargets(started.deps.localNode())) {
-		if (!target.scheduledHere) continue;
+	const targets = listAutopilotTargets(started.deps.localNode()).filter(
+		(target) => target.scheduledHere,
+	);
+	clearStaleRuns(
+		store,
+		targets.map((target) => target.cwd),
+	);
+	for (const target of targets) {
 		recordAutopilotItems(store, started.deps, target.cwd);
 		if (!recoverStalledItem(store, started, target))
 			tickAutopilotRepo(store, started.runs, target);
@@ -19,8 +26,8 @@ export function tickAutopilot(
 			(store.repo(target.cwd).items ?? []).map((item) => item.id),
 		);
 	}
-	/* why: after settling, so a finished run's closing message is read before
-	 * its idle root session is closed. */
+	/* why: a run held open for its summary is still current, so its idle root
+	 * must not be closed. */
 	const keep = new Set(
 		store.cwds().flatMap((cwd) => store.repo(cwd).current?.sessionId ?? []),
 	);

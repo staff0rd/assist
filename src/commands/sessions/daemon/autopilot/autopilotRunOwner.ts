@@ -7,10 +7,12 @@ export function autopilotRunOwner(
 	store: AutopilotStore,
 	deps: AutopilotDeps,
 	sessionId: string,
+	scheduled: string[],
 ): string | undefined {
+	/* why: session ids restart with the daemon, so a stale record (e.g. an old
+	 * worktree's) can hold a reused id; only scheduled repos can own a run. */
 	const live = new Map(
-		store
-			.cwds()
+		scheduled
 			.map((cwd) => [store.repo(cwd).current?.sessionId, cwd] as const)
 			.filter(([id]) => id !== undefined),
 	);

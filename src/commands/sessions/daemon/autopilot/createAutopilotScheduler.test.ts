@@ -1,4 +1,4 @@
-import { mkdtempSync, readFileSync, rmSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
@@ -313,5 +313,25 @@ describe("createAutopilotScheduler", () => {
 			sessionId: "s1",
 		});
 		expect(scheduler.status("/repo")?.runs[0].summary).toBeUndefined();
+	});
+
+	it("files a summary under the scheduled repo, not a stale record holding the same session id", async () => {
+		writeFileSync(
+			path,
+			JSON.stringify({
+				"/repo-2": {
+					paused: false,
+					ticks: [],
+					current: { sessionId: "s1", startedAt: "2026-01-01T00:00:00Z" },
+				},
+			}),
+		);
+		const scheduler = start();
+		const summary = { checked: "c", decided: "d", started: "none", next: "n" };
+		expect(scheduler.recordSummary("s1", summary)).toEqual({
+			ok: true,
+			cwd: "/repo",
+		});
+		expect(saved()["/repo-2"].current).toBeUndefined();
 	});
 });
