@@ -5,4 +5,5 @@ export type AutopilotDeps = {
 	localNode: () => string;
 	sessionState: (sessionId: string) => AutopilotSessionState;
 	launch: (target: AutopilotTarget) => string;
+	closeIdle?: () => void;
 };

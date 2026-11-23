@@ -25,6 +25,7 @@ export function createAutopilotScheduler(
 
 	const tick = (): void => {
 		if (!started) return;
+		started.deps.closeIdle?.();
 		for (const target of listAutopilotTargets(started.deps.localNode()))
 			if (target.scheduledHere) tickAutopilotRepo(store, started.runs, target);
 	};

@@ -238,8 +238,8 @@ export class SessionManager {
 	hasSession = (id: string): boolean => this.sessions.has(id);
 	session = (id: string): Session | undefined => this.sessions.get(id);
 
-	autopilotRun = (rootId: string): Session[] =>
-		[...this.sessions.values()].filter((s) => s.autopilot === rootId);
+	autopilotSessions = (): Session[] =>
+		[...this.sessions.values()].filter((s) => s.autopilot);
 
 	localSessions = (): SessionInfo[] =>
 		[...this.sessions.values()].map(toSessionInfo);
