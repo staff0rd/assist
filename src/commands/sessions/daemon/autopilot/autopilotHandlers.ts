@@ -7,6 +7,10 @@ const actions = {
 	pause: (cwd: string) => autopilotScheduler.setPaused(cwd, true),
 	resume: (cwd: string) => autopilotScheduler.setPaused(cwd, false),
 	run: (cwd: string) => autopilotScheduler.runNow(cwd),
+	stop: (cwd: string, itemId: unknown) =>
+		typeof itemId === "number"
+			? autopilotScheduler.stopItem(cwd, itemId)
+			: { ok: false as const, error: "stop needs an itemId" },
 };
 
 function isAction(value: unknown): value is keyof typeof actions {
@@ -21,6 +25,13 @@ export const autopilotHandlers: Record<string, Handler> = {
 			...(cwd
 				? { status: autopilotScheduler.status(cwd) ?? null }
 				: { statuses: autopilotScheduler.statuses() }),
+		});
+	},
+	"autopilot-session": (client, manager, data) => {
+		const id = typeof data.sessionId === "string" ? data.sessionId : "";
+		sendTo(client, {
+			type: "autopilot-session",
+			autopilot: !!manager.session(id)?.autopilot,
 		});
 	},
 	"autopilot-follow-up": (client, _manager, data) => {
@@ -39,18 +50,20 @@ export const autopilotHandlers: Record<string, Handler> = {
 		sendTo(client, { type: "autopilot-follow-up", ...result });
 	},
 	"autopilot-control": (client, _manager, data) => {
-		const { cwd, action } = data;
+		const { cwd, action, itemId } = data;
 		if (typeof cwd !== "string" || !isAction(action)) {
 			sendTo(client, {
 				type: "autopilot-control",
 				ok: false,
 				error:
-					"autopilot-control needs a cwd and an action of pause, resume or run",
+					"autopilot-control needs a cwd and an action of pause, resume, run or stop",
 			});
 			return;
 		}
-		daemonLog(`autopilot: ${action} requested for ${cwd}`);
-		const result = actions[action](cwd);
+		daemonLog(
+			`autopilot: ${action} requested for ${cwd}${itemId === undefined ? "" : ` item ${itemId}`}`,
+		);
+		const result = actions[action](cwd, itemId);
 		if (!result.ok) daemonLog(`autopilot: ${action} refused: ${result.error}`);
 		sendTo(client, { type: "autopilot-control", ...result });
 	},

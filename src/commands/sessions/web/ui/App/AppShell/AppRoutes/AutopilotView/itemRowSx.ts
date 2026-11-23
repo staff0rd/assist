@@ -1,0 +1,37 @@
+export const itemRowSx = {
+	row: {
+		display: "grid",
+		gridTemplateColumns: { xs: "1fr", sm: "1fr auto" },
+		gap: "4px 16px",
+		alignItems: "start",
+		px: 2,
+		py: 1.5,
+		"& + &": { borderTop: 1, borderColor: "divider" },
+	},
+	title: {
+		display: "flex",
+		flexWrap: "wrap",
+		gap: "4px 8px",
+		alignItems: "baseline",
+		minWidth: 0,
+	},
+	line: { gridColumn: 1, color: "text.secondary", minWidth: 0 },
+	side: {
+		gridRow: { sm: "1 / span 2" },
+		gridColumn: { sm: 2 },
+		display: "grid",
+		justifyItems: { xs: "start", sm: "end" },
+		gap: 1,
+	},
+	next: {
+		gridColumn: "1 / -1",
+		display: "flex",
+		flexWrap: "wrap",
+		gap: 1,
+		minWidth: 0,
+		typography: "caption",
+		color: "text.secondary",
+	},
+	key: { fontFamily: "fontFamilyMono", color: "info.main" },
+	mono: { fontFamily: "fontFamilyMono", typography: "caption" },
+} as const;

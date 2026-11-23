@@ -31,7 +31,10 @@ export function scaledPageRoutes(socket: SessionSocket) {
 			/>
 			<Route path="news" element={<NewsView />} />
 			<Route path="inbox" element={<InboxView />} />
-			<Route path="autopilot" element={<AutopilotView />} />
+			<Route
+				path="autopilot"
+				element={<AutopilotView selectSession={socket.selectSession} />}
+			/>
 			<Route path="releases" element={<ReleasesView />} />
 			<Route path="rules" element={<RulesRoute socket={socket} />} />
 			<Route path="usage" element={<UsageHistoryView />} />

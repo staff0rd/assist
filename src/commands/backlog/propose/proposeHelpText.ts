@@ -1,4 +1,6 @@
-export const proposeHelpText = `The payload is strict JSON: { name, type, description?, acceptanceCriteria?, phases? }.
+export const proposeHelpText = `The payload is strict JSON: { name, type, description?, summary?, acceptanceCriteria?, phases? }.
+summary is one line naming the constraint the item addresses and its predicted
+effect; it is required from autopilot sessions and shown as the item's why line.
 Each phase is { name, tasks, manualChecks?, dependsOn? } and needs at least one task.
 
 dependsOn lists the earlier phase numbers a phase needs, e.g. [2]. Leave it out

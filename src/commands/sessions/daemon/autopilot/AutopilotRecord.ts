@@ -17,10 +17,14 @@ export type AutopilotFollowUp = {
 	item?: string;
 };
 
+/** A backlog item an autopilot run started. */
+export type AutopilotItem = { id: number; startedAt: string };
+
 export type AutopilotRepoRecord = {
 	paused: boolean;
 	current?: AutopilotRun;
 	followUp?: AutopilotFollowUp;
+	items?: AutopilotItem[];
 	ticks: AutopilotTick[];
 };
 

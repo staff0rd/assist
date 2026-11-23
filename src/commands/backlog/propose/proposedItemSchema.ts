@@ -24,6 +24,15 @@ export const proposedItemSchema = z.strictObject({
 	name: z.string().trim().min(1, "name is required"),
 	type: z.enum(["story", "bug"]),
 	description: z.string().optional(),
+	summary: z
+		.string()
+		.trim()
+		.min(1)
+		.refine(
+			(summary) => !summary.includes("\n"),
+			"summary is one line: the constraint and the predicted effect",
+		)
+		.optional(),
 	acceptanceCriteria: z
 		.array(
 			z

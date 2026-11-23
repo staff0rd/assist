@@ -49,7 +49,13 @@ const phaseUsageTotalSchema = z.strictObject({
 	peakContextPct: z.number(),
 });
 
-const backlogCommentTypeSchema = z.enum(["comment", "summary"]);
+const backlogCommentTypeSchema = z.enum([
+	"comment",
+	"summary",
+	"why",
+	"delivered",
+	"result",
+]);
 
 const backlogCommentSchema = z.strictObject({
 	id: z.number().optional(),

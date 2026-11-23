@@ -4,6 +4,7 @@ import { autopilotStatusOf } from "./autopilotStatusOf";
 import type { AutopilotStore } from "./createAutopilotStore";
 import { listAutopilotTargets } from "./listAutopilotTargets";
 import { readAutopilotTarget } from "./readAutopilotTarget";
+import { recordAutopilotItems } from "./recordAutopilotItems";
 
 export function autopilotStatuses(
 	store: AutopilotStore,
@@ -15,7 +16,14 @@ export function autopilotStatuses(
 	const targets = cwd
 		? [readAutopilotTarget(cwd, localNode)].filter((t) => t !== undefined)
 		: listAutopilotTargets(localNode);
-	return targets.map((target) =>
-		autopilotStatusOf(target, localNode, store, started.runs),
-	);
+	return targets.map((target) => {
+		recordAutopilotItems(store, started.deps, target.cwd);
+		return autopilotStatusOf(
+			target,
+			localNode,
+			store,
+			started.runs,
+			started.deps,
+		);
+	});
 }

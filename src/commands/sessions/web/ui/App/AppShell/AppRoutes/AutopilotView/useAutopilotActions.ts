@@ -12,11 +12,11 @@ export function useAutopilotActions(
 	const [busy, setBusy] = useState(false);
 	const [error, setError] = useState<string>();
 
-	const run = async (action: AutopilotAction) => {
+	const run = async (action: AutopilotAction, itemId?: number) => {
 		setBusy(true);
 		setError(undefined);
 		try {
-			await postAutopilotControl(cwd, action, node);
+			await postAutopilotControl(cwd, action, node, itemId);
 		} catch (error) {
 			setError(error instanceof Error ? error.message : String(error));
 		} finally {

@@ -1,3 +1,4 @@
+import { clockTime } from "./clockTime";
 import Box from "@mui/material/Box";
 import Chip from "@mui/material/Chip";
 import Paper from "@mui/material/Paper";
@@ -27,13 +28,6 @@ const listSx = {
 	minWidth: 0,
 } as const;
 
-function time(iso: string): string {
-	return new Date(iso).toLocaleTimeString([], {
-		hour: "2-digit",
-		minute: "2-digit",
-	});
-}
-
 export function ScheduleBar({ status }: { status: AutopilotStatus }) {
 	return (
 		<Paper variant="outlined" sx={barSx}>
@@ -48,7 +42,9 @@ export function ScheduleBar({ status }: { status: AutopilotStatus }) {
 				<Field
 					label="Last tick"
 					value={
-						status.lastTick ? describeTick(status.lastTick, time) : "none yet"
+						status.lastTick
+							? describeTick(status.lastTick, clockTime)
+							: "none yet"
 					}
 				/>
 				{status.running && (

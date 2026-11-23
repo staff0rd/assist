@@ -8,7 +8,6 @@ import {
 	type AutopilotStore,
 	createAutopilotStore,
 } from "./createAutopilotStore";
-import { listAutopilotTargets } from "./listAutopilotTargets";
 import {
 	type AutopilotFollowUpResult,
 	requestAutopilotFollowUp,
@@ -18,7 +17,8 @@ import {
 	runAutopilotNow,
 } from "./runAutopilotNow";
 import { setAutopilotPaused } from "./setAutopilotPaused";
-import { tickAutopilotRepo } from "./tickAutopilotRepo";
+import { stopAutopilotItem } from "./stopAutopilotItem";
+import { tickAutopilot } from "./tickAutopilot";
 
 const CHECK_MS = 60_000;
 
@@ -27,12 +27,7 @@ export function createAutopilotScheduler(
 ) {
 	let started: AutopilotStarted | undefined;
 
-	const tick = (): void => {
-		if (!started) return;
-		started.deps.closeIdle?.();
-		for (const target of listAutopilotTargets(started.deps.localNode()))
-			if (target.scheduledHere) tickAutopilotRepo(store, started.runs, target);
-	};
+	const tick = (): void => tickAutopilot(store, started);
 
 	return {
 		start(deps: AutopilotDeps): () => void {
@@ -54,5 +49,7 @@ export function createAutopilotScheduler(
 			requestAutopilotFollowUp(store, started, sessionId, delayMs),
 		setPaused: (cwd: string, paused: boolean): AutopilotControlResult =>
 			setAutopilotPaused(store, started, cwd, paused),
+		stopItem: (cwd: string, itemId: number): AutopilotControlResult =>
+			stopAutopilotItem(store, started, cwd, itemId),
 	};
 }

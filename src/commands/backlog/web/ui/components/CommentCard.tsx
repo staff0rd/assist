@@ -9,6 +9,9 @@ const typeStyles: Record<
 > = {
 	summary: { bgcolor: "warning.light", borderColor: "warning.dark" },
 	comment: { bgcolor: "action.selected", borderColor: "divider" },
+	why: { bgcolor: "info.light", borderColor: "info.dark" },
+	delivered: { bgcolor: "success.light", borderColor: "success.dark" },
+	result: { bgcolor: "success.light", borderColor: "success.dark" },
 };
 const headerRowSx = {
 	justifyContent: "space-between",

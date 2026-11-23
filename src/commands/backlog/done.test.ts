@@ -61,6 +61,26 @@ describe("done", () => {
 		expect(mockUpdateStatus).toHaveBeenCalledWith(orm, 1, "done");
 	});
 
+	it("refuses an item with a why line until its Delivered line is recorded", async () => {
+		const why = { text: "Predicts +3k/h", timestamp: "t", type: "why" };
+		const item = {
+			id: 1,
+			name: "Task",
+			status: "in-progress",
+			comments: [why],
+		};
+		mockFindOneItem.mockResolvedValue(found(item));
+		vi.spyOn(console, "log").mockImplementation(() => {});
+
+		await done("1");
+		expect(mockUpdateStatus).not.toHaveBeenCalled();
+		expect(process.exitCode).toBe(1);
+
+		item.comments.push({ text: "It works", timestamp: "t", type: "delivered" });
+		await done("1");
+		expect(mockUpdateStatus).toHaveBeenCalledWith(orm, 1, "done");
+	});
+
 	it("should mark an item with all phases completed as done", async () => {
 		const item = {
 			id: 1,

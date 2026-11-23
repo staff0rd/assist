@@ -16,6 +16,9 @@ const labelSx = { fontWeight: 500 } as const;
 const typeLabels: Record<BacklogComment["type"], string> = {
 	summary: "Phase summary",
 	comment: "Comment",
+	why: "Why",
+	delivered: "Delivered",
+	result: "Result",
 };
 
 export function CommentMeta({ comment }: { comment: BacklogComment }) {

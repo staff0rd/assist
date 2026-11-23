@@ -9,7 +9,7 @@ export function buildCommentLines(
 
 function formatPromptComment(entry: BacklogComment): string {
 	const id = entry.id !== undefined ? `#${entry.id} ` : "";
-	const tag = entry.type === "summary" ? "[summary]" : "[comment]";
+	const tag = `[${entry.type}]`;
 	const phase = entry.phase !== undefined ? ` (phase ${entry.phase})` : "";
 	return `${id}${tag}${phase} ${entry.timestamp}\n  ${entry.text}`;
 }

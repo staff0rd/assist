@@ -2,6 +2,7 @@ import { mkdtempSync, readFileSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import type { AutopilotRunItem } from "./AutopilotDeps";
 import type { AutopilotRecord } from "./AutopilotRecord";
 import type { AutopilotSessionState } from "./autopilotSessionState";
 import { createAutopilotScheduler } from "./createAutopilotScheduler";
@@ -30,12 +31,16 @@ describe("createAutopilotScheduler", () => {
 	let states: Record<string, AutopilotSessionState>;
 	let launched: number;
 	let links: Record<string, { launchedFrom?: string; itemId?: number }>;
+	let runItems: AutopilotRunItem[];
+	let stopped: string[];
 	let stop: () => void = () => {};
 
 	const deps = () => ({
 		localNode: () => "mac",
 		sessionState: (id: string) => states[id] ?? "ended",
 		sessionLink: (id: string) => links[id],
+		runItems: () => runItems,
+		stopSession: (id: string) => stopped.push(id),
 		launch: () => {
 			launched += 1;
 			states[`s${launched}`] = "live";
@@ -57,6 +62,8 @@ describe("createAutopilotScheduler", () => {
 		states = {};
 		launched = 0;
 		links = {};
+		runItems = [];
+		stopped = [];
 		targets = [target];
 	});
 
@@ -160,6 +167,34 @@ describe("createAutopilotScheduler", () => {
 		expect(scheduler.followUp("other", 60_000)).toEqual({
 			ok: false,
 			error: "session other is not an autopilot session or a run it started",
+		});
+	});
+
+	it("records the items a run starts and keeps them after the run ends", async () => {
+		const scheduler = start();
+		runItems = [{ itemId: 7, sessionId: "b1", live: true }];
+		expect(scheduler.status("/repo")?.items).toMatchObject([
+			{ id: 7, sessionId: "b1" },
+		]);
+		states.s1 = "ended";
+		runItems = [];
+		await vi.advanceTimersByTimeAsync(30 * 60_000);
+		expect(scheduler.status("/repo")?.items).toMatchObject([
+			{ id: 7, sessionId: null },
+		]);
+	});
+
+	it("stops an item's live run sessions", () => {
+		const scheduler = start();
+		runItems = [
+			{ itemId: 7, sessionId: "b1", live: true },
+			{ itemId: 8, sessionId: "b2", live: true },
+		];
+		expect(scheduler.stopItem("/repo", 7)).toEqual({ ok: true });
+		expect(stopped).toEqual(["b1"]);
+		expect(scheduler.stopItem("/repo", 9)).toEqual({
+			ok: false,
+			error: "no live run for item 9",
 		});
 	});
 });

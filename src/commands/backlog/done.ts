@@ -3,6 +3,7 @@ import { appendComment } from "./appendComment";
 import { authoredPhases } from "./authoredPhases";
 import { closeRunPreviews } from "./closeRunPreviews";
 import { formatItemId } from "./formatItemId";
+import { missingDelivered } from "./missingDelivered";
 import { findOneItem } from "./shared";
 import { updateStatus } from "./updateStatus";
 
@@ -26,6 +27,16 @@ export async function done(id: string, summary?: string): Promise<void> {
 			process.exitCode = 1;
 			return;
 		}
+	}
+
+	if (missingDelivered(item)) {
+		console.log(
+			chalk.red(
+				`Cannot complete item ${formatItemId(item.id)}: it has a why line but no Delivered statement. Run \`assist backlog delivered ${formatItemId(item.id)} "<one line: what now works>"\` first.`,
+			),
+		);
+		process.exitCode = 1;
+		return;
 	}
 
 	if (summary) {

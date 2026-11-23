@@ -12,6 +12,20 @@ export function registerCommentCommands(cmd: Command): void {
 	);
 
 	cmd
+		.command("delivered <id> <text>")
+		.description(
+			"Record an item's one-line Delivered statement: what now works (recorded by its Review phase)",
+		)
+		.action(lazyAction(() => import("./delivered"), "delivered"));
+
+	cmd
+		.command("result <id> <text>")
+		.description(
+			"Record an item's one-line result: its predicted effect against the measured one",
+		)
+		.action(lazyAction(() => import("./result"), "result"));
+
+	cmd
 		.command("comments <id>")
 		.description("List comments and summaries for a backlog item")
 		.action(lazyAction(() => import("./comments"), "comments"));

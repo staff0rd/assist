@@ -50,7 +50,7 @@ export function buildReviewPrompt(
 		"(e.g. end-to-end behaviour they need to verify themselves).",
 		"Wait for the user to confirm before proceeding.",
 		"",
-		...buildReviewCompletionLines(itemId, phaseNumber),
+		...buildReviewCompletionLines(itemId, phaseNumber, item.comments),
 	]
 		.filter((line) => line !== undefined)
 		.join("\n");

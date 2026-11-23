@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import type { AutopilotStatus } from "../../../../../../daemon/autopilot/AutopilotStatus";
+import type { AutopilotItemView } from "../../../../../autopilot/AutopilotItemView";
 import { apiFetch } from "../../../../apiFetch";
 import { useApiNode } from "../../../../useApiNode";
 import { withNode } from "../../../../withNode";
@@ -8,7 +9,12 @@ const POLL_MS = 15_000;
 
 type AutopilotStatusState =
 	| { loading: true }
-	| { loading: false; status: AutopilotStatus | null; error?: string };
+	| {
+			loading: false;
+			status: AutopilotStatus | null;
+			items: AutopilotItemView[];
+			error?: string;
+	  };
 
 async function fetchStatus(
 	cwd: string,
@@ -23,13 +29,19 @@ async function fetchStatus(
 			return {
 				loading: false,
 				status: null,
+				items: [],
 				error: `Couldn't read the schedule: ${body.error ?? `HTTP ${res.status}`}`,
 			};
-		return { loading: false, status: body.status ?? null };
+		return {
+			loading: false,
+			status: body.status ?? null,
+			items: body.items ?? [],
+		};
 	} catch (error) {
 		return {
 			loading: false,
 			status: null,
+			items: [],
 			error: `Couldn't read the schedule: ${String(error)}`,
 		};
 	}

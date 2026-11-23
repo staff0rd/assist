@@ -47,7 +47,7 @@ export type BacklogComment = {
 	text: string;
 	phase?: number;
 	timestamp: string;
-	type: "comment" | "summary";
+	type: "comment" | "summary" | "why" | "delivered" | "result";
 };
 
 export type PhaseStatus = "done" | "current" | "upcoming";

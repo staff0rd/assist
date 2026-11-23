@@ -2,6 +2,7 @@ import { resolveNodeName } from "../../shared/resolveNodeName";
 import type { SessionManager } from "../SessionManager";
 import { autopilotRunState } from "./autopilotRunState";
 import { autopilotScheduler } from "./autopilotScheduler";
+import { autopilotSessionState } from "./autopilotSessionState";
 import { closeIdleAutopilotRoots } from "./closeIdleAutopilotRoots";
 
 export function startAutopilot(manager: SessionManager): () => void {
@@ -23,6 +24,14 @@ export function startAutopilot(manager: SessionManager): () => void {
 				}
 			);
 		},
+		runItems: (rootId) =>
+			manager.autopilotSessions().flatMap((session) => {
+				const itemId = session.activity?.itemId;
+				if (session.autopilot !== rootId || itemId === undefined) return [];
+				const live = autopilotSessionState(session) === "live";
+				return [{ itemId, sessionId: session.id, live }];
+			}),
+		stopSession: (sessionId) => manager.dismissSession(sessionId),
 		launch: ({ cwd, prompt, harness, model }) =>
 			manager.spawn({ prompt, cwd, harness, model }, { autopilot: true }),
 		closeIdle: () =>

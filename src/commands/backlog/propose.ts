@@ -1,6 +1,7 @@
 import chalk from "chalk";
 import { ensureRemoteOrigin } from "./ensureRemoteOrigin";
 import { readProposedItem } from "./propose/readProposedItem";
+import { refuseMissingSummary } from "./propose/refuseMissingSummary";
 import { reviewProposal } from "./propose/reviewProposal";
 import { saveProposedItem } from "./propose/saveProposedItem";
 import { startProposedRun } from "./propose/startProposedRun";
@@ -31,6 +32,7 @@ export async function propose(options: ProposeOptions): Promise<void> {
 	}
 
 	const item = await readProposedItem(options.json);
+	if (await refuseMissingSummary(item, sessionId)) return;
 
 	let tracker: ProposalTracker | undefined;
 	try {

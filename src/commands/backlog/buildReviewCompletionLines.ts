@@ -1,7 +1,20 @@
+import type { BacklogComment } from "./types";
+
 export function buildReviewCompletionLines(
 	itemId: string,
 	phaseNumber: number,
+	comments: BacklogComment[] = [],
 ): string[] {
+	const steps = [
+		"/commit",
+		...(comments.some((comment) => comment.type === "why")
+			? [
+					`assist backlog delivered ${itemId} "<one line: what now works, from the user's point of view>"`,
+				]
+			: []),
+		`assist backlog done ${itemId} "<summary>"`,
+		`assist backlog phase-done ${itemId} ${phaseNumber} "done"`,
+	];
 	return [
 		"What counts as a completion confirmation — read carefully:",
 		"- Marking the item done/phase-done requires an explicit, unambiguous instruction to complete it (e.g. the user says the item is done/accepted or tells you to mark it complete). Nothing else counts.",
@@ -9,9 +22,7 @@ export function buildReviewCompletionLines(
 		"- If it is unclear whether the user's message is a completion confirmation, ask them explicitly before running done/phase-done.",
 		"",
 		"Once the user gives that explicit completion instruction:",
-		"1. Run: /commit",
-		`2. Run: assist backlog done ${itemId} "<summary>"`,
-		`3. Run: assist backlog phase-done ${itemId} ${phaseNumber} "done"`,
+		...steps.map((step, i) => `${i + 1}. Run: ${step}`),
 		"",
 		"Precedence rules — read carefully:",
 		"- An explicit completion instruction plus a successful commit means the work is complete. Always finish with done + phase-done; never rewind already-approved, committed work as an automatic response.",

@@ -1685,6 +1685,10 @@ Commands:
   delete|remove <id>                              Delete a backlog item
   web [options]                                   Open the backlog tab in the web dashboard
   comment <id> <text>                             Add a comment to a backlog item
+  delivered <id> <text>                           Record an item's one-line Delivered statement:
+                                                  what now works (recorded by its Review phase)
+  result <id> <text>                              Record an item's one-line result: its predicted
+                                                  effect against the measured one
   comments <id>                                   List comments and summaries for a backlog item
   delete-comment <id> <comment-id>                Delete a comment from a backlog item
   link [options] <from> <to>                      Link two backlog items
@@ -1777,7 +1781,9 @@ Options:
                    web session)
   -h, --help       display help for command
 
-The payload is strict JSON: { name, type, description?, acceptanceCriteria?, phases? }.
+The payload is strict JSON: { name, type, description?, summary?, acceptanceCriteria?, phases? }.
+summary is one line naming the constraint the item addresses and its predicted
+effect; it is required from autopilot sessions and shown as the item's why line.
 Each phase is { name, tasks, manualChecks?, dependsOn? } and needs at least one task.
 
 dependsOn lists the earlier phase numbers a phase needs, e.g. [2]. Leave it out
@@ -1892,6 +1898,22 @@ Options:
 Usage: assist backlog comment [options] <id> <text>
 
 Add a comment to a backlog item
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog delivered --help
+Usage: assist backlog delivered [options] <id> <text>
+
+Record an item's one-line Delivered statement: what now works (recorded by its Review phase)
+
+Options:
+  -h, --help  display help for command
+
+=== assist backlog result --help
+Usage: assist backlog result [options] <id> <text>
+
+Record an item's one-line result: its predicted effect against the measured one
 
 Options:
   -h, --help  display help for command

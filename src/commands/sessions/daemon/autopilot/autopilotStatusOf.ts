@@ -1,3 +1,5 @@
+import type { AutopilotDeps } from "./AutopilotDeps";
+import { autopilotItemStatuses } from "./autopilotItemStatuses";
 import type { AutopilotStatus } from "./AutopilotStatus";
 import { autopilotNextTickAt } from "./autopilotNextTickAt";
 import type { AutopilotRuns } from "./createAutopilotRuns";
@@ -9,6 +11,7 @@ export function autopilotStatusOf(
 	localNode: string,
 	store: AutopilotStore,
 	runs: AutopilotRuns,
+	deps: AutopilotDeps,
 ): AutopilotStatus {
 	const repo = store.repo(target.cwd);
 	const scheduled = target.scheduledHere && !repo.paused;
@@ -27,5 +30,6 @@ export function autopilotStatusOf(
 			: null,
 		followUp: scheduled ? (repo.followUp ?? null) : null,
 		lastTick: repo.ticks.at(-1) ?? null,
+		items: autopilotItemStatuses(repo, deps),
 	};
 }

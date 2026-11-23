@@ -4,9 +4,9 @@ import type { BacklogComment } from "./types";
 export function formatComment(entry: BacklogComment): string {
 	const id = entry.id !== undefined ? chalk.dim(`#${entry.id} `) : "";
 	const tag =
-		entry.type === "summary"
-			? chalk.magenta("[summary]")
-			: chalk.cyan("[comment]");
+		entry.type === "comment"
+			? chalk.cyan("[comment]")
+			: chalk.magenta(`[${entry.type}]`);
 	const phase =
 		entry.phase !== undefined ? chalk.dim(` (phase ${entry.phase})`) : "";
 	const time = chalk.dim(entry.timestamp);

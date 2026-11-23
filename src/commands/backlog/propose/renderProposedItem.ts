@@ -4,6 +4,8 @@ import type { ProposedItem } from "./proposedItemSchema";
 export function renderProposedItem(item: ProposedItem): string {
 	const sections = [`**Type:** ${item.type}`];
 
+	if (item.summary) sections.push(`**Why:** ${item.summary}`);
+
 	if (item.description) sections.push("## Description", item.description);
 
 	if (item.acceptanceCriteria.length > 0)
