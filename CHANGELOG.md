@@ -1,3 +1,10 @@
+## [0.1258.2](https://github.com/staff0rd/assist/compare/v0.1258.1...v0.1258.2) (2026-11-23)
+
+
+### Bug Fixes
+
+* autopilot answers count as the user's ([70eb3c5](https://github.com/staff0rd/assist/commit/70eb3c5abd4be5a0777c6c6c97022473f1ccb103))
+
 ## [0.1258.1](https://github.com/staff0rd/assist/compare/v0.1258.0...v0.1258.1) (2026-11-23)
 
 
