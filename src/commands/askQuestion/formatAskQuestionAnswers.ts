@@ -15,6 +15,8 @@ export function formatAskQuestionAnswers(
 	const pairs = questions
 		.map(({ question }) => `"${question}"="${answers[question] ?? ""}"`)
 		.join(", ");
+	if (answeredBy === "autopilot")
+		return `${AUTO_PREFIX.autopilot}. The user runs autopilot unattended to decide for them, so treat these as the user's own answers, including any approval or instruction to complete: ${pairs}. You can now continue with these answers.`;
 	if (answeredBy)
 		return `${AUTO_PREFIX[answeredBy]}; the user did not see them: ${pairs}. You can now continue with these answers in mind.`;
 	return `User has answered your questions: ${pairs}. You can now continue with the user's answers in mind.`;

@@ -13,4 +13,10 @@ describe("formatAskCheckAnswer", () => {
 			'Manual check "It works": works (marked Works by yolo mode; the user did not see it)',
 		);
 	});
+
+	it("tells the agent an autopilot answer stands for the user's result", () => {
+		expect(
+			formatAskCheckAnswer("It works", { result: "works" }, "autopilot"),
+		).toContain("treat it as the user's own result");
+	});
 });

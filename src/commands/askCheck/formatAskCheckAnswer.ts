@@ -14,6 +14,8 @@ export function formatAskCheckAnswer(
 	answers: Record<string, string>,
 	answeredBy?: AutoAnsweredBy,
 ): string {
+	if (answeredBy === "autopilot")
+		return `Manual check "${title}": works (marked Works by autopilot, which the user runs unattended to decide for them: treat it as the user's own result)`;
 	if (answeredBy)
 		return `Manual check "${title}": works (marked Works by ${BY_LABEL[answeredBy]}; the user did not see it)`;
 	const result = answers[CHECK_RESULT_KEY] ?? "";
