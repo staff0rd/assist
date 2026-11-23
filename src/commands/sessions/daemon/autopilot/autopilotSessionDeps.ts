@@ -1,5 +1,7 @@
 import type { SessionManager } from "../SessionManager";
 import type { AutopilotDeps } from "./AutopilotDeps";
+import { activityPhaseLabel } from "./activityPhaseLabel";
+import { autopilotRunItem } from "./autopilotRunItem";
 import { autopilotRunState } from "./autopilotRunState";
 
 const running = (status: string) => status !== "done" && status !== "error";
@@ -24,17 +26,15 @@ export function autopilotSessionDeps(
 				session && {
 					launchedFrom: session.launchedFrom,
 					itemId: session.activity?.itemId,
+					phase: activityPhaseLabel(session.activity),
+					error: session.error,
 				}
 			);
 		},
 		runItems: (rootId) =>
-			manager.autopilotSessions().flatMap((session) => {
-				const itemId = session.activity?.itemId;
-				if (session.autopilot !== rootId || itemId === undefined) return [];
-				return [
-					{ itemId, sessionId: session.id, live: running(session.status) },
-				];
-			}),
+			manager
+				.autopilotSessions()
+				.flatMap((session) => autopilotRunItem(session, rootId)),
 		itemSessions: (itemId) =>
 			manager
 				.localSessions()

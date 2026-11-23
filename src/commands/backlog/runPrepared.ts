@@ -5,6 +5,7 @@ import { runOnce } from "./runOnce";
 import type { BacklogRunOptions } from "./types";
 import { clearSignalOwner } from "./recordSignalOwner";
 import { parkedExitCode } from "./parkedExitCode";
+import { reportRunFailure } from "./reportRunFailure";
 
 export async function runPrepared(
 	id: string,
@@ -21,6 +22,12 @@ export async function runPrepared(
 				process.exitCode = parkedExitCode;
 				return true;
 			}
+			if (
+				review.kind === "fail" ||
+				review.kind === "abort" ||
+				review.kind === "incomplete"
+			)
+				await reportRunFailure(item, review.kind);
 			const outcome = await handleReviewResult(id, review);
 			if (outcome.kind === "stop") {
 				return outcome.success;

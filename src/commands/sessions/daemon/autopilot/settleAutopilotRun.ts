@@ -2,7 +2,9 @@ import { daemonLog } from "../daemonLog";
 import type { AutopilotDeps } from "./AutopilotDeps";
 import { awaitingSummary } from "./awaitingSummary";
 import type { AutopilotStore } from "./createAutopilotStore";
+import { pauseOnFailure } from "./pauseOnFailure";
 import { requestRunSummary } from "./requestRunSummary";
+import { runFailure } from "./runFailure";
 
 export function settleAutopilotRun(
 	store: AutopilotStore,
@@ -14,7 +16,8 @@ export function settleAutopilotRun(
 	const state = deps.sessionState(current.sessionId);
 	if (state === "live" || awaitingSummary(current, state)) return;
 	if (state === "ended" && requestRunSummary(store, deps, cwd)) return;
-	const reason = state === "errored" ? "session errored" : undefined;
+	const failure = runFailure(deps, current.sessionId, state);
+	const reason = failure?.reason;
 	daemonLog(
 		`autopilot: ${cwd} run ${current.sessionId} finished${reason ? ` (${reason})` : ""}${current.summary ? "" : " without a summary"}`,
 	);
@@ -35,4 +38,5 @@ export function settleAutopilotRun(
 			repo.current = undefined;
 		},
 	);
+	if (failure) pauseOnFailure(store, deps, cwd, failure);
 }

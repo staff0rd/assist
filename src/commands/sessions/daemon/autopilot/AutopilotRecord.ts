@@ -45,12 +45,23 @@ export type AutopilotItem = {
 	stopped?: boolean;
 };
 
+/** Why the scheduler paused itself, shown on the page until resumed. */
+export type AutopilotFailure = {
+	at: string;
+	reason: string;
+	item?: string;
+	phase?: string;
+	sessionId?: string;
+};
+
 export type AutopilotRepoRecord = {
 	paused: boolean;
 	current?: AutopilotRun;
 	followUp?: AutopilotFollowUp;
 	items?: AutopilotItem[];
 	/** Why the scheduler paused itself; cleared on resume. */
+	failure?: AutopilotFailure;
+	/** Legacy reason-only form of failure, from records saved before it. */
 	pauseReason?: string;
 	ticks: AutopilotTick[];
 };

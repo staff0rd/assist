@@ -7,7 +7,6 @@ export function optimisticStatus(
 	status: AutopilotStatus,
 ): AutopilotStatus {
 	if (action === "pause") return { ...status, paused: true, nextTickAt: null };
-	if (action === "resume")
-		return { ...status, paused: false, pauseReason: null };
+	if (action === "resume") return { ...status, paused: false, failure: null };
 	return status;
 }

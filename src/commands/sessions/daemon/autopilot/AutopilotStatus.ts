@@ -1,4 +1,5 @@
 import type {
+	AutopilotFailure,
 	AutopilotFollowUp,
 	AutopilotItem,
 	AutopilotRun,
@@ -13,7 +14,7 @@ export type AutopilotStatus = {
 	localNode: string;
 	scheduledHere: boolean;
 	paused: boolean;
-	pauseReason: string | null;
+	failure: AutopilotFailure | null;
 	running: AutopilotRun | null;
 	nextTickAt: string | null;
 	followUp: AutopilotFollowUp | null;

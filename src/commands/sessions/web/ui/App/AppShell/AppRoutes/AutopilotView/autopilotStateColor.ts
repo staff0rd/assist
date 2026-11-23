@@ -4,6 +4,6 @@ export function autopilotStateColor(
 	status: AutopilotStatus,
 ): "success" | "warning" | "error" | "default" {
 	if (!status.scheduledHere) return "default";
-	if (status.pauseReason) return "error";
+	if (status.failure) return "error";
 	return status.paused ? "warning" : "success";
 }

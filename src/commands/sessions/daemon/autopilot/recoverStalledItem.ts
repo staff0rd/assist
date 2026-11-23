@@ -4,6 +4,7 @@ import { findStalledItem } from "./findStalledItem";
 import type { AutopilotStarted } from "./AutopilotStarted";
 import type { AutopilotStore } from "./createAutopilotStore";
 import type { AutopilotTarget } from "./readAutopilotTarget";
+import { pauseOnFailure } from "./pauseOnFailure";
 import { resumeItemPrompt } from "./resumeItemPrompt";
 
 /** Resume an item a run left unfinished; pause if it stalls again. True when it acted. */
@@ -20,11 +21,10 @@ export function recoverStalledItem(
 	if (!stalled) return false;
 	const id = formatItemId(stalled.id);
 	if ((stalled.resumes ?? 0) >= 1) {
-		const reason = `${id} is still not done, and nothing is running it, after autopilot already resumed it once`;
-		daemonLog(`autopilot: ${target.cwd} paused: ${reason}`);
-		store.update(target.cwd, (next) => {
-			next.paused = true;
-			next.pauseReason = reason;
+		pauseOnFailure(store, started.deps, target.cwd, {
+			item: id,
+			reason:
+				"still not done, and nothing is running it, after autopilot already resumed it once",
 		});
 		return true;
 	}

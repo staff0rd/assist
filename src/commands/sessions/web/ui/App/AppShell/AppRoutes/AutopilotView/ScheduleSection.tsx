@@ -13,9 +13,9 @@ export function ScheduleSection({
 }) {
 	return (
 		<>
-			{status.pauseReason && (
+			{status.failure && (
 				<PauseBanner
-					reason={status.pauseReason}
+					failure={status.failure}
 					busy={busy}
 					onResume={onResumeSchedule}
 				/>

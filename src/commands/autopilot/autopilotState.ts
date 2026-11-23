@@ -5,6 +5,6 @@ export function autopilotState(status: AutopilotStatus): string {
 		return status.node
 			? `Runs on ${status.node}`
 			: "Off (autopilot.node unset)";
-	if (status.pauseReason) return "Paused · failed";
+	if (status.failure) return "Paused · failed";
 	return status.paused ? "Paused" : "Running";
 }

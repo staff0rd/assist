@@ -30,7 +30,11 @@ describe("createAutopilotScheduler", () => {
 	let path: string;
 	let states: Record<string, AutopilotSessionState>;
 	let launched: number;
-	let links: Record<string, { launchedFrom?: string; itemId?: number }>;
+	let links: Record<
+		string,
+		{ launchedFrom?: string; itemId?: number; phase?: string; error?: string }
+	>;
+	let notified: string[];
 	let runItems: AutopilotRunItem[];
 	let stopped: string[];
 	let itemStatus: Map<number, string>;
@@ -51,6 +55,8 @@ describe("createAutopilotScheduler", () => {
 			prompted.push(id);
 			return canPrompt;
 		},
+		notify: (title: string, message: string) =>
+			notified.push(`${title}: ${message}`),
 		launch: () => {
 			launched += 1;
 			states[`s${launched}`] = "live";
@@ -77,6 +83,7 @@ describe("createAutopilotScheduler", () => {
 		itemStatus = new Map();
 		prompted = [];
 		canPrompt = false;
+		notified = [];
 		targets = [target];
 	});
 
@@ -142,7 +149,7 @@ describe("createAutopilotScheduler", () => {
 		states.s1 = "errored";
 		expect(scheduler.runNow("/repo")).toEqual({ ok: true });
 		expect(saved()["/repo"].ticks.slice(1)).toMatchObject([
-			{ outcome: "finished", reason: "session errored" },
+			{ outcome: "finished", reason: "the autopilot session errored" },
 			{ outcome: "launched", trigger: "manual", sessionId: "s2" },
 		]);
 	});
@@ -252,11 +259,15 @@ describe("createAutopilotScheduler", () => {
 		expect(launched).toBe(2);
 		expect(scheduler.status("/repo")).toMatchObject({
 			paused: true,
-			pauseReason:
-				"a7 is still not done, and nothing is running it, after autopilot already resumed it once",
+			failure: {
+				item: "a7",
+				reason:
+					"still not done, and nothing is running it, after autopilot already resumed it once",
+			},
 		});
+		expect(notified).toHaveLength(1);
 		scheduler.setPaused("/repo", false);
-		expect(scheduler.status("/repo")?.pauseReason).toBeNull();
+		expect(scheduler.status("/repo")?.failure).toBeNull();
 	});
 
 	it("never resumes an item while a session still runs it, and trusts no status read before it ended", async () => {
@@ -333,5 +344,69 @@ describe("createAutopilotScheduler", () => {
 			cwd: "/repo",
 		});
 		expect(saved()["/repo-2"].current).toBeUndefined();
+	});
+
+	it("pauses and notifies when the autopilot session errors", async () => {
+		const scheduler = start();
+		states.s1 = "errored";
+		links.s1 = { error: "process exited with code 1" };
+		await vi.advanceTimersByTimeAsync(60_000);
+		expect(scheduler.status("/repo")).toMatchObject({
+			paused: true,
+			nextTickAt: null,
+			failure: {
+				sessionId: "s1",
+				reason: "the autopilot session errored: process exited with code 1",
+			},
+		});
+		expect(notified).toEqual([
+			"Autopilot paused: repo: the autopilot session errored: process exited with code 1",
+		]);
+		await vi.advanceTimersByTimeAsync(60 * 60_000);
+		expect(launched).toBe(1);
+	});
+
+	it("pauses with the item and phase when a backlog session the run started errored", async () => {
+		const scheduler = start();
+		runItems = [{ itemId: 7, sessionId: "b1", live: false, error: "boom" }];
+		links.b1 = { launchedFrom: "s1", itemId: 7, phase: "phase 2 of 3" };
+		states.s1 = "ended";
+		await vi.advanceTimersByTimeAsync(60_000);
+		expect(scheduler.status("/repo")?.failure).toMatchObject({
+			item: "a7",
+			phase: "phase 2 of 3",
+			reason: "its backlog session errored: boom",
+		});
+	});
+
+	it("pauses when a session in the run reports a failed phase, and resume clears it", () => {
+		const scheduler = start();
+		links.b1 = { launchedFrom: "s1", itemId: 7, phase: "Review" };
+		expect(
+			scheduler.reportFailure("b1", { reason: "the review was aborted" }),
+		).toEqual({ ok: true, cwd: "/repo" });
+		expect(saved()["/repo"]).toMatchObject({
+			paused: true,
+			failure: {
+				item: "a7",
+				phase: "Review",
+				reason: "the review was aborted",
+			},
+		});
+		expect(notified).toEqual([
+			"Autopilot paused: repo: a7 Review: the review was aborted",
+		]);
+		scheduler.setPaused("/repo", false);
+		expect(saved()["/repo"]).toMatchObject({ paused: false });
+		expect(saved()["/repo"].failure).toBeUndefined();
+	});
+
+	it("ignores failures from sessions outside an autopilot run", () => {
+		const scheduler = start();
+		expect(scheduler.reportFailure("x9", { reason: "nope" })).toMatchObject({
+			ok: false,
+		});
+		expect(saved()["/repo"].paused).toBe(false);
+		expect(notified).toEqual([]);
 	});
 });

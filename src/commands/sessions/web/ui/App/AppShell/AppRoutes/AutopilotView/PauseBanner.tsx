@@ -1,15 +1,18 @@
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
+import type { AutopilotFailure } from "../../../../../../daemon/autopilot/AutopilotRecord";
+import { failureWhere } from "./failureWhere";
 
 export function PauseBanner({
-	reason,
+	failure,
 	busy,
 	onResume,
 }: {
-	reason: string;
+	failure: AutopilotFailure;
 	busy: boolean;
 	onResume: () => void;
 }) {
+	const where = failureWhere(failure);
 	return (
 		<Alert
 			severity="error"
@@ -25,8 +28,8 @@ export function PauseBanner({
 				</Button>
 			}
 		>
-			<strong>Paused after a failure.</strong> {reason}. No more ticks run until
-			you resume.
+			<strong>Paused after a failure{where ? ` in ${where}` : ""}.</strong>{" "}
+			{failure.reason}. No more ticks run until you resume.
 		</Alert>
 	);
 }

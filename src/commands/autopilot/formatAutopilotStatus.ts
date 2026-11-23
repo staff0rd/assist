@@ -11,6 +11,11 @@ export function formatAutopilotStatus(status: AutopilotStatus): string[] {
 	return [
 		`${status.cwd} · ${status.prompt}`,
 		`  State:     ${autopilotState(status)}`,
+		...(status.failure
+			? [
+					`  Failure:   ${[status.failure.item, status.failure.phase, status.failure.reason].filter(Boolean).join(" · ")}`,
+				]
+			: []),
 		`  Every:     ${status.intervalMinutes} min`,
 		`  Next tick: ${status.nextTickAt ? time(status.nextTickAt) : "none"}`,
 		...(status.followUp

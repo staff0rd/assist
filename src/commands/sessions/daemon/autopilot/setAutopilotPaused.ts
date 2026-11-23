@@ -15,6 +15,7 @@ export function setAutopilotPaused(
 		store.update(target.cwd, (repo) => {
 			repo.paused = paused;
 			if (paused) return;
+			repo.failure = undefined;
 			repo.pauseReason = undefined;
 			for (const item of repo.items ?? []) item.resumes = 0;
 		});

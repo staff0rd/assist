@@ -2,6 +2,7 @@ import { sendTo } from "../broadcast";
 import { daemonLog } from "../daemonLog";
 import type { Handler } from "../routed";
 import { autopilotScheduler } from "./autopilotScheduler";
+import { handleAutopilotFailure } from "./handleAutopilotFailure";
 import { handleAutopilotSummary } from "./handleAutopilotSummary";
 
 const actions = {
@@ -56,6 +57,7 @@ export const autopilotHandlers: Record<string, Handler> = {
 		sendTo(client, { type: "autopilot-follow-up", ...result });
 	},
 	"autopilot-summary": handleAutopilotSummary,
+	"autopilot-failure": handleAutopilotFailure,
 	"autopilot-control": (client, _manager, data) => {
 		const { cwd, action, itemId } = data;
 		if (typeof cwd !== "string" || !isAction(action)) {

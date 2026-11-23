@@ -24,7 +24,9 @@ export function autopilotStatusOf(
 		localNode,
 		scheduledHere: target.scheduledHere,
 		paused: repo.paused,
-		pauseReason: repo.pauseReason ?? null,
+		failure:
+			repo.failure ??
+			(repo.pauseReason ? { at: "", reason: repo.pauseReason } : null),
 		running: runs.liveRun(target.cwd) ?? null,
 		nextTickAt: scheduled
 			? new Date(Math.max(next, Date.now())).toISOString()
