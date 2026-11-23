@@ -8,6 +8,11 @@ vi.mock("../../../../shared/loadConfigFrom", () => ({
 	loadConfigFrom: () => config.value,
 }));
 
+vi.mock("../../../../shared/linkedWorktree", () => ({
+	linkedWorktree: (dir: string) =>
+		dir === "/repo-2" ? { root: "/repo-2", clone: "/repo" } : null,
+}));
+
 import { readAutopilotTarget } from "./readAutopilotTarget";
 
 const autopilot = { prompt: "/helm", intervalMinutes: 60, node: "mac" };
@@ -33,5 +38,10 @@ describe("readAutopilotTarget", () => {
 			harness: "codex",
 			model: "gpt-5",
 		});
+	});
+
+	it("resolves a worktree to its clone so the repo keeps one schedule", () => {
+		config.value = { autopilot, harness: { engine: "claude-sdk" } };
+		expect(readAutopilotTarget("/repo-2", "mac")?.cwd).toBe("/repo");
 	});
 });

@@ -1,4 +1,5 @@
 import type { HarnessKind } from "../../../../shared/harnesses";
+import { linkedWorktree } from "../../../../shared/linkedWorktree";
 import { loadConfigFrom } from "../../../../shared/loadConfigFrom";
 import type { AssistConfig } from "../../../../shared/types";
 
@@ -22,9 +23,11 @@ function launchHarness(harness: AssistConfig["harness"]) {
 }
 
 export function readAutopilotTarget(
-	cwd: string,
+	dir: string,
 	localNode: string,
 ): AutopilotTarget | undefined {
+	// why: a worktree shares its clone's repo config, so it must resolve to the clone's one schedule
+	const cwd = linkedWorktree(dir)?.clone ?? dir;
 	const config = loadConfigFrom(cwd);
 	const autopilot = config.autopilot;
 	const prompt = autopilot?.prompt?.trim();

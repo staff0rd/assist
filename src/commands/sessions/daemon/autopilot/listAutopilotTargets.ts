@@ -15,7 +15,8 @@ export function listAutopilotTargets(localNode: string): AutopilotTarget[] {
 		try {
 			const target = readAutopilotTarget(cwd, localNode);
 			failing.delete(cwd);
-			if (target) targets.push(target);
+			if (target && !targets.some((t) => t.cwd === target.cwd))
+				targets.push(target);
 		} catch (error) {
 			if (!failing.has(cwd))
 				daemonLog(`autopilot: reading ${cwd} config failed: ${String(error)}`);

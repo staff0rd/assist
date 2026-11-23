@@ -46,9 +46,9 @@ export function createAutopilotScheduler(
 				runAutopilotNow(runs, target),
 			),
 		setPaused: (cwd: string, paused: boolean): AutopilotControlResult =>
-			controlAutopilotTarget(started, cwd, () => {
-				daemonLog(`autopilot: ${cwd} ${paused ? "paused" : "resumed"}`);
-				store.update(cwd, (repo) => {
+			controlAutopilotTarget(started, cwd, (_, target) => {
+				daemonLog(`autopilot: ${target.cwd} ${paused ? "paused" : "resumed"}`);
+				store.update(target.cwd, (repo) => {
 					repo.paused = paused;
 				});
 				return { ok: true };
