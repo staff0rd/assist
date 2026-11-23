@@ -10,8 +10,10 @@ export function startAutopilot(manager: SessionManager): () => void {
 		localNode: resolveNodeName,
 		...autopilotSessionDeps(manager),
 		stopSession: (sessionId) => manager.dismissSession(sessionId),
-		sessionSummary: (sessionId) =>
-			manager.session(sessionId)?.lastAssistantMessage,
+		sessionSummary: (sessionId) => {
+			const session = manager.session(sessionId);
+			return session?.closingMessage ?? session?.lastAssistantMessage;
+		},
 		itemStatuses: loadItemStatuses,
 		launch: ({ cwd, prompt, harness, model }) =>
 			manager.spawn({ prompt, cwd, harness, model }, { autopilot: true }),

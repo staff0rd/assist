@@ -274,7 +274,7 @@ describe("createAutopilotScheduler", () => {
 		states.s1 = "ended";
 		runItems = [];
 		await vi.advanceTimersByTimeAsync(60_000);
-		expect(scheduler.status("/repo")?.lastRun).toMatchObject({
+		expect(scheduler.status("/repo")?.runs[0]).toMatchObject({
 			outcome: "finished",
 			items: [7],
 			summary: "closing message of s1",

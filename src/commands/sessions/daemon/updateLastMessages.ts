@@ -7,6 +7,7 @@ type MessageField = "lastUserMessage" | "lastAssistantMessage";
 
 const USER_MAX_LENGTH = 2048;
 const ASSISTANT_MAX_LENGTH = 500;
+const CLOSING_MAX_LENGTH = 8000;
 
 function update(
 	session: Session,
@@ -47,5 +48,9 @@ export function updateLastMessages(
 		lastMessageText(events, "assistant", ASSISTANT_MAX_LENGTH),
 		"assistant",
 	);
+	if (session.autopilot) {
+		const closing = lastMessageText(events, "assistant", CLOSING_MAX_LENGTH);
+		if (closing) session.closingMessage = closing;
+	}
 	if (user || assistant) notify?.();
 }

@@ -2,6 +2,7 @@ import type { AutopilotStatus } from "../../../../../../daemon/autopilot/Autopil
 import type { AutopilotItemView } from "../../../../../autopilot/AutopilotItemView";
 import { DeliveredRow } from "./DeliveredRow";
 import { ItemSection } from "./ItemSection";
+import { RunHistory } from "./RunHistory";
 import { RunningSection } from "./RunningSection";
 import { splitAutopilotItems } from "./splitAutopilotItems";
 
@@ -48,6 +49,7 @@ export function AutopilotItems({
 					/>
 				))}
 			</ItemSection>
+			<RunHistory runs={status.runs} />
 		</>
 	);
 }

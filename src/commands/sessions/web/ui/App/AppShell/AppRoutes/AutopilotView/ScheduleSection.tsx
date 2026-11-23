@@ -1,5 +1,4 @@
 import type { AutopilotStatus } from "../../../../../../daemon/autopilot/AutopilotStatus";
-import { LastRunCard } from "./LastRunCard";
 import { PauseBanner } from "./PauseBanner";
 import { ScheduleBar } from "./ScheduleBar";
 
@@ -22,7 +21,6 @@ export function ScheduleSection({
 				/>
 			)}
 			<ScheduleBar status={status} />
-			{status.lastRun && <LastRunCard run={status.lastRun} />}
 		</>
 	);
 }
