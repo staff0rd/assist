@@ -1,3 +1,10 @@
+## [0.1268.2](https://github.com/staff0rd/assist/compare/v0.1268.1...v0.1268.2) (2026-11-23)
+
+
+### Bug Fixes
+
+* post-update config uses new schema ([e3dd08f](https://github.com/staff0rd/assist/commit/e3dd08f32bea8d64fa88cc84560db3d73dfa6760))
+
 ## [0.1268.1](https://github.com/staff0rd/assist/compare/v0.1268.0...v0.1268.1) (2026-11-23)
 
 
