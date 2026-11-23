@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { parseItemId } from "../formatItemId";
 import { applyCwdFromReq } from "./applyCwdFromReq";
 import { deleteItemComment } from "./deleteItemComment";
+import { postItemMove } from "./postItemMove";
 import { rewindItemPhase } from "./rewindItemPhase";
 import { deleteItem, patchItemStar, patchItemStatus } from "./shared";
 import { getItemById } from "./getItemById";
@@ -29,6 +30,11 @@ const routes: ItemRoute[] = [
 		pattern: /^\/api\/items\/(a?\d+)\/star$/,
 		method: "POST",
 		run: (req, res, m) => patchItemStar(req, res, itemId(m)),
+	},
+	{
+		pattern: /^\/api\/items\/(a?\d+)\/move$/,
+		method: "POST",
+		run: (req, res, m) => postItemMove(req, res, itemId(m)),
 	},
 	{
 		pattern: /^\/api\/items\/(a?\d+)\/comments\/(\d+)$/,

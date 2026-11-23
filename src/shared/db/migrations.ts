@@ -14,6 +14,7 @@ import { migration0012PhaseDependsOn } from "./migrations/migration0012PhaseDepe
 import { migration0013PhaseRunState } from "./migrations/migration0013PhaseRunState";
 import { migration0014MergeJitteredCycles } from "./migrations/migration0014MergeJitteredCycles";
 import { migration0015FoldLastManualChecks } from "./migrations/migration0015FoldLastManualChecks";
+import { migration0016ItemPriority } from "./migrations/migration0016ItemPriority";
 
 export const migrations: readonly Migration[] = [
 	migration0001Baseline,
@@ -31,6 +32,7 @@ export const migrations: readonly Migration[] = [
 	migration0013PhaseRunState,
 	migration0014MergeJitteredCycles,
 	migration0015FoldLastManualChecks,
+	migration0016ItemPriority,
 ];
 
 export const latestMigrationId: number = migrations.reduce(

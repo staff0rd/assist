@@ -2,6 +2,8 @@ import { keyframes } from "@emotion/react";
 import type { SxProps, Theme } from "@mui/material";
 import { alpha } from "@mui/material";
 import { sessionTextSize } from "../../../../sessions/web/ui/App/sessionTextSize";
+import { dragGripClass } from "./dragGripClass";
+import { draggingCardClass } from "./draggingCardClass";
 
 const baseCardSx = {
 	position: "relative",
@@ -18,6 +20,16 @@ const baseCardSx = {
 	bgcolor: "background.paper",
 	transition: "box-shadow 0.2s",
 	"&:hover": { boxShadow: 3 },
+	[`&:hover .${dragGripClass}`]: { color: "text.secondary" },
+	[`& .${dragGripClass}:hover`]: {
+		color: "text.primary",
+		bgcolor: "action.hover",
+	},
+	[`&.${draggingCardClass}`]: {
+		boxShadow: (theme: Theme) => theme.tokens.elevation.overlay,
+		borderColor: "primary.main",
+		[`& .${dragGripClass}`]: { cursor: "grabbing", color: "primary.main" },
+	},
 } as const;
 
 const stretchOverRowSx = {
@@ -78,6 +90,7 @@ export const itemCardStyles: Record<string, SxProps<Theme>> = {
 	card: baseCardSx,
 	inProgressCard: inProgressCardSx,
 	inProgressRunningCard: sweepingEdgeSx,
+	leading: { display: "flex", alignItems: "center", gap: 0.5 },
 	main: { minWidth: 0, textAlign: "left" },
 	stretchedNameLink: {
 		display: "block",

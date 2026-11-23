@@ -1,25 +1,13 @@
 import { apiFetch } from "../../../sessions/web/ui/apiFetch";
 import { formatItemId } from "../../formatItemId";
+import type { ItemPlacement } from "../../reorderItem";
 import type { DocsRefreshRequest } from "../../requestDocsRefresh";
 import type { DocsRefreshView } from "../getDocsRefresh";
 import type { BacklogItem } from "./types";
 import { withCwd } from "./withCwd";
+import { sendJson } from "./sendJson";
 
 const DOCS_REFRESH_URL = "/api/backlog/docs-refresh";
-
-async function sendJson<T>(
-	url: string,
-	method: string,
-	body: unknown,
-): Promise<T> {
-	const res = await apiFetch(url, {
-		method,
-		headers: { "Content-Type": "application/json" },
-		body: JSON.stringify(body),
-	});
-	if (!res.ok) throw new Error(`${method} ${url} failed: ${res.status}`);
-	return res.json();
-}
 
 export async function deleteItem(
 	id: number,
@@ -88,4 +76,17 @@ export function createDocsRefresh(
 	node: string | undefined,
 ): Promise<DocsRefreshRequest> {
 	return sendJson(withCwd(DOCS_REFRESH_URL, cwd, node), "POST", {});
+}
+
+export function moveItem(
+	id: number,
+	placement: ItemPlacement,
+	cwd?: string,
+	node?: string,
+): Promise<{ ok: true }> {
+	return sendJson(
+		withCwd(`/api/items/${formatItemId(id)}/move`, cwd, node),
+		"POST",
+		placement,
+	);
 }

@@ -1,7 +1,6 @@
 import chalk from "chalk";
-import { eq } from "drizzle-orm";
-import { items } from "../../shared/db/schema";
 import { normalizeOrigin } from "./getCurrentOrigin";
+import { appendItemsToOrigin } from "./move-repo/appendItemsToOrigin";
 import { getOrigin, getReady } from "./shared";
 import { confirmMove, pluralItems } from "./move-repo/confirmMove";
 import { countByOrigin } from "./move-repo/countByOrigin";
@@ -45,10 +44,7 @@ export async function moveRepo(
 		return;
 	}
 
-	await orm
-		.update(items)
-		.set({ origin: newOrigin })
-		.where(eq(items.origin, oldOrigin));
+	await appendItemsToOrigin(orm, oldOrigin, newOrigin);
 
 	console.log(
 		chalk.green(

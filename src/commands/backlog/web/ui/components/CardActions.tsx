@@ -28,6 +28,7 @@ export function CardActions({
 						totalPhases: item.totalPhases,
 						onClosed: onReload,
 					}}
+					orderEnds={item}
 				/>
 			)}
 		</>

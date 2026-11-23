@@ -11,7 +11,10 @@ import type { BacklogItemSummary } from "../types";
 vi.mock("./useJiraSite", () => ({ useJiraSite: () => "acme.atlassian.net" }));
 vi.mock("../api", () => ({ toggleStar: vi.fn(() => Promise.resolve()) }));
 
+import { MoveItemContext } from "../useMoveItemContext";
 import { ItemCard } from "./ItemCard";
+
+const moveItem = vi.fn(() => Promise.resolve());
 
 function socketWith(sessions: SessionInfo[]) {
 	return { sessions, selectSession: vi.fn() } as unknown as SessionSocket;
@@ -33,15 +36,17 @@ function renderCard(
 	sessions: SessionInfo[] = [],
 ) {
 	return render(
-		<MemoryRouter initialEntries={["/backlog"]}>
-			<ItemCard
-				item={{ ...base, ...item }}
-				to={itemPath}
-				socket={socketWith(sessions)}
-				onReload={() => Promise.resolve()}
-			/>
-			<LocationProbe />
-		</MemoryRouter>,
+		<MoveItemContext.Provider value={moveItem}>
+			<MemoryRouter initialEntries={["/backlog"]}>
+				<ItemCard
+					item={{ ...base, ...item }}
+					to={itemPath}
+					socket={socketWith(sessions)}
+					onReload={() => Promise.resolve()}
+				/>
+				<LocationProbe />
+			</MemoryRouter>
+		</MoveItemContext.Provider>,
 	);
 }
 
@@ -270,5 +275,51 @@ describe("ItemCard row link", () => {
 		fireEvent.click(screen.getByRole("button", { name: "Build" }));
 
 		expect(location()).toBe("/backlog");
+	});
+});
+
+describe("ItemCard move menu items", () => {
+	const moveOption = (name: string) => {
+		fireEvent.click(screen.getByRole("button", { name: "More actions" }));
+		return screen.getByRole("menuitem", { name });
+	};
+	const isDisabled = (item: HTMLElement) =>
+		item.getAttribute("aria-disabled") === "true";
+
+	it("moves to the newest-first list's top by sending the item to the order's bottom", () => {
+		renderCard();
+
+		fireEvent.click(moveOption("Move to top"));
+
+		expect(moveItem).toHaveBeenCalledWith(base.id, { edge: "bottom" });
+		expect(location()).toBe("/backlog");
+	});
+
+	it("moves to the newest-first list's bottom by sending the item to the order's top", () => {
+		renderCard();
+
+		fireEvent.click(moveOption("Move to bottom"));
+
+		expect(moveItem).toHaveBeenCalledWith(base.id, { edge: "top" });
+	});
+
+	it.each([
+		{
+			ends: { lastInOrder: true },
+			disabled: "Move to top",
+			enabled: "Move to bottom",
+		},
+		{
+			ends: { firstInOrder: true },
+			disabled: "Move to bottom",
+			enabled: "Move to top",
+		},
+	])("disables $disabled at that end", ({ ends, disabled, enabled }) => {
+		renderCard(ends);
+
+		expect(isDisabled(moveOption(disabled))).toBe(true);
+		expect(isDisabled(screen.getByRole("menuitem", { name: enabled }))).toBe(
+			false,
+		);
 	});
 });

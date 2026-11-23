@@ -4,30 +4,34 @@ import { useReportContentReady } from "../../../sessions/web/ui/useReportContent
 import type { SessionSocket } from "../../../sessions/web/ui/useSessionSocket";
 import { ViewRouter } from "./components/ViewRouter";
 import { useBacklogItems } from "./useBacklogItems";
+import { MoveItemContext } from "./useMoveItemContext";
 import { SelectSessionContext } from "./useSelectSessionContext";
 
 export function BacklogView({ socket }: { socket: SessionSocket }) {
-	const { items, loading, error, reload } = useBacklogItems();
+	const { items, loading, error, reload, move } = useBacklogItems();
 
 	useReportContentReady(!loading);
 
 	return (
 		<LiveSessionsContext.Provider value={socket.sessions}>
 			<SelectSessionContext.Provider value={socket.selectSession}>
-				<Routes>
-					<Route
-						path="/*"
-						element={
-							<ViewRouter
-								items={items}
-								loading={loading}
-								error={error}
-								socket={socket}
-								onReload={reload}
-							/>
-						}
-					/>
-				</Routes>
+				<MoveItemContext.Provider value={move}>
+					<Routes>
+						<Route
+							path="/*"
+							element={
+								<ViewRouter
+									items={items}
+									loading={loading}
+									error={error}
+									socket={socket}
+									onReload={reload}
+									onMove={move}
+								/>
+							}
+						/>
+					</Routes>
+				</MoveItemContext.Provider>
 			</SelectSessionContext.Provider>
 		</LiveSessionsContext.Provider>
 	);

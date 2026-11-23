@@ -3,6 +3,7 @@ import {
 	loadBacklogSummaries,
 	searchBacklogSummaries,
 } from "../loadBacklogSummaries";
+import { markOrderEnds } from "../markOrderEnds";
 import type { BacklogItemSummary, BacklogStatus } from "../types";
 import { type BacklogFilter, parseBacklogFilter } from "./parseBacklogFilter";
 
@@ -30,5 +31,7 @@ export async function loadVisibleItems(
 	const loaded = q
 		? await searchBacklogSummaries(q)
 		: await loadBacklogSummaries();
-	return loaded.filter((item) => matchesFilter(item.status, filter));
+	return markOrderEnds(
+		loaded.filter((item) => matchesFilter(item.status, filter)),
+	);
 }

@@ -1,6 +1,7 @@
-import { asc, eq } from "drizzle-orm";
+import { eq } from "drizzle-orm";
 import type { Db } from "../../shared/db/Db";
 import { items } from "../../shared/db/schema";
+import { itemOrder } from "./itemOrder";
 import { loadRelations } from "./loadRelations";
 import { rowToItem } from "./rowToItem";
 import type { BacklogFile } from "./types";
@@ -23,7 +24,7 @@ export async function loadAllItems(
 		.select()
 		.from(items)
 		.where(origin === undefined ? undefined : eq(items.origin, origin))
-		.orderBy(asc(items.id));
+		.orderBy(...itemOrder);
 	if (rows.length === 0) return [];
 
 	const rel = await loadRelations(

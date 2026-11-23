@@ -1,11 +1,13 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useApiNode } from "../../../sessions/web/ui/useApiNode";
 import { backlogItemsCache } from "./backlogItemsCache";
 import { backlogLoadHandlers } from "./backlogLoadHandlers";
-import { fetchItems } from "./fetchItems";
 import { startBacklogPolling } from "./startBacklogPolling";
 import type { BacklogItemSummary } from "./types";
 import { useBacklogFilter } from "./useBacklogFilter";
+import { useGuardedReload } from "./useGuardedReload";
+import { useOptimisticMove } from "./useOptimisticMove";
+import { useOrderGuard } from "./useOrderGuard";
 import { useRepoCwd } from "./useRepoCwd";
 
 export function useBacklogItems() {
@@ -21,6 +23,7 @@ export function useBacklogItems() {
 	const [loadedCwd, setLoadedCwd] = useState(cwd);
 	const [loadedNode, setLoadedNode] = useState(node);
 	const [loadedFilter, setLoadedFilter] = useState(filter);
+	const guard = useOrderGuard();
 
 	// why: reset during render so the previous key's stale list never commits and loading reflects the new key's cache hit/miss before the effect runs.
 	if (cwd !== loadedCwd || node !== loadedNode || filter !== loadedFilter) {
@@ -32,23 +35,25 @@ export function useBacklogItems() {
 		setError(null);
 	}
 
-	const reload = useCallback(async () => {
-		const next = await fetchItems({ cwd, node, filter });
-		setItems(next);
-		backlogItemsCache.set(cwd, filter, next, node);
-		setLoading(false);
-	}, [cwd, node, filter]);
+	const scope = { cwd, node, filter, guard, setItems };
+	const reload = useGuardedReload({ ...scope, setLoading });
+	const move = useOptimisticMove({ ...scope, setError, reload });
 
 	useEffect(
 		() =>
 			startBacklogPolling(
 				cwd,
 				filter,
-				backlogLoadHandlers({ setItems, setLoading, setError }),
+				backlogLoadHandlers({
+					setItems,
+					setLoading,
+					setError,
+					ticket: guard.ticket,
+				}),
 				node,
 			),
-		[cwd, node, filter],
+		[cwd, node, filter, guard],
 	);
 
-	return { items, loading, error, reload };
+	return { items, loading, error, reload, move };
 }

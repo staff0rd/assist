@@ -3,7 +3,6 @@ type Queryable = {
 	query: (sql: string) => Promise<{ rows: Record<string, unknown>[] }>;
 };
 
-/** A generated-identity column whose sequence must be resynced after restore. */
 type IdentityColumn = {
 	/** quote_ident-quoted table, safe to interpolate into SQL. */
 	table: string;
@@ -13,7 +12,6 @@ type IdentityColumn = {
 	rawColumn: string;
 };
 
-/** Every generated-identity column in the public schema, in ordinal order. */
 const IDENTITY_SQL = `
 	SELECT
 		quote_ident(table_name) AS table,
@@ -21,7 +19,7 @@ const IDENTITY_SQL = `
 		column_name AS raw_column
 	FROM information_schema.columns
 	WHERE table_schema = 'public'
-		AND is_identity = 'YES'
+		AND (is_identity = 'YES' OR column_default LIKE 'nextval(%')
 	ORDER BY table_name, ordinal_position
 `;
 
@@ -30,7 +28,7 @@ const IDENTITY_SQL = `
  * so a table added to the schema (or created at runtime) has its sequence
  * resynced on restore with no source change.
  */
-export async function introspectIdentityColumns(
+export async function introspectSequenceColumns(
 	client: Queryable,
 ): Promise<IdentityColumn[]> {
 	const { rows } = await client.query(IDENTITY_SQL);

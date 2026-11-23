@@ -25,6 +25,8 @@ export function itemsEqual(
 			item.name === other.name &&
 			item.status === other.status &&
 			item.starred === other.starred &&
+			item.firstInOrder === other.firstInOrder &&
+			item.lastInOrder === other.lastInOrder &&
 			usageTotalEqual(item.usageTotal, other.usageTotal)
 		);
 	});

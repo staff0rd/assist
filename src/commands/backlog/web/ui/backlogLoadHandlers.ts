@@ -7,12 +7,14 @@ type Setters = {
 	setItems: Dispatch<SetStateAction<BacklogItemSummary[]>>;
 	setLoading: (loading: boolean) => void;
 	setError: (error: string | null) => void;
+	ticket?: () => () => boolean;
 };
 
 export function backlogLoadHandlers({
 	setItems,
 	setLoading,
 	setError,
+	ticket,
 }: Setters): BacklogLoadHandlers {
 	return {
 		onLoaded: (next) => {
@@ -24,5 +26,6 @@ export function backlogLoadHandlers({
 			setLoading(false);
 			setError(message);
 		},
+		ticket,
 	};
 }

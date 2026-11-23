@@ -33,4 +33,15 @@ export function registerUpdateCommands(cmd: Command): void {
 			"Reorder a plan phase from one 1-based position to another, moving its tasks with it",
 		)
 		.action(lazyAction(() => import("./movePhase"), "movePhase"));
+
+	cmd
+		.command("move <id>")
+		.description(
+			"Reorder an item within its repo's backlog: before or after another item, or to the top or bottom",
+		)
+		.option("--before <id>", "Place the item directly before this item")
+		.option("--after <id>", "Place the item directly after this item")
+		.option("--top", "Move the item to the top of its repo's backlog")
+		.option("--bottom", "Move the item to the bottom of its repo's backlog")
+		.action(lazyAction(() => import("./moveItem"), "moveItem"));
 }

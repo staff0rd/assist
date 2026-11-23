@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import type { BacklogItemSummary } from "../types";
+import type { OptimisticMove } from "../useOptimisticMove";
 import { ItemList } from "./ItemList";
 import { ItemRoute } from "./ItemRoute";
 
@@ -10,6 +11,7 @@ type ViewRouterProps = {
 	error: string | null;
 	socket: SessionSocket;
 	onReload: () => Promise<void>;
+	onMove: OptimisticMove;
 };
 
 export function ViewRouter({
@@ -18,6 +20,7 @@ export function ViewRouter({
 	error,
 	socket,
 	onReload,
+	onMove,
 }: ViewRouterProps) {
 	return (
 		<Routes>
@@ -30,6 +33,7 @@ export function ViewRouter({
 						error={error}
 						socket={socket}
 						onReload={onReload}
+						onMove={onMove}
 					/>
 				}
 			/>

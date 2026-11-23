@@ -14,6 +14,14 @@ vi.mock("./loadBacklogItems", () => ({
 	loadBacklogItems: (...args: unknown[]) => loadBacklogItems(...args),
 }));
 vi.mock("./useRepoCwd", () => ({ useRepoCwd: () => cwd }));
+const moveItem = vi.fn();
+const fetchItems = vi.fn();
+vi.mock("./api", () => ({
+	moveItem: (...args: unknown[]) => moveItem(...args),
+}));
+vi.mock("./fetchItems", () => ({
+	fetchItems: (...args: unknown[]) => fetchItems(...args),
+}));
 vi.mock("./useBacklogFilter", () => ({
 	useBacklogFilter: () => [filter, vi.fn()] as const,
 }));
@@ -148,5 +156,89 @@ describe("useBacklogItems", () => {
 		expect(result.current.items).toEqual([
 			makeBacklogItemSummary({ id: 2, status: "done" }),
 		]);
+	});
+
+	it("keeps a dragged order through a poll that lands before the move is saved", async () => {
+		vi.useFakeTimers();
+		try {
+			const one = makeBacklogItemSummary({ id: 1 });
+			const two = makeBacklogItemSummary({ id: 2 });
+			backlogItemsCache.set("/repo", "todo", [two, one]);
+			resolveLoad([two, one]);
+			let saveMove = () => {};
+			moveItem.mockReturnValue(
+				new Promise<void>((resolve) => {
+					saveMove = resolve;
+				}),
+			);
+			fetchItems.mockResolvedValue([one, two]);
+
+			const { result } = renderHook(() => useBacklogItems());
+			await act(async () => {
+				await vi.advanceTimersByTimeAsync(0);
+			});
+
+			let moved: Promise<void> = Promise.resolve();
+			act(() => {
+				moved = result.current.move(2, { side: "before", targetId: 1 }, [
+					one,
+					two,
+				]);
+			});
+			expect(result.current.items).toEqual([one, two]);
+
+			await act(async () => {
+				await vi.advanceTimersByTimeAsync(5000);
+			});
+			expect(result.current.items).toEqual([one, two]);
+			expect(backlogItemsCache.get("/repo", "todo")).toEqual([one, two]);
+
+			await act(async () => {
+				saveMove();
+				await moved;
+			});
+			expect(result.current.items).toEqual([one, two]);
+		} finally {
+			vi.useRealTimers();
+		}
+	});
+
+	it("drops a poll that started before a button move once the move saves", async () => {
+		vi.useFakeTimers();
+		try {
+			const one = makeBacklogItemSummary({ id: 1 });
+			const two = makeBacklogItemSummary({ id: 2 });
+			backlogItemsCache.set("/repo", "todo", [two, one]);
+			resolveLoad([two, one]);
+			const { result } = renderHook(() => useBacklogItems());
+			await act(async () => {
+				await vi.advanceTimersByTimeAsync(0);
+			});
+
+			let landStalePoll: (items: BacklogItemSummary[]) => void = () => {};
+			loadBacklogItems.mockReturnValueOnce(
+				new Promise<BacklogItemSummary[]>((resolve) => {
+					landStalePoll = resolve;
+				}),
+			);
+			await act(async () => {
+				await vi.advanceTimersByTimeAsync(5000);
+			});
+			moveItem.mockResolvedValue({ ok: true });
+			fetchItems.mockResolvedValue([one, two]);
+
+			await act(async () => {
+				await result.current.move(2, { edge: "top" });
+			});
+			expect(result.current.items).toEqual([one, two]);
+
+			await act(async () => {
+				landStalePoll([two, one]);
+				await vi.advanceTimersByTimeAsync(0);
+			});
+			expect(result.current.items).toEqual([one, two]);
+		} finally {
+			vi.useRealTimers();
+		}
 	});
 });

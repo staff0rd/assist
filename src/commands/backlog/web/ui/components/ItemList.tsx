@@ -1,15 +1,14 @@
-import { useState } from "react";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import { itemDetailPath } from "../itemDetailPath";
 import type { BacklogItemSummary } from "../types";
 import { useApiNode } from "../../../../sessions/web/ui/useApiNode";
+import type { OptimisticMove } from "../useOptimisticMove";
 import { useRepoCwd } from "../useRepoCwd";
-import { useSearchItems } from "../useSearchItems";
 import { ListBody } from "./ListBody";
 import { RepoSummaryChips } from "./RepoSummaryChips";
 import { SearchInput } from "./SearchInput";
-import { type TypeFilterValue } from "./TypeFilter";
 import { Header } from "./Header";
+import { useListFilters } from "./useListFilters";
 
 type ItemListProps = {
 	items: BacklogItemSummary[];
@@ -17,6 +16,7 @@ type ItemListProps = {
 	error: string | null;
 	socket: SessionSocket;
 	onReload: () => Promise<void>;
+	onMove?: OptimisticMove;
 };
 
 export function ItemList({
@@ -25,35 +25,31 @@ export function ItemList({
 	error,
 	socket,
 	onReload,
+	onMove,
 }: ItemListProps) {
 	const cwd = useRepoCwd();
 	const node = useApiNode();
-	const { query, setQuery, results, loading: searching } = useSearchItems();
-	const [typeFilter, setTypeFilter] = useState<TypeFilterValue>("all");
-	const visible = results ?? items;
-	const filtered =
-		typeFilter === "all"
-			? visible
-			: visible.filter((item) => item.type === typeFilter);
+	const list = useListFilters(items);
 
 	return (
 		<>
 			<Header
-				typeFilter={typeFilter}
-				onTypeFilterChange={setTypeFilter}
+				typeFilter={list.typeFilter}
+				onTypeFilterChange={list.setTypeFilter}
 				revision={items}
 			/>
-			<SearchInput value={query} onChange={setQuery} />
+			<SearchInput value={list.query} onChange={list.setQuery} />
 			<RepoSummaryChips sessions={socket.sessions} />
 			<ListBody
-				loading={loading || searching}
-				error={results ? null : error}
-				query={query}
-				typeFilter={typeFilter}
-				items={filtered}
+				loading={loading || list.searching}
+				error={list.searched ? null : error}
+				query={list.query}
+				typeFilter={list.typeFilter}
+				items={list.filtered}
 				socket={socket}
 				itemPath={(item) => itemDetailPath(item.id, cwd, node)}
 				onReload={onReload}
+				onMove={list.reorderable ? onMove : undefined}
 			/>
 		</>
 	);

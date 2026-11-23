@@ -131,4 +131,6 @@ export type BacklogItemSummary = {
 	runningPhases?: number[];
 	donePhases?: number[];
 	totalPhases?: number;
+	firstInOrder?: boolean;
+	lastInOrder?: boolean;
 };
