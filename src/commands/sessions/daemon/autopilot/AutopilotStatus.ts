@@ -13,6 +13,7 @@ export type AutopilotStatus = {
 	localNode: string;
 	scheduledHere: boolean;
 	paused: boolean;
+	pauseReason: string | null;
 	running: AutopilotRun | null;
 	nextTickAt: string | null;
 	followUp: AutopilotFollowUp | null;

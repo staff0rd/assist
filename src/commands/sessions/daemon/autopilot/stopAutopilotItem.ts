@@ -22,6 +22,10 @@ export function stopAutopilotItem(
 		daemonLog(
 			`autopilot: ${target.cwd} stopping item ${itemId}: session(s) ${sessions.map((run) => run.sessionId).join(", ")}`,
 		);
+		store.update(target.cwd, (repo) => {
+			const item = repo.items?.find((i) => i.id === itemId);
+			if (item) item.stopped = true;
+		});
 		for (const run of sessions) deps.stopSession(run.sessionId);
 		return { ok: true };
 	});

@@ -2,7 +2,8 @@ import type { AutopilotStatus } from "../../../../../../daemon/autopilot/Autopil
 
 export function autopilotStateColor(
 	status: AutopilotStatus,
-): "success" | "warning" | "default" {
+): "success" | "warning" | "error" | "default" {
 	if (!status.scheduledHere) return "default";
+	if (status.pauseReason) return "error";
 	return status.paused ? "warning" : "success";
 }

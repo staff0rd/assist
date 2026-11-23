@@ -33,6 +33,7 @@ describe("createAutopilotScheduler", () => {
 	let links: Record<string, { launchedFrom?: string; itemId?: number }>;
 	let runItems: AutopilotRunItem[];
 	let stopped: string[];
+	let itemStatus: Map<number, string>;
 	let stop: () => void = () => {};
 
 	const deps = () => ({
@@ -41,6 +42,7 @@ describe("createAutopilotScheduler", () => {
 		sessionLink: (id: string) => links[id],
 		runItems: () => runItems,
 		stopSession: (id: string) => stopped.push(id),
+		itemStatuses: async () => itemStatus,
 		launch: () => {
 			launched += 1;
 			states[`s${launched}`] = "live";
@@ -64,6 +66,7 @@ describe("createAutopilotScheduler", () => {
 		links = {};
 		runItems = [];
 		stopped = [];
+		itemStatus = new Map();
 		targets = [target];
 	});
 
@@ -222,5 +225,26 @@ describe("createAutopilotScheduler", () => {
 			trigger: "manual",
 			sessionId: "s2",
 		});
+	});
+
+	it("resumes an item a run left unfinished within a minute, then pauses if it stalls again", async () => {
+		const scheduler = start();
+		runItems = [{ itemId: 7, sessionId: "b1", live: true }];
+		itemStatus = new Map([[7, "in-progress"]]);
+		await vi.advanceTimersByTimeAsync(60_000);
+		states.s1 = "ended";
+		runItems = [];
+		await vi.advanceTimersByTimeAsync(2 * 60_000);
+		expect(launched).toBe(2);
+		expect(saved()["/repo"].items?.[0].resumes).toBe(1);
+		states.s2 = "ended";
+		await vi.advanceTimersByTimeAsync(2 * 60_000);
+		expect(launched).toBe(2);
+		expect(scheduler.status("/repo")).toMatchObject({
+			paused: true,
+			pauseReason: "a7 stalled again after it was resumed",
+		});
+		scheduler.setPaused("/repo", false);
+		expect(scheduler.status("/repo")?.pauseReason).toBeNull();
 	});
 });

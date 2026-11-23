@@ -18,13 +18,22 @@ export type AutopilotFollowUp = {
 };
 
 /** A backlog item an autopilot run started. */
-export type AutopilotItem = { id: number; startedAt: string };
+export type AutopilotItem = {
+	id: number;
+	startedAt: string;
+	/** Times the scheduler resumed it after it stalled. */
+	resumes?: number;
+	/** Stopped from the page, so never resumed automatically. */
+	stopped?: boolean;
+};
 
 export type AutopilotRepoRecord = {
 	paused: boolean;
 	current?: AutopilotRun;
 	followUp?: AutopilotFollowUp;
 	items?: AutopilotItem[];
+	/** Why the scheduler paused itself; cleared on resume. */
+	pauseReason?: string;
 	ticks: AutopilotTick[];
 };
 

@@ -3,6 +3,7 @@ import Typography from "@mui/material/Typography";
 import type { AutopilotStatus } from "../../../../../../daemon/autopilot/AutopilotStatus";
 import type { AutopilotItemView } from "../../../../../autopilot/AutopilotItemView";
 import { AutopilotItems } from "./AutopilotItems";
+import { PauseBanner } from "./PauseBanner";
 import { ScheduleBar } from "./ScheduleBar";
 
 export function AutopilotBody({
@@ -14,6 +15,7 @@ export function AutopilotBody({
 	onStop,
 	onOpen,
 	onResume,
+	onResumeSchedule,
 }: {
 	cwd: string;
 	status: AutopilotStatus | null;
@@ -23,6 +25,7 @@ export function AutopilotBody({
 	onStop: (itemId?: number) => void;
 	onOpen: (sessionId: string) => void;
 	onResume: (itemId: number) => void;
+	onResumeSchedule: () => void;
 }) {
 	return (
 		<>
@@ -33,6 +36,13 @@ export function AutopilotBody({
 			)}
 			{status ? (
 				<>
+					{status.pauseReason && (
+						<PauseBanner
+							reason={status.pauseReason}
+							busy={busy}
+							onResume={onResumeSchedule}
+						/>
+					)}
 					<ScheduleBar status={status} />
 					<AutopilotItems
 						status={status}

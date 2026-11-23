@@ -1,9 +1,11 @@
 import type { AutopilotDeps } from "./AutopilotDeps";
 import type { AutopilotStarted } from "./AutopilotStarted";
 import type { AutopilotStatus } from "./AutopilotStatus";
+import { autopilotItemControls } from "./autopilotItemControls";
 import { autopilotStatuses } from "./autopilotStatuses";
 import { controlAutopilotTarget } from "./controlAutopilotTarget";
 import { createAutopilotRuns } from "./createAutopilotRuns";
+import { createItemStatusCache } from "./createItemStatusCache";
 import {
 	type AutopilotStore,
 	createAutopilotStore,
@@ -17,9 +19,6 @@ import {
 	runAutopilotNow,
 } from "./runAutopilotNow";
 import { setAutopilotPaused } from "./setAutopilotPaused";
-import { stopAutopilotItem } from "./stopAutopilotItem";
-import { stopAutopilotRun } from "./stopAutopilotRun";
-import { resumeAutopilotItem } from "./resumeAutopilotItem";
 import { tickAutopilot } from "./tickAutopilot";
 
 const CHECK_MS = 60_000;
@@ -33,7 +32,11 @@ export function createAutopilotScheduler(
 
 	return {
 		start(deps: AutopilotDeps): () => void {
-			started = { deps, runs: createAutopilotRuns(store, deps) };
+			started = {
+				deps,
+				runs: createAutopilotRuns(store, deps),
+				items: createItemStatusCache(deps),
+			};
 			store.load();
 			tick();
 			const timer = setInterval(tick, CHECK_MS);
@@ -51,11 +54,6 @@ export function createAutopilotScheduler(
 			requestAutopilotFollowUp(store, started, sessionId, delayMs),
 		setPaused: (cwd: string, paused: boolean): AutopilotControlResult =>
 			setAutopilotPaused(store, started, cwd, paused),
-		stopItem: (cwd: string, itemId?: number): AutopilotControlResult =>
-			itemId === undefined
-				? stopAutopilotRun(started, cwd)
-				: stopAutopilotItem(store, started, cwd, itemId),
-		resumeItem: (cwd: string, itemId: number): AutopilotControlResult =>
-			resumeAutopilotItem(started, cwd, itemId),
+		...autopilotItemControls(store, () => started),
 	};
 }

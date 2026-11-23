@@ -4,6 +4,7 @@ import { autopilotRunState } from "./autopilotRunState";
 import { autopilotScheduler } from "./autopilotScheduler";
 import { autopilotSessionState } from "./autopilotSessionState";
 import { closeIdleAutopilotRoots } from "./closeIdleAutopilotRoots";
+import { loadItemStatuses } from "./loadItemStatuses";
 
 export function startAutopilot(manager: SessionManager): () => void {
 	return autopilotScheduler.start({
@@ -32,6 +33,7 @@ export function startAutopilot(manager: SessionManager): () => void {
 				return [{ itemId, sessionId: session.id, live }];
 			}),
 		stopSession: (sessionId) => manager.dismissSession(sessionId),
+		itemStatuses: loadItemStatuses,
 		launch: ({ cwd, prompt, harness, model }) =>
 			manager.spawn({ prompt, cwd, harness, model }, { autopilot: true }),
 		closeIdle: () =>

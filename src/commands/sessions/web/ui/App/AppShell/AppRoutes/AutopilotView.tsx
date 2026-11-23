@@ -39,6 +39,7 @@ export function AutopilotView({
 				busy={actions.busy}
 				onStop={(itemId) => void actions.run("stop", itemId)}
 				onResume={(itemId) => void actions.run("resume-item", itemId)}
+				onResumeSchedule={() => void actions.run("resume")}
 				onOpen={(id) =>
 					activate(target.node ? toNodeSessionId(target.node, id) : id)
 				}

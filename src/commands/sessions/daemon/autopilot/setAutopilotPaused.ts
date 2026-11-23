@@ -14,6 +14,9 @@ export function setAutopilotPaused(
 		daemonLog(`autopilot: ${target.cwd} ${paused ? "paused" : "resumed"}`);
 		store.update(target.cwd, (repo) => {
 			repo.paused = paused;
+			if (paused) return;
+			repo.pauseReason = undefined;
+			for (const item of repo.items ?? []) item.resumes = 0;
 		});
 		return { ok: true };
 	});
