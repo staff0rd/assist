@@ -1,3 +1,10 @@
+# [0.1262.0](https://github.com/staff0rd/assist/compare/v0.1261.0...v0.1262.0) (2026-11-23)
+
+
+### Features
+
+* autopilot records each run's outcome ([945e4f2](https://github.com/staff0rd/assist/commit/945e4f2a7d025950016e5b3b53ff28efa4dc5e44))
+
 # [0.1261.0](https://github.com/staff0rd/assist/compare/v0.1260.1...v0.1261.0) (2026-11-23)
 
 
