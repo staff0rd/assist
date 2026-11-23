@@ -1,3 +1,10 @@
+## [0.1256.5](https://github.com/staff0rd/assist/compare/v0.1256.4...v0.1256.5) (2026-11-23)
+
+
+### Bug Fixes
+
+* autopilot closes its idle session ([50e88ed](https://github.com/staff0rd/assist/commit/50e88edc7c7d197ad604186516d015822315e4d0))
+
 ## [0.1256.4](https://github.com/staff0rd/assist/compare/v0.1256.3...v0.1256.4) (2026-11-23)
 
 
