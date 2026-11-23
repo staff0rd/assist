@@ -15,9 +15,19 @@ export function settleAutopilotRun(
 	daemonLog(
 		`autopilot: ${cwd} run ${current.sessionId} finished${reason ? ` (${reason})` : ""}`,
 	);
+	const items = (store.repo(cwd).items ?? [])
+		.filter((item) => item.startedAt >= current.startedAt)
+		.map((item) => item.id);
 	store.addTick(
 		cwd,
-		{ outcome: "finished", sessionId: current.sessionId, reason },
+		{
+			outcome: "finished",
+			sessionId: current.sessionId,
+			reason,
+			startedAt: current.startedAt,
+			items,
+			summary: deps.sessionSummary?.(current.sessionId),
+		},
 		(repo) => {
 			repo.current = undefined;
 		},

@@ -6,6 +6,10 @@ export type AutopilotTick = {
 	trigger?: "scheduled" | "manual";
 	sessionId?: string;
 	reason?: string;
+	/** On a finished tick: when the run started, the items it started and its closing message. */
+	startedAt?: string;
+	items?: number[];
+	summary?: string;
 };
 
 export type AutopilotRun = { sessionId: string; startedAt: string };

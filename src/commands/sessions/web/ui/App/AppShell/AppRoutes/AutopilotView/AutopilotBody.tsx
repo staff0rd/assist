@@ -3,8 +3,7 @@ import Typography from "@mui/material/Typography";
 import type { AutopilotStatus } from "../../../../../../daemon/autopilot/AutopilotStatus";
 import type { AutopilotItemView } from "../../../../../autopilot/AutopilotItemView";
 import { AutopilotItems } from "./AutopilotItems";
-import { PauseBanner } from "./PauseBanner";
-import { ScheduleBar } from "./ScheduleBar";
+import { ScheduleSection } from "./ScheduleSection";
 
 export function AutopilotBody({
 	cwd,
@@ -36,14 +35,11 @@ export function AutopilotBody({
 			)}
 			{status ? (
 				<>
-					{status.pauseReason && (
-						<PauseBanner
-							reason={status.pauseReason}
-							busy={busy}
-							onResume={onResumeSchedule}
-						/>
-					)}
-					<ScheduleBar status={status} />
+					<ScheduleSection
+						status={status}
+						busy={busy}
+						onResumeSchedule={onResumeSchedule}
+					/>
 					<AutopilotItems
 						status={status}
 						items={items}

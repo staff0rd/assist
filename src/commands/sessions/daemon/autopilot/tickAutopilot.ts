@@ -10,7 +10,6 @@ export function tickAutopilot(
 	started: AutopilotStarted | undefined,
 ): void {
 	if (!started) return;
-	started.deps.closeIdle?.();
 	for (const target of listAutopilotTargets(started.deps.localNode())) {
 		if (!target.scheduledHere) continue;
 		recordAutopilotItems(store, started.deps, target.cwd);
@@ -20,4 +19,7 @@ export function tickAutopilot(
 			(store.repo(target.cwd).items ?? []).map((item) => item.id),
 		);
 	}
+	/* why: after settling, so a finished run's closing message is read before
+	 * its idle root session is closed. */
+	started.deps.closeIdle?.();
 }

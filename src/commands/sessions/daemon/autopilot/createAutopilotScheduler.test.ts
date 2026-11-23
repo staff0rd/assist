@@ -45,6 +45,7 @@ describe("createAutopilotScheduler", () => {
 		itemSessions: (id: number) =>
 			runItems.filter((run) => run.itemId === id).map((run) => run.sessionId),
 		itemStatuses: async () => itemStatus,
+		sessionSummary: (id: string) => `closing message of ${id}`,
 		launch: () => {
 			launched += 1;
 			states[`s${launched}`] = "live";
@@ -264,5 +265,19 @@ describe("createAutopilotScheduler", () => {
 		await vi.advanceTimersByTimeAsync(5 * 60_000);
 		expect(launched).toBe(1);
 		expect(saved()["/repo"].paused).toBe(false);
+	});
+
+	it("records what a finished run started and its closing message", async () => {
+		const scheduler = start();
+		runItems = [{ itemId: 7, sessionId: "b1", live: true }];
+		await vi.advanceTimersByTimeAsync(60_000);
+		states.s1 = "ended";
+		runItems = [];
+		await vi.advanceTimersByTimeAsync(60_000);
+		expect(scheduler.status("/repo")?.lastRun).toMatchObject({
+			outcome: "finished",
+			items: [7],
+			summary: "closing message of s1",
+		});
 	});
 });

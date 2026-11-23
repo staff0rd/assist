@@ -18,6 +18,8 @@ export type AutopilotStatus = {
 	nextTickAt: string | null;
 	followUp: AutopilotFollowUp | null;
 	lastTick: AutopilotTick | null;
+	/** The latest finished run, with what it started and its closing message. */
+	lastRun: AutopilotTick | null;
 	/** Newest first; sessionId is the item's live run session, if any. */
 	items: (AutopilotItem & { sessionId: string | null })[];
 };
