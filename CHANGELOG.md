@@ -1,3 +1,10 @@
+# [0.1268.0](https://github.com/staff0rd/assist/compare/v0.1267.0...v0.1268.0) (2026-11-23)
+
+
+### Features
+
+* collapsible autopilot runs on phone ([e341351](https://github.com/staff0rd/assist/commit/e3413511a9e809d4ab9eedc7bb571f304fa53535))
+
 # [0.1267.0](https://github.com/staff0rd/assist/compare/v0.1266.0...v0.1267.0) (2026-11-23)
 
 
