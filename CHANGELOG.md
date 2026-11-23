@@ -1,3 +1,10 @@
+## [0.1260.1](https://github.com/staff0rd/assist/compare/v0.1260.0...v0.1260.1) (2026-11-23)
+
+
+### Bug Fixes
+
+* no autopilot stall while item session lives ([73baedc](https://github.com/staff0rd/assist/commit/73baedced8fa81b7163130f6a028bc16ab05cb15))
+
 # [0.1260.0](https://github.com/staff0rd/assist/compare/v0.1259.1...v0.1260.0) (2026-11-23)
 
 
