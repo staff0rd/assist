@@ -9,9 +9,10 @@ const CLOSABLE: Session["status"][] = ["waiting", "done"];
 export function closeIdleAutopilotRoots(
 	sessions: Session[],
 	dismiss: (id: string) => void,
+	keep = new Set<string>(),
 ): void {
 	for (const session of sessions) {
-		if (session.autopilot !== session.id) continue;
+		if (session.autopilot !== session.id || keep.has(session.id)) continue;
 		if (!CLOSABLE.includes(session.status)) continue;
 		if (autopilotSessionState(session) !== "ended") continue;
 		daemonLog(

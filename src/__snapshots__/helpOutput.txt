@@ -1062,6 +1062,8 @@ Commands:
   status                Print each autopilot repo's schedule: state, interval, next and last tick
   follow-up <duration>  From an autopilot session (or a run it started), set the next tick to fire
                         after <duration> (e.g. 30m, 2h) instead of at the interval
+  summary [options]     From an autopilot session (or a run it started), record what this run did
+                        for the Autopilot page; each value is one plain-English line
   help [command]        display help for command
 
 Config:
@@ -1088,6 +1090,19 @@ Arguments:
 
 Options:
   -h, --help  display help for command
+
+=== assist autopilot summary --help
+Usage: assist autopilot summary [options]
+
+From an autopilot session (or a run it started), record what this run did for the Autopilot page;
+each value is one plain-English line
+
+Options:
+  --checked <text>  what the run looked at
+  --decided <text>  what it decided, and why
+  --started <text>  the items it started, or none
+  --next <text>     what the next run should do
+  -h, --help        display help for command
 
 === assist inbox --help
 Usage: assist inbox [options] [command]

@@ -31,10 +31,7 @@ export function autopilotStatusOf(
 			: null,
 		followUp: scheduled ? (repo.followUp ?? null) : null,
 		lastTick: repo.ticks.at(-1) ?? null,
-		runs: repo.ticks
-			.filter((t) => t.outcome === "finished")
-			.slice(-10)
-			.reverse(),
+		runs: repo.ticks.filter((t) => t.outcome === "finished").reverse(),
 		items: autopilotItemStatuses(repo, deps),
 	};
 }

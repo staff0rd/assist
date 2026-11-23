@@ -34,6 +34,8 @@ describe("createAutopilotScheduler", () => {
 	let runItems: AutopilotRunItem[];
 	let stopped: string[];
 	let itemStatus: Map<number, string>;
+	let prompted: string[];
+	let canPrompt: boolean;
 	let stop: () => void = () => {};
 
 	const deps = () => ({
@@ -45,7 +47,10 @@ describe("createAutopilotScheduler", () => {
 		itemSessions: (id: number) =>
 			runItems.filter((run) => run.itemId === id).map((run) => run.sessionId),
 		itemStatuses: async () => itemStatus,
-		sessionSummary: (id: string) => `closing message of ${id}`,
+		promptSession: (id: string) => {
+			prompted.push(id);
+			return canPrompt;
+		},
 		launch: () => {
 			launched += 1;
 			states[`s${launched}`] = "live";
@@ -70,6 +75,8 @@ describe("createAutopilotScheduler", () => {
 		runItems = [];
 		stopped = [];
 		itemStatus = new Map();
+		prompted = [];
+		canPrompt = false;
 		targets = [target];
 	});
 
@@ -267,17 +274,44 @@ describe("createAutopilotScheduler", () => {
 		expect(saved()["/repo"].paused).toBe(false);
 	});
 
-	it("records what a finished run started and its closing message", async () => {
+	it("prompts an idle run for its summary, holds it open, then records it", async () => {
+		canPrompt = true;
 		const scheduler = start();
 		runItems = [{ itemId: 7, sessionId: "b1", live: true }];
 		await vi.advanceTimersByTimeAsync(60_000);
 		states.s1 = "ended";
 		runItems = [];
 		await vi.advanceTimersByTimeAsync(60_000);
+		expect(prompted).toEqual(["s1"]);
+		expect(scheduler.status("/repo")?.running?.sessionId).toBe("s1");
+		const summary = {
+			checked: "a1868 since deploy",
+			decided: "no change, a1868 works",
+			started: "none",
+			next: "judge TUSK-1 after 18:17",
+		};
+		expect(scheduler.recordSummary("s1", summary)).toEqual({
+			ok: true,
+			cwd: "/repo",
+		});
+		await vi.advanceTimersByTimeAsync(60_000);
+		expect(scheduler.status("/repo")?.runs[0]).toMatchObject({
+			items: [7],
+			summary,
+		});
+	});
+
+	it("records a run without a summary once the grace after prompting passes", async () => {
+		canPrompt = true;
+		const scheduler = start();
+		states.s1 = "ended";
+		await vi.advanceTimersByTimeAsync(60_000);
+		expect(prompted).toEqual(["s1"]);
+		await vi.advanceTimersByTimeAsync(11 * 60_000);
 		expect(scheduler.status("/repo")?.runs[0]).toMatchObject({
 			outcome: "finished",
-			items: [7],
-			summary: "closing message of s1",
+			sessionId: "s1",
 		});
+		expect(scheduler.status("/repo")?.runs[0].summary).toBeUndefined();
 	});
 });

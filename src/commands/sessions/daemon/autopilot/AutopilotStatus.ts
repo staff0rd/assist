@@ -18,7 +18,7 @@ export type AutopilotStatus = {
 	nextTickAt: string | null;
 	followUp: AutopilotFollowUp | null;
 	lastTick: AutopilotTick | null;
-	/** Recent finished runs, newest first, with what each started and its closing message. */
+	/** Every recorded finished run, newest first, with what each started and its closing message. */
 	runs: AutopilotTick[];
 	/** Newest first; sessionId is the item's live run session, if any. */
 	items: (AutopilotItem & { sessionId: string | null })[];

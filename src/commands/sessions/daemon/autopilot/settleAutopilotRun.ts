@@ -1,6 +1,8 @@
 import { daemonLog } from "../daemonLog";
 import type { AutopilotDeps } from "./AutopilotDeps";
+import { awaitingSummary } from "./awaitingSummary";
 import type { AutopilotStore } from "./createAutopilotStore";
+import { requestRunSummary } from "./requestRunSummary";
 
 export function settleAutopilotRun(
 	store: AutopilotStore,
@@ -10,10 +12,11 @@ export function settleAutopilotRun(
 	const current = store.repo(cwd).current;
 	if (!current) return;
 	const state = deps.sessionState(current.sessionId);
-	if (state === "live") return;
+	if (state === "live" || awaitingSummary(current, state)) return;
+	if (state === "ended" && requestRunSummary(store, deps, cwd)) return;
 	const reason = state === "errored" ? "session errored" : undefined;
 	daemonLog(
-		`autopilot: ${cwd} run ${current.sessionId} finished${reason ? ` (${reason})` : ""}`,
+		`autopilot: ${cwd} run ${current.sessionId} finished${reason ? ` (${reason})` : ""}${current.summary ? "" : " without a summary"}`,
 	);
 	const items = (store.repo(cwd).items ?? [])
 		.filter((item) => item.startedAt >= current.startedAt)
@@ -26,7 +29,7 @@ export function settleAutopilotRun(
 			reason,
 			startedAt: current.startedAt,
 			items,
-			summary: deps.sessionSummary?.(current.sessionId),
+			summary: current.summary,
 		},
 		(repo) => {
 			repo.current = undefined;

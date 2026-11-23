@@ -18,6 +18,8 @@ import {
 	type AutopilotControlResult,
 	runAutopilotNow,
 } from "./runAutopilotNow";
+import type { AutopilotRunSummary } from "./AutopilotRecord";
+import { recordRunSummary } from "./recordRunSummary";
 import { setAutopilotPaused } from "./setAutopilotPaused";
 import { tickAutopilot } from "./tickAutopilot";
 
@@ -52,6 +54,8 @@ export function createAutopilotScheduler(
 			),
 		followUp: (sessionId: string, delayMs: number): AutopilotFollowUpResult =>
 			requestAutopilotFollowUp(store, started, sessionId, delayMs),
+		recordSummary: (sessionId: string, summary: AutopilotRunSummary) =>
+			recordRunSummary(store, started, sessionId, summary),
 		setPaused: (cwd: string, paused: boolean): AutopilotControlResult =>
 			setAutopilotPaused(store, started, cwd, paused),
 		...autopilotItemControls(store, () => started),

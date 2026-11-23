@@ -7,7 +7,9 @@ import type {
 import { loadAutopilotRecord } from "./loadAutopilotRecord";
 import { saveAutopilotRecord } from "./saveAutopilotRecord";
 
-const MAX_TICKS = 100;
+/* why: every hourly run adds two or three ticks, so this keeps several days of
+ * runs for someone returning after a day or more away. */
+const MAX_TICKS = 500;
 
 export type AutopilotStore = ReturnType<typeof createAutopilotStore>;
 

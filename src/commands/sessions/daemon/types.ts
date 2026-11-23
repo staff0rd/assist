@@ -92,8 +92,6 @@ export type Session = SdkViewState & {
 	transcriptRevision?: number;
 	lastUserMessage?: string;
 	lastAssistantMessage?: string;
-	/** An autopilot session's full last assistant message, kept as the run's record. */
-	closingMessage?: string;
 	lastEchoAt?: string;
 	permissionActive?: boolean;
 	pendingSubmit?: { fingerprint?: string; cancel: () => void };

@@ -21,5 +21,8 @@ export function tickAutopilot(
 	}
 	/* why: after settling, so a finished run's closing message is read before
 	 * its idle root session is closed. */
-	started.deps.closeIdle?.();
+	const keep = new Set(
+		store.cwds().flatMap((cwd) => store.repo(cwd).current?.sessionId ?? []),
+	);
+	started.deps.closeIdle?.(keep);
 }

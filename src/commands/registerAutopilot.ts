@@ -25,5 +25,16 @@ export function registerAutopilot(program: Command): void {
 		.argument("<duration>", "delay before the next tick: 30s, 30m or 2h")
 		.action(lazyAction(() => import("./autopilot/followUp"), "followUp"));
 
+	autopilotCommand
+		.command("summary")
+		.description(
+			"From an autopilot session (or a run it started), record what this run did for the Autopilot page; each value is one plain-English line",
+		)
+		.requiredOption("--checked <text>", "what the run looked at")
+		.requiredOption("--decided <text>", "what it decided, and why")
+		.requiredOption("--started <text>", "the items it started, or none")
+		.requiredOption("--next <text>", "what the next run should do")
+		.action(lazyAction(() => import("./autopilot/summary"), "summary"));
+
 	configHelp(autopilotCommand, autopilotConfigHelp);
 }

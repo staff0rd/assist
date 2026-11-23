@@ -6,13 +6,27 @@ export type AutopilotTick = {
 	trigger?: "scheduled" | "manual";
 	sessionId?: string;
 	reason?: string;
-	/** On a finished tick: when the run started, the items it started and its closing message. */
+	/** On a finished tick: when the run started, the items it started and what it recorded. */
 	startedAt?: string;
 	items?: number[];
-	summary?: string;
+	summary?: AutopilotRunSummary;
 };
 
-export type AutopilotRun = { sessionId: string; startedAt: string };
+/** What a run did, recorded by the run itself with `assist autopilot summary`. */
+export type AutopilotRunSummary = {
+	checked: string;
+	decided: string;
+	started: string;
+	next: string;
+};
+
+export type AutopilotRun = {
+	sessionId: string;
+	startedAt: string;
+	summary?: AutopilotRunSummary;
+	/** When the daemon prompted the idle run to record its summary. */
+	summaryRequestedAt?: string;
+};
 
 export type AutopilotFollowUp = {
 	at: string;

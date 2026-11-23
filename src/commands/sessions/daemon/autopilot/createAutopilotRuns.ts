@@ -1,5 +1,6 @@
 import { daemonLog } from "../daemonLog";
 import type { AutopilotDeps } from "./AutopilotDeps";
+import { awaitingSummary } from "./awaitingSummary";
 import type { AutopilotStore } from "./createAutopilotStore";
 import { launchAutopilotRun } from "./launchAutopilotRun";
 import type { AutopilotTarget } from "./readAutopilotTarget";
@@ -13,7 +14,8 @@ export function createAutopilotRuns(
 		liveRun(cwd: string) {
 			const current = store.repo(cwd).current;
 			if (!current) return undefined;
-			return deps.sessionState(current.sessionId) === "live"
+			const state = deps.sessionState(current.sessionId);
+			return state === "live" || awaitingSummary(current, state)
 				? current
 				: undefined;
 		},

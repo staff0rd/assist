@@ -2,6 +2,7 @@ import { sendTo } from "../broadcast";
 import { daemonLog } from "../daemonLog";
 import type { Handler } from "../routed";
 import { autopilotScheduler } from "./autopilotScheduler";
+import { handleAutopilotSummary } from "./handleAutopilotSummary";
 
 const actions = {
 	pause: (cwd: string) => autopilotScheduler.setPaused(cwd, true),
@@ -54,6 +55,7 @@ export const autopilotHandlers: Record<string, Handler> = {
 		if (!result.ok) daemonLog(`autopilot: follow-up refused: ${result.error}`);
 		sendTo(client, { type: "autopilot-follow-up", ...result });
 	},
+	"autopilot-summary": handleAutopilotSummary,
 	"autopilot-control": (client, _manager, data) => {
 		const { cwd, action, itemId } = data;
 		if (typeof cwd !== "string" || !isAction(action)) {
