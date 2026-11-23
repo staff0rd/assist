@@ -19,7 +19,7 @@ export function AutopilotBody({
 	items: AutopilotItemView[];
 	busy: boolean;
 	problem?: string;
-	onStop: (itemId: number) => void;
+	onStop: (itemId?: number) => void;
 	onOpen: (sessionId: string) => void;
 }) {
 	return (
@@ -33,6 +33,7 @@ export function AutopilotBody({
 				<>
 					<ScheduleBar status={status} />
 					<AutopilotItems
+						status={status}
 						items={items}
 						cwd={cwd}
 						busy={busy}

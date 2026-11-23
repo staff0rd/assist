@@ -1,41 +1,36 @@
+import type { AutopilotStatus } from "../../../../../../daemon/autopilot/AutopilotStatus";
 import type { AutopilotItemView } from "../../../../../autopilot/AutopilotItemView";
 import { DeliveredRow } from "./DeliveredRow";
 import { ItemSection } from "./ItemSection";
-import { RunningRow } from "./RunningRow";
+import { RunningSection } from "./RunningSection";
 import { splitAutopilotItems } from "./splitAutopilotItems";
 
 export function AutopilotItems({
+	status,
 	items,
 	cwd,
 	busy,
 	onStop,
 	onOpen,
 }: {
+	status: AutopilotStatus;
 	items: AutopilotItemView[];
 	cwd: string;
 	busy: boolean;
-	onStop: (itemId: number) => void;
+	onStop: (itemId?: number) => void;
 	onOpen: (sessionId: string) => void;
 }) {
 	const { running, delivered } = splitAutopilotItems(items);
 	return (
 		<>
-			<ItemSection
-				title="Running"
-				count={running.length}
-				empty="No item is running."
-			>
-				{running.map((item) => (
-					<RunningRow
-						key={item.id}
-						item={item}
-						cwd={cwd}
-						busy={busy}
-						onStop={() => onStop(item.id)}
-						onOpen={() => item.sessionId && onOpen(item.sessionId)}
-					/>
-				))}
-			</ItemSection>
+			<RunningSection
+				status={status}
+				running={running}
+				cwd={cwd}
+				busy={busy}
+				onStop={onStop}
+				onOpen={onOpen}
+			/>
 			<ItemSection
 				title="Delivered"
 				count={delivered.length}

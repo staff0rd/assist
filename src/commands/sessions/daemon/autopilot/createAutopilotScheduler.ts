@@ -18,6 +18,7 @@ import {
 } from "./runAutopilotNow";
 import { setAutopilotPaused } from "./setAutopilotPaused";
 import { stopAutopilotItem } from "./stopAutopilotItem";
+import { stopAutopilotRun } from "./stopAutopilotRun";
 import { tickAutopilot } from "./tickAutopilot";
 
 const CHECK_MS = 60_000;
@@ -49,7 +50,9 @@ export function createAutopilotScheduler(
 			requestAutopilotFollowUp(store, started, sessionId, delayMs),
 		setPaused: (cwd: string, paused: boolean): AutopilotControlResult =>
 			setAutopilotPaused(store, started, cwd, paused),
-		stopItem: (cwd: string, itemId: number): AutopilotControlResult =>
-			stopAutopilotItem(store, started, cwd, itemId),
+		stopItem: (cwd: string, itemId?: number): AutopilotControlResult =>
+			itemId === undefined
+				? stopAutopilotRun(started, cwd)
+				: stopAutopilotItem(store, started, cwd, itemId),
 	};
 }

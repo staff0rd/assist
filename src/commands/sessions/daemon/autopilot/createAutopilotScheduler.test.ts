@@ -197,4 +197,15 @@ describe("createAutopilotScheduler", () => {
 			error: "no live run for item 9",
 		});
 	});
+
+	it("stops the live run itself when no item is named", () => {
+		const scheduler = start();
+		expect(scheduler.stopItem("/repo")).toEqual({ ok: true });
+		expect(stopped).toEqual(["s1"]);
+		states.s1 = "ended";
+		expect(scheduler.stopItem("/repo")).toEqual({
+			ok: false,
+			error: "no autopilot run is live",
+		});
+	});
 });

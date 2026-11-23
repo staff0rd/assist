@@ -8,9 +8,10 @@ const actions = {
 	resume: (cwd: string) => autopilotScheduler.setPaused(cwd, false),
 	run: (cwd: string) => autopilotScheduler.runNow(cwd),
 	stop: (cwd: string, itemId: unknown) =>
-		typeof itemId === "number"
-			? autopilotScheduler.stopItem(cwd, itemId)
-			: { ok: false as const, error: "stop needs an itemId" },
+		autopilotScheduler.stopItem(
+			cwd,
+			typeof itemId === "number" ? itemId : undefined,
+		),
 };
 
 function isAction(value: unknown): value is keyof typeof actions {
