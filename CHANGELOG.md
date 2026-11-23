@@ -1,3 +1,10 @@
+## [0.1259.1](https://github.com/staff0rd/assist/compare/v0.1259.0...v0.1259.1) (2026-11-23)
+
+
+### Bug Fixes
+
+* autopilot page drops agent phase summaries ([7475fa4](https://github.com/staff0rd/assist/commit/7475fa4a0f8f490ac0ff3e67db37bef4b84e6892))
+
 # [0.1259.0](https://github.com/staff0rd/assist/compare/v0.1258.2...v0.1259.0) (2026-11-23)
 
 
