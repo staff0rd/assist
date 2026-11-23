@@ -26,9 +26,11 @@ vi.mock("../prs/readBodyArgument", () => ({
 	readBodyArgument: (...args: unknown[]) => mockReadBodyArgument(...args),
 }));
 vi.mock("../prs/shared", () => ({
-	getRepoInfo: () => ({ org: "acme", repo: "widgets" }),
 	isGhNotInstalled: () => false,
 	isNotFound: () => false,
+}));
+vi.mock("../prs/getBaseRepoInfo", () => ({
+	getBaseRepoInfo: () => ({ org: "acme", repo: "widgets" }),
 }));
 vi.mock("../../shared/loadConfig", async () =>
 	(

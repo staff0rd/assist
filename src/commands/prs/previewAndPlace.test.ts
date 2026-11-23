@@ -200,6 +200,7 @@ describe("previewAndPlace", () => {
 			expect(chainAfterRaiseMock).toHaveBeenCalledWith(
 				42,
 				expect.objectContaining({ reviewAfter: true, announceAfter: false }),
+				undefined,
 			);
 			expect(placedFirst).toEqual(["place", "chain"]);
 		});
@@ -216,6 +217,24 @@ describe("previewAndPlace", () => {
 			expect(chainAfterRaiseMock).toHaveBeenCalledWith(
 				null,
 				expect.objectContaining({ reviewAfter: true, announceAfter: true }),
+				undefined,
+			);
+		});
+
+		it("carries a one-off base repo into auto-merge and the chain", async () => {
+			requestPrDecisionMock.mockResolvedValue({
+				decision: "approve",
+				autoMerge: true,
+				reviewAfter: true,
+			});
+
+			await previewAndPlace({ ...args, options: { baseRepo: "origin" } });
+
+			expect(enableAutoMergeMock).toHaveBeenCalledWith("origin");
+			expect(chainAfterRaiseMock).toHaveBeenCalledWith(
+				null,
+				expect.anything(),
+				"origin",
 			);
 		});
 	});
@@ -254,6 +273,7 @@ describe("previewAndPlace", () => {
 			expect(chainAfterRaiseMock).toHaveBeenCalledWith(
 				null,
 				expect.objectContaining({ reviewAfter: true }),
+				undefined,
 			);
 			expect(error.mock.calls[0][0]).toContain(
 				"Warning: could not enable auto-merge",

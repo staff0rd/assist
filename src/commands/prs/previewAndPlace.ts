@@ -37,7 +37,7 @@ export async function previewAndPlace(args: {
 
 	await placePr(args.prNumber, args.title, body, options, attachments);
 
-	if (decision.autoMerge === true) enableAutoMerge();
+	if (decision.autoMerge === true) enableAutoMerge(options.baseRepo);
 
-	await chainAfterRaise(args.prNumber, decision);
+	await chainAfterRaise(args.prNumber, decision, options.baseRepo);
 }

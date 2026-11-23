@@ -82,9 +82,9 @@ export function getCurrentPrNodeId(): string {
 	}
 }
 
-export function findCurrentPrNumber(): number | null {
+export function findCurrentPrNumber(baseRepo?: BaseRepoMode): number | null {
 	try {
-		return viewCurrentPr<{ number: number }>("number").number;
+		return viewCurrentPr<{ number: number }>("number", baseRepo).number;
 	} catch (error) {
 		if (error instanceof Error && error.message.includes("no pull requests")) {
 			return null;

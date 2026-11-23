@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
-import { getRepoInfo, isGhNotInstalled } from "./shared";
+import { getBaseRepoInfo } from "./getBaseRepoInfo";
+import { isGhNotInstalled } from "./shared";
 import type { PrsOptions, PullRequest } from "./types";
 import { displayPaginated } from "./prs/displayPaginated";
 
@@ -7,7 +8,7 @@ export async function prs(options: PrsOptions): Promise<void> {
 	const state = options.open ? "open" : options.closed ? "closed" : "all";
 
 	try {
-		const { org, repo } = getRepoInfo();
+		const { org, repo } = getBaseRepoInfo();
 		const result = execFileSync(
 			"gh",
 			[

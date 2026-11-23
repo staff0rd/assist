@@ -3,7 +3,8 @@ import { azureDevopsThreadActions } from "./azureDevops/azureDevopsThreadActions
 import { replyToComment } from "./replyToComment";
 import { rejectHarnessNames } from "./rejectHarnessNames";
 import { reviewProposedPrComment } from "./reviewProposedPrComment";
-import { getCurrentPrNumber, getRepoInfo, isGhNotInstalled } from "./shared";
+import { getBaseRepoInfo } from "./getBaseRepoInfo";
+import { getCurrentPrNumber, isGhNotInstalled } from "./shared";
 
 export async function reply(commentId: number, body: string): Promise<void> {
 	rejectHarnessNames("Body", body);
@@ -20,7 +21,7 @@ export async function reply(commentId: number, body: string): Promise<void> {
 
 	try {
 		const prNumber = getCurrentPrNumber();
-		const { org, repo } = getRepoInfo();
+		const { org, repo } = getBaseRepoInfo();
 
 		replyToComment(org, repo, prNumber, commentId, body);
 		console.log("Reply posted successfully.");

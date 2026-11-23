@@ -51,5 +51,5 @@ export async function placePr(
 	}
 	process.stdout.write(runGhWithAttachments(args, attachments));
 
-	await recordPrActivity();
+	await recordPrActivity(options.baseRepo);
 }

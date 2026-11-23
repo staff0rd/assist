@@ -1,5 +1,6 @@
 import type { PreviewAttachment } from "../sessions/shared/PreviewAttachment";
 import { attachArgs } from "./attachArgs";
+import type { BaseRepoMode } from "./resolveBaseRepo";
 
 export type CreateOptions = {
 	title?: string;
@@ -14,6 +15,7 @@ export type CreateOptions = {
 	milestone?: string;
 	repo?: string;
 	forkHead?: string;
+	baseRepo?: BaseRepoMode;
 };
 
 export function buildCreateArgs(

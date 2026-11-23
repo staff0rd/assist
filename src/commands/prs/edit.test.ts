@@ -26,6 +26,9 @@ const mockGetCurrentPr = vi.fn();
 vi.mock("./shared", () => ({
 	getCurrentPr: () => mockGetCurrentPr(),
 }));
+vi.mock("./getBaseRepoInfo", () => ({
+	getBaseRepoInfo: () => ({ org: "acme", repo: "widgets" }),
+}));
 
 const mockRequestPreviewDecision = vi.fn();
 vi.mock("../sessions/shared/requestPreviewDecision", () => ({
@@ -47,6 +50,13 @@ const EXISTING =
 	"## What\n\nold what\n\n## Why\n\nold why\n\n## How\n\nold how";
 
 const GH_OPTIONS = { encoding: "utf8", stdio: ["inherit", "pipe", "inherit"] };
+
+const REPO_ARGS = ["-R", "acme/widgets"];
+
+function sentBody(): string {
+	const args = mockExecFileSync.mock.calls[0][1] as string[];
+	return args[args.indexOf("--body") + 1];
+}
 
 beforeEach(() => {
 	vi.clearAllMocks();
@@ -78,6 +88,7 @@ describe("edit", () => {
 				"42",
 				"--body",
 				"## What\n\nnew what\n\n## Why\n\nold why\n\n## How\n\nold how",
+				...REPO_ARGS,
 			],
 			GH_OPTIONS,
 		);
@@ -96,6 +107,7 @@ describe("edit", () => {
 				"feat: new title",
 				"--body",
 				"## What\n\nold what\n\n## Why\n\nold why\n\n## How\n\nold how",
+				...REPO_ARGS,
 			],
 			GH_OPTIONS,
 		);
@@ -138,9 +150,7 @@ describe("edit", () => {
 
 		await edit({ why: "new why" });
 
-		const body = (mockExecFileSync.mock.calls[0][1] as string[]).at(
-			-1,
-		) as string;
+		const body = sentBody();
 		expect(body).toContain(
 			"## Why\n\nnew why\n\nResolves https://example.atlassian.net/browse/BAD-1",
 		);
@@ -155,9 +165,7 @@ describe("edit", () => {
 
 		await edit({ resolves: ["BAD-2"] });
 
-		const body = (mockExecFileSync.mock.calls[0][1] as string[]).at(
-			-1,
-		) as string;
+		const body = sentBody();
 		expect(body).toContain(
 			"Resolves https://example.atlassian.net/browse/BAD-2",
 		);
@@ -224,6 +232,7 @@ describe("edit", () => {
 					`## What\n\nw\n\n## Screenshots\n\n### Profile\n\n| Light |  |\n| --- | --- |\n| ![Light](${path}) |  |`,
 					"--attach",
 					path,
+					...REPO_ARGS,
 				],
 				{ encoding: "utf8", stdio: ["inherit", "pipe", "pipe"] },
 			);
@@ -305,6 +314,7 @@ describe("edit", () => {
 					"42",
 					"--body",
 					"## What\n\nnew what\n\n## Why\n\nold why\n\n## How\n\nold how",
+					...REPO_ARGS,
 				],
 				GH_OPTIONS,
 			);
@@ -333,6 +343,7 @@ describe("edit", () => {
 					"/s/a.png",
 					"--attach",
 					"/s/b.mp4",
+					...REPO_ARGS,
 				],
 				{ encoding: "utf8", stdio: ["inherit", "pipe", "pipe"] },
 			);
