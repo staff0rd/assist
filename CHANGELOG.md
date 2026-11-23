@@ -1,3 +1,10 @@
+## [0.1258.1](https://github.com/staff0rd/assist/compare/v0.1258.0...v0.1258.1) (2026-11-23)
+
+
+### Bug Fixes
+
+* autopilot page shows the live run ([62d85f0](https://github.com/staff0rd/assist/commit/62d85f0fee0c651641325be5907ed5fd8948c27c))
+
 # [0.1258.0](https://github.com/staff0rd/assist/compare/v0.1257.0...v0.1258.0) (2026-11-23)
 
 
