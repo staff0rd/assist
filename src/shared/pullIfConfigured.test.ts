@@ -21,6 +21,11 @@ vi.mock("./loadConfig", async () =>
 	).loadConfigMock(),
 );
 
+const mockEnsureBaseRepoRemote = vi.fn(() => "origin");
+vi.mock("../commands/prs/ensureBaseRepoRemote", () => ({
+	ensureBaseRepoRemote: () => mockEnsureBaseRepoRemote(),
+}));
+
 const mockExecSync = vi.mocked(execSync);
 const mockExecFile = vi.mocked(execFile);
 const mockExecFileSync = vi.mocked(execFileSync);
@@ -33,6 +38,7 @@ describe("pullIfConfigured", () => {
 
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockEnsureBaseRepoRemote.mockReturnValue("origin");
 		exitSpy = vi.spyOn(process, "exit").mockImplementation((() => {
 			throw new Error("process.exit");
 		}) as never);
@@ -188,6 +194,64 @@ describe("pullIfConfigured", () => {
 				expect.stringContaining("there is no origin/trunk"),
 			);
 			expect(exitSpy).not.toHaveBeenCalled();
+		});
+
+		describe("in a fork clone", () => {
+			function setupFork(failing: string[]) {
+				const warnSpy = setup(failing);
+				mockEnsureBaseRepoRemote.mockReturnValue("upstream");
+				mockExecFileSync.mockImplementation(((_file: string, args: string[]) =>
+					args.join(" ") === "ls-remote --symref upstream HEAD"
+						? "ref: refs/heads/develop\tHEAD\n"
+						: "") as never);
+				return warnSpy;
+			}
+
+			it("fetches the parent remote and fast-forwards onto its default branch", async () => {
+				const warnSpy = setupFork([]);
+
+				await pullIfConfigured();
+
+				expect(mockExecSync).toHaveBeenCalledWith("git fetch upstream", {
+					stdio: "ignore",
+				});
+				expect(mockExecFileSync).toHaveBeenCalledWith(
+					"git",
+					["merge", "--ff-only", "upstream/develop"],
+					{ stdio: ["inherit", "inherit", "pipe"] },
+				);
+				expect(warnSpy).not.toHaveBeenCalled();
+			});
+
+			it("skips when the parent remote cannot be fetched", async () => {
+				const warnSpy = setupFork(["git fetch upstream"]);
+
+				await pullIfConfigured();
+
+				expect(mockExecFileSync).not.toHaveBeenCalledWith(
+					"git",
+					expect.arrayContaining(["merge"]),
+					expect.anything(),
+				);
+				expect(warnSpy).toHaveBeenCalledWith(
+					expect.stringContaining("fetching the parent repo failed"),
+				);
+			});
+		});
+
+		it("falls back to origin when the base repo cannot be resolved", async () => {
+			setup([]);
+			mockEnsureBaseRepoRemote.mockImplementation(() => {
+				throw new Error("not a fork");
+			});
+
+			await pullIfConfigured();
+
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"git",
+				["merge", "--ff-only", "origin/trunk"],
+				{ stdio: ["inherit", "inherit", "pipe"] },
+			);
 		});
 	});
 
