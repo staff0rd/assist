@@ -1,3 +1,4 @@
+import { resolveBaseRepo } from "../prs/resolveBaseRepo";
 import { azureDevopsRemote } from "./azureDevopsRemote";
 
 type CliCommand = { file: string; args: string[] };
@@ -14,25 +15,35 @@ function branchFromRef(stdout: string): string | null {
 	return (ref.startsWith(HEADS) ? ref.slice(HEADS.length) : ref) || null;
 }
 
+function baseRepoArgs(cwd: string): string[] {
+	const base = resolveBaseRepo(undefined, cwd)?.base;
+	return base ? ["-R", `${base.org}/${base.repo}`] : [];
+}
+
+function ghCommands(number: string, cwd: string): PrCliCommands {
+	const repo = baseRepoArgs(cwd);
+	return {
+		headBranch: {
+			file: "gh",
+			args: [
+				"pr",
+				"view",
+				number,
+				"--json",
+				"headRefName",
+				"-q",
+				".headRefName",
+				...repo,
+			],
+			parse: (stdout) => stdout.trim() || null,
+		},
+		checkout: { file: "gh", args: ["pr", "checkout", number, ...repo] },
+	};
+}
+
 export function prCliCommands(number: string, cwd: string): PrCliCommands {
 	const azure = azureDevopsRemote(cwd);
-	if (!azure)
-		return {
-			headBranch: {
-				file: "gh",
-				args: [
-					"pr",
-					"view",
-					number,
-					"--json",
-					"headRefName",
-					"-q",
-					".headRefName",
-				],
-				parse: (stdout) => stdout.trim() || null,
-			},
-			checkout: { file: "gh", args: ["pr", "checkout", number] },
-		};
+	if (!azure) return ghCommands(number, cwd);
 	return {
 		headBranch: {
 			file: "az",

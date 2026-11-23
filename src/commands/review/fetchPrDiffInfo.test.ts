@@ -1,7 +1,8 @@
 import { execFileSync, execSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
-import { fetchPrChangedFiles, fetchPrDiffInfo } from "./fetchPrDiffInfo";
+import { fetchPrDiffInfo } from "./fetchPrDiffInfo";
+import { fetchPrChangedFiles } from "./fetchPrChangedFiles";
 
 vi.mock("node:child_process", async () =>
 	(

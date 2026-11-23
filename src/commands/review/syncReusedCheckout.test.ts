@@ -70,7 +70,10 @@ function reusedPrCheckout() {
 
 function sync(clone: string): Promise<void> {
 	vi.spyOn(process, "cwd").mockReturnValue(clone);
-	return syncReusedCheckout("7", "feat", "refs/pull/7/head");
+	return syncReusedCheckout("7", "feat", {
+		remote: "origin",
+		ref: "refs/pull/7/head",
+	});
 }
 
 describe("syncReusedCheckout", () => {

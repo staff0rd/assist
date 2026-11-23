@@ -11,13 +11,17 @@ function slug({ org, repo }: Repo): string {
 	return `${org}/${repo}`;
 }
 
-function run(file: string, args: string[]): string {
-	return execFileSync(file, args, {
-		encoding: "utf8",
-		stdio: ["pipe", "pipe", "pipe"],
-		windowsHide: true,
-		timeout: 15_000,
-	}).trim();
+type Run = (file: string, args: string[]) => string;
+
+function runIn(cwd: string | undefined): Run {
+	return (file, args) =>
+		execFileSync(file, args, {
+			encoding: "utf8",
+			stdio: ["pipe", "pipe", "pipe"],
+			windowsHide: true,
+			timeout: 15_000,
+			cwd,
+		}).trim();
 }
 
 function parseCachedParent(value: string | undefined): ForkParent | null {
@@ -26,7 +30,7 @@ function parseCachedParent(value: string | undefined): ForkParent | null {
 	return org && repo ? { org, repo } : null;
 }
 
-function readCached(origin: Repo): ForkParent | null {
+function readCached(origin: Repo, run: Run): ForkParent | null {
 	try {
 		const cached = run("git", ["config", "--local", "--get", CACHE_KEY]);
 		const [cachedOrigin, cachedParent] = cached.split(" ");
@@ -37,7 +41,11 @@ function readCached(origin: Repo): ForkParent | null {
 	}
 }
 
-function writeCached(origin: Repo, parent: Repo | typeof NOT_A_FORK): void {
+function writeCached(
+	origin: Repo,
+	parent: Repo | typeof NOT_A_FORK,
+	run: Run,
+): void {
 	const cached = parent === NOT_A_FORK ? NOT_A_FORK : slug(parent);
 	try {
 		run("git", ["config", "--local", CACHE_KEY, `${slug(origin)} ${cached}`]);
@@ -46,7 +54,7 @@ function writeCached(origin: Repo, parent: Repo | typeof NOT_A_FORK): void {
 	}
 }
 
-function lookUp(origin: Repo): ForkParent {
+function lookUp(origin: Repo, run: Run): ForkParent {
 	try {
 		const { parent } = JSON.parse(
 			run("gh", ["repo", "view", slug(origin), "--json", "parent"]),
@@ -58,10 +66,11 @@ function lookUp(origin: Repo): ForkParent {
 	}
 }
 
-export function findForkParent(origin: Repo): ForkParent {
-	const cached = readCached(origin);
+export function findForkParent(origin: Repo, cwd?: string): ForkParent {
+	const run = runIn(cwd);
+	const cached = readCached(origin, run);
 	if (cached) return cached;
-	const parent = lookUp(origin);
-	if (parent !== "lookup-failed") writeCached(origin, parent);
+	const parent = lookUp(origin, run);
+	if (parent !== "lookup-failed") writeCached(origin, parent, run);
 	return parent;
 }

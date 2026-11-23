@@ -1,12 +1,13 @@
 import { execFileSync } from "node:child_process";
-import { getRepoInfo } from "../prs/shared";
+import { baseRepoFetchSource } from "../prs/baseRepoFetchSource";
+import { getBaseRepoInfo } from "../prs/getBaseRepoInfo";
 
 export function fetchPrDiff(
 	prNumber: number,
 	baseSha: string,
 	headSha: string,
 ): string {
-	const { org, repo } = getRepoInfo();
+	const { org, repo } = getBaseRepoInfo();
 	try {
 		return execFileSync(
 			"gh",
@@ -34,7 +35,7 @@ function isDiffTooLarge(error: unknown): boolean {
 
 function fetchDiffViaGit(baseSha: string, headSha: string): string {
 	try {
-		execFileSync("git", ["fetch", "origin", baseSha, headSha], {
+		execFileSync("git", ["fetch", baseRepoFetchSource(), baseSha, headSha], {
 			stdio: "ignore",
 		});
 	} catch {

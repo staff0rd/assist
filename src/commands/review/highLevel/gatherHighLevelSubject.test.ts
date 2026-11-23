@@ -10,8 +10,9 @@ import { highLevelSlicesPath } from "./highLevelSlicesPath";
 import type { HighLevelFile } from "./types";
 import { writeJsonFile } from "./writeJsonFile";
 
-vi.mock("../../prs/shared", () => ({
-	getRepoInfo: () => ({ org: "org", repo: "repo" }),
+const mockGetBaseRepoInfo = vi.fn();
+vi.mock("../../prs/getBaseRepoInfo", () => ({
+	getBaseRepoInfo: () => mockGetBaseRepoInfo(),
 }));
 vi.mock("../../../shared/loadConfig", () => ({ loadConfig: () => ({}) }));
 vi.mock("./fetchHighLevelPr", () => ({ fetchHighLevelPr: vi.fn() }));
@@ -62,6 +63,7 @@ beforeEach(() => {
 	process.env.ASSIST_STORE_DIR = mkdtempSync(
 		join(tmpdir(), "assist-high-level-subject-"),
 	);
+	mockGetBaseRepoInfo.mockReturnValue({ org: "org", repo: "repo" });
 	vi.mocked(fetchHighLevelFiles).mockReturnValue(files);
 	vi.mocked(fetchFileAtSha).mockResolvedValue('it("works", () => {});');
 });
