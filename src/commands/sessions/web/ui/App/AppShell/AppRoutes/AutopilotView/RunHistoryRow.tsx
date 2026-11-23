@@ -3,6 +3,14 @@ import type { AutopilotTick } from "../../../../../../daemon/autopilot/Autopilot
 import { itemRowSx } from "./itemRowSx";
 import { lastRunHeading } from "./lastRunHeading";
 
+const rowSx = {
+	display: "grid",
+	gap: 0.75,
+	px: 2,
+	py: 1.5,
+	"& + &": { borderTop: 1, borderColor: "divider" },
+} as const;
+
 const fieldsSx = {
 	display: "grid",
 	gridTemplateColumns: "auto 1fr",
@@ -20,9 +28,18 @@ const LABELS = [
 export function RunHistoryRow({ run }: { run: AutopilotTick }) {
 	const { summary } = run;
 	return (
-		<Box sx={[itemRowSx.row, { gridTemplateColumns: "1fr" }]}>
-			<Box sx={{ fontWeight: 500 }}>{lastRunHeading(run)}</Box>
-			{summary ? (
+		<Box sx={rowSx}>
+			<Box>
+				<Box component="span" sx={{ fontWeight: 500 }}>
+					{lastRunHeading(run)}
+				</Box>
+				{!summary && (
+					<Box component="span" sx={{ color: "text.secondary" }}>
+						{" · no summary recorded"}
+					</Box>
+				)}
+			</Box>
+			{summary && (
 				<Box sx={fieldsSx}>
 					{LABELS.map(([key, label]) => (
 						<Box key={key} sx={{ display: "contents" }}>
@@ -41,8 +58,6 @@ export function RunHistoryRow({ run }: { run: AutopilotTick }) {
 						</Box>
 					))}
 				</Box>
-			) : (
-				<Box sx={itemRowSx.line}>The run recorded no summary.</Box>
 			)}
 		</Box>
 	);

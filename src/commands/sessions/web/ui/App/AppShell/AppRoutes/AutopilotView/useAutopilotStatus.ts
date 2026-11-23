@@ -12,13 +12,15 @@ const POLL_MS = 15_000;
 
 type AutopilotStatusState =
 	| { loading: true }
-	| ({ loading: false } & ResolvedAutopilotStatus);
+	| ({ loading: false; cwd: string } & ResolvedAutopilotStatus);
+
+const LOADING: AutopilotStatusState = { loading: true };
 
 export function useAutopilotStatus(cwd: string) {
 	const node = useApiNode();
 	const localNode = useNodeSelectionContext().nodes?.local;
 	const { cloneOn } = useRepoSelectionContext();
-	const [state, setState] = useState<AutopilotStatusState>({ loading: true });
+	const [state, setState] = useState<AutopilotStatusState>(LOADING);
 
 	const refresh = useCallback(async () => {
 		if (!cwd) return;
@@ -27,7 +29,7 @@ export function useAutopilotStatus(cwd: string) {
 			localNode,
 			(repoCwd, onNode) => cloneOn(repoCwd, onNode),
 		);
-		setState({ loading: false, ...resolved });
+		setState({ loading: false, cwd, ...resolved });
 	}, [cwd, node, localNode, cloneOn]);
 
 	useEffect(() => {
@@ -46,5 +48,8 @@ export function useAutopilotStatus(cwd: string) {
 		[],
 	);
 
-	return { state, refresh, patch };
+	/* why: until the switched-to repo's status arrives, the previous repo's
+	 * status (often "not configured") must not show under the new repo's name. */
+	const current = state.loading || state.cwd === cwd ? state : LOADING;
+	return { state: current, refresh, patch };
 }
