@@ -4,6 +4,7 @@ import type { AssistConfig } from "../../shared/types";
 import { execCommit } from "./execCommit";
 import { moveOffPlaceholder } from "./moveOffPlaceholder";
 import { pushCommit } from "./pushCommit";
+import { PushFailedError } from "./PushFailedError";
 import { abortOnConflicts } from "./abortOnConflicts";
 import { commitStaged } from "./commitStaged";
 import { pullKeepingIndex } from "./pullKeepingIndex";
@@ -28,6 +29,7 @@ vi.mock("./collectCommitRefs", () => ({
 	collectCommitRefs: () => [{ kind: "commit", ref: "65888b3eb" }],
 }));
 vi.mock("./pushCommit", () => ({ pushCommit: vi.fn() }));
+vi.mock("../../shared/tryGit", () => ({ tryGit: vi.fn(() => "a1b2c3d") }));
 vi.mock("./moveOffPlaceholder", () => ({ moveOffPlaceholder: vi.fn() }));
 
 const recordMock = vi.mocked(recordSessionRefs);
@@ -53,6 +55,19 @@ describe("execCommit", () => {
 		expect(recordMock).toHaveBeenCalledWith([
 			{ kind: "commit", ref: "65888b3eb" },
 		]);
+		expect(process.exit).toHaveBeenCalledWith(1);
+	});
+
+	it("says the commit was not pushed when the push fails", async () => {
+		pushMock.mockImplementation(() => {
+			throw new PushFailedError("rebasing onto origin/main failed");
+		});
+
+		await execCommit([], "fix: card layout", config);
+
+		expect(console.error).toHaveBeenCalledWith(
+			"Committed a1b2c3d locally but NOT pushed: rebasing onto origin/main failed",
+		);
 		expect(process.exit).toHaveBeenCalledWith(1);
 	});
 

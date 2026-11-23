@@ -1,54 +1,74 @@
-import { execFileSync } from "node:child_process";
+import { spawnSync } from "node:child_process";
+import { tryGit } from "../../shared/tryGit";
+import { PushFailedError } from "./PushFailedError";
+import {
+	type PushTarget,
+	pushTargetForRenamedUpstream,
+} from "./pushTargetForRenamedUpstream";
 
-const HEADS_PREFIX = "refs/heads/";
-
-type PushTarget = { remote: string; branch: string; setUpstream: boolean };
+const MAX_PUSH_ATTEMPTS = 3;
+const UPSTREAM_MOVED = /\[rejected\].*\((fetch first|non-fast-forward)\)/;
 
 export function pushCommit(trunkMode: boolean): void {
 	const target = pushTargetForRenamedUpstream(trunkMode);
-	const args = target
-		? [
-				"push",
-				...(target.setUpstream ? ["--set-upstream"] : []),
-				target.remote,
-				`HEAD:${target.branch}`,
-			]
-		: ["push"];
-	execFileSync("git", args, { stdio: "inherit" });
-}
-
-function pushTargetForRenamedUpstream(trunkMode: boolean): PushTarget | null {
-	const branch = gitOrNull("symbolic-ref", "--short", "HEAD");
-	if (!branch) return null;
-	const remote = gitOrNull("config", "--get", `branch.${branch}.remote`);
-	const merge = gitOrNull("config", "--get", `branch.${branch}.merge`);
-	if (!remote || !merge) return null;
-	const upstream = merge.startsWith(HEADS_PREFIX)
-		? merge.slice(HEADS_PREFIX.length)
-		: merge;
-	if (upstream === branch) return null;
-	return trunkMode
-		? landOnTrackedMainline(remote, upstream)
-		: raiseOwnRemoteBranch(remote, branch);
-}
-
-function landOnTrackedMainline(remote: string, upstream: string): PushTarget {
-	return { remote, branch: upstream, setUpstream: false };
-}
-
-function raiseOwnRemoteBranch(remote: string, branch: string): PushTarget {
-	return { remote, branch, setUpstream: true };
-}
-
-function gitOrNull(...args: string[]): string | null {
-	try {
-		return (
-			execFileSync("git", args, {
-				encoding: "utf8",
-				stdio: ["pipe", "pipe", "pipe"],
-			}).trim() || null
-		);
-	} catch {
-		return null;
+	for (let attempt = 1; ; attempt++) {
+		const stderr = runPush(target);
+		if (stderr === null) return;
+		if (!UPSTREAM_MOVED.test(stderr)) {
+			throw new PushFailedError(firstGitError(stderr));
+		}
+		if (attempt === MAX_PUSH_ATTEMPTS) {
+			throw new PushFailedError(
+				`push was still rejected after ${MAX_PUSH_ATTEMPTS} attempts because the upstream kept moving`,
+			);
+		}
+		rebaseOntoUpstream(target);
 	}
+}
+
+function pushArgs(target: PushTarget | null): string[] {
+	if (!target) return ["push"];
+	return [
+		"push",
+		...(target.setUpstream ? ["--set-upstream"] : []),
+		target.remote,
+		`HEAD:${target.branch}`,
+	];
+}
+
+function runPush(target: PushTarget | null): string | null {
+	const result = spawnSync("git", pushArgs(target), {
+		encoding: "utf8",
+		stdio: ["inherit", "inherit", "pipe"],
+	});
+	const stderr = result.stderr ?? "";
+	process.stderr.write(stderr);
+	if (result.status === 0) return null;
+	return stderr || (result.error?.message ?? "git push failed");
+}
+
+function rebaseOntoUpstream(target: PushTarget | null): void {
+	const source = target ? [target.remote, target.branch] : [];
+	console.log(
+		"Push rejected because the upstream moved; rebasing and retrying",
+	);
+	const result = spawnSync(
+		"git",
+		["pull", "--rebase", "--autostash", ...source],
+		{ stdio: "inherit" },
+	);
+	if (result.status === 0) return;
+	tryGit("rebase", "--abort");
+	throw new PushFailedError(
+		`rebasing onto ${source.join("/") || "the upstream"} failed`,
+	);
+}
+
+function firstGitError(stderr: string): string {
+	const lines = stderr.split("\n").map((line) => line.trim());
+	return (
+		lines.find((line) => /^(error|fatal):/.test(line)) ??
+		lines.find(Boolean) ??
+		"git push failed"
+	);
 }

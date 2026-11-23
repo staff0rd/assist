@@ -1,6 +1,7 @@
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
+import { PushFailedError } from "./PushFailedError";
 import { pushCommit } from "./pushCommit";
 
 vi.mock("node:child_process", async () =>
@@ -12,6 +13,32 @@ vi.mock("node:child_process", async () =>
 );
 
 const mockExecFileSync = vi.mocked(execFileSync);
+const mockSpawnSync = vi.mocked(spawnSync);
+
+const REJECTED =
+	"To github.com:o/r.git\n ! [rejected]        HEAD -> main (fetch first)\nerror: failed to push some refs\n";
+
+type SpawnResult = { status: number; stderr?: string };
+
+function spawnResults(push: SpawnResult[], pull: SpawnResult[] = []): void {
+	mockSpawnSync.mockImplementation(((_file: string, args: string[]) => {
+		const queue = args[0] === "push" ? push : pull;
+		return { stderr: "", ...(queue.shift() ?? { status: 0 }) };
+	}) as never);
+}
+
+const spawned = (command: string) =>
+	mockSpawnSync.mock.calls
+		.filter(([file, args]) => file === "git" && args?.[0] === command)
+		.map(([, args]) => args);
+
+const pushed = () => spawned("push");
+
+const trunkState = {
+	"git symbolic-ref --short HEAD": "assist-2\n",
+	"git config --get branch.assist-2.remote": "origin\n",
+	"git config --get branch.assist-2.merge": "refs/heads/main\n",
+};
 
 type GitOutputs = Record<string, string>;
 
@@ -24,13 +51,11 @@ function gitState(outputs: GitOutputs): void {
 	}) as never);
 }
 
-const pushed = () =>
-	mockExecFileSync.mock.calls
-		.filter(([file, args]) => file === "git" && args?.[0] === "push")
-		.map(([, args]) => args);
-
 beforeEach(() => {
 	vi.clearAllMocks();
+	vi.spyOn(console, "log").mockImplementation(() => {});
+	vi.spyOn(process.stderr, "write").mockImplementation(() => true);
+	spawnResults([]);
 });
 
 describe("pushCommit", () => {
@@ -99,6 +124,73 @@ describe("pushCommit", () => {
 			pushCommit(true);
 
 			expect(pushed()).toEqual([["push"]]);
+		});
+	});
+
+	describe("when the push is rejected because the upstream moved", () => {
+		it("should rebase onto the push target and retry", () => {
+			gitState(trunkState);
+			spawnResults([{ status: 1, stderr: REJECTED }, { status: 0 }]);
+
+			pushCommit(true);
+
+			expect(spawned("pull")).toEqual([
+				["pull", "--rebase", "--autostash", "origin", "main"],
+			]);
+			expect(pushed()).toEqual([
+				["push", "origin", "HEAD:main"],
+				["push", "origin", "HEAD:main"],
+			]);
+		});
+
+		it("should give up after a bounded number of attempts", () => {
+			gitState(trunkState);
+			spawnResults([
+				{ status: 1, stderr: REJECTED },
+				{ status: 1, stderr: REJECTED },
+				{ status: 1, stderr: REJECTED },
+				{ status: 0 },
+			]);
+
+			expect(() => pushCommit(true)).toThrow(
+				new PushFailedError(
+					"push was still rejected after 3 attempts because the upstream kept moving",
+				),
+			);
+			expect(pushed()).toHaveLength(3);
+			expect(spawned("pull")).toHaveLength(2);
+		});
+
+		it("should abort the rebase and fail when it conflicts", () => {
+			gitState(trunkState);
+			spawnResults([{ status: 1, stderr: REJECTED }], [{ status: 1 }]);
+
+			expect(() => pushCommit(true)).toThrow(
+				new PushFailedError("rebasing onto origin/main failed"),
+			);
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"git",
+				["rebase", "--abort"],
+				expect.anything(),
+			);
+			expect(pushed()).toHaveLength(1);
+		});
+	});
+
+	describe("when the push fails for another reason", () => {
+		it("should fail without rebasing, naming git's error", () => {
+			gitState(trunkState);
+			spawnResults([
+				{
+					status: 128,
+					stderr: "fatal: Could not read from remote repository.\n",
+				},
+			]);
+
+			expect(() => pushCommit(true)).toThrow(
+				new PushFailedError("fatal: Could not read from remote repository."),
+			);
+			expect(spawned("pull")).toEqual([]);
 		});
 	});
 });
