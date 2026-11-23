@@ -1,3 +1,10 @@
+# [0.1266.0](https://github.com/staff0rd/assist/compare/v0.1265.0...v0.1266.0) (2026-11-23)
+
+
+### Features
+
+* autopilot tab in the iOS app ([b4fa0bb](https://github.com/staff0rd/assist/commit/b4fa0bb16030d63f0ab60590f62f8189339f0cc1))
+
 # [0.1265.0](https://github.com/staff0rd/assist/compare/v0.1264.2...v0.1265.0) (2026-11-23)
 
 
