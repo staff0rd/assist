@@ -1,3 +1,10 @@
+# [0.1267.0](https://github.com/staff0rd/assist/compare/v0.1266.0...v0.1267.0) (2026-11-23)
+
+
+### Features
+
+* autopilot running/delivered on phone ([a811018](https://github.com/staff0rd/assist/commit/a8110187701c6b4547056384338195b451263afd))
+
 # [0.1266.0](https://github.com/staff0rd/assist/compare/v0.1265.0...v0.1266.0) (2026-11-23)
 
 
