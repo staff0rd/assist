@@ -1,60 +1,33 @@
 import { useCallback, useEffect, useState } from "react";
-import type { AutopilotStatus } from "../../../../../../daemon/autopilot/AutopilotStatus";
-import type { AutopilotItemView } from "../../../../../autopilot/AutopilotItemView";
-import { apiFetch } from "../../../../apiFetch";
 import { useApiNode } from "../../../../useApiNode";
-import { withNode } from "../../../../withNode";
+import { useNodeSelectionContext } from "../../../../useNodeSelectionContext";
+import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
+import {
+	type ResolvedAutopilotStatus,
+	resolveAutopilotStatus,
+} from "./resolveAutopilotStatus";
 
 const POLL_MS = 15_000;
 
 type AutopilotStatusState =
 	| { loading: true }
-	| {
-			loading: false;
-			status: AutopilotStatus | null;
-			items: AutopilotItemView[];
-			error?: string;
-	  };
-
-async function fetchStatus(
-	cwd: string,
-	node?: string,
-): Promise<AutopilotStatusState> {
-	try {
-		const res = await apiFetch(
-			withNode(`/api/autopilot/status?cwd=${encodeURIComponent(cwd)}`, node),
-		);
-		const body = await res.json().catch(() => ({}));
-		if (!res.ok)
-			return {
-				loading: false,
-				status: null,
-				items: [],
-				error: `Couldn't read the schedule: ${body.error ?? `HTTP ${res.status}`}`,
-			};
-		return {
-			loading: false,
-			status: body.status ?? null,
-			items: body.items ?? [],
-		};
-	} catch (error) {
-		return {
-			loading: false,
-			status: null,
-			items: [],
-			error: `Couldn't read the schedule: ${String(error)}`,
-		};
-	}
-}
+	| ({ loading: false } & ResolvedAutopilotStatus);
 
 export function useAutopilotStatus(cwd: string) {
 	const node = useApiNode();
+	const localNode = useNodeSelectionContext().nodes?.local;
+	const { cloneOn } = useRepoSelectionContext();
 	const [state, setState] = useState<AutopilotStatusState>({ loading: true });
 
 	const refresh = useCallback(async () => {
 		if (!cwd) return;
-		setState(await fetchStatus(cwd, node));
-	}, [cwd, node]);
+		const resolved = await resolveAutopilotStatus(
+			{ cwd, node },
+			localNode,
+			(repoCwd, onNode) => cloneOn(repoCwd, onNode),
+		);
+		setState({ loading: false, ...resolved });
+	}, [cwd, node, localNode, cloneOn]);
 
 	useEffect(() => {
 		void refresh();
@@ -62,5 +35,5 @@ export function useAutopilotStatus(cwd: string) {
 		return () => clearInterval(timer);
 	}, [refresh]);
 
-	return { state, refresh, node };
+	return { state, refresh };
 }

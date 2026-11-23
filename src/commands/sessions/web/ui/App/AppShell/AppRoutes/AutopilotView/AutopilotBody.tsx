@@ -6,6 +6,7 @@ import { AutopilotItems } from "./AutopilotItems";
 import { ScheduleBar } from "./ScheduleBar";
 
 export function AutopilotBody({
+	cwd,
 	status,
 	items,
 	busy,
@@ -13,6 +14,7 @@ export function AutopilotBody({
 	onStop,
 	onOpen,
 }: {
+	cwd: string;
 	status: AutopilotStatus | null;
 	items: AutopilotItemView[];
 	busy: boolean;
@@ -32,7 +34,7 @@ export function AutopilotBody({
 					<ScheduleBar status={status} />
 					<AutopilotItems
 						items={items}
-						cwd={status.cwd}
+						cwd={cwd}
 						busy={busy}
 						onStop={onStop}
 						onOpen={onOpen}
