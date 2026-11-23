@@ -1,3 +1,10 @@
+## [0.1256.2](https://github.com/staff0rd/assist/compare/v0.1256.1...v0.1256.2) (2026-11-23)
+
+
+### Bug Fixes
+
+* correct autopilot harness comment ([7abcfd4](https://github.com/staff0rd/assist/commit/7abcfd41a3ebdb1e2a25d116bc645a1adefe564e))
+
 ## [0.1256.1](https://github.com/staff0rd/assist/compare/v0.1256.0...v0.1256.1) (2026-11-22)
 
 
