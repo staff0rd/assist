@@ -13,6 +13,7 @@ export function AutopilotBody({
 	problem,
 	onStop,
 	onOpen,
+	onResume,
 }: {
 	cwd: string;
 	status: AutopilotStatus | null;
@@ -21,6 +22,7 @@ export function AutopilotBody({
 	problem?: string;
 	onStop: (itemId?: number) => void;
 	onOpen: (sessionId: string) => void;
+	onResume: (itemId: number) => void;
 }) {
 	return (
 		<>
@@ -39,6 +41,7 @@ export function AutopilotBody({
 						busy={busy}
 						onStop={onStop}
 						onOpen={onOpen}
+						onResume={onResume}
 					/>
 				</>
 			) : (

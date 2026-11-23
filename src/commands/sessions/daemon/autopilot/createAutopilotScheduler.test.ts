@@ -208,4 +208,19 @@ describe("createAutopilotScheduler", () => {
 			error: "no autopilot run is live",
 		});
 	});
+
+	it("resumes a stalled item as an autopilot run, once no run is live", () => {
+		const scheduler = start();
+		expect(scheduler.resumeItem("/repo", 1867)).toEqual({
+			ok: false,
+			error: "run s1 is still live",
+		});
+		states.s1 = "ended";
+		expect(scheduler.resumeItem("/repo", 1867)).toEqual({ ok: true });
+		expect(saved()["/repo"].ticks.at(-1)).toMatchObject({
+			outcome: "launched",
+			trigger: "manual",
+			sessionId: "s2",
+		});
+	});
 });

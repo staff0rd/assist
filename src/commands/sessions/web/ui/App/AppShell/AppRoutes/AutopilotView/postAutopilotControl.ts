@@ -1,7 +1,12 @@
 import { postJson } from "../../../postJson";
 import { withNode } from "../../../../withNode";
 
-export type AutopilotAction = "pause" | "resume" | "run" | "stop";
+export type AutopilotAction =
+	| "pause"
+	| "resume"
+	| "run"
+	| "stop"
+	| "resume-item";
 
 export async function postAutopilotControl(
 	cwd: string,

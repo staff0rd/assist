@@ -1,4 +1,5 @@
 import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
 import type { AutopilotItemView } from "../../../../../autopilot/AutopilotItemView";
 import { deliveredLine } from "./deliveredLine";
 import { deliveredPill } from "./deliveredPill";
@@ -9,10 +10,15 @@ import { itemRowSx } from "./itemRowSx";
 export function DeliveredRow({
 	item,
 	cwd,
+	busy,
+	onResume,
 }: {
 	item: AutopilotItemView;
 	cwd: string;
+	busy: boolean;
+	onResume: () => void;
 }) {
+	const stalled = item.status !== "done" && item.status !== "wontdo";
 	const pill = deliveredPill(item);
 	return (
 		<Box sx={itemRowSx.row}>
@@ -30,6 +36,16 @@ export function DeliveredRow({
 				>
 					{diffSize(item)}
 				</Box>
+				{stalled && (
+					<Button
+						variant="contained"
+						size="small"
+						disabled={busy}
+						onClick={onResume}
+					>
+						Resume
+					</Button>
+				)}
 			</Box>
 			{item.result && (
 				<Box sx={itemRowSx.next}>

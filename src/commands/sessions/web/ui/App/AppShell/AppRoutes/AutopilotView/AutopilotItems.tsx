@@ -12,6 +12,7 @@ export function AutopilotItems({
 	busy,
 	onStop,
 	onOpen,
+	onResume,
 }: {
 	status: AutopilotStatus;
 	items: AutopilotItemView[];
@@ -19,6 +20,7 @@ export function AutopilotItems({
 	busy: boolean;
 	onStop: (itemId?: number) => void;
 	onOpen: (sessionId: string) => void;
+	onResume: (itemId: number) => void;
 }) {
 	const { running, delivered } = splitAutopilotItems(items);
 	return (
@@ -37,7 +39,13 @@ export function AutopilotItems({
 				empty="Nothing delivered yet."
 			>
 				{delivered.map((item) => (
-					<DeliveredRow key={item.id} item={item} cwd={cwd} />
+					<DeliveredRow
+						key={item.id}
+						item={item}
+						cwd={cwd}
+						busy={busy}
+						onResume={() => onResume(item.id)}
+					/>
 				))}
 			</ItemSection>
 		</>

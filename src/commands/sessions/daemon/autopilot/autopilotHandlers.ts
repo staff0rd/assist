@@ -7,6 +7,10 @@ const actions = {
 	pause: (cwd: string) => autopilotScheduler.setPaused(cwd, true),
 	resume: (cwd: string) => autopilotScheduler.setPaused(cwd, false),
 	run: (cwd: string) => autopilotScheduler.runNow(cwd),
+	"resume-item": (cwd: string, itemId: unknown) =>
+		typeof itemId === "number"
+			? autopilotScheduler.resumeItem(cwd, itemId)
+			: { ok: false as const, error: "resume-item needs an itemId" },
 	stop: (cwd: string, itemId: unknown) =>
 		autopilotScheduler.stopItem(
 			cwd,
@@ -57,7 +61,7 @@ export const autopilotHandlers: Record<string, Handler> = {
 				type: "autopilot-control",
 				ok: false,
 				error:
-					"autopilot-control needs a cwd and an action of pause, resume, run or stop",
+					"autopilot-control needs a cwd and an action of pause, resume, run, stop or resume-item",
 			});
 			return;
 		}
