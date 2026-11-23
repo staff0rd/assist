@@ -283,6 +283,26 @@ describe("HighLevelSliceReview", () => {
 		expect(screen.queryByText("schema.graphql")).toBeNull();
 	});
 
+	it("collapses every diff in All files but keeps slice Structure open", () => {
+		localStorage.clear();
+		render(<HighLevelReviewPane preview={preview()} onDecision={vi.fn()} />);
+		fireEvent.click(area(/All files/));
+		expect(
+			screen
+				.getByRole("button", { name: "Expand src/a.ts" })
+				.getAttribute("aria-expanded"),
+		).toBe("false");
+
+		fireEvent.click(railEntry(/1Change a/));
+		fireEvent.click(area(/Structure/));
+
+		expect(
+			screen
+				.getByRole("button", { name: "Collapse src/a.ts" })
+				.getAttribute("aria-expanded"),
+		).toBe("true");
+	});
+
 	it("moves between slices with ] and [ keeping the area", () => {
 		render(<HighLevelReviewPane preview={preview()} onDecision={vi.fn()} />);
 		fireEvent.click(railEntry(/1Change a/));

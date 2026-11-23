@@ -13,6 +13,7 @@ export function HighLevelStructureView({
 	subject,
 	comments,
 	hideSummary = false,
+	collapseAllFiles = false,
 	toolbarChildren,
 }: {
 	structure: HighLevelStructure;
@@ -20,12 +21,14 @@ export function HighLevelStructureView({
 	subject: string;
 	comments?: HighLevelDiffComments | undefined;
 	hideSummary?: boolean;
+	collapseAllFiles?: boolean;
 	toolbarChildren?: ReactNode;
 }) {
 	const { offsetSx, toolbar, tree } = useHighLevelStructureView(
 		subject,
 		structure.tree,
 		collapsedPaths,
+		collapseAllFiles,
 	);
 
 	if (structure.tree.length === 0)

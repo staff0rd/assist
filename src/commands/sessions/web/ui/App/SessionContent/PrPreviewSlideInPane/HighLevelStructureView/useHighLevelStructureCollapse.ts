@@ -11,6 +11,7 @@ export function useHighLevelStructureCollapse(
 	subject: string,
 	tree: HighLevelTreeNode[],
 	collapsedPaths: string[],
+	collapseAllFiles = false,
 ) {
 	const defaults = useMemo(
 		() => highLevelCollapseDefaults(tree, collapsedPaths),
@@ -20,9 +21,13 @@ export function useHighLevelStructureCollapse(
 		() => flattenHighLevelTree(tree).map((file) => file.path),
 		[tree],
 	);
+	const defaultFiles = useMemo(
+		() => (collapseAllFiles ? new Set(filePaths) : defaults.files),
+		[collapseAllFiles, filePaths, defaults.files],
+	);
 	const dirPaths = useMemo(() => flattenHighLevelDirs(tree), [tree]);
 	const dirs = useHighLevelCollapse(subject, defaults.dirs);
-	const files = useHighLevelCollapse(`files:${subject}`, defaults.files);
+	const files = useHighLevelCollapse(`files:${subject}`, defaultFiles);
 	const bulk = highLevelStructureBulk(
 		dirs,
 		files,

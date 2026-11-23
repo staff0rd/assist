@@ -8,9 +8,15 @@ export function useHighLevelStructureView(
 	subject: string,
 	tree: HighLevelTreeNode[],
 	collapsedPaths: string[],
+	collapseAllFiles = false,
 ) {
 	const { dirs, files, fileGlobs, filePaths, bulk } =
-		useHighLevelStructureCollapse(subject, tree, collapsedPaths);
+		useHighLevelStructureCollapse(
+			subject,
+			tree,
+			collapsedPaths,
+			collapseAllFiles,
+		);
 	const { viewType, onChange } = useDiffViewType();
 	const match = useHighLevelStructureMatch(filePaths, collapsedPaths);
 	const { toolbarRef, offsetSx } = useStructureToolbarOffset();

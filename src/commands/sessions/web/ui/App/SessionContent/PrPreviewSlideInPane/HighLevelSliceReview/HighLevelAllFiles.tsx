@@ -26,7 +26,8 @@ export function HighLevelAllFiles({
 		<HighLevelStructureView
 			structure={structure}
 			collapsedPaths={payload.collapsedPaths}
-			subject={subject}
+			subject={`${subject}:all`}
+			collapseAllFiles
 			comments={comments}
 		/>
 	);
