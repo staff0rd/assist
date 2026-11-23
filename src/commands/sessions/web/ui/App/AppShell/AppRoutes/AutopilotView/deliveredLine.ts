@@ -3,8 +3,10 @@ import { stalledStage } from "./stalledStage";
 
 export function deliveredLine(item: AutopilotItemView): string {
 	if (item.delivered) return `Delivered: ${item.delivered}`;
-	if (item.status === "done") return "Delivered: no statement recorded.";
+	if (item.status === "done")
+		return "Done, but its Review recorded no Delivered statement.";
 	if (item.status === "wontdo") return "Not delivered: marked won't do.";
-	const done = item.summary ? `${item.summary} ` : "";
-	return `${done}Stalled in ${stalledStage(item)}: no session is running it, so it is not done.`;
+	const progress = `${item.donePhases} of ${item.totalPhases} phases built`;
+	const aim = item.why ? ` It set out to: ${item.why}` : "";
+	return `Not delivered: stalled in ${stalledStage(item)} with ${progress} and nothing running it.${aim}`;
 }

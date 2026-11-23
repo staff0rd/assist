@@ -9,7 +9,7 @@ const item: AutopilotItemView = {
 	status: "in-progress",
 	sessionId: null,
 	startedAt: "t",
-	summary: "Contracts cycle on every trading agent.",
+	why: "Predicts TUSK-1 +150k/h operating.",
 	phase: 3,
 	totalPhases: 2,
 	donePhases: 2,
@@ -22,7 +22,7 @@ const item: AutopilotItemView = {
 describe("deliveredLine", () => {
 	it("says what a stalled item did and that it stalled in Review", () => {
 		expect(deliveredLine(item)).toBe(
-			"Contracts cycle on every trading agent. Stalled in Review: no session is running it, so it is not done.",
+			"Not delivered: stalled in Review with 2 of 2 phases built and nothing running it. It set out to: Predicts TUSK-1 +150k/h operating.",
 		);
 		expect(deliveredPill(item).label).toBe("stalled in Review");
 	});

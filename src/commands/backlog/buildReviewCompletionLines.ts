@@ -9,7 +9,7 @@ export function buildReviewCompletionLines(
 		"/commit",
 		...(comments.some((comment) => comment.type === "why")
 			? [
-					`assist backlog delivered ${itemId} "<one line: what now works, from the user's point of view>"`,
+					`assist backlog delivered ${itemId} "<one plain-English line a non-developer understands: what now works for the user and its visible effect; no file, function, key or table names>"`,
 				]
 			: []),
 		`assist backlog done ${itemId} "<summary>"`,

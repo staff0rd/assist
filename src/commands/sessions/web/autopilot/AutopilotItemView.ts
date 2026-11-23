@@ -11,8 +11,6 @@ export type AutopilotItemView = {
 	why?: string;
 	delivered?: string;
 	result?: string;
-	/** The latest phase summary: what the item has done so far. */
-	summary?: string;
 	finishedAt?: string;
 	phase: number;
 	totalPhases: number;

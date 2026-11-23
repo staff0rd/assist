@@ -41,6 +41,18 @@ describe("toAutopilotItemView", () => {
 		});
 	});
 
+	it("never shows a phase summary as the delivered line", () => {
+		const view = toAutopilotItemView(
+			item({
+				status: "done",
+				comments: [{ text: "Commit 76379e7", timestamp: "t", type: "summary" }],
+			}),
+			recorded,
+			diff,
+		);
+		expect(view.delivered).toBeUndefined();
+	});
+
 	it("gives a done item's delivered and result lines, commits and diff", () => {
 		const view = toAutopilotItemView(
 			item({

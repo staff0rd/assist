@@ -33,7 +33,6 @@ export function toAutopilotItemView(
 		why: latest(comments, "why")?.text,
 		delivered: delivered?.text,
 		result: latest(comments, "result")?.text,
-		summary: latest(comments, "summary")?.text,
 		finishedAt: finished?.timestamp,
 		...itemPhaseProgress(item),
 		commits: (item.gitRefs ?? []).filter((ref) => ref.kind === "commit").length,
