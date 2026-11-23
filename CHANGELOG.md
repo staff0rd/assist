@@ -1,3 +1,10 @@
+## [0.1268.3](https://github.com/staff0rd/assist/compare/v0.1268.2...v0.1268.3) (2026-11-23)
+
+
+### Bug Fixes
+
+* yolo answers parallel phase questions ([d81b541](https://github.com/staff0rd/assist/commit/d81b54159a890a6de75d21822459002952c512ec))
+
 ## [0.1268.2](https://github.com/staff0rd/assist/compare/v0.1268.1...v0.1268.2) (2026-11-23)
 
 
