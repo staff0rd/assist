@@ -1,3 +1,10 @@
+# [0.1259.0](https://github.com/staff0rd/assist/compare/v0.1258.2...v0.1259.0) (2026-11-23)
+
+
+### Features
+
+* resume a stalled autopilot item ([3a63d05](https://github.com/staff0rd/assist/commit/3a63d05ce6e8da16c4aae7cbc88fc6f55ad020b2))
+
 ## [0.1258.2](https://github.com/staff0rd/assist/compare/v0.1258.1...v0.1258.2) (2026-11-23)
 
 
