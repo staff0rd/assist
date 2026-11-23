@@ -1,3 +1,10 @@
+# [0.1265.0](https://github.com/staff0rd/assist/compare/v0.1264.2...v0.1265.0) (2026-11-23)
+
+
+### Features
+
+* autopilot pauses on failure ([3d11417](https://github.com/staff0rd/assist/commit/3d114177db53f3d33c479ca54b619a55e6caa038))
+
 ## [0.1264.2](https://github.com/staff0rd/assist/compare/v0.1264.1...v0.1264.2) (2026-11-23)
 
 
