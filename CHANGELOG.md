@@ -1,3 +1,10 @@
+# [0.1261.0](https://github.com/staff0rd/assist/compare/v0.1260.1...v0.1261.0) (2026-11-23)
+
+
+### Features
+
+* autopilot tab for any configured repo ([0928fb9](https://github.com/staff0rd/assist/commit/0928fb96f5be9906a737a859dc7d17a4accec6ef))
+
 ## [0.1260.1](https://github.com/staff0rd/assist/compare/v0.1260.0...v0.1260.1) (2026-11-23)
 
 
