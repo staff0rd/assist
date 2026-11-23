@@ -1,3 +1,10 @@
+## [0.1256.3](https://github.com/staff0rd/assist/compare/v0.1256.2...v0.1256.3) (2026-11-23)
+
+
+### Bug Fixes
+
+* worktrees share their clone's autopilot ([52ae4f8](https://github.com/staff0rd/assist/commit/52ae4f8c29f283126945c0d722c874208eb75a24))
+
 ## [0.1256.2](https://github.com/staff0rd/assist/compare/v0.1256.1...v0.1256.2) (2026-11-23)
 
 
