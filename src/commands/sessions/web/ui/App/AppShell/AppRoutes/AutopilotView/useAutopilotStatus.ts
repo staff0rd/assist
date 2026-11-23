@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
+import type { AutopilotStatus } from "../../../../../../daemon/autopilot/AutopilotStatus";
 import { useApiNode } from "../../../../useApiNode";
 import { useNodeSelectionContext } from "../../../../useNodeSelectionContext";
 import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
@@ -35,5 +36,15 @@ export function useAutopilotStatus(cwd: string) {
 		return () => clearInterval(timer);
 	}, [refresh]);
 
-	return { state, refresh };
+	const patch = useCallback(
+		(update: (status: AutopilotStatus) => AutopilotStatus) =>
+			setState((current) =>
+				!current.loading && current.status
+					? { ...current, status: update(current.status) }
+					: current,
+			),
+		[],
+	);
+
+	return { state, refresh, patch };
 }

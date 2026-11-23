@@ -1,41 +1,37 @@
 import { toNodeSessionId } from "../../../../../daemon/links/splitNodeSessionId";
-import { useRepoSelectionContext } from "../../../useRepoSelectionContext";
 import { useActivateSession } from "../../../useActivateSession";
 import { PageShell } from "../../PageShell";
 import { AutopilotBody } from "./AutopilotView/AutopilotBody";
 import { AutopilotHeader } from "./AutopilotView/AutopilotHeader";
-import { useAutopilotActions } from "./AutopilotView/useAutopilotActions";
-import { useAutopilotStatus } from "./AutopilotView/useAutopilotStatus";
+import { RepoSwitcher } from "./AutopilotView/RepoSwitcher";
+import { useAutopilotPage } from "./AutopilotView/useAutopilotPage";
 
 export function AutopilotView({
 	selectSession,
 }: {
 	selectSession: (id: string) => void;
 }) {
-	const { selectedCwd } = useRepoSelectionContext();
-	const { state, refresh } = useAutopilotStatus(selectedCwd);
-	const target = state.loading ? { cwd: selectedCwd } : state.target;
-	const actions = useAutopilotActions(target.cwd, target.node, refresh);
+	const { page, state, target, actions } = useAutopilotPage();
 	const activate = useActivateSession(selectSession);
-	const status = state.loading ? null : state.status;
-	const via = state.loading ? undefined : state.via;
+	const loaded = state.loading ? undefined : state;
 	return (
 		<PageShell
 			loading={state.loading}
 			header={
 				<AutopilotHeader
-					cwd={selectedCwd}
-					status={status}
-					via={via}
+					cwd={page.cwd}
+					status={loaded?.status ?? null}
+					via={loaded?.via}
 					busy={actions.busy}
 					onAction={(action) => void actions.run(action)}
 				/>
 			}
 		>
+			<RepoSwitcher repos={page.repos} cwd={page.cwd} onPick={page.pick} />
 			<AutopilotBody
-				cwd={selectedCwd}
-				status={status}
-				items={state.loading ? [] : state.items}
+				cwd={page.cwd}
+				status={loaded?.status ?? null}
+				items={loaded?.items ?? []}
 				busy={actions.busy}
 				onStop={(itemId) => void actions.run("stop", itemId)}
 				onResume={(itemId) => void actions.run("resume-item", itemId)}
@@ -43,7 +39,7 @@ export function AutopilotView({
 				onOpen={(id) =>
 					activate(target.node ? toNodeSessionId(target.node, id) : id)
 				}
-				problem={actions.error ?? (state.loading ? undefined : state.error)}
+				problem={actions.error ?? loaded?.error}
 			/>
 		</PageShell>
 	);

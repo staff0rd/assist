@@ -2,6 +2,7 @@ import type { IncomingMessage, ServerResponse } from "node:http";
 import { loadConfigFrom } from "../../../../shared/loadConfigFrom";
 import { respondJson } from "../../../../shared/web";
 import { getCwdParam } from "../getCwdParam";
+import { autopilotRepos } from "./autopilotRepos";
 
 export function autopilotConfigured(
 	req: IncomingMessage,
@@ -11,9 +12,8 @@ export function autopilotConfigured(
 	if (!cwd) return;
 	try {
 		const autopilot = loadConfigFrom(cwd).autopilot;
-		respondJson(res, 200, {
-			configured: !!autopilot?.prompt?.trim() && !!autopilot.intervalMinutes,
-		});
+		const here = !!autopilot?.prompt?.trim() && !!autopilot.intervalMinutes;
+		respondJson(res, 200, { configured: here || autopilotRepos().length > 0 });
 	} catch (error) {
 		respondJson(res, 500, {
 			error: error instanceof Error ? error.message : "Failed to read config",

@@ -4,6 +4,7 @@ const POLLED_PATHS = new Set([
 	"/api/updates/history",
 	"/api/autopilot/status",
 	"/api/autopilot/configured",
+	"/api/autopilot/repos",
 	"/api/releases/configured",
 ]);
 

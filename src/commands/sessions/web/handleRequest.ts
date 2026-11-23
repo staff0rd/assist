@@ -37,6 +37,7 @@ import { health } from "./health";
 import { historySearch } from "./historySearch";
 import { autopilotConfigured } from "./autopilot/autopilotConfigured";
 import { autopilotStatus } from "./autopilot/autopilotStatus";
+import { listAutopilotRepos } from "./autopilot/listAutopilotRepos";
 import { controlAutopilot } from "./autopilot/controlAutopilot";
 import { inboxStatus } from "./inbox/inboxStatus";
 import { listInbox } from "./inbox/listInbox";
@@ -168,6 +169,7 @@ const routes: Record<string, Handler> = {
 	"POST /api/inbox/scan": scanInbox,
 	"GET /api/autopilot/configured": autopilotConfigured,
 	"GET /api/autopilot/status": autopilotStatus,
+	"GET /api/autopilot/repos": listAutopilotRepos,
 	"POST /api/autopilot/control": controlAutopilot,
 	"GET /api/news/items": listNewsItems,
 	"GET /api/news/nav": newsNavConfig,
