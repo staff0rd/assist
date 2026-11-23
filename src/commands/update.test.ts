@@ -4,7 +4,6 @@ import type * as childProcessMockModule from "../test/mocks/childProcessMock";
 
 const mockExecSync = vi.mocked(execSync);
 const mockExecFileSync = vi.mocked(execFileSync);
-const mockIsDatabaseConfigured = vi.fn();
 const mockGetInstallDir = vi.fn();
 const mockIsGitRepo = vi.fn();
 const mockIsDaemonRunning = vi.fn();
@@ -23,8 +22,10 @@ vi.mock("../shared/getInstallDir", () => ({
 	isGitRepo: (dir: string) => mockIsGitRepo(dir),
 }));
 
-vi.mock("./db/isDatabaseConfigured", () => ({
-	isDatabaseConfigured: () => mockIsDatabaseConfigured(),
+vi.mock("../shared/loadConfig", () => ({
+	loadConfig: () => {
+		throw new Error('Unrecognized key: "requireLinkedIssue"');
+	},
 }));
 
 vi.mock("./sessions/daemon/connectToDaemon", () => ({
@@ -43,7 +44,6 @@ describe("update", () => {
 		mockGetInstallDir.mockReturnValue("/some/dir");
 		mockIsDaemonRunning.mockResolvedValue(false);
 		mockRestartDaemon.mockResolvedValue(undefined);
-		mockIsDatabaseConfigured.mockReturnValue(false);
 	});
 
 	it("should call assist sync without --yes for git repo install", async () => {
@@ -128,7 +128,6 @@ describe("update", () => {
 		});
 
 		it("applies pending migrations with the freshly built entry script, skipping the schema lock", async () => {
-			mockIsDatabaseConfigured.mockReturnValue(true);
 			const order: string[] = [];
 			mockExecFileSync.mockImplementation(() => {
 				order.push("migrate");
@@ -156,15 +155,14 @@ describe("update", () => {
 			);
 		});
 
-		it("skips migrating when no database is configured", async () => {
+		it("never loads config in the pre-update process, whose schema may not know newly pulled keys", async () => {
 			await update();
 
-			expect(migrateCalls()).toEqual([]);
+			expect(migrateCalls()).toHaveLength(1);
 			expect(syncIndex()).toBeGreaterThanOrEqual(0);
 		});
 
 		it("reports a failed migrate, points to assist db migrate, and still syncs and restarts the daemon", async () => {
-			mockIsDatabaseConfigured.mockReturnValue(true);
 			mockIsDaemonRunning.mockResolvedValue(true);
 			mockExecFileSync.mockImplementation(() => {
 				throw new Error("connection refused");

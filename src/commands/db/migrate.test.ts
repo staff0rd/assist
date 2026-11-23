@@ -12,6 +12,7 @@ let applied: number[];
 let executed: string[];
 let released: Set<number> | null;
 let gitCheckout: boolean;
+let databaseConfigured: boolean;
 
 vi.mock("../../shared/db/getDb", () => ({
 	getDb: () => Promise.resolve(orm),
@@ -21,6 +22,10 @@ vi.mock("../../shared/db/getDb", () => ({
 vi.mock("../../shared/getInstallDir", () => ({
 	getInstallDir: () => "/repo",
 	isGitRepo: () => gitCheckout,
+}));
+
+vi.mock("./isDatabaseConfigured", () => ({
+	isDatabaseConfigured: () => databaseConfigured,
 }));
 
 vi.mock("./listReleasedMigrationIds", () => ({
@@ -94,6 +99,7 @@ beforeEach(async () => {
 	executed = [];
 	released = new Set(allIds);
 	gitCheckout = true;
+	databaseConfigured = true;
 	vi.stubEnv("CLAUDECODE", "1");
 	vi.stubEnv("CLAUDE_CODE_SESSION_ID", `claude-${Math.random()}`);
 	vi.stubEnv("ASSIST_SESSION_ID", "");
@@ -154,6 +160,14 @@ describe("migrate schema lock", () => {
 });
 
 describe("migrate after update", () => {
+	it("skips when no database is configured", async () => {
+		databaseConfigured = false;
+		vi.spyOn(console, "log").mockImplementation(() => {});
+
+		await migrate({ afterUpdate: true });
+		expect(executed).toEqual([]);
+	});
+
 	it("applies released migrations despite the schema lock", async () => {
 		await migrate({ afterUpdate: true });
 		expect(appliedSql()).toEqual([latest.sql]);

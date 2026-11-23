@@ -1,12 +1,6 @@
 import { execFileSync } from "node:child_process";
-import { isDatabaseConfigured } from "./db/isDatabaseConfigured";
 
 export function migrateAfterUpdate(): void {
-	if (!isDatabaseConfigured()) {
-		console.log("No database configured; skipping migrations.");
-		return;
-	}
-	console.log("Applying released migrations...");
 	try {
 		// Runs the freshly installed entry script so it knows the new build's migrations.
 		execFileSync(
