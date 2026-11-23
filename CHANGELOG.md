@@ -1,3 +1,10 @@
+## [0.1264.1](https://github.com/staff0rd/assist/compare/v0.1264.0...v0.1264.1) (2026-11-23)
+
+
+### Bug Fixes
+
+* autopilot runs layout and repo switch ([7d97323](https://github.com/staff0rd/assist/commit/7d97323942a0b8aaeb7ebb482200929b209ab883))
+
 # [0.1264.0](https://github.com/staff0rd/assist/compare/v0.1263.0...v0.1264.0) (2026-11-23)
 
 
