@@ -1,6 +1,5 @@
 import { parseQuestions } from "../shared/parseQuestions";
-
-const RECOMMENDED = "(Recommended)";
+import { findRecommendedOption } from "./findRecommendedOption";
 
 export function recommendedAnswers(
 	body: string,
@@ -10,9 +9,7 @@ export function recommendedAnswers(
 	const answers: Record<string, string> = {};
 	for (const question of questions) {
 		if (question.multiSelect) return undefined;
-		const option = question.options.find((o) =>
-			o.label.trim().endsWith(RECOMMENDED),
-		);
+		const option = findRecommendedOption(question.options);
 		if (!option) return undefined;
 		answers[question.question] = option.label;
 	}

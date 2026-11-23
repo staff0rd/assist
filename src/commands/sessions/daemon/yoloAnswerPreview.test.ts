@@ -119,6 +119,36 @@ describe("yoloAnswerPreview", () => {
 		]);
 	});
 
+	it("answers with an option marked recommended in its description", () => {
+		const { session, waiter } = run(
+			preview([
+				{
+					header: "Call sign",
+					question: "Which call sign should the new agent register under?",
+					multiSelect: false,
+					options: [
+						{
+							label: "TUSK-4",
+							description: "Continues the TUSK family (recommended)",
+						},
+						{ label: "TUSK-1", description: "Reuse TUSK-1's name" },
+					],
+				},
+			]),
+			true,
+		);
+		expect(session.pendingPrPreview).toBeUndefined();
+		expect(waiter.sent).toEqual([
+			expect.objectContaining({
+				type: "pr-decision",
+				yolo: true,
+				answers: {
+					"Which call sign should the new agent register under?": "TUSK-4",
+				},
+			}),
+		]);
+	});
+
 	it("ignores non-question previews", () => {
 		const { session, waiter } = run(
 			preview([question("A (Recommended)", "B")], "ask"),

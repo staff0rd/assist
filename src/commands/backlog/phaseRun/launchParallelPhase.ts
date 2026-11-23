@@ -40,6 +40,7 @@ export async function launchParallelPhase(
 	try {
 		const sessionId = await requestAssistSession(args, itemTree, {
 			startPoint: head,
+			inheritYolo: true,
 		});
 		appendDaemonLog(
 			`backlog run ${item.id}: started phase ${idx + 1} in session ${sessionId} off ${head.slice(0, 8)}`,

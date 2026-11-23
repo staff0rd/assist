@@ -1,6 +1,5 @@
 import { parseQuestions } from "../shared/parseQuestions";
-
-const RECOMMENDED = "(Recommended)";
+import { findRecommendedOption } from "./findRecommendedOption";
 
 export function autopilotAnswers(
 	body: string,
@@ -9,8 +8,7 @@ export function autopilotAnswers(
 	if (!questions) return undefined;
 	return Object.fromEntries(
 		questions.map(({ question, options }) => {
-			const option =
-				options.find((o) => o.label.trim().endsWith(RECOMMENDED)) ?? options[0];
+			const option = findRecommendedOption(options) ?? options[0];
 			return [question, option?.label ?? ""];
 		}),
 	);
