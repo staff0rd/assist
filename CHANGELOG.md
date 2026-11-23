@@ -1,3 +1,10 @@
+# [0.1260.0](https://github.com/staff0rd/assist/compare/v0.1259.1...v0.1260.0) (2026-11-23)
+
+
+### Features
+
+* autopilot resumes stalled items itself ([5033776](https://github.com/staff0rd/assist/commit/503377648411aa2e9e28a708a38231d20dae84ae))
+
 ## [0.1259.1](https://github.com/staff0rd/assist/compare/v0.1259.0...v0.1259.1) (2026-11-23)
 
 
