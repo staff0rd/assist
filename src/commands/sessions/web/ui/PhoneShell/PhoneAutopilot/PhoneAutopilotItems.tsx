@@ -4,6 +4,7 @@ import { splitAutopilotItems } from "../../App/AppShell/AppRoutes/AutopilotView/
 import { PhoneDeliveredSection } from "./PhoneDeliveredSection";
 import type { PhoneItemHandlers } from "./PhoneItemHandlers";
 import { PhoneRunningSection } from "./PhoneRunningSection";
+import { PhoneRunsSection } from "./PhoneRunsSection";
 
 export function PhoneAutopilotItems({
 	status,
@@ -23,6 +24,7 @@ export function PhoneAutopilotItems({
 				handlers={handlers}
 			/>
 			<PhoneDeliveredSection delivered={delivered} handlers={handlers} />
+			<PhoneRunsSection runs={status.runs} />
 		</>
 	);
 }

@@ -1,14 +1,9 @@
-import { formatItemId } from "../../../../../../../backlog/formatItemId";
 import type { AutopilotTick } from "../../../../../../daemon/autopilot/AutopilotRecord";
-import { clockTime } from "./clockTime";
-import { runTime } from "./runTime";
+import { runItemsText } from "./runItemsText";
+import { runSpan } from "./runSpan";
 
 export function lastRunHeading(run: AutopilotTick): string {
-	const span = run.startedAt
-		? `${runTime(run.startedAt)}–${clockTime(run.at)}`
-		: runTime(run.at);
-	const items = run.items?.length
-		? `started ${run.items.map(formatItemId).join(", ")}`
-		: "started no item";
-	return [span, items, run.reason].filter(Boolean).join(" · ");
+	return [runSpan(run), runItemsText(run), run.reason]
+		.filter(Boolean)
+		.join(" · ");
 }

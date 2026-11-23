@@ -37,7 +37,8 @@ function renderItems(
 		onOpen: vi.fn(),
 		onResume: vi.fn(),
 	};
-	const status = { prompt: "/helm", running } as AutopilotStatus;
+	const runs: AutopilotStatus["runs"] = [];
+	const status = { prompt: "/helm", running, runs } as AutopilotStatus;
 	render(
 		<ThemeProvider theme={createDesignTheme("dark", "touch")}>
 			<PhoneAutopilotItems status={status} items={items} handlers={handlers} />

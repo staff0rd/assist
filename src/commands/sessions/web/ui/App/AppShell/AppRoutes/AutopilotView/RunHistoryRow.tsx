@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import type { AutopilotTick } from "../../../../../../daemon/autopilot/AutopilotRecord";
 import { itemRowSx } from "./itemRowSx";
 import { lastRunHeading } from "./lastRunHeading";
+import { runSummaryLabels } from "./runSummaryLabels";
 
 const rowSx = {
 	display: "grid",
@@ -17,13 +18,6 @@ const fieldsSx = {
 	gap: "2px 12px",
 	alignItems: "baseline",
 } as const;
-
-const LABELS = [
-	["checked", "Checked"],
-	["decided", "Decided"],
-	["started", "Started"],
-	["next", "Next"],
-] as const;
 
 export function RunHistoryRow({ run }: { run: AutopilotTick }) {
 	const { summary } = run;
@@ -41,7 +35,7 @@ export function RunHistoryRow({ run }: { run: AutopilotTick }) {
 			</Box>
 			{summary && (
 				<Box sx={fieldsSx}>
-					{LABELS.map(([key, label]) => (
+					{runSummaryLabels.map(([key, label]) => (
 						<Box key={key} sx={{ display: "contents" }}>
 							<Box
 								component="span"
