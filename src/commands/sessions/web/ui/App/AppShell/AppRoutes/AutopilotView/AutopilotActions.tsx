@@ -2,6 +2,7 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import type { AutopilotStatus } from "../../../../../../daemon/autopilot/AutopilotStatus";
 import type { AutopilotAction } from "./postAutopilotControl";
+import { scheduleControls } from "./scheduleControls";
 
 export function AutopilotActions({
 	status,
@@ -12,13 +13,13 @@ export function AutopilotActions({
 	busy: boolean;
 	onAction: (action: AutopilotAction) => void;
 }) {
-	const controllable = status.scheduledHere && !busy;
+	const controls = scheduleControls(status, busy);
 	return (
 		<Box sx={{ display: "flex", gap: 1 }}>
 			<Button
 				variant="outlined"
 				size="small"
-				disabled={!controllable || !!status.running}
+				disabled={controls.runDisabled}
 				onClick={() => onAction("run")}
 			>
 				Run now
@@ -26,10 +27,10 @@ export function AutopilotActions({
 			<Button
 				variant="contained"
 				size="small"
-				disabled={!controllable}
-				onClick={() => onAction(status.paused ? "resume" : "pause")}
+				disabled={controls.toggleDisabled}
+				onClick={() => onAction(controls.toggle)}
 			>
-				{status.paused ? "Resume" : "Pause"}
+				{controls.toggleLabel}
 			</Button>
 		</Box>
 	);

@@ -20,6 +20,21 @@ function badge(t: Theme) {
 	} as const;
 }
 
+function dot(t: Theme) {
+	const size = t.tokens.density.tabBar.dot;
+	return {
+		position: "absolute",
+		top: 0,
+		left: "75%",
+		width: size,
+		height: size,
+		borderRadius: "50%",
+		bgcolor: "error.main",
+		border: 2,
+		borderColor: "background.default",
+	} as const;
+}
+
 export const phoneTabBarSx = {
 	bar: (t: Theme) => ({
 		flex: "none",
@@ -43,4 +58,5 @@ export const phoneTabBarSx = {
 	}),
 	iconWrap: { position: "relative", display: "flex" },
 	badge,
+	dot,
 } as const;

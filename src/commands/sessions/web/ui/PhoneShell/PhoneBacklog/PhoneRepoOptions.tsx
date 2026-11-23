@@ -2,9 +2,9 @@ import CheckIcon from "@mui/icons-material/Check";
 import Box from "@mui/material/Box";
 import { nodeListSx } from "../../HomeNodeGate/nodeListSx";
 import { PhoneSheetItem } from "../PhoneActions/PhoneSheetItem";
-import type { PhoneBacklogRepo } from "./usePhoneBacklogRepos";
+import type { PhoneRepoChoice } from "./PhoneRepoChoice";
 
-function matches(repo: PhoneBacklogRepo, query: string): boolean {
+function matches(repo: PhoneRepoChoice, query: string): boolean {
 	const q = query.trim().toLowerCase();
 	return (
 		!q ||
@@ -19,7 +19,7 @@ export function PhoneRepoOptions({
 	value,
 	onPick,
 }: {
-	repos: PhoneBacklogRepo[];
+	repos: PhoneRepoChoice[];
 	query: string;
 	value: string | undefined;
 	onPick: (origin: string) => void;

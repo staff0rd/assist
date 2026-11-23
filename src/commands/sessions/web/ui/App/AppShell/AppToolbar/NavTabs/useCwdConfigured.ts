@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { apiFetch } from "../../../../apiFetch";
 import { reportCaughtError } from "../../../../clientFailures/reportCaughtError";
+import { recheckWhileOpen } from "../../../../recheckWhileOpen";
 import { useApiNode } from "../../../../useApiNode";
 import { withNode } from "../../../../withNode";
 
@@ -42,13 +43,10 @@ export function useCwdConfigured(
 				.then((configured) => {
 					if (!cancelled) setResult({ key, configured });
 				});
-		void check();
-		const timer = setInterval(check, RECHECK_MS);
-		globalThis.addEventListener("focus", check);
+		const stop = recheckWhileOpen(check, RECHECK_MS);
 		return () => {
 			cancelled = true;
-			clearInterval(timer);
-			globalThis.removeEventListener("focus", check);
+			stop();
 		};
 	}, [path, cwd, node, key]);
 

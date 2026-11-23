@@ -5,7 +5,7 @@ import { PhoneSheetNavHeader } from "../PhoneNewSession/PhoneSheetNavHeader";
 import { PhoneSearchField } from "../PhoneSearchField";
 import { phoneSheetPaperSx } from "../phoneSheetPaperSx";
 import { PhoneRepoOptions } from "./PhoneRepoOptions";
-import type { PhoneBacklogRepo } from "./usePhoneBacklogRepos";
+import type { PhoneRepoChoice } from "./PhoneRepoChoice";
 
 const paperSx = { ...phoneSheetPaperSx, height: "calc(100% - 64px)" };
 
@@ -19,7 +19,7 @@ export function PhoneRepoSheet({
 	onClose,
 }: {
 	open: boolean;
-	repos: PhoneBacklogRepo[];
+	repos: PhoneRepoChoice[];
 	value: string | undefined;
 	onPick: (origin: string) => void;
 	onClose: () => void;

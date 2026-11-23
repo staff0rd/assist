@@ -1,5 +1,6 @@
 import { type Location, Navigate, Route, Routes } from "react-router";
 import type { SessionSocket } from "../useSessionSocket";
+import { PhoneAutopilotScreen } from "./PhoneAutopilot/PhoneAutopilotScreen";
 import { phoneBacklogRoutes } from "./PhoneBacklog/phoneBacklogRoutes";
 import type { PhoneTabRestore } from "./PhoneTabBar/usePhoneTabMemory";
 import { PhoneTabRootLayout } from "./PhoneTabRootLayout";
@@ -31,6 +32,10 @@ export function PhoneRoutes({
 			>
 				{phoneSessionRoutes(props, refresh)}
 				{phoneBacklogRoutes(props.socket)}
+				<Route
+					path="autopilot"
+					element={<PhoneAutopilotScreen socket={props.socket} />}
+				/>
 				<Route path="*" element={<Navigate to="/" replace />} />
 			</Route>
 		</Routes>

@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import { StarredSessionsProvider } from "./App/useStarredSessions";
+import { PhoneAutopilotProvider } from "./PhoneShell/PhoneAutopilot/PhoneAutopilotProvider";
 import { PhoneActionsLayer } from "./PhoneShell/PhoneActions/PhoneActionsLayer";
 import { PhoneNodesSheet } from "./PhoneShell/PhoneNodesSheet";
 import { usePhoneNodeUpdates } from "./PhoneShell/PhoneNodeUpdates/usePhoneNodeUpdates";
@@ -34,12 +35,14 @@ export function PhoneShell() {
 				setSessionStarred={socket.setStarred}
 			>
 				<PhoneActionsLayer socket={socket}>
-					<PhoneNavStack
-						socket={socket}
-						keyboardOpen={viewport.keyboardOpen}
-						onOpenNodes={sheet.openList}
-						onNewSession={newSession.show}
-					/>
+					<PhoneAutopilotProvider socket={socket}>
+						<PhoneNavStack
+							socket={socket}
+							keyboardOpen={viewport.keyboardOpen}
+							onOpenNodes={sheet.openList}
+							onNewSession={newSession.show}
+						/>
+					</PhoneAutopilotProvider>
 				</PhoneActionsLayer>
 			</StarredSessionsProvider>
 			<PhoneNewSessionSheet

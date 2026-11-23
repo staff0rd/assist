@@ -264,7 +264,14 @@ export const slateDesign: DesignTokens = {
 			newSessionDialogWidth: 720,
 			configSourceColumnWidth: 200,
 			chip: { height: 26, dot: 6 },
-			tabBar: { height: 44, icon: 20, label: 10, badge: 16, insetTrim: 0 },
+			tabBar: {
+				height: 44,
+				icon: 20,
+				label: 10,
+				badge: 16,
+				dot: 10,
+				insetTrim: 0,
+			},
 		},
 		touch: {
 			target: 48,
@@ -280,7 +287,14 @@ export const slateDesign: DesignTokens = {
 			newSessionDialogWidth: 720,
 			configSourceColumnWidth: 260,
 			chip: { height: 34, dot: 6 },
-			tabBar: { height: 49, icon: 26, label: 11, badge: 18, insetTrim: 12 },
+			tabBar: {
+				height: 49,
+				icon: 26,
+				label: 11,
+				badge: 18,
+				dot: 12,
+				insetTrim: 12,
+			},
 		},
 	},
 };

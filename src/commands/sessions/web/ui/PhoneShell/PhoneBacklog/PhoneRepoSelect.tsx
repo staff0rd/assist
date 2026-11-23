@@ -4,15 +4,15 @@ import { useState } from "react";
 import { nodeListSx } from "../../HomeNodeGate/nodeListSx";
 import { PhoneSheetItem } from "../PhoneActions/PhoneSheetItem";
 import { PhoneRepoSheet } from "./PhoneRepoSheet";
-import type { PhoneBacklogRepo } from "./usePhoneBacklogRepos";
+import type { PhoneRepoChoice } from "./PhoneRepoChoice";
 
 export function PhoneRepoSelect({
 	repos,
 	repo,
 	onPick,
 }: {
-	repos: PhoneBacklogRepo[];
-	repo: PhoneBacklogRepo | undefined;
+	repos: PhoneRepoChoice[];
+	repo: PhoneRepoChoice | undefined;
 	onPick: (origin: string) => void;
 }) {
 	const [open, setOpen] = useState(false);

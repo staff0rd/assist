@@ -10,6 +10,7 @@ describe("owningPhoneTab", () => {
 		["/backlog", "/backlog"],
 		["/backlog/12/criteria", "/backlog"],
 		["/backlogs", "/"],
+		["/autopilot", "/autopilot"],
 	])("assigns %s to %s", (pathname, tab) => {
 		expect(owningPhoneTab(pathname)).toBe(tab);
 	});

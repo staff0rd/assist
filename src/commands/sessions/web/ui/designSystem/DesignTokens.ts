@@ -109,6 +109,7 @@ type DensityTokens = {
 		icon: number;
 		label: number;
 		badge: number;
+		dot: number;
 		insetTrim: number;
 	};
 };
