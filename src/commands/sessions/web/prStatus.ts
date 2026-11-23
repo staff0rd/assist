@@ -1,47 +1,15 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
 import { createCachedGhJson } from "./createCachedGhJson";
+import { forkBaseRepo } from "./forkBaseRepo";
 import { getCwdParam } from "./getCwdParam";
 import type { PrSummary } from "./prList";
-import { getCurrentBranch } from "./getCurrentBranch";
-
-type GhPr = {
-	number?: number;
-	title?: string;
-	author?: { login?: string; name?: string };
-	createdAt?: string;
-	url?: string;
-	isDraft?: boolean;
-};
-
-function toPrSummary(parsed: GhPr): PrSummary | null {
-	if (typeof parsed.number !== "number") return null;
-	return {
-		number: parsed.number,
-		title: parsed.title ?? "",
-		author: parsed.author?.name || parsed.author?.login || "unknown",
-		createdAt: parsed.createdAt ?? "",
-		url: parsed.url ?? "",
-		isDraft: parsed.isDraft === true,
-	};
-}
-
-const prFields = "number,title,author,createdAt,url,isDraft";
+import { getBranchPr } from "./getBranchPr";
+import { type GhPr, prFields, toPrSummary } from "./toPrSummary";
 
 const getPrByNumber = createCachedGhJson<PrSummary | null>(
 	["pr", "view", "--json", prFields],
 	(stdout) => toPrSummary(JSON.parse(stdout) as GhPr),
-	null,
-	{ cacheFallback: false },
-);
-
-const getOpenPrForBranch = createCachedGhJson<PrSummary | null>(
-	["pr", "list", "--state", "open", "--json", prFields],
-	(stdout) => {
-		const parsed = JSON.parse(stdout) as GhPr[];
-		if (!Array.isArray(parsed) || parsed.length === 0) return null;
-		return toPrSummary(parsed[0]);
-	},
 	null,
 	{ cacheFallback: false },
 );
@@ -61,12 +29,14 @@ export async function prStatus(
 ): Promise<void> {
 	const cwd = getCwdParam(req, res);
 	if (!cwd) return;
+	const base = forkBaseRepo(cwd);
 	const number = getNumberParam(req);
 	if (number !== undefined) {
-		respondJson(res, 200, { pr: await getPrByNumber(cwd, [String(number)]) });
+		const repoArgs = base ? ["-R", `${base.org}/${base.repo}`] : [];
+		respondJson(res, 200, {
+			pr: await getPrByNumber(cwd, [String(number), ...repoArgs]),
+		});
 		return;
 	}
-	const branch = await getCurrentBranch(cwd);
-	const pr = branch ? await getOpenPrForBranch(cwd, ["--head", branch]) : null;
-	respondJson(res, 200, { pr });
+	respondJson(res, 200, { pr: await getBranchPr(cwd, base) });
 }
