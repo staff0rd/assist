@@ -1,3 +1,10 @@
+# [0.1263.0](https://github.com/staff0rd/assist/compare/v0.1262.0...v0.1263.0) (2026-11-23)
+
+
+### Features
+
+* autopilot run history with full messages ([2752396](https://github.com/staff0rd/assist/commit/2752396cb31e00bc76d14239fde3156ed14c1023))
+
 # [0.1262.0](https://github.com/staff0rd/assist/compare/v0.1261.0...v0.1262.0) (2026-11-23)
 
 
