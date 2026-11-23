@@ -15,6 +15,14 @@ function isApproved(node: GhPeerPrNode): boolean {
 	);
 }
 
+function requestedChanges(node: GhPeerPrNode, viewer: string): boolean {
+	return (node.latestReviews?.nodes ?? []).some(
+		(review) =>
+			review?.state === "CHANGES_REQUESTED" &&
+			sameLogin(review.author?.login, viewer),
+	);
+}
+
 export function selectPeerPrs(
 	nodes: GhPeerPrNode[],
 	viewer: string,
@@ -27,7 +35,11 @@ export function selectPeerPrs(
 			continue;
 		const requested = isRequested(node, viewer);
 		const byPeer = peers.some((peer) => sameLogin(author, peer));
-		if (!requested && (!byPeer || isApproved(node))) continue;
+		if (
+			!requested &&
+			(!byPeer || isApproved(node) || requestedChanges(node, viewer))
+		)
+			continue;
 		selected.push(toNextPr(node, author, requested, viewer));
 	}
 	return selected.sort((a, b) => a.requestedAt.localeCompare(b.requestedAt));

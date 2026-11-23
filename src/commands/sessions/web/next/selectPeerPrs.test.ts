@@ -116,9 +116,33 @@ describe("selectPeerPrs", () => {
 			numbers([
 				pr(1, { myReview: "DISMISSED" }),
 				pr(2, { myReview: "COMMENTED" }),
-				pr(3, { myReview: "CHANGES_REQUESTED" }),
 			]),
-		).toEqual([1, 2, 3]);
+		).toEqual([1, 2]);
+	});
+
+	it("excludes peer PRs where I requested changes and am not re-requested", () => {
+		expect(numbers([pr(1, { myReview: "CHANGES_REQUESTED" })])).toEqual([]);
+	});
+
+	it("keeps peer PRs where another reviewer requested changes", () => {
+		expect(
+			numbers([
+				pr(1, {
+					latestReviews: {
+						nodes: [{ author: { login: "bob" }, state: "CHANGES_REQUESTED" }],
+					},
+				}),
+			]),
+		).toEqual([1]);
+	});
+
+	it("returns changes-requested PRs as requested once my review is re-requested", () => {
+		const result = selectPeerPrs(
+			[pr(1, { requested: ["Me"], myReview: "CHANGES_REQUESTED" })],
+			"me",
+			["alice"],
+		);
+		expect(result.map((p) => [p.number, p.reason])).toEqual([[1, "requested"]]);
 	});
 
 	it("keeps approved PRs that re-request my review", () => {
