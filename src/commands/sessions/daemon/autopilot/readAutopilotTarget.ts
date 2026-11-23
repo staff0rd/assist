@@ -12,8 +12,7 @@ export type AutopilotTarget = {
 	scheduledHere: boolean;
 };
 
-/* why: the daemon's own cwd is not the repo, so read the repo's prompt-session
- * harness here; a PTY claude would stop at the folder-trust prompt in a fresh worktree. */
+// why: the daemon's own cwd is not the repo, so read the repo's prompt-session harness here
 function launchHarness(harness: AssistConfig["harness"]) {
 	const defaults = harness.defaults?.prompt;
 	return {
