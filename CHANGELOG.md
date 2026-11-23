@@ -1,3 +1,10 @@
+## [0.1268.1](https://github.com/staff0rd/assist/compare/v0.1268.0...v0.1268.1) (2026-11-23)
+
+
+### Bug Fixes
+
+* autopilot answers idle chat questions ([917bf50](https://github.com/staff0rd/assist/commit/917bf504cea0b3c0bd8feb83ac387d7d2063fa31))
+
 # [0.1268.0](https://github.com/staff0rd/assist/compare/v0.1267.0...v0.1268.0) (2026-11-23)
 
 
