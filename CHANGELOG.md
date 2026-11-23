@@ -1,3 +1,10 @@
+## [0.1256.7](https://github.com/staff0rd/assist/compare/v0.1256.6...v0.1256.7) (2026-11-23)
+
+
+### Bug Fixes
+
+* hide peer PRs I requested changes on ([9f11031](https://github.com/staff0rd/assist/commit/9f110313ddc549dac57be6a1c3bd87fe40376cb0))
+
 ## [0.1256.6](https://github.com/staff0rd/assist/compare/v0.1256.5...v0.1256.6) (2026-11-23)
 
 
