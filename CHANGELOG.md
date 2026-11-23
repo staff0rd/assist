@@ -1,3 +1,15 @@
+# [0.1258.0](https://github.com/staff0rd/assist/compare/v0.1257.0...v0.1258.0) (2026-11-23)
+
+
+### Bug Fixes
+
+* autopilot page reads the scheduling node ([d6bfc98](https://github.com/staff0rd/assist/commit/d6bfc98d796285bbffc6379e957bb3880def2ea8))
+
+
+### Features
+
+* collapse every diff in All files ([6818fd5](https://github.com/staff0rd/assist/commit/6818fd5aeb9721e006bfe041b4ad9ff05591e059))
+
 # [0.1257.0](https://github.com/staff0rd/assist/compare/v0.1256.7...v0.1257.0) (2026-11-23)
 
 
