@@ -15,7 +15,9 @@ function sameRepo(a: Repo, b: Repo): boolean {
 function resolve(cwd: string): Repo | null {
 	try {
 		const resolved = resolveBaseRepo(undefined, cwd);
-		if (!resolved || sameRepo(resolved.base, resolved.origin)) return null;
+		if (!resolved) return null;
+		const pinnedOrigin = resolved.mode === "origin";
+		if (!pinnedOrigin && sameRepo(resolved.base, resolved.origin)) return null;
 		return resolved.base;
 	} catch {
 		return null;

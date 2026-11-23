@@ -37,6 +37,7 @@ vi.mock("../../backlog/getCurrentOrigin", () => ({
 }));
 
 import { nextScope } from "./next/nextScope";
+import { prList } from "./prList";
 import { prStatus } from "./prStatus";
 
 const ORIGIN = { org: "Turtlator", repo: "assist" };
@@ -149,9 +150,11 @@ describe("prStatus", () => {
 
 			await status();
 
-			expect(ghCalls()[0].slice(0, 2)).toEqual(["pr", "list"]);
-			expect(ghCalls()[0].slice(-2)).toEqual(["--head", "fix-poll"]);
-			expect(ghCalls()[0]).not.toContain("-R");
+			expect(ghCalls()[0].slice(-3)).toEqual([
+				"fix-poll",
+				"-R",
+				"Turtlator/assist",
+			]);
 		});
 	});
 
@@ -174,6 +177,39 @@ describe("prStatus", () => {
 			});
 		},
 	);
+});
+
+describe("prList", () => {
+	async function list(): Promise<void> {
+		await prList(
+			{ url: `/api/pr-list?cwd=${nextCwd()}` } as IncomingMessage,
+			{} as ServerResponse,
+		);
+	}
+
+	it("should list the parent's open PRs in a fork clone", async () => {
+		await list();
+
+		expect(ghCalls()[0].slice(-2)).toEqual(["-R", "staff0rd/assist"]);
+	});
+
+	it("should list the fork's open PRs in a fork clone pinned to origin", async () => {
+		mockLoadConfigFrom.mockReturnValue(
+			makeAssistConfig({ prs: { baseRepo: "origin" } }),
+		);
+
+		await list();
+
+		expect(ghCalls()[0].slice(-2)).toEqual(["-R", "Turtlator/assist"]);
+	});
+
+	it("should leave the repo to gh in a clone that is not a fork", async () => {
+		mockFindForkParent.mockReturnValue("not-a-fork");
+
+		await list();
+
+		expect(ghCalls()[0]).not.toContain("-R");
+	});
 });
 
 describe("nextScope", () => {
