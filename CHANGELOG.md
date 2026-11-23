@@ -1,3 +1,10 @@
+## [0.1264.2](https://github.com/staff0rd/assist/compare/v0.1264.1...v0.1264.2) (2026-11-23)
+
+
+### Bug Fixes
+
+* autopilot ignores stale worktree runs ([7fed6f3](https://github.com/staff0rd/assist/commit/7fed6f3ad1bd93ca3cb71315956e0ff955689193))
+
 ## [0.1264.1](https://github.com/staff0rd/assist/compare/v0.1264.0...v0.1264.1) (2026-11-23)
 
 
