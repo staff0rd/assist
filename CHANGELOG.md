@@ -1,3 +1,10 @@
+## [0.1256.6](https://github.com/staff0rd/assist/compare/v0.1256.5...v0.1256.6) (2026-11-23)
+
+
+### Bug Fixes
+
+* nav tabs re-check repo config ([8101e79](https://github.com/staff0rd/assist/commit/8101e79abf98c223dea1148f796eef55a851f7f2))
+
 ## [0.1256.5](https://github.com/staff0rd/assist/compare/v0.1256.4...v0.1256.5) (2026-11-23)
 
 
