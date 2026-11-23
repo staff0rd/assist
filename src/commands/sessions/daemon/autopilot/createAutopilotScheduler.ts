@@ -33,6 +33,7 @@ export function createAutopilotScheduler(
 				deps,
 				runs: createAutopilotRuns(store, deps),
 				items: createItemStatusCache(deps),
+				nudges: new Map(),
 			};
 			store.load();
 			tick();

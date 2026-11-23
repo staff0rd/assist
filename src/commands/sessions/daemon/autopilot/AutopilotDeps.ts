@@ -9,6 +9,15 @@ export type AutopilotRunItem = {
 	error?: string;
 };
 
+/** A session of the run that ended its turn with no preview or prompt pending. */
+export type AutopilotIdleMember = {
+	sessionId: string;
+	waitingSince: number;
+	itemId?: number;
+	phase?: string;
+	lastMessage?: string;
+};
+
 export type AutopilotDeps = {
 	localNode: () => string;
 	sessionState: (sessionId: string) => AutopilotSessionState;
@@ -23,6 +32,8 @@ export type AutopilotDeps = {
 	launch: (target: AutopilotTarget) => string;
 	/** Sessions in the autopilot run rooted at rootId that run a backlog item. */
 	runItems: (rootId: string) => AutopilotRunItem[];
+	/** Sessions the run rooted at rootId started that sit idle with nothing pending. */
+	idleMembers?: (rootId: string) => AutopilotIdleMember[];
 	stopSession: (sessionId: string) => void;
 	/** Send a prompt to a session; false when it can't take one. */
 	promptSession: (sessionId: string, text: string) => boolean;

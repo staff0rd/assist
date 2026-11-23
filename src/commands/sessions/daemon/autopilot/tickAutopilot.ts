@@ -2,6 +2,7 @@ import type { AutopilotStarted } from "./AutopilotStarted";
 import { clearStaleRuns } from "./clearStaleRuns";
 import type { AutopilotStore } from "./createAutopilotStore";
 import { listAutopilotTargets } from "./listAutopilotTargets";
+import { nudgeIdleRunMembers } from "./nudgeIdleRunMembers";
 import { recordAutopilotItems } from "./recordAutopilotItems";
 import { recoverStalledItem } from "./recoverStalledItem";
 import { tickAutopilotRepo } from "./tickAutopilotRepo";
@@ -20,6 +21,7 @@ export function tickAutopilot(
 	);
 	for (const target of targets) {
 		recordAutopilotItems(store, started.deps, target.cwd);
+		nudgeIdleRunMembers(store, started, target.cwd);
 		if (!recoverStalledItem(store, started, target))
 			tickAutopilotRepo(store, started.runs, target);
 		started.items.refresh(

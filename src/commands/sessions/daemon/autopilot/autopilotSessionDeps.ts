@@ -1,6 +1,7 @@
 import type { SessionManager } from "../SessionManager";
 import type { AutopilotDeps } from "./AutopilotDeps";
 import { activityPhaseLabel } from "./activityPhaseLabel";
+import { autopilotIdleMembers } from "./autopilotIdleMembers";
 import { autopilotRunItem } from "./autopilotRunItem";
 import { autopilotRunState } from "./autopilotRunState";
 
@@ -10,7 +11,7 @@ export function autopilotSessionDeps(
 	manager: SessionManager,
 ): Pick<
 	AutopilotDeps,
-	"sessionState" | "sessionLink" | "runItems" | "itemSessions"
+	"sessionState" | "sessionLink" | "runItems" | "itemSessions" | "idleMembers"
 > {
 	return {
 		sessionState: (sessionId) =>
@@ -35,6 +36,8 @@ export function autopilotSessionDeps(
 			manager
 				.autopilotSessions()
 				.flatMap((session) => autopilotRunItem(session, rootId)),
+		idleMembers: (rootId) =>
+			autopilotIdleMembers(manager.autopilotSessions(), rootId),
 		itemSessions: (itemId) =>
 			manager
 				.localSessions()
