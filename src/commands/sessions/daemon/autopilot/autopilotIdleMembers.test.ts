@@ -37,7 +37,7 @@ describe("autopilotIdleMembers", () => {
 		]);
 	});
 
-	it("skips the root, other runs, running sessions and pending previews", () => {
+	it("skips the root, other runs, running sessions, pending previews and background tasks", () => {
 		const sessions = [
 			session({ id: "s1" }),
 			session({ autopilot: "s9" }),
@@ -46,6 +46,7 @@ describe("autopilotIdleMembers", () => {
 				pendingPrPreview: { requestId: "r" } as Session["pendingPrPreview"],
 			}),
 			session({ permissionActive: true }),
+			session({ sdkBackgroundTasks: ["live check"] }),
 		];
 		expect(autopilotIdleMembers(sessions, "s1")).toEqual([]);
 	});

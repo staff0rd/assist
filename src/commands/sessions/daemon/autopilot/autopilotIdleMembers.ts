@@ -9,11 +9,12 @@ function idle(session: Session): boolean {
 		!session.pendingPrPreview &&
 		!session.permissionActive &&
 		!session.pendingPrompts?.length &&
-		!session.deferredCommands?.length
+		!session.deferredCommands?.length &&
+		!session.sdkBackgroundTasks?.length
 	);
 }
 
-/** Sessions the run rooted at rootId started whose turn ended with nothing pending. */
+/** Sessions the run rooted at rootId started whose turn ended with nothing pending or running in the background. */
 export function autopilotIdleMembers(
 	sessions: Session[],
 	rootId: string,

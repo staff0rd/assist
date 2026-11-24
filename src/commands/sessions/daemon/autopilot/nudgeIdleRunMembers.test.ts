@@ -2,8 +2,12 @@ import { mkdtempSync, rmSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { makeSession } from "../../../../test/mothers/makeSession";
+import { applySdkTaskList } from "../applySdkTaskList";
+import type { Session } from "../types";
 import type { AutopilotDeps, AutopilotIdleMember } from "./AutopilotDeps";
 import type { AutopilotStarted } from "./AutopilotStarted";
+import { autopilotIdleMembers } from "./autopilotIdleMembers";
 import {
 	type AutopilotStore,
 	createAutopilotStore,
@@ -90,6 +94,33 @@ describe("nudgeIdleRunMembers", () => {
 			},
 		});
 		expect(notified).toHaveLength(1);
+	});
+
+	it("leaves a session waiting on its own background task, then counts idle from when it ends", () => {
+		const member = makeSession({
+			id: "b1",
+			autopilot: "s1",
+			status: "waiting",
+			waitingSince: 0,
+			sdkBackgroundTasks: ["15-minute live check"],
+		});
+		const sessions: Session[] = [member];
+		started.deps.idleMembers = (rootId) =>
+			autopilotIdleMembers(sessions, rootId);
+		for (let tick = 0; tick < 4; tick++) {
+			vi.advanceTimersByTime(3 * 60_000);
+			nudge();
+		}
+		expect(prompted).toEqual([]);
+		expect(store.repo("/repo").paused).toBe(false);
+		expect(notified).toEqual([]);
+
+		applySdkTaskList(member, { kind: "background", tasks: [] });
+		nudge();
+		expect(prompted).toEqual([]);
+		vi.advanceTimersByTime(2 * 60_000);
+		nudge();
+		expect(prompted).toEqual(["b1"]);
 	});
 
 	it("does nothing while the schedule is paused or no run is current", () => {

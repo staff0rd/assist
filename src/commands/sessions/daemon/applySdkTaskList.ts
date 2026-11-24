@@ -15,7 +15,10 @@ export function applySdkTaskList(
 		);
 		return;
 	}
+	const hadTasks = !!session.sdkBackgroundTasks?.length;
 	session.sdkBackgroundTasks = event.tasks.length ? event.tasks : undefined;
+	if (hadTasks && !event.tasks.length && session.status === "waiting")
+		session.waitingSince = Date.now();
 	daemonLog(
 		`session ${session.id} sdk background tasks: ${event.tasks.length}`,
 	);
