@@ -9,7 +9,7 @@ import type { DumpTable } from "./DumpTable";
 import { introspectDumpTables } from "./introspectDumpTables";
 import {
 	introspectSequenceColumns,
-	resyncIdentitySql,
+	resyncSequenceSql,
 } from "./introspectSequenceColumns";
 import { parseDump } from "./parseDump";
 import { validateDump } from "./validateDump";
@@ -47,7 +47,7 @@ async function restoreInto(db: PGlite, dump: Buffer): Promise<void> {
 	}
 	await backfillItemPriority(db, tables);
 	for (const col of await introspectSequenceColumns(db)) {
-		const { text, values } = resyncIdentitySql(col);
+		const { text, values } = resyncSequenceSql(col);
 		await db.query(text, values);
 	}
 }
@@ -132,7 +132,7 @@ describe("dump/restore round-trip", () => {
 			);
 		}
 		for (const col of await introspectSequenceColumns(db)) {
-			const { text, values } = resyncIdentitySql(col);
+			const { text, values } = resyncSequenceSql(col);
 			await db.query(text, values);
 		}
 
@@ -170,7 +170,7 @@ describe("dump/restore round-trip", () => {
 			);
 		}
 		for (const col of await introspectSequenceColumns(db)) {
-			const { text, values } = resyncIdentitySql(col);
+			const { text, values } = resyncSequenceSql(col);
 			await db.query(text, values);
 		}
 

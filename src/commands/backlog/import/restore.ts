@@ -5,7 +5,7 @@ import { copyTableIn } from "../dump/copyTableIn";
 import { backfillItemPriority } from "./backfillItemPriority";
 import {
 	introspectSequenceColumns,
-	resyncIdentitySql,
+	resyncSequenceSql,
 } from "../dump/introspectSequenceColumns";
 import type { ParsedDump } from "../dump/parseDump";
 
@@ -24,7 +24,7 @@ async function replaceData(
 	}
 	await backfillItemPriority(client, tables);
 	for (const col of await introspectSequenceColumns(client)) {
-		const { text, values } = resyncIdentitySql(col);
+		const { text, values } = resyncSequenceSql(col);
 		await client.query(text, values);
 	}
 }
