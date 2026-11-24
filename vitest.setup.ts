@@ -34,6 +34,11 @@ vi.mock("./src/shared/harnessAdapters/piExtensionProbe", () => ({
 	piExtensionProbe: () => ({ supported: true }),
 }));
 
+// why: tests run inside assist sessions, whose env would send a phase launch to the live daemon
+vi.mock("./src/commands/backlog/fetchAutopilotRunContract", () => ({
+	fetchAutopilotRunContract: () => Promise.resolve(undefined),
+}));
+
 // why: a parallel build of this repo holds its build lock, which would stall any test that reaches a restart or daemon spawn
 vi.mock("./src/build/waitForBuild", () => ({
 	waitForBuild: () => Promise.resolve(),

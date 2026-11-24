@@ -1,6 +1,7 @@
 import { resolveNodeName } from "../../shared/resolveNodeName";
 import type { SessionManager } from "../SessionManager";
 import { autopilotScheduler } from "./autopilotScheduler";
+import { autopilotHoldDeps } from "./autopilotHoldDeps";
 import { autopilotSessionDeps } from "./autopilotSessionDeps";
 import { closeIdleAutopilotRoots } from "./closeIdleAutopilotRoots";
 import { loadItemStatuses } from "./loadItemStatuses";
@@ -11,6 +12,7 @@ export function startAutopilot(manager: SessionManager): () => void {
 	return autopilotScheduler.start({
 		localNode: resolveNodeName,
 		...autopilotSessionDeps(manager),
+		...autopilotHoldDeps(manager),
 		stopSession: (sessionId) => manager.dismissSession(sessionId),
 		promptSession: (sessionId, text) =>
 			promptAutopilotSession(manager, sessionId, text),

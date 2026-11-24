@@ -98,6 +98,8 @@ export type Session = SdkViewState & {
 	pendingPrompts?: string[];
 	pendingDeferredResults?: string[];
 	deferredCommands?: PendingDeferredCommand[];
+	/** When the current run of SDK background tasks began. */
+	sdkBackgroundTasksSince?: number;
 	autoAdvance?: boolean;
 	autoApprove?: boolean;
 	yolo?: boolean;

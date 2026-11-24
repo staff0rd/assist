@@ -18,6 +18,15 @@ export type AutopilotIdleMember = {
 	lastMessage?: string;
 };
 
+/** A run member idle on a background task while nothing else holds the run. */
+export type AutopilotHeldMember = {
+	sessionId: string;
+	itemId?: number;
+	phase?: string;
+	/** How long its background tasks have been running. */
+	taskAgeMs: number;
+};
+
 export type AutopilotDeps = {
 	localNode: () => string;
 	sessionState: (sessionId: string) => AutopilotSessionState;
@@ -34,6 +43,8 @@ export type AutopilotDeps = {
 	runItems: (rootId: string) => AutopilotRunItem[];
 	/** Sessions the run rooted at rootId started that sit idle with nothing pending. */
 	idleMembers?: (rootId: string) => AutopilotIdleMember[];
+	/** Members holding the run rooted at rootId live solely by idling on background tasks. */
+	backgroundHolds?: (rootId: string) => AutopilotHeldMember[];
 	stopSession: (sessionId: string) => void;
 	/** Send a prompt to a session; false when it can't take one. */
 	promptSession: (sessionId: string, text: string) => boolean;

@@ -17,6 +17,8 @@ export function applySdkTaskList(
 	}
 	const hadTasks = !!session.sdkBackgroundTasks?.length;
 	session.sdkBackgroundTasks = event.tasks.length ? event.tasks : undefined;
+	if (!event.tasks.length) session.sdkBackgroundTasksSince = undefined;
+	else if (!hadTasks) session.sdkBackgroundTasksSince = Date.now();
 	if (hadTasks && !event.tasks.length && session.status === "waiting")
 		session.waitingSince = Date.now();
 	daemonLog(

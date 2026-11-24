@@ -11,6 +11,7 @@ export function wireSdkEvents(
 	notify?: () => void,
 ): void {
 	session.sdkBackgroundTasks = undefined;
+	session.sdkBackgroundTasksSince = undefined;
 	session.pty?.sdk?.setPrefix?.(() => takeHeldShellResults(session, notify));
 	session.pty?.sdk?.onEvent((event) => {
 		if (session.status === "done" || session.status === "stopped") return;

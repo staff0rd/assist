@@ -1,9 +1,21 @@
 import { buildPhasePrompt } from "./buildPhasePrompt";
+import { fetchAutopilotRunContract } from "./fetchAutopilotRunContract";
 import { launchPhaseHarness } from "./launchPhaseHarness";
 import { resumeNudge } from "./resumeNudge";
 import type { BacklogItem, BacklogRunOptions, PlanPhase } from "./types";
 
-export function launchPhaseSession(
+async function phasePrompt(
+	item: BacklogItem,
+	phaseNumber: number,
+	phase: PlanPhase,
+	harness: BacklogRunOptions["harness"],
+): Promise<string> {
+	const prompt = buildPhasePrompt(item, phaseNumber, phase, harness);
+	const contract = await fetchAutopilotRunContract(item.id);
+	return contract ? `${prompt}\n\n${contract}` : prompt;
+}
+
+export async function launchPhaseSession(
 	item: BacklogItem,
 	phaseNumber: number,
 	phase: PlanPhase,
@@ -17,7 +29,7 @@ export function launchPhaseSession(
 	return launchPhaseHarness(
 		resumeSessionId
 			? resumeNudge()
-			: buildPhasePrompt(item, phaseNumber, phase, harness),
+			: await phasePrompt(item, phaseNumber, phase, harness),
 		resumeSessionId
 			? phaseOptions
 			: { ...phaseOptions, sessionId: claudeSessionId },

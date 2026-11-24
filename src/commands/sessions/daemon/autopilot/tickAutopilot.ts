@@ -23,7 +23,7 @@ export function tickAutopilot(
 		recordAutopilotItems(store, started.deps, target.cwd);
 		nudgeIdleRunMembers(store, started, target.cwd);
 		if (!recoverStalledItem(store, started, target))
-			tickAutopilotRepo(store, started.runs, target);
+			tickAutopilotRepo(store, started, target);
 		started.items.refresh(
 			(store.repo(target.cwd).items ?? []).map((item) => item.id),
 		);

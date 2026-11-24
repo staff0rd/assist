@@ -2,6 +2,7 @@ import { sendTo } from "../broadcast";
 import { daemonLog } from "../daemonLog";
 import type { Handler } from "../routed";
 import { autopilotScheduler } from "./autopilotScheduler";
+import { handleAutopilotSession } from "./handleAutopilotSession";
 import { handleAutopilotFailure } from "./handleAutopilotFailure";
 import { handleAutopilotSummary } from "./handleAutopilotSummary";
 
@@ -34,13 +35,7 @@ export const autopilotHandlers: Record<string, Handler> = {
 				: { statuses: autopilotScheduler.statuses() }),
 		});
 	},
-	"autopilot-session": (client, manager, data) => {
-		const id = typeof data.sessionId === "string" ? data.sessionId : "";
-		sendTo(client, {
-			type: "autopilot-session",
-			autopilot: !!manager.session(id)?.autopilot,
-		});
-	},
+	"autopilot-session": handleAutopilotSession,
 	"autopilot-follow-up": (client, _manager, data) => {
 		const { sessionId, delayMs } = data;
 		const result =

@@ -1,18 +1,10 @@
 import type { Session } from "../types";
 import type { AutopilotIdleMember } from "./AutopilotDeps";
 import { activityPhaseLabel } from "./activityPhaseLabel";
+import { quietMember } from "./quietMember";
 
-function idle(session: Session): boolean {
-	return (
-		session.status === "waiting" &&
-		session.waitingSince !== null &&
-		!session.pendingPrPreview &&
-		!session.permissionActive &&
-		!session.pendingPrompts?.length &&
-		!session.deferredCommands?.length &&
-		!session.sdkBackgroundTasks?.length
-	);
-}
+const idle = (session: Session) =>
+	quietMember(session) && !session.sdkBackgroundTasks?.length;
 
 /** Sessions the run rooted at rootId started whose turn ended with nothing pending or running in the background. */
 export function autopilotIdleMembers(
