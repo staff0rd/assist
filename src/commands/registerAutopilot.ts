@@ -18,6 +18,13 @@ export function registerAutopilot(program: Command): void {
 		.action(lazyAction(() => import("./autopilot/status"), "status"));
 
 	autopilotCommand
+		.command("last-run")
+		.description(
+			"Print this repo's last finished autopilot run: its summary and the backlog items it started",
+		)
+		.action(lazyAction(() => import("./autopilot/lastRun"), "lastRun"));
+
+	autopilotCommand
 		.command("follow-up")
 		.description(
 			"From an autopilot session (or a run it started), set the next tick to fire after <duration> (e.g. 30m, 2h) instead of at the interval",

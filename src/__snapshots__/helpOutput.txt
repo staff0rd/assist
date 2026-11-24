@@ -1060,6 +1060,8 @@ Options:
 
 Commands:
   status                Print each autopilot repo's schedule: state, interval, next and last tick
+  last-run              Print this repo's last finished autopilot run: its summary and the backlog
+                        items it started
   follow-up <duration>  From an autopilot session (or a run it started), set the next tick to fire
                         after <duration> (e.g. 30m, 2h) instead of at the interval
   summary [options]     From an autopilot session (or a run it started), record what this run did
@@ -1077,6 +1079,14 @@ Config:
 Usage: assist autopilot status [options]
 
 Print each autopilot repo's schedule: state, interval, next and last tick
+
+Options:
+  -h, --help  display help for command
+
+=== assist autopilot last-run --help
+Usage: assist autopilot last-run [options]
+
+Print this repo's last finished autopilot run: its summary and the backlog items it started
 
 Options:
   -h, --help  display help for command
