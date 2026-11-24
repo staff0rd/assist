@@ -27,8 +27,10 @@ export async function applyIssueEdit(
 	const issue = prepareIssueEdit(number, repo, true, proposed);
 	pushIssueBody(number, repo, issue.bodyPath, screenshots, title);
 	console.log(
-		title === undefined
-			? `Screenshots attached to ${issue.target}`
-			: `Issue renamed and body updated on ${issue.target}`,
+		title !== undefined
+			? `Issue renamed and body updated on ${issue.target}`
+			: proposed !== undefined
+				? `Issue body updated on ${issue.target}`
+				: `Screenshots attached to ${issue.target}`,
 	);
 }

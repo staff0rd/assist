@@ -5,6 +5,7 @@ import { writeIssueWorkingFile } from "./writeIssueWorkingFile";
 import { slugFromUrl } from "./slugFromUrl";
 
 type PreparedIssueEdit = {
+	parent: string | undefined;
 	title: string;
 	target: string;
 	updatedAt: string;
@@ -19,8 +20,9 @@ export function prepareIssueEdit(
 	repo: string | undefined,
 	fresh: boolean | undefined,
 	proposed: string | undefined,
+	withParent = false,
 ): PreparedIssueEdit {
-	const issue = fetchIssue(number, repo);
+	const issue = fetchIssue(number, repo, withParent);
 	const slug = repo ?? slugFromUrl(issue.url);
 	const target = `${slug}#${number}`;
 	const resumed =
@@ -39,6 +41,9 @@ export function prepareIssueEdit(
 
 	return {
 		title: issue.title,
+		parent: issue.parent
+			? `${slugFromUrl(issue.parent.url)}#${issue.parent.number}`
+			: undefined,
 		target,
 		updatedAt: issue.updatedAt,
 		body,

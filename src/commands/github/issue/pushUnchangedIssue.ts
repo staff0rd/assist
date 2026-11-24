@@ -1,11 +1,14 @@
 import type { PreviewAttachment } from "../../sessions/shared/PreviewAttachment";
+import { applyEditIssueParent } from "./applyEditIssueParent";
 import { fetchIssue } from "./fetchIssue";
 import { pushIssueBody } from "./pushIssueBody";
 import { pushIssueTitle } from "./pushIssueTitle";
+import type { EditIssueParent } from "./resolveEditIssueParent";
 
-type IssueRename = {
-	title: string;
+type IssueEditChanges = {
+	title?: string;
 	bodyChanged: boolean;
+	parent?: EditIssueParent;
 };
 
 export function pushUnchangedIssue(
@@ -15,7 +18,7 @@ export function pushUnchangedIssue(
 	fetchedAt: string,
 	bodyPath: string,
 	attachments: PreviewAttachment[] = [],
-	rename?: IssueRename,
+	changes: IssueEditChanges = { bodyChanged: true },
 ): void {
 	if (fetchIssue(number, repo).updatedAt !== fetchedAt) {
 		console.error(
@@ -24,16 +27,23 @@ export function pushUnchangedIssue(
 		process.exit(1);
 	}
 
-	if (rename && !rename.bodyChanged && attachments.length === 0) {
-		pushIssueTitle(number, repo, rename.title);
+	const { title, parent } = changes;
+	const pushBody =
+		changes.bodyChanged ||
+		attachments.length > 0 ||
+		(title === undefined && !parent);
+
+	if (pushBody) {
+		pushIssueBody(number, repo, bodyPath, attachments, title);
+		console.log(
+			title === undefined
+				? `Issue body updated on ${target}`
+				: `Issue renamed and body updated on ${target}`,
+		);
+	} else if (title !== undefined) {
+		pushIssueTitle(number, repo, title);
 		console.log(`Issue renamed on ${target}`);
-		return;
 	}
 
-	pushIssueBody(number, repo, bodyPath, attachments, rename?.title);
-	console.log(
-		rename
-			? `Issue renamed and body updated on ${target}`
-			: `Issue body updated on ${target}`,
-	);
+	if (parent) applyEditIssueParent(parent);
 }

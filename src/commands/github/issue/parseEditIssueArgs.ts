@@ -16,10 +16,10 @@ export function parseEditIssueArgs(
 	options: EditIssueOptions,
 ): number {
 	const number = Number.parseInt(numberArg, 10);
-	const badTitle =
-		options.title !== undefined &&
-		(!options.title.trim() || options.parent || options.fetch);
-	if (!Number.isInteger(number) || number <= 0 || badTitle) {
+	const badTitle = options.title !== undefined && !options.title.trim();
+	const badFetch =
+		options.fetch && (options.title !== undefined || options.parent);
+	if (!Number.isInteger(number) || number <= 0 || badTitle || badFetch) {
 		console.error(USAGE);
 		process.exit(1);
 	}

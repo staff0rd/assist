@@ -5,18 +5,20 @@ type FetchedIssue = {
 	body: string;
 	updatedAt: string;
 	url: string;
+	parent?: { number: number; url: string } | null;
 };
 
 export function fetchIssue(
 	number: number,
 	repo: string | undefined,
+	withParent = false,
 ): FetchedIssue {
 	const args = [
 		"issue",
 		"view",
 		String(number),
 		"--json",
-		"title,body,updatedAt,url",
+		withParent ? "title,body,updatedAt,url,parent" : "title,body,updatedAt,url",
 	];
 	if (repo) args.push("--repo", repo);
 

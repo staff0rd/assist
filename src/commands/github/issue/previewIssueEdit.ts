@@ -1,28 +1,42 @@
-import { readBodyArgument } from "../../prs/readBodyArgument";
 import type { PreviewAttachment } from "../../sessions/shared/PreviewAttachment";
+import { editIssuePreviewMetadata } from "./editIssuePreviewMetadata";
 import { prepareIssueEdit } from "./prepareIssueEdit";
 import { pushUnchangedIssue } from "./pushUnchangedIssue";
+import { readProposedIssueBody } from "./readProposedIssueBody";
+import type { EditIssueParent } from "./resolveEditIssueParent";
 import { reviewProposedIssueEdit } from "./reviewProposedIssueEdit";
 import { validateIssueBody } from "./validateIssueBody";
 
+type IssueEditRequest = {
+	repo?: string;
+	fresh?: boolean;
+	body?: string;
+	screenshots?: PreviewAttachment[];
+	title?: string;
+	parent?: EditIssueParent;
+};
+
 export async function previewIssueEdit(
 	number: number,
-	repo: string | undefined,
-	fresh: boolean | undefined,
-	body: string | undefined,
-	screenshots: PreviewAttachment[] = [],
-	title?: string,
+	request: IssueEditRequest,
 ): Promise<void> {
-	if (title !== undefined) validateIssueBody(title, "");
-	const proposed = body ? await readBodyArgument(body) : undefined;
-	const issue = prepareIssueEdit(number, repo, fresh, proposed);
+	const { repo, title, parent } = request;
+	const proposed = await readProposedIssueBody(title, request.body);
+	const issue = prepareIssueEdit(
+		number,
+		repo,
+		request.fresh,
+		proposed,
+		parent !== undefined,
+	);
 	const heading =
 		title === undefined ? issue.title : `${issue.title} → ${title}`;
 	const edited = await reviewProposedIssueEdit(
 		`Edit ${issue.target}: ${heading}`,
 		issue.body,
 		{ path: issue.bodyPath, save: issue.save },
-		screenshots,
+		request.screenshots,
+		editIssuePreviewMetadata(issue.parent, parent),
 	);
 	validateIssueBody(title ?? issue.title, edited.body);
 
@@ -33,8 +47,11 @@ export async function previewIssueEdit(
 		issue.updatedAt,
 		issue.bodyPath,
 		edited.screenshots,
-		title === undefined
-			? undefined
-			: { title, bodyChanged: edited.body !== issue.fetchedBody },
+		{
+			title,
+			parent,
+			bodyChanged:
+				(title === undefined && !parent) || edited.body !== issue.fetchedBody,
+		},
 	);
 }

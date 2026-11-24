@@ -95,17 +95,6 @@ describe("editIssue --parent", () => {
 		expectParentedTo("acme", "widgets", 12);
 	});
 
-	it("leaves the body untouched and previews nothing in a web session", async () => {
-		process.env.ASSIST_SESSION = "1";
-		process.env.ASSIST_SESSION_ID = "s1";
-
-		await editIssue("42", { parent: "12" });
-
-		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
-		expect(execFileSync).not.toHaveBeenCalled();
-		expectParentedTo("acme", "widgets", 12);
-	});
-
 	it("parents under a github.com issue URL", async () => {
 		await editIssue("42", {
 			parent: "https://github.com/acme/widgets/issues/12",

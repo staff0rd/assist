@@ -115,15 +115,15 @@ describe("editIssue arguments", () => {
 		expect(execFileSync).not.toHaveBeenCalled();
 	});
 
-	it.each([{ parent: "7" }, { fetch: true }])(
-		"rejects --title combined with %o",
+	it.each([{ title: "Tidy the changelog" }, { parent: "7" }])(
+		"rejects --fetch combined with %o",
 		async (extra) => {
 			const error = vi.spyOn(console, "error").mockImplementation(() => {});
 			exitThrows();
 
-			await expect(
-				editIssue("42", { title: "Tidy the changelog", ...extra }),
-			).rejects.toThrow("process.exit");
+			await expect(editIssue("42", { fetch: true, ...extra })).rejects.toThrow(
+				"process.exit",
+			);
 			expect(error).toHaveBeenCalledWith(expect.stringMatching(/^Usage: /));
 			expect(execFileSync).not.toHaveBeenCalled();
 		},
@@ -862,19 +862,16 @@ describe("editIssue --title", () => {
 		expect(execFileSync).not.toHaveBeenCalled();
 	});
 
-	it.each([{ parent: "7" }, { fetch: true }])(
-		"is a usage error with %o",
-		async (extra) => {
-			webSession();
-			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
-			exitThrows();
+	it.each([{ fetch: true }])("is a usage error with %o", async (extra) => {
+		webSession();
+		const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+		exitThrows();
 
-			await expect(
-				editIssue("42", { title: "Tidy the changelog", ...extra }),
-			).rejects.toThrow("process.exit");
+		await expect(
+			editIssue("42", { title: "Tidy the changelog", ...extra }),
+		).rejects.toThrow("process.exit");
 
-			expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("Usage:"));
-			expect(execFileSync).not.toHaveBeenCalled();
-		},
-	);
+		expect(errorSpy).toHaveBeenCalledWith(expect.stringContaining("Usage:"));
+		expect(execFileSync).not.toHaveBeenCalled();
+	});
 });
