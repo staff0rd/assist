@@ -1,3 +1,10 @@
+## [0.1268.7](https://github.com/staff0rd/assist/compare/v0.1268.6...v0.1268.7) (2026-11-24)
+
+
+### Bug Fixes
+
+* show progress on Next refresh ([fe23988](https://github.com/staff0rd/assist/commit/fe23988f3343a7658ec74affc34474cbd989b2cc))
+
 ## [0.1268.6](https://github.com/staff0rd/assist/compare/v0.1268.5...v0.1268.6) (2026-11-24)
 
 
