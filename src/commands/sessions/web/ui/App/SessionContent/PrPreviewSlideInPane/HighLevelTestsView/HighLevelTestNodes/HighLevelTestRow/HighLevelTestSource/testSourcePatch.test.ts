@@ -18,4 +18,10 @@ describe("testSourcePatch", () => {
 			]),
 		).toBe("@@ -3,1 +3,1 @@\n a\n@@ -40,2 +40,2 @@\n b\n c");
 	});
+
+	it("shows a deleted test's source as removed lines at its base line numbers", () => {
+		expect(testSourcePatch([{ line: 7, source: "a\nb" }], true)).toBe(
+			"@@ -7,2 +6,0 @@\n-a\n-b",
+		);
+	});
 });

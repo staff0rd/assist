@@ -37,7 +37,14 @@ export function HighLevelTestToggle({
 		>
 			<Chevron sx={{ fontSize: 15, color: "text.secondary", flexShrink: 0 }} />
 			<HighLevelTestChange change={change} />
-			<Typography component="span" sx={highLevelTestNameSx} title={name}>
+			<Typography
+				component="span"
+				sx={{
+					...highLevelTestNameSx,
+					...(change === "removed" ? { color: "text.secondary" } : {}),
+				}}
+				title={name}
+			>
 				{name}
 			</Typography>
 		</Box>

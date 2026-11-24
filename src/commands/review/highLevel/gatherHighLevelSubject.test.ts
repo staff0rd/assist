@@ -17,6 +17,9 @@ vi.mock("../../../shared/loadConfig", () => ({ loadConfig: () => ({}) }));
 vi.mock("./fetchHighLevelPr", () => ({ fetchHighLevelPr: vi.fn() }));
 vi.mock("./fetchHighLevelFiles", () => ({ fetchHighLevelFiles: vi.fn() }));
 vi.mock("./fetchFileAtSha", () => ({ fetchFileAtSha: vi.fn() }));
+vi.mock("./fetchHighLevelMergeBase", () => ({
+	fetchHighLevelMergeBase: vi.fn(async () => "base"),
+}));
 
 const files: HighLevelFile[] = [
 	{

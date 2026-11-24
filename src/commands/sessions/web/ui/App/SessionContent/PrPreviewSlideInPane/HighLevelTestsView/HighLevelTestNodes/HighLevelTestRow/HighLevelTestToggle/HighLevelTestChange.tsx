@@ -6,6 +6,12 @@ import {
 	highLevelTreeNameSx,
 } from "../../../../highLevelTreeRowSx";
 
+const CHANGE_TOOLTIPS = {
+	added: "New test",
+	modified: "Edited test",
+	removed: "Deleted test",
+} as const;
+
 export function HighLevelTestChange({
 	change,
 }: {
@@ -13,7 +19,7 @@ export function HighLevelTestChange({
 }) {
 	if (!change) return null;
 	return (
-		<Tooltip title={change === "added" ? "New test" : "Edited test"}>
+		<Tooltip title={CHANGE_TOOLTIPS[change]}>
 			<Typography
 				component="span"
 				aria-label={change}

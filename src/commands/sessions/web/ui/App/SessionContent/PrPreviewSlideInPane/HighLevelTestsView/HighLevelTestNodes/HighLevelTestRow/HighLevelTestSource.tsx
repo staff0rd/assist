@@ -37,7 +37,7 @@ export function HighLevelTestSource({
 				<HighLevelNativeDiff
 					path={path}
 					status="modified"
-					patch={testSourcePatch(excerpts)}
+					patch={testSourcePatch(excerpts, test.change === "removed")}
 					viewType="unified"
 					comments={comments}
 				/>

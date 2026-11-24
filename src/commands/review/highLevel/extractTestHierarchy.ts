@@ -4,25 +4,23 @@ import type { HighLevelTestNode } from "./types";
 import { testName } from "./testName";
 import { visitCase } from "./visitCase";
 
-type Context = { path: string; changed?: Set<number> };
-
-function collect(node: Node, context: Context): HighLevelTestNode[] {
+function collect(node: Node, path: string): HighLevelTestNode[] {
 	const found: HighLevelTestNode[] = [];
 	node.forEachChild((child) => {
-		found.push(...visit(child, context));
+		found.push(...visit(child, path));
 	});
 	return found;
 }
 
-function visit(node: Node, context: Context): HighLevelTestNode[] {
-	if (!Node.isCallExpression(node)) return collect(node, context);
+function visit(node: Node, path: string): HighLevelTestNode[] {
+	if (!Node.isCallExpression(node)) return collect(node, path);
 	const kind = classifyTestCall(node);
-	if (kind === "it") return visitCase(node, context);
-	if (kind === undefined) return collect(node, context);
+	if (kind === "it") return [visitCase(node, path)];
+	if (kind === undefined) return collect(node, path);
 	const children = node
 		.getArguments()
 		.slice(1)
-		.flatMap((argument) => visit(argument, context));
+		.flatMap((argument) => visit(argument, path));
 	if (children.length === 0) return [];
 	return [
 		{
@@ -37,12 +35,11 @@ function visit(node: Node, context: Context): HighLevelTestNode[] {
 export function extractTestHierarchy(
 	path: string,
 	text: string,
-	changed?: Set<number>,
 ): HighLevelTestNode[] {
 	const project = new Project({
 		useInMemoryFileSystem: true,
 		compilerOptions: { allowJs: true },
 	});
 	const source = project.createSourceFile(`/${path}`, text);
-	return collect(source, { path, ...(changed ? { changed } : {}) });
+	return collect(source, path);
 }

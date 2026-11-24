@@ -31,12 +31,7 @@ export async function gatherFreshHighLevelSubject(
 		changedFiles: files.map((file) => file.path),
 		structure: buildHighLevelStructure(files),
 		criticalDiffs: selectCriticalDiffs(files, config.criticalPaths),
-		tests: await gatherHighLevelTests(
-			fetched,
-			config.testPaths,
-			head.repo,
-			head.headSha,
-		),
+		tests: await gatherHighLevelTests(fetched, config.testPaths, head),
 	};
 	saveHighLevelSubjectCache(head, cache);
 	return { cache, sliced };

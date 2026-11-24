@@ -30,11 +30,10 @@ export function buildHighLevelCapturePreview(
 		structure: buildHighLevelStructure(files),
 		criticalDiffs: selectCriticalDiffs(files, config.criticalPaths),
 		criticalPaths: config.criticalPaths,
-		tests: collectHighLevelTests(
-			files,
-			config.testPaths,
-			(path) => sources.get(path) ?? "",
-		),
+		tests: collectHighLevelTests(files, config.testPaths, {
+			head: (path) => sources.get(path) ?? "",
+			base: () => "",
+		}),
 		testPaths: config.testPaths,
 		collapsedPaths: config.collapsedPaths,
 		...captureHighLevelSlices(step, files),

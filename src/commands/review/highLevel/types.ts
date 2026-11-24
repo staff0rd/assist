@@ -45,6 +45,7 @@ export type HighLevelSliceSplit = {
 
 export type HighLevelFile = {
 	path: string;
+	previousPath?: string;
 	status: HighLevelFileStatus;
 	additions: number;
 	deletions: number;
@@ -97,10 +98,12 @@ type HighLevelTestBase = { name: string; line: number };
 
 export type HighLevelTestExcerpt = { line: number; source: string };
 
+export type HighLevelTestChangeKind = "added" | "modified" | "removed";
+
 export type HighLevelTestCase = HighLevelTestBase & {
 	kind: "it";
 	id: string;
-	change?: "added" | "modified";
+	change?: HighLevelTestChangeKind;
 	source?: string;
 	changedLines?: number[];
 	excerpts?: HighLevelTestExcerpt[];
@@ -108,7 +111,7 @@ export type HighLevelTestCase = HighLevelTestBase & {
 	overBudget?: boolean;
 };
 
-type HighLevelTestSuite = HighLevelTestBase & {
+export type HighLevelTestSuite = HighLevelTestBase & {
 	kind: "describe";
 	children: HighLevelTestNode[];
 };

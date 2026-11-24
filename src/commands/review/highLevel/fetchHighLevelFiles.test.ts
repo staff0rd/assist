@@ -9,7 +9,7 @@ describe("fetchHighLevelFiles", () => {
 
 	it("passes the jq pipes as one literal argument and parses paginated file records", () => {
 		vi.mocked(execFileSync).mockReturnValue(
-			'{"filename":"src/a.ts","status":"added","additions":1,"deletions":0,"patch":"@@ -0,0 +1 @@"}\n{"filename":"old.ts","status":"removed","additions":0,"deletions":2}\n',
+			'{"filename":"src/a.ts","status":"added","additions":1,"deletions":0,"patch":"@@ -0,0 +1 @@"}\n{"filename":"old.ts","status":"removed","additions":0,"deletions":2}\n{"filename":"new.ts","previous_filename":"was.ts","status":"renamed","additions":1,"deletions":1}\n{"filename":"b.ts","previous_filename":null,"status":"modified","additions":1,"deletions":1}\n',
 		);
 		const files = fetchHighLevelFiles(1301, "owner/repo");
 		expect(execFileSync).toHaveBeenCalledWith(
@@ -19,7 +19,7 @@ describe("fetchHighLevelFiles", () => {
 				"repos/owner/repo/pulls/1301/files",
 				"--paginate",
 				"--jq",
-				".[] | {filename,status,additions,deletions,patch} | @json",
+				".[] | {filename,previous_filename,status,additions,deletions,patch} | @json",
 			],
 			{ encoding: "utf8", maxBuffer: 64 * 1024 * 1024 },
 		);
@@ -31,7 +31,10 @@ describe("fetchHighLevelFiles", () => {
 				patch: "@@ -0,0 +1 @@",
 			},
 			{ path: "old.ts", status: "removed", deletions: 2 },
+			{ path: "new.ts", previousPath: "was.ts", status: "modified" },
+			{ path: "b.ts", status: "modified" },
 		]);
+		expect(files[3]).not.toHaveProperty("previousPath");
 	});
 
 	it("propagates API failures instead of returning an empty checklist", () => {

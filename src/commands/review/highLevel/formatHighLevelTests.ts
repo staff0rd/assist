@@ -8,6 +8,7 @@ import type {
 function changeMarker(change: HighLevelTestCase["change"]): string {
 	if (change === "added") return "A";
 	if (change === "modified") return "M";
+	if (change === "removed") return "D";
 	return "·";
 }
 

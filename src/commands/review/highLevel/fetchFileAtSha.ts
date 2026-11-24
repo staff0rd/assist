@@ -10,7 +10,7 @@ export async function fetchFileAtSha(
 		return await ghRawFileAtSha(repo, sha, path, 64 * 1024 * 1024);
 	} catch (error) {
 		throw new Error(
-			`Could not read ${path} at PR head ${sha.slice(0, 7)}: ${ghFailure(error)}`,
+			`Could not read ${path} at ${sha.slice(0, 7)}: ${ghFailure(error)}`,
 		);
 	}
 }

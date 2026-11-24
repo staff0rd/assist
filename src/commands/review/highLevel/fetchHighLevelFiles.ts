@@ -4,13 +4,15 @@ import type { HighLevelFile, HighLevelFileStatus } from "./types";
 
 type ApiFile = {
 	filename: string;
+	previous_filename?: string | null;
 	status: string;
 	additions: number;
 	deletions: number;
 	patch?: string;
 };
 
-const JQ = ".[] | {filename,status,additions,deletions,patch} | @json";
+const JQ =
+	".[] | {filename,previous_filename,status,additions,deletions,patch} | @json";
 
 function toStatus(status: string): HighLevelFileStatus {
 	if (status === "added") return "added";
@@ -40,6 +42,9 @@ export function fetchHighLevelFiles(
 			const file = JSON.parse(line) as ApiFile;
 			return {
 				path: file.filename,
+				...(file.previous_filename
+					? { previousPath: file.previous_filename }
+					: {}),
 				status: toStatus(file.status),
 				additions: file.additions,
 				deletions: file.deletions,

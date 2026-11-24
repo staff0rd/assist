@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import type {
+	HighLevelTestChangeKind,
 	HighLevelTestFile,
 	HighLevelTestNode,
 } from "../../../../../../../review/highLevel/types";
@@ -16,7 +17,10 @@ function file(tests: HighLevelTestNode[]): HighLevelTestFile {
 	};
 }
 
-function test(name: string, change?: "added" | "modified"): HighLevelTestNode {
+function test(
+	name: string,
+	change?: HighLevelTestChangeKind,
+): HighLevelTestNode {
 	return {
 		kind: "it",
 		id: name,
@@ -27,7 +31,7 @@ function test(name: string, change?: "added" | "modified"): HighLevelTestNode {
 }
 
 describe("highLevelTestChangeSummary", () => {
-	it("counts added and modified tests, including those inside describes", () => {
+	it("counts added, deleted and modified tests, including those inside describes", () => {
 		const summary = highLevelTestChangeSummary([
 			file([
 				test("a", "added"),
@@ -35,13 +39,17 @@ describe("highLevelTestChangeSummary", () => {
 					kind: "describe",
 					name: "suite",
 					line: 2,
-					children: [test("b", "modified"), test("c", "added")],
+					children: [
+						test("b", "modified"),
+						test("c", "added"),
+						test("d", "removed"),
+					],
 				},
 			]),
 		]);
 
 		expect(summary).toBe(
-			"2 added · 1 modified · unchanged tests are not listed",
+			"2 added · 1 deleted · 1 modified · unchanged tests are not listed",
 		);
 	});
 
