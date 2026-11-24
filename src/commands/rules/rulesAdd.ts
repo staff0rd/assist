@@ -4,6 +4,7 @@ import { addUserRule } from "./addUserRule";
 import { adviceRuleError } from "./adviceRuleError";
 import { describeRuleTarget } from "./describeRuleTarget";
 import { failRule } from "./failRule";
+import { governedCommandFile } from "./governedCommandFile";
 import { reviewProposedRule } from "./reviewProposedRule";
 import type { UserRuleOptions } from "./userRuleOptionsError";
 
@@ -20,6 +21,11 @@ export async function rulesAdd(
 			? "Rule text is required"
 			: undefined;
 	if (error) return failRule(error);
+	const commandFile = governedCommandFile(text, cwd);
+	if (commandFile)
+		return failRule(
+			`This rule governs the command in ${commandFile}; write it into that file instead of a CLAUDE.md or advice.rules`,
+		);
 
 	await reviewProposedRule(
 		{ title: options.title?.trim() || undefined, text: text.trim() },

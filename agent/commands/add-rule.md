@@ -1,9 +1,9 @@
 ---
-description: Capture a new CLAUDE.md rule from a review comment
+description: Capture a new rule from a review comment, in a CLAUDE.md, advice.rules or the command it governs
 allowed_args: "[quoted text, file and note from the comment pane] [--repo [name] | --user | --node | --scope <path>]"
 ---
 
-You are turning a review comment into a written rule in a `CLAUDE.md` file, so the same mistake is caught next time. `$ARGUMENTS` carries what the comment pane sent: an optional `File:` line, the quoted text in a fenced block, and the reviewer's note. A request from the Rules page's Add rule box carries only a scope flag and a note, with no quote.
+You are turning a review comment into a written rule (in a `CLAUDE.md`, `advice.rules`, or the command or skill file whose behaviour it governs), so the same mistake is caught next time. `$ARGUMENTS` carries what the comment pane sent: an optional `File:` line, the quoted text in a fenced block, and the reviewer's note. A request from the Rules page's Add rule box carries only a scope flag and a note, with no quote.
 
 ## Step 1: Read what you were given
 
@@ -26,12 +26,13 @@ Ask the user a clarifying question only when the note is genuinely too vague to 
 
 ## Step 3: Work out the scope
 
-The scope is the directory whose `CLAUDE.md` gets the rule, or `advice.rules` in `repo (db)`, `user (db)` or `user (node)`.
+The scope is the command or skill file whose behaviour the rule governs, the directory whose `CLAUDE.md` gets the rule, or `advice.rules` in `repo (db)`, `user (db)` or `user (node)`.
 
 If Step 1 found a scope flag, it fixes the scope: `--repo [name]` is `repo (db)` (for the named repo when one follows), `--user` is `user (db)`, `--node` is `user (node)`, `--scope <path>` is that `CLAUDE.md`, with the path relative to the repo root. Use it as given — do not infer a different scope or second-guess it — and go to Step 4.
 
-Otherwise infer it — do not ask by default:
+Otherwise infer it — do not ask by default. Check the first case before any other:
 
+- If the rule governs how a specific command or skill behaves (the misbehaviour happened while running `/<name>`, or the note names one), find its file in this repo: `.claude/commands/<name>.md` (`/a:b` is `.claude/commands/a/b.md`), `.claude/skills/<name>/SKILL.md`, or `agent/commands/<name>.md`. When it exists, that file is the scope — not `user (db)`, not `repo (db)`, and not a `CLAUDE.md` rule that says "In /<name>". This holds even when the rule reads like general agent conduct (e.g. "wait for approval before making changes"): the command is where it went wrong, so the command is where it is fixed. A command synced from elsewhere (e.g. installed under `~/.claude/commands/` with no copy in this repo) is not a scope; fall through to the cases below.
 - If the rule is about agent conduct that holds in every repo rather than about this repo's code or docs (e.g. "give the URL, not a nav path", "don't ask for sign-off in chat"), the scope is **`user (db)`**: it goes to `advice.rules` in the shared db and reaches every session in every repo on every node. A rule that only makes sense for this repo's files, conventions or tooling never goes there. Use `user (node)` (this node's `~/.assist.yml`) only when the user asks for the rule to stay on this node.
 - If the rule is about agent conduct specific to this repo (how to work in it, its tooling or workflow) and should reach every node working on it, but is not a convention about the repo's code or docs that belongs in a checked-in `CLAUDE.md`, the scope is **`repo (db)`**: it goes to `advice.rules` in the shared per-repo override that every node sees for this repo.
 - With a file path, the default is the nearest `CLAUDE.md` walking up from that file's directory to the repo root. `assist rules list <path>` shows what is already in scope there, which tells you where sibling rules live.
@@ -42,6 +43,8 @@ Otherwise infer it — do not ask by default:
 Ask the user only when two scopes are genuinely defensible and the choice changes where the rule applies. Otherwise take the nearest `CLAUDE.md` and say which one you chose.
 
 ## Step 4: Write it
+
+For a command or skill file scope, do not run `assist rules add` (it refuses a rule scoped to a repo command). Edit the file directly: put the rule as an instruction in the step it governs (e.g. "Wait for the user's approval of the proposal before editing or publishing anything" in the step that makes the proposal), worded to fit the file rather than as an R-coded bullet. Then tell the user in one line what you added and to which file, and go to Step 5.
 
 ```
 assist rules add '<rule text>' --title '<title>' --scope <path> 2>&1
@@ -59,7 +62,7 @@ It appends the rule to `advice.rules` in `user (db)` with no R-code. For `user (
 
 Use single quotes around the rule text to avoid shell escaping issues.
 
-Run `assist rules add` in the foreground. In a web session it opens the rule, its title and where it will land in the preview pane, and writes nothing until the user decides: it returns at once, so end your turn and do nothing else — the command's output and exit code arrive as your next message, and a superseded run delivers nothing.
+Otherwise, run `assist rules add` in the foreground. In a web session it opens the rule, its title and where it will land in the preview pane, and writes nothing until the user decides: it returns at once, so end your turn and do nothing else — the command's output and exit code arrive as your next message, and a superseded run delivers nothing.
 
 - **Approved** — it exits 0 having written the rule. Show the command output — it names the allocated code (or, for an `advice.rules` rule, the title) and where it went — then tell the user in one line which rule was added and where.
 - **Rejected** — it exits non-zero having written nothing, printing the reason and every inline comment. Revise the wording, title or scope to address each one, then re-run `assist rules add` with the revision again, the same way. Do not move on to Step 5 until a version is approved.

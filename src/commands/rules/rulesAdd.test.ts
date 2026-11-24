@@ -185,4 +185,26 @@ describe("rulesAdd", () => {
 		expect(requestPreviewDecision).not.toHaveBeenCalled();
 		expect(process.exitCode).toBe(1);
 	});
+
+	it.each(targets)(
+		"refuses a rule scoped to a repo command for $name, pointing at its file",
+		async (target) => {
+			mkdirSync(join(root, ".claude", "commands"), { recursive: true });
+			writeFileSync(join(root, ".claude", "commands", "milestone.md"), "");
+
+			await rulesAdd(
+				"In /milestone, wait for approval before making changes",
+				target.options(root),
+				globalConfigPath,
+				root,
+			);
+
+			expect(requestPreviewDecision).not.toHaveBeenCalled();
+			expect(process.exitCode).toBe(1);
+			expect(errors.join("\n")).toContain(
+				join(".claude", "commands", "milestone.md"),
+			);
+			expect(NOTHING).toContainEqual(await target.written());
+		},
+	);
 });
