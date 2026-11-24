@@ -222,6 +222,8 @@ const assistConfigShape = {
 			intervalMinutes: z.number().int().positive().optional(),
 			prompt: z.string().optional(),
 			node: z.string().optional(),
+			context: z.array(z.string()).optional(),
+			statusCommand: z.string().optional(),
 		})
 		.optional(),
 	autoUpdate: z

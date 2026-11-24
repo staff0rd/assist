@@ -1067,9 +1067,11 @@ Commands:
   help [command]        display help for command
 
 Config:
-  assist config set autopilot.intervalMinutes 60 --repo # minutes between scheduled autopilot launches in this repo; nothing is scheduled while it, autopilot.prompt or autopilot.node is unset
-  assist config set autopilot.prompt /helm --repo       # prompt each scheduled autopilot session starts with
-  assist config set autopilot.node <node name> --repo   # the one node (sessions.nodeName, else its hostname) whose daemon runs this repo's schedule; unset means no node runs it
+  assist config set autopilot.intervalMinutes 60 --repo                 # minutes between scheduled autopilot launches in this repo; nothing is scheduled while it, autopilot.prompt or autopilot.node is unset
+  assist config set autopilot.prompt /helm --repo                       # prompt each scheduled autopilot session starts with
+  assist config set autopilot.node <node name> --repo                   # the one node (sessions.nodeName, else its hostname) whose daemon runs this repo's schedule; unset means no node runs it
+  assist config set autopilot.context CLAUDE.md,docs/strategy.md --repo # files /autopilot loads as context at the start of each tick
+  assist config set autopilot.statusCommand "pnpm status" --repo        # command whose output is the current state /autopilot judges each tick
 
 === assist autopilot status --help
 Usage: assist autopilot status [options]
