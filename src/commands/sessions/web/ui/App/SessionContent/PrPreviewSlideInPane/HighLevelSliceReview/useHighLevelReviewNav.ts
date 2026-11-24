@@ -1,22 +1,19 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { onSelectHighLevelSlice } from "../selectHighLevelSlice";
 import type { HighLevelArea } from "./highLevelAreaCheck";
 import type { HighLevelReviewEntry } from "./highLevelReviewEntries";
 import { useHighLevelReviewKeys } from "./useHighLevelReviewKeys";
+import {
+	type HighLevelReviewHead,
+	useHighLevelReviewPosition,
+} from "./useHighLevelReviewNav/useHighLevelReviewPosition";
+import { landingArea } from "./useHighLevelReviewNav/landingArea";
 
-function landingArea(
-	entry: HighLevelReviewEntry,
-	wanted: HighLevelArea | undefined,
-): HighLevelArea | undefined {
-	const open = entry.areas.filter((area) => !entry.disabled.has(area));
-	return wanted && open.includes(wanted) ? wanted : open[0];
-}
-
-export function useHighLevelReviewNav(entries: HighLevelReviewEntry[]) {
-	const [position, setPosition] = useState<{
-		index: number;
-		area: HighLevelArea | undefined;
-	}>({ index: 0, area: undefined });
+export function useHighLevelReviewNav(
+	entries: HighLevelReviewEntry[],
+	head?: HighLevelReviewHead,
+) {
+	const [position, setPosition] = useHighLevelReviewPosition(head);
 	const index = Math.min(position.index, Math.max(entries.length - 1, 0));
 	const entry = entries[index];
 	const area = entry && landingArea(entry, position.area);
@@ -43,7 +40,7 @@ export function useHighLevelReviewNav(entries: HighLevelReviewEntry[]) {
 			onSelectHighLevelSlice((number) =>
 				setPosition({ index: number, area: "structure" }),
 			),
-		[],
+		[setPosition],
 	);
 
 	return {

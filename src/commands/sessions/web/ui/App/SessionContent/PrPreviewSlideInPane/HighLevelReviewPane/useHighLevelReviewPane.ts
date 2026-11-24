@@ -25,7 +25,11 @@ export function useHighLevelReviewPane(
 		sliced?.slicing,
 	);
 	const queue = useHighLevelReviewQueue(progress);
-	const nav = useHighLevelReviewNav(sliced?.entries ?? []);
+	const nav = useHighLevelReviewNav(sliced?.entries ?? [], {
+		repo: payload.repo,
+		prNumber: payload.prNumber,
+		headSha: payload.headSha,
+	});
 	const { comments, sentTo, clearSent } = useHighLevelDiffComments(
 		session,
 		sendInput,

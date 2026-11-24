@@ -120,6 +120,7 @@ function area(name: RegExp) {
 
 afterEach(() => {
 	cleanup();
+	localStorage.clear();
 });
 
 describe("HighLevelSliceReview", () => {
