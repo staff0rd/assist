@@ -511,3 +511,73 @@ describe("NextView pickups", () => {
 		expect(screen.getByText(/, o\/9, picking up Ready, Todo/)).toBeTruthy();
 	});
 });
+
+describe("NextView repo switch", () => {
+	function tree(cwd: string) {
+		return (
+			<MemoryRouter initialEntries={["/next"]}>
+				<RepoSelectionContext.Provider
+					value={{
+						repos: ["/repo", "/git/other"],
+						selectedCwd: cwd,
+						worktreeCwd: cwd,
+						setSelectedCwd: () => {},
+						cloneOn: (c) => c,
+						originOf: () => undefined,
+					}}
+				>
+					<NextView sessions={[]} selectSession={() => {}} />
+				</RepoSelectionContext.Provider>
+			</MemoryRouter>
+		);
+	}
+
+	function stubNext(other: () => Promise<Reply>) {
+		vi.stubGlobal(
+			"fetch",
+			vi.fn((url: string) =>
+				url.includes(encodeURIComponent("/git/other"))
+					? other()
+					: Promise.resolve<Reply>({
+							ok: true,
+							json: async () => ({
+								peerPrs: { items: [pr(1)], error: null },
+								myPrs: empty,
+								assignedIssues: empty,
+								pickups: empty,
+								boards: [],
+								scope: defaultScope,
+							}),
+						}),
+			),
+		);
+	}
+
+	it("clears the old repo's items and shows the header with a loading line", async () => {
+		stubNext(() => new Promise<Reply>(() => {}));
+		const { rerender } = render(tree("/repo"));
+		await heroCard();
+		expect(screen.getByText(/Peers: none/)).toBeTruthy();
+		rerender(tree("/git/other"));
+		expect(screen.queryByText("PR 1")).toBeNull();
+		expect(screen.queryByText(/Peers: none/)).toBeNull();
+		expect(screen.getByText("Next")).toBeTruthy();
+		expect(screen.getByText("Loading other…")).toBeTruthy();
+		expect(screen.getByRole("progressbar")).toBeTruthy();
+	});
+
+	it("shows the error state when the new repo fails to load", async () => {
+		stubNext(() =>
+			Promise.resolve<Reply>({
+				ok: false,
+				json: async () => ({ error: "gh: not logged in" }),
+			}),
+		);
+		const { rerender } = render(tree("/repo"));
+		await heroCard();
+		rerender(tree("/git/other"));
+		expect(await screen.findByText("gh: not logged in")).toBeTruthy();
+		expect(screen.queryByText("PR 1")).toBeNull();
+		expect(screen.queryByRole("progressbar")).toBeNull();
+	});
+});

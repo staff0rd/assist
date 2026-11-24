@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import { Link as RouterLink } from "react-router";
 import type { NextResponse } from "../../../../../next/types";
 import { NextScopeNote } from "./NextHeader/NextScopeNote";
+import { repoName } from "../../../../repoName";
 import { sessionTextSize } from "../../../sessionTextSize";
 
 const headingSx = {
@@ -17,10 +18,12 @@ const headingSx = {
 } as const;
 
 export function NextHeader({
+	cwd,
 	loading,
 	data,
 	onRefresh,
 }: {
+	cwd: string;
 	loading: boolean;
 	data: NextResponse | null;
 	onRefresh: () => void;
@@ -35,7 +38,16 @@ export function NextHeader({
 				<Typography component="h2" sx={headingSx}>
 					Next
 				</Typography>
-				{data && <NextScopeNote scope={data.scope} boards={data.boards} />}
+				{data ? (
+					<NextScopeNote scope={data.scope} boards={data.boards} />
+				) : (
+					loading &&
+					cwd && (
+						<Typography variant="body2" color="text.secondary">
+							Loading {repoName(cwd)}…
+						</Typography>
+					)
+				)}
 			</Stack>
 			<Stack direction="row" spacing={1}>
 				<Button component={RouterLink} to="/config?search=next">

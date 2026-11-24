@@ -1,16 +1,9 @@
-import Stack from "@mui/material/Stack";
-import { NextGroups } from "./NextView/NextGroups";
+import { NextContent } from "./NextView/NextContent";
 import { NextHeader } from "./NextView/NextHeader";
-import { NextPickupStatus } from "./NextView/NextPickupStatus";
-import { NextRecommended } from "./NextView/NextRecommended";
 import { NextReviewDialog } from "./NextView/NextReviewDialog";
-import { useCloneLookup } from "./NextView/useCloneLookup";
 import { useNextActions } from "./NextView/useNextActions";
-import { NextCloneContext } from "./NextView/useNextClone";
 import { useNextItems } from "./NextView/useNextItems";
 import { useNextPageLayout } from "./NextView/useNextPageLayout";
-import { NextSessionsContext } from "./NextView/useNextSessions";
-import { useNextSessionsValue } from "./NextView/useNextSessionsValue";
 import { PageShell } from "../../PageShell";
 import type { SessionInfo } from "../../../types";
 import { useRepoSelectionContext } from "../../../useRepoSelectionContext";
@@ -28,28 +21,32 @@ export function NextView({
 		selectedCwd,
 		refresh,
 	);
-	const cloneFor = useCloneLookup(data?.scope.selfRepo ?? null);
-	const nextSessions = useNextSessionsValue(sessions, selectSession);
 	const layout = useNextPageLayout();
 
 	return (
 		<PageShell
 			{...layout.shell}
-			loading={loading && !data}
-			header={<NextHeader loading={loading} data={data} onRefresh={refresh} />}
+			contentLoading={loading && !data}
+			header={
+				<NextHeader
+					cwd={selectedCwd}
+					loading={loading}
+					data={data}
+					onRefresh={refresh}
+				/>
+			}
 			isEmpty={!data}
 			emptyMessage={error ?? undefined}
 		>
 			{data && (
-				<NextCloneContext.Provider value={cloneFor}>
-					<NextSessionsContext.Provider value={nextSessions}>
-						<Stack spacing={layout.spacing}>
-							<NextPickupStatus {...pickup} />
-							<NextRecommended data={data} {...actions} />
-							<NextGroups data={data} {...actions} />
-						</Stack>
-					</NextSessionsContext.Provider>
-				</NextCloneContext.Provider>
+				<NextContent
+					data={data}
+					actions={actions}
+					pickup={pickup}
+					spacing={layout.spacing}
+					sessions={sessions}
+					selectSession={selectSession}
+				/>
 			)}
 			{reviewing && (
 				<NextReviewDialog review={reviewing} onClose={closeReview} />

@@ -7,6 +7,7 @@ import { useReportContentReady } from "../useReportContentReady";
 
 type PageShellProps = {
 	loading?: boolean;
+	contentLoading?: boolean;
 	title?: string;
 	header?: ReactNode;
 	isEmpty?: boolean;
@@ -19,6 +20,7 @@ type PageShellProps = {
 export const PageShell = (props: PageShellProps) => {
 	const {
 		loading = false,
+		contentLoading = false,
 		title,
 		header,
 		isEmpty = false,
@@ -28,7 +30,7 @@ export const PageShell = (props: PageShellProps) => {
 		sx,
 	} = props;
 
-	useReportContentReady(!loading);
+	useReportContentReady(!loading && !contentLoading);
 
 	if (loading) return <PageSpinner />;
 
@@ -43,7 +45,9 @@ export const PageShell = (props: PageShellProps) => {
 				</Typography>
 			)}
 			{header}
-			{isEmpty ? (
+			{contentLoading ? (
+				<PageSpinner />
+			) : isEmpty ? (
 				<Typography color="text.secondary" align="center" sx={{ py: 6 }}>
 					{emptyMessage}
 				</Typography>
