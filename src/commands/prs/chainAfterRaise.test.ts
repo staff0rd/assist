@@ -1,15 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockChainReviewAndPost = vi.fn();
-const mockAnnouncePr = vi.fn();
+const mockRequestPromptSession = vi.fn();
 const mockFindCurrentPrNumber = vi.fn();
 
 vi.mock("./chainReviewAndPost", () => ({
 	chainReviewAndPost: (...args: unknown[]) => mockChainReviewAndPost(...args),
 }));
 
-vi.mock("../review/announcePr", () => ({
-	announcePr: (...args: unknown[]) => mockAnnouncePr(...args),
+vi.mock("../sessions/shared/requestPromptSession", () => ({
+	requestPromptSession: (...args: unknown[]) =>
+		mockRequestPromptSession(...args),
 }));
 
 vi.mock("./shared", () => ({
@@ -21,6 +22,7 @@ import { chainAfterRaise } from "./chainAfterRaise";
 beforeEach(() => {
 	vi.clearAllMocks();
 	vi.spyOn(console, "error").mockImplementation(() => {});
+	vi.spyOn(console, "log").mockImplementation(() => {});
 	process.env.ASSIST_SESSION = "1";
 });
 
@@ -34,7 +36,7 @@ describe("chainAfterRaise", () => {
 			await chainAfterRaise(42, { reviewAfter: true, announceAfter: true });
 
 			expect(mockChainReviewAndPost).toHaveBeenCalledWith(42, true);
-			expect(mockAnnouncePr).not.toHaveBeenCalled();
+			expect(console.log).not.toHaveBeenCalled();
 		});
 	});
 
@@ -43,15 +45,18 @@ describe("chainAfterRaise", () => {
 			await chainAfterRaise(42, { reviewAfter: true, announceAfter: false });
 
 			expect(mockChainReviewAndPost).toHaveBeenCalledWith(42, false);
-			expect(mockAnnouncePr).not.toHaveBeenCalled();
+			expect(console.log).not.toHaveBeenCalled();
 		});
 	});
 
 	describe("with only the post toggle on", () => {
-		it("should announce the PR directly", async () => {
+		it("should tell the calling agent to post from its own session", async () => {
 			await chainAfterRaise(42, { reviewAfter: false, announceAfter: true });
 
-			expect(mockAnnouncePr).toHaveBeenCalledWith(42);
+			expect(console.log).toHaveBeenCalledWith(
+				expect.stringContaining("/prs-slack 42 --no-confirm"),
+			);
+			expect(mockRequestPromptSession).not.toHaveBeenCalled();
 			expect(mockChainReviewAndPost).not.toHaveBeenCalled();
 		});
 	});
@@ -61,7 +66,7 @@ describe("chainAfterRaise", () => {
 			await chainAfterRaise(null, { reviewAfter: false, announceAfter: false });
 
 			expect(mockChainReviewAndPost).not.toHaveBeenCalled();
-			expect(mockAnnouncePr).not.toHaveBeenCalled();
+			expect(console.log).not.toHaveBeenCalled();
 			expect(mockFindCurrentPrNumber).not.toHaveBeenCalled();
 		});
 	});
@@ -109,7 +114,7 @@ describe("chainAfterRaise", () => {
 			await chainAfterRaise(42, { reviewAfter: true, announceAfter: true });
 
 			expect(mockChainReviewAndPost).not.toHaveBeenCalled();
-			expect(mockAnnouncePr).not.toHaveBeenCalled();
+			expect(console.log).not.toHaveBeenCalled();
 		});
 	});
 });

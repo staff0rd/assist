@@ -1,4 +1,3 @@
-import { announcePr } from "../review/announcePr";
 import { chainReviewAndPost } from "./chainReviewAndPost";
 import { findCurrentPrNumber } from "./shared";
 
@@ -20,7 +19,13 @@ export async function chainAfterRaise(
 	if (number === null) return;
 
 	if (review) await chainReviewAndPost(number, announce);
-	else await announcePr(number);
+	else printAnnounceInstruction(number);
+}
+
+function printAnnounceInstruction(prNumber: number): void {
+	console.log(
+		`Now run /prs-slack ${prNumber} --no-confirm in this session to post PR #${prNumber} to Slack.`,
+	);
 }
 
 function resolvePrNumber(prNumber: number | null): number | null {
