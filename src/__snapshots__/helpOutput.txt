@@ -634,7 +634,7 @@ Options:
   -h, --help         display help for command
 
 Commands:
-  migrate [options]  Apply pending migrations in order (build ships up to migration 15)
+  migrate [options]  Apply pending migrations in order (build ships up to migration 16)
   status             Report whether the database is in sync, behind, or ahead of this build
   drop-retired       Drop retired tables left by removed features, after confirming each
   help [command]     display help for command
@@ -642,7 +642,7 @@ Commands:
 === assist db migrate --help
 Usage: assist db migrate [options]
 
-Apply pending migrations in order (build ships up to migration 15)
+Apply pending migrations in order (build ships up to migration 16)
 
 Options:
   -h, --help  display help for command
@@ -1733,6 +1733,8 @@ Commands:
                                                   previewed and applied in one approval
   move-phase <id> <from> <to>                     Reorder a plan phase from one 1-based position to
                                                   another, moving its tasks with it
+  move [options] <id>                             Reorder an item within its repo's backlog: before
+                                                  or after another item, or to the top or bottom
   export [file]                                   Export every table in the backlog database
                                                   (discovered by introspection) to a file, or stdout
                                                   if omitted
@@ -2167,6 +2169,18 @@ Reorder a plan phase from one 1-based position to another, moving its tasks with
 
 Options:
   -h, --help  display help for command
+
+=== assist backlog move --help
+Usage: assist backlog move [options] <id>
+
+Reorder an item within its repo's backlog: before or after another item, or to the top or bottom
+
+Options:
+  --before <id>  Place the item directly before this item
+  --after <id>   Place the item directly after this item
+  --top          Move the item to the top of its repo's backlog
+  --bottom       Move the item to the bottom of its repo's backlog
+  -h, --help     display help for command
 
 === assist backlog export --help
 Usage: assist backlog export [options] [file]

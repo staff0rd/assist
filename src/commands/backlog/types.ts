@@ -145,7 +145,7 @@ export type BacklogItemSummary = Pick<
 	| "currentPhase"
 	| "runningPhases"
 	| "donePhases"
-> & { totalPhases?: number };
+> & { totalPhases?: number; firstInOrder?: boolean; lastInOrder?: boolean };
 export type BacklogStatus = z.infer<typeof backlogStatusSchema>;
 export type BacklogType = z.infer<typeof backlogTypeSchema>;
 export type PlanPhase = z.infer<typeof planPhaseSchema>;

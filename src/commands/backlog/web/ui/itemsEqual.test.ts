@@ -103,6 +103,15 @@ describe("itemsEqual", () => {
 		expect(itemsEqual([first], [after])).toBe(false);
 	});
 
+	it("detects an item reaching an end of the order", () => {
+		expect(
+			itemsEqual(
+				[makeBacklogItemSummary({ id: 1 })],
+				[makeBacklogItemSummary({ id: 1, lastInOrder: true })],
+			),
+		).toBe(false);
+	});
+
 	it("treats matching usage totals as equal", () => {
 		const total = {
 			tokensUp: 100,

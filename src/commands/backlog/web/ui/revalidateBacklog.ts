@@ -5,19 +5,23 @@ import type { BacklogItemSummary } from "./types";
 export type BacklogLoadHandlers = {
 	onLoaded: (items: BacklogItemSummary[]) => void;
 	onError: (message: string) => void;
+	ticket?: () => () => boolean;
 };
+
+const alwaysFresh = () => true;
 
 export function revalidateBacklog(
 	cwd: string | undefined,
 	filter: BacklogFilter,
 	signal: AbortSignal,
-	{ onLoaded, onError }: BacklogLoadHandlers,
+	{ onLoaded, onError, ticket }: BacklogLoadHandlers,
 	node?: string,
 ): Promise<void> {
 	return (async () => {
+		const isFresh = ticket?.() ?? alwaysFresh;
 		try {
-			const items = await loadBacklogItems(cwd, filter, signal, node);
-			if (!signal.aborted) onLoaded(items);
+			const items = await loadBacklogItems(cwd, filter, signal, node, isFresh);
+			if (!signal.aborted && isFresh()) onLoaded(items);
 		} catch (error) {
 			// why: a transient failure (network blip, server mid-restart) must not throw
 			// out of the polling loop — the next interval simply retries.

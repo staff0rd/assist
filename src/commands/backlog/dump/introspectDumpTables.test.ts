@@ -61,6 +61,7 @@ describe("introspectDumpTables", () => {
 			"starred",
 			"jira_key",
 			"github_issue",
+			"priority",
 		]);
 	});
 

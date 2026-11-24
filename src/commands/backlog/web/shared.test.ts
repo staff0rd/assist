@@ -84,6 +84,35 @@ describe("listItems", () => {
 			expect(getJson().map((item) => item.id)).toEqual([3, 1]);
 		});
 
+		it("marks the order's ends among the listed items, not hidden done ones", async () => {
+			mockLoadBacklog.mockResolvedValue(
+				(
+					[
+						[1, "done"],
+						[2, "todo"],
+						[3, "todo"],
+						[4, "done"],
+					] as const
+				).map(([id, status]) =>
+					makeBacklogItemSummary({ id, status, origin: "repo" }),
+				),
+			);
+			const { req, res, getJson } = makeReqRes("/api/items");
+
+			await listItems(req, res);
+
+			expect(
+				getJson().map(({ id, firstInOrder, lastInOrder }) => ({
+					id,
+					firstInOrder,
+					lastInOrder,
+				})),
+			).toEqual([
+				{ id: 3, lastInOrder: true },
+				{ id: 2, firstInOrder: true },
+			]);
+		});
+
 		it("excludes completed items from search results", async () => {
 			mockSearchBacklog.mockResolvedValue([
 				makeBacklogItemSummary({ id: 5, status: "todo" }),

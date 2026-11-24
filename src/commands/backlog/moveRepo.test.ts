@@ -26,7 +26,9 @@ import type { Db } from "../../shared/db/Db";
 import { items } from "../../shared/db/schema";
 import { getOrigin, getReady } from "./shared";
 import { confirmMove } from "./move-repo/confirmMove";
+import { loadAllItems } from "./loadAllItems";
 import { moveRepo } from "./moveRepo";
+import { reorderItem } from "./reorderItem";
 
 const mockGetReady = getReady as unknown as MockInstance;
 const mockGetOrigin = getOrigin as unknown as MockInstance;
@@ -72,6 +74,15 @@ describe("moveRepo", () => {
 			3: "github.com/acme/other",
 		});
 		expect(process.exitCode).toBeUndefined();
+	});
+
+	it("appends moved items to the bottom of the destination, keeping their order", async () => {
+		await orm.insert(items).values({ id: 4, origin: NEW, name: "D" });
+		await reorderItem(orm, 2, { edge: "top" });
+
+		await moveRepo(OLD, NEW, { yes: true });
+
+		expect((await loadAllItems(orm, NEW)).map((i) => i.id)).toEqual([4, 2, 1]);
 	});
 
 	it("normalizes both arguments so URL and git@ forms are accepted", async () => {

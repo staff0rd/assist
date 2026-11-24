@@ -3,13 +3,14 @@ import { beforeEach, describe, expect, it } from "vitest";
 import { applyMigrations } from "../../../shared/db/migrations/applyMigrations";
 import { pgliteExecutor } from "../../../shared/db/migrations/MigrationExecutor";
 import { sharedTestPglite } from "../../../shared/db/sharedTestPglite";
+import { backfillItemPriority } from "../import/backfillItemPriority";
 import { buildDump } from "./buildDump";
 import type { DumpTable } from "./DumpTable";
 import { introspectDumpTables } from "./introspectDumpTables";
 import {
-	introspectIdentityColumns,
-	resyncIdentitySql,
-} from "./introspectIdentityColumns";
+	introspectSequenceColumns,
+	resyncSequenceSql,
+} from "./introspectSequenceColumns";
 import { parseDump } from "./parseDump";
 import { validateDump } from "./validateDump";
 
@@ -34,12 +35,72 @@ async function copyIn(
 	);
 }
 
+async function restoreInto(db: PGlite, dump: Buffer): Promise<void> {
+	const parsed = parseDump(dump);
+	validateDump(parsed);
+	const { tables } = parsed.header;
+	await db.exec(
+		`TRUNCATE ${tables.map((t) => t.name).join(", ")} RESTART IDENTITY CASCADE`,
+	);
+	for (const table of tables) {
+		await copyIn(db, table, parsed.sections.get(table.name) ?? Buffer.alloc(0));
+	}
+	await backfillItemPriority(db, tables);
+	for (const col of await introspectSequenceColumns(db)) {
+		const { text, values } = resyncSequenceSql(col);
+		await db.query(text, values);
+	}
+}
+
+async function itemOrder(db: PGlite): Promise<number[]> {
+	const { rows } = await db.query<{ id: number }>(
+		"SELECT id FROM items ORDER BY origin, priority, id",
+	);
+	return rows.map((r) => r.id);
+}
+
 describe("dump/restore round-trip", () => {
 	let db: PGlite;
 
 	beforeEach(async () => {
 		db = await sharedTestPglite();
 		await applyMigrations(pgliteExecutor(db));
+	});
+
+	it("preserves item order and appends new items after it", async () => {
+		await db.exec(`INSERT INTO items (id, origin, name, priority) VALUES
+			(1, 'a', 'one', 3), (2, 'a', 'two', 1), (3, 'a', 'three', 2)`);
+		const tables = await introspectDumpTables(db);
+		const dump = await buildDump(tables, (table) => copyOut(db, table));
+
+		await restoreInto(db, dump);
+		await db.exec(
+			`INSERT INTO items (id, origin, name) VALUES (4, 'a', 'four')`,
+		);
+
+		expect(await itemOrder(db)).toEqual([2, 3, 1, 4]);
+	});
+
+	it("backfills id order when the dump predates item priority", async () => {
+		await db.exec(`INSERT INTO items (id, origin, name, priority) VALUES
+			(1, 'a', 'one', 3), (2, 'a', 'two', 1), (3, 'b', 'three', 2)`);
+		const tables = (await introspectDumpTables(db)).map((t) =>
+			t.name === "items"
+				? { ...t, columns: t.columns.filter((c) => c !== "priority") }
+				: t,
+		);
+		const dump = await buildDump(tables, (table) => copyOut(db, table));
+
+		await restoreInto(db, dump);
+
+		const { rows } = await db.query<{ id: number; priority: number }>(
+			"SELECT id, priority FROM items ORDER BY id",
+		);
+		expect(rows).toEqual([
+			{ id: 1, priority: 1 },
+			{ id: 2, priority: 2 },
+			{ id: 3, priority: 1 },
+		]);
 	});
 
 	it("captures and restores a table created at runtime, unknown to any constant", async () => {
@@ -70,8 +131,8 @@ describe("dump/restore round-trip", () => {
 				parsed.sections.get(table.name) ?? Buffer.alloc(0),
 			);
 		}
-		for (const col of await introspectIdentityColumns(db)) {
-			const { text, values } = resyncIdentitySql(col);
+		for (const col of await introspectSequenceColumns(db)) {
+			const { text, values } = resyncSequenceSql(col);
 			await db.query(text, values);
 		}
 
@@ -108,8 +169,8 @@ describe("dump/restore round-trip", () => {
 				parsed.sections.get(table.name) ?? Buffer.alloc(0),
 			);
 		}
-		for (const col of await introspectIdentityColumns(db)) {
-			const { text, values } = resyncIdentitySql(col);
+		for (const col of await introspectSequenceColumns(db)) {
+			const { text, values } = resyncSequenceSql(col);
 			await db.query(text, values);
 		}
 

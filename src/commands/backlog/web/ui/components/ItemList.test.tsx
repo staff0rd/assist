@@ -6,11 +6,14 @@ import {
 	screen,
 	within,
 } from "@testing-library/react";
+import { ThemeProvider } from "@mui/material/styles";
 import { MemoryRouter } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { createDesignTheme } from "../../../../sessions/web/ui/designSystem/createDesignTheme";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import { makeBacklogItemSummary } from "../../../../../test/mothers/makeBacklogItemSummary";
 import type { BacklogItemSummary } from "../types";
+import type { OptimisticMove } from "../useOptimisticMove";
 
 vi.mock("../useRepoSummaries", () => ({
 	useRepoSummaries: () => ({ summaries: [], node: undefined }),
@@ -27,17 +30,20 @@ const socket = {
 	selectSession: vi.fn(),
 } as unknown as SessionSocket;
 
-function renderList(items: BacklogItemSummary[]) {
+function renderList(items: BacklogItemSummary[], onMove?: OptimisticMove) {
 	return render(
-		<MemoryRouter>
-			<ItemList
-				items={items}
-				loading={false}
-				error={null}
-				socket={socket}
-				onReload={() => Promise.resolve()}
-			/>
-		</MemoryRouter>,
+		<ThemeProvider theme={createDesignTheme("dark")}>
+			<MemoryRouter>
+				<ItemList
+					items={items}
+					loading={false}
+					error={null}
+					socket={socket}
+					onReload={() => Promise.resolve()}
+					onMove={onMove}
+				/>
+			</MemoryRouter>
+		</ThemeProvider>,
 	);
 }
 
@@ -201,5 +207,67 @@ describe("ItemList tracker links", () => {
 		expect(screen.getAllByRole("link").map((link) => link.textContent)).toEqual(
 			["Login flow"],
 		);
+	});
+});
+
+describe("ItemList drag grips", () => {
+	const items = [
+		makeBacklogItemSummary({ id: 1, type: "story", name: "Login flow" }),
+		makeBacklogItemSummary({ id: 2, type: "bug", name: "Crash on save" }),
+	];
+	const onMove: OptimisticMove = () => Promise.resolve();
+	const grips = () => screen.queryAllByRole("button", { name: /^Reorder / });
+
+	it("shows a grip on every card in the unfiltered todo view", () => {
+		renderList(items, onMove);
+
+		expect(grips()).toHaveLength(2);
+	});
+
+	it("hides grips under a type filter", () => {
+		renderList(items, onMove);
+
+		clickFilter("Bugs");
+
+		expect(grips()).toHaveLength(0);
+	});
+
+	it("hides grips while a search query is entered", () => {
+		renderList(items, onMove);
+
+		fireEvent.change(screen.getByPlaceholderText("Search backlog…"), {
+			target: { value: "crash" },
+		});
+
+		expect(grips()).toHaveLength(0);
+	});
+});
+
+describe("ItemList move menu items", () => {
+	const items = [
+		makeBacklogItemSummary({ id: 1, type: "story", name: "Login flow" }),
+		makeBacklogItemSummary({ id: 2, type: "bug", name: "Crash on save" }),
+	];
+	const onMove: OptimisticMove = () => Promise.resolve();
+	const openFirstMenu = () =>
+		fireEvent.click(screen.getAllByRole("button", { name: "More actions" })[0]);
+	const moveItems = () =>
+		screen.queryAllByRole("menuitem", { name: /^Move to / });
+
+	it("offers the move items in the unfiltered todo view", () => {
+		renderList(items, onMove);
+
+		openFirstMenu();
+
+		expect(moveItems()).toHaveLength(2);
+	});
+
+	it("omits the move items under a type filter", () => {
+		renderList(items, onMove);
+		clickFilter("Bugs");
+
+		openFirstMenu();
+
+		expect(moveItems()).toHaveLength(0);
 	});
 });

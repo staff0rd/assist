@@ -2,10 +2,11 @@ import type { PoolClient } from "pg";
 import { applyMigrations } from "../../../shared/db/migrations/applyMigrations";
 import { pgExecutor } from "../../../shared/db/migrations/MigrationExecutor";
 import { copyTableIn } from "../dump/copyTableIn";
+import { backfillItemPriority } from "./backfillItemPriority";
 import {
-	introspectIdentityColumns,
-	resyncIdentitySql,
-} from "../dump/introspectIdentityColumns";
+	introspectSequenceColumns,
+	resyncSequenceSql,
+} from "../dump/introspectSequenceColumns";
 import type { ParsedDump } from "../dump/parseDump";
 
 /** Replace all data with the dump's rows in FK order, then resync identity sequences. */
@@ -21,8 +22,9 @@ async function replaceData(
 		const data = parsed.sections.get(table.name) ?? Buffer.alloc(0);
 		await copyTableIn(client, table, data);
 	}
-	for (const col of await introspectIdentityColumns(client)) {
-		const { text, values } = resyncIdentitySql(col);
+	await backfillItemPriority(client, tables);
+	for (const col of await introspectSequenceColumns(client)) {
+		const { text, values } = resyncSequenceSql(col);
 		await client.query(text, values);
 	}
 }

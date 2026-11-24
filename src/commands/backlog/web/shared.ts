@@ -16,7 +16,6 @@ export async function listItems(
 ): Promise<void> {
 	applyCwdFromReq(req);
 	const items = await loadVisibleItems(req);
-	// The web view lists newest-first, reversing the ascending-id CLI ordering.
 	respondJson(res, 200, items.slice().reverse());
 }
 

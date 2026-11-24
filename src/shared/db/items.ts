@@ -1,3 +1,4 @@
+import { sql } from "drizzle-orm";
 import { boolean, index, integer, pgTable, text } from "drizzle-orm/pg-core";
 
 /**
@@ -17,6 +18,12 @@ export const items = pgTable(
 		starred: boolean().notNull().default(false),
 		jiraKey: text("jira_key"),
 		githubIssue: text("github_issue"),
+		priority: integer()
+			.notNull()
+			.default(sql`nextval('items_priority_seq')`),
 	},
-	(t) => [index("items_origin_idx").on(t.origin)],
+	(t) => [
+		index("items_origin_idx").on(t.origin),
+		index("items_origin_priority_idx").on(t.origin, t.priority),
+	],
 );
