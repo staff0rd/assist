@@ -1,11 +1,12 @@
 import { Box } from "@mui/material";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import type { HighLevelPreviewPayload } from "../../../../../../../review/highLevel/types";
 import type { HighLevelDiffComments } from "../HighLevelDiffComments";
 import type { useHighLevelChecklist } from "../HighLevelReviewPane/useHighLevelChecklist";
 import { HighLevelAreaPanel } from "./HighLevelAreaPanel";
 import { HighLevelAreaTabs } from "./HighLevelAreaTabs";
 import { HighLevelEntryHeader } from "./HighLevelEntryHeader";
+import { useHighLevelReviewScroll } from "./HighLevelReviewMain/useHighLevelReviewScroll";
 import type { useHighLevelReviewNav } from "./useHighLevelReviewNav";
 
 export function HighLevelReviewMain({
@@ -20,9 +21,8 @@ export function HighLevelReviewMain({
 	comments?: HighLevelDiffComments | undefined;
 }) {
 	const mainRef = useRef<HTMLDivElement>(null);
-	useEffect(() => {
-		mainRef.current?.scrollTo?.({ top: 0 });
-	}, [nav.index, nav.area]);
+	const contentRef = useRef<HTMLDivElement>(null);
+	useHighLevelReviewScroll(mainRef, contentRef, nav);
 	const { entry, area } = nav;
 
 	return (
@@ -30,30 +30,32 @@ export function HighLevelReviewMain({
 			ref={mainRef}
 			sx={{ minWidth: 0, minHeight: 0, overflowY: "auto", pb: 2 }}
 		>
-			{entry && (
-				<>
-					<HighLevelEntryHeader
-						entry={entry}
-						structure={payload.structure}
-						sliceCount={payload.slices?.length ?? 0}
-					/>
-					<HighLevelAreaTabs
-						entry={entry}
-						area={area}
-						ticked={checklist.ticked}
-						onPick={nav.pickArea}
-					/>
-					{area && (
-						<HighLevelAreaPanel
+			<Box ref={contentRef}>
+				{entry && (
+					<>
+						<HighLevelEntryHeader
+							entry={entry}
+							structure={payload.structure}
+							sliceCount={payload.slices?.length ?? 0}
+						/>
+						<HighLevelAreaTabs
 							entry={entry}
 							area={area}
-							payload={payload}
-							checklist={checklist}
-							comments={comments}
+							ticked={checklist.ticked}
+							onPick={nav.pickArea}
 						/>
-					)}
-				</>
-			)}
+						{area && (
+							<HighLevelAreaPanel
+								entry={entry}
+								area={area}
+								payload={payload}
+								checklist={checklist}
+								comments={comments}
+							/>
+						)}
+					</>
+				)}
+			</Box>
 		</Box>
 	);
 }

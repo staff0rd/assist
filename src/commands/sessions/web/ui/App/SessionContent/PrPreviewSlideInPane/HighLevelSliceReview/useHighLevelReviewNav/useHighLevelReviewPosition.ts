@@ -17,6 +17,7 @@ export type HighLevelReviewHead = {
 type HighLevelReviewPosition = {
 	index: number;
 	area: HighLevelArea | undefined;
+	scrollTop?: number;
 };
 
 const START: HighLevelReviewPosition = { index: 0, area: undefined };
@@ -32,13 +33,13 @@ function loadPosition(key: string | undefined): HighLevelReviewPosition {
 	prunePersisted(PREFIX);
 	const [saved] = loadPersisted<HighLevelReviewPosition>(key);
 	return saved && Number.isInteger(saved.index) && saved.index >= 0
-		? { index: saved.index, area: saved.area }
+		? { index: saved.index, area: saved.area, scrollTop: saved.scrollTop }
 		: START;
 }
 
 export function useHighLevelReviewPosition(
 	head: HighLevelReviewHead | undefined,
-): [HighLevelReviewPosition, (next: HighLevelReviewPosition) => void] {
+) {
 	const key = positionKey(head);
 	const [state, setState] = useState(() => ({
 		key,
@@ -55,5 +56,17 @@ export function useHighLevelReviewPosition(
 		},
 		[key],
 	);
-	return [current.position, setPosition];
+	const saveScroll = useCallback(
+		(position: HighLevelReviewPosition, scrollTop: number) => {
+			if (key) savePersisted(key, [{ ...position, scrollTop }]);
+		},
+		[key],
+	);
+	const loadSaved = useCallback(() => loadPosition(key), [key]);
+	return {
+		position: current.position,
+		setPosition,
+		saveScroll,
+		loadSaved,
+	};
 }

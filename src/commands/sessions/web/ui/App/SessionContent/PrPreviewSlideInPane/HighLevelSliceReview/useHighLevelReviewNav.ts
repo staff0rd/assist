@@ -8,12 +8,14 @@ import {
 	useHighLevelReviewPosition,
 } from "./useHighLevelReviewNav/useHighLevelReviewPosition";
 import { landingArea } from "./useHighLevelReviewNav/landingArea";
+import { scrollPersistence } from "./useHighLevelReviewNav/scrollPersistence";
 
 export function useHighLevelReviewNav(
 	entries: HighLevelReviewEntry[],
 	head?: HighLevelReviewHead,
 ) {
-	const [position, setPosition] = useHighLevelReviewPosition(head);
+	const stored = useHighLevelReviewPosition(head);
+	const { position, setPosition } = stored;
 	const index = Math.min(position.index, Math.max(entries.length - 1, 0));
 	const entry = entries[index];
 	const area = entry && landingArea(entry, position.area);
@@ -51,5 +53,6 @@ export function useHighLevelReviewNav(
 		pickArea,
 		onNext: () => step(1),
 		hasNext: index < entries.length - 1,
+		...scrollPersistence({ index, area }, stored),
 	};
 }
