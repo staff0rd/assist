@@ -25,6 +25,8 @@ function renderPane(messages: TranscriptMessage[], onTooVerbose = vi.fn()) {
 	return { onTooVerbose, view };
 }
 
+const long = (lead: string) => `${lead}\n\nsecond line\n\nthird line`;
+
 const buttons = () => screen.queryAllByRole("button", { name: NAME });
 
 describe("TranscriptPane too-verbose button", () => {
@@ -34,9 +36,9 @@ describe("TranscriptPane too-verbose button", () => {
 	it("shows on every assistant text row", () => {
 		renderPane([
 			{ role: "user", text: "q" },
-			{ role: "assistant", text: "first reply" },
+			{ role: "assistant", text: long("first reply") },
 			{ role: "tool", tool: "Read", target: "a.ts" },
-			{ role: "assistant", text: "second reply" },
+			{ role: "assistant", text: long("second reply") },
 		]);
 		expect(buttons().map(rowText)).toEqual([
 			expect.stringContaining("first reply"),
@@ -54,39 +56,44 @@ describe("TranscriptPane too-verbose button", () => {
 		expect(buttons()).toHaveLength(0);
 	});
 
+	it("never shows on a reply of a couple of lines", () => {
+		renderPane([{ role: "assistant", text: "Done.\n\nAll tests pass." }]);
+		expect(buttons()).toHaveLength(0);
+	});
+
 	it("keeps the button out of comment selection", () => {
-		renderPane([{ role: "assistant", text: "reply" }]);
+		renderPane([{ role: "assistant", text: long("reply") }]);
 		expect(skipsSelection(buttons()[0])).toBe(true);
 	});
 
 	it("passes the reply text and whether it is the last item", () => {
 		const { onTooVerbose } = renderPane([
-			{ role: "assistant", text: "earlier" },
+			{ role: "assistant", text: long("earlier") },
 			{ role: "user", text: "q" },
-			{ role: "assistant", text: "latest" },
+			{ role: "assistant", text: long("latest") },
 		]);
 		fireEvent.click(buttons()[1]);
 		fireEvent.click(buttons()[0]);
 		expect(onTooVerbose.mock.calls).toEqual([
-			["latest", true],
-			["earlier", false],
+			[long("latest"), true],
+			[long("earlier"), false],
 		]);
 	});
 
 	it("treats a reply followed by tool runs as earlier", () => {
 		const { onTooVerbose } = renderPane([
-			{ role: "assistant", text: "narration" },
+			{ role: "assistant", text: long("narration") },
 			{ role: "tool", tool: "Read", target: "a.ts" },
 		]);
 		fireEvent.click(buttons()[0]);
-		expect(onTooVerbose).toHaveBeenCalledWith("narration", false);
+		expect(onTooVerbose).toHaveBeenCalledWith(long("narration"), false);
 	});
 
 	it("hides only the clicked message's button", () => {
 		renderPane([
-			{ role: "assistant", text: "one" },
-			{ role: "assistant", text: "two" },
-			{ role: "assistant", text: "three" },
+			{ role: "assistant", text: long("one") },
+			{ role: "assistant", text: long("two") },
+			{ role: "assistant", text: long("three") },
 		]);
 		fireEvent.click(buttons()[1]);
 		expect(buttons().map(rowText)).toEqual([

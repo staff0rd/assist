@@ -33,7 +33,9 @@ function renderOverlay(overrides: Partial<SessionInfo> = {}) {
 					session={makeSessionInfo({ id: "s1", sdk: true, ...overrides })}
 					transcript={{
 						sessionId: "s1",
-						messages: [{ role: "assistant", text: "a long reply" }],
+						messages: [
+							{ role: "assistant", text: "a long reply\n\nsecond\n\nthird" },
+						],
 					}}
 					fetchSessionTranscript={vi.fn()}
 					sendInput={vi.fn()}
@@ -63,9 +65,12 @@ describe("SdkTranscriptOverlay", () => {
 						transcript={{
 							sessionId: "s1",
 							messages: [
-								{ role: "assistant", text: "an earlier long reply" },
+								{
+									role: "assistant",
+									text: "an earlier long reply\n\nsecond\n\nthird",
+								},
 								{ role: "user", text: "next" },
-								{ role: "assistant", text: "a long reply" },
+								{ role: "assistant", text: "a long reply\n\nsecond\n\nthird" },
 							],
 						}}
 						fetchSessionTranscript={vi.fn()}
@@ -93,7 +98,9 @@ describe("SdkTranscriptOverlay", () => {
 	it("quotes an earlier reply before the too-verbose prompt", () => {
 		expect(clickTooVerbose(0)).toHaveBeenCalledWith(
 			"s1",
-			bracketedPaste(`> an earlier long reply\n\n${tooVerbosePrompt}`),
+			bracketedPaste(
+				`> an earlier long reply\n>\n> second\n>\n> third\n\n${tooVerbosePrompt}`,
+			),
 		);
 	});
 
