@@ -1,3 +1,10 @@
+## [0.1268.6](https://github.com/staff0rd/assist/compare/v0.1268.5...v0.1268.6) (2026-11-24)
+
+
+### Bug Fixes
+
+* clear Next items on repo switch ([02430e4](https://github.com/staff0rd/assist/commit/02430e443b7ecccc7d201803640c0867d92543f7))
+
 ## [0.1268.5](https://github.com/staff0rd/assist/compare/v0.1268.4...v0.1268.5) (2026-11-24)
 
 
