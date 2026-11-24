@@ -10,6 +10,7 @@ export function composerSendKeys(
 	shell: SendStop[2],
 	slash: ReturnType<typeof useSlashSuggestions>,
 	targets: SendStop[3],
+	recallQueued?: () => void,
 ) {
 	const { send, stop } = sdkComposerSendStop(draft, state, shell, targets);
 	const onKeyDown = sdkComposerOnKeyDown({
@@ -20,6 +21,7 @@ export function composerSendKeys(
 		running: state.running,
 		send,
 		stop,
+		recallQueued,
 	});
 	return { send, stop, onKeyDown };
 }

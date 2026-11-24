@@ -9,6 +9,7 @@ import { shellAwareEdit } from "./shellAwareEdit";
 import { useAppendQueuedToDraft } from "./useAppendQueuedToDraft";
 import { useComposerCommands } from "./useComposerCommands";
 import { useComposerShell } from "./useComposerShell";
+import { useRecallQueued } from "./useRecallQueued";
 
 export function useSdkComposer(
 	session: SessionInfo,
@@ -20,6 +21,7 @@ export function useSdkComposer(
 	const commands = useComposerCommands(session, shell.shell);
 	const slash = useSlashSuggestions(commands, text, setText);
 	useAppendQueuedToDraft(session.id, setText, slash.inputRef);
+	const recallQueued = useRecallQueued(session, text, Boolean(shell.shell));
 	const state = sdkComposerState(session);
 	const suggestion = text || shell.shell ? undefined : state.suggestion;
 	const { send, stop, onKeyDown } = composerSendKeys(
@@ -28,6 +30,7 @@ export function useSdkComposer(
 		shell,
 		slash,
 		{ sessionId: session.id, sendInput, interruptSession },
+		recallQueued,
 	);
 	return {
 		...state,

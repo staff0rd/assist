@@ -1,6 +1,8 @@
 import type { KeyboardEvent } from "react";
 import type { useSlashSuggestions } from "../../../../slashSuggestions/useSlashSuggestions";
 import { backslashLineBreak } from "./backslashLineBreak";
+import { isPlainArrowUp } from "./isPlainArrowUp";
+import { acceptsSuggestion } from "./acceptsSuggestion";
 
 type SdkComposerKeys = {
 	slash: ReturnType<typeof useSlashSuggestions>;
@@ -9,11 +11,20 @@ type SdkComposerKeys = {
 	send: () => void;
 	stop: () => void;
 	stopShell: (() => void) | undefined;
+	recallQueued: (() => void) | undefined;
 };
 
 export function sdkComposerKeyDown(
 	e: KeyboardEvent,
-	{ slash, suggestion, running, send, stop, stopShell }: SdkComposerKeys,
+	{
+		slash,
+		suggestion,
+		running,
+		send,
+		stop,
+		stopShell,
+		recallQueued,
+	}: SdkComposerKeys,
 ): void {
 	if (slash.onKeyDown(e)) return;
 	if (suggestion && acceptsSuggestion(e)) {
@@ -25,6 +36,9 @@ export function sdkComposerKeyDown(
 		const lineBreak = field && backslashLineBreak(field);
 		if (lineBreak) slash.replace(lineBreak);
 		else send();
+	} else if (recallQueued && isPlainArrowUp(e)) {
+		e.preventDefault();
+		recallQueued();
 	} else if (e.key === "Escape" && stopShell) {
 		e.preventDefault();
 		stopShell();
@@ -32,15 +46,4 @@ export function sdkComposerKeyDown(
 		e.preventDefault();
 		stop();
 	}
-}
-
-function acceptsSuggestion(e: KeyboardEvent): boolean {
-	if (e.key === "Tab") return !e.shiftKey;
-	return (
-		e.key === "ArrowRight" &&
-		!e.shiftKey &&
-		!e.ctrlKey &&
-		!e.altKey &&
-		!e.metaKey
-	);
 }

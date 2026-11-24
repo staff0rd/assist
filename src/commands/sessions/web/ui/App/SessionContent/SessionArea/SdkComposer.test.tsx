@@ -1,11 +1,22 @@
 // @vitest-environment jsdom
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import {
+	act,
+	cleanup,
+	fireEvent,
+	render,
+	screen,
+} from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { makeSessionInfo } from "../../../../../../../test/mothers/makeSessionInfo";
 import { bracketedPaste } from "../../../../../shared/pasteAndSubmit/bracketedPaste";
 import type { SessionInfo } from "../../../types";
 import { SdkComposer } from "./SdkComposer";
 import { RunShellCommandContext } from "./TranscriptArea/useRunShellCommand";
+import { DequeueMessageContext } from "./TranscriptArea/useDequeueMessage";
+import {
+	ComposerDraftContext,
+	createComposerDraftRegistry,
+} from "./SdkComposer/useComposerDraft";
 
 vi.mock("../../../slashSuggestions/useSlashCommands", () => ({
 	useSlashCommands: (cwd: string | undefined) =>
@@ -452,6 +463,77 @@ describe("SdkComposer", () => {
 			const { field } = suggested({}, "/dr");
 			fireEvent.keyDown(field, { key: "Tab" });
 			expect(value(field)).toBe("/draft ");
+		});
+	});
+
+	describe("recall queued message", () => {
+		function queued(
+			initial: string,
+			removed = true,
+			sdkQueued = ["first", "second"],
+		) {
+			const dequeue = vi.fn().mockResolvedValue(removed);
+			render(
+				<DequeueMessageContext.Provider value={dequeue}>
+					<ComposerDraftContext.Provider value={createComposerDraftRegistry()}>
+						<SdkComposer
+							session={makeSessionInfo({
+								sdk: true,
+								cwd: "/repo",
+								status: "running",
+								sdkQueued,
+							})}
+							sendInput={vi.fn()}
+							interruptSession={vi.fn()}
+						/>
+					</ComposerDraftContext.Provider>
+				</DequeueMessageContext.Provider>,
+			);
+			const field = screen.getByLabelText(/^Message /) as HTMLTextAreaElement;
+			type(field, initial);
+			return { field, dequeue };
+		}
+
+		const pressUp = async (field: HTMLElement) => {
+			fireEvent.keyDown(field, { key: "ArrowUp" });
+			await act(async () => {});
+		};
+
+		it("dequeues the last queued message into the empty composer", async () => {
+			const { field, dequeue } = queued("");
+			await pressUp(field);
+			expect(dequeue).toHaveBeenCalledWith("1", 1, "second");
+			expect(field.value).toBe("second");
+			expect(field.selectionStart).toBe("second".length);
+			expect(document.activeElement).toBe(field);
+		});
+
+		it("ignores Up with a draft in progress", async () => {
+			const { field, dequeue } = queued("keep me");
+			await pressUp(field);
+			expect(dequeue).not.toHaveBeenCalled();
+			expect(field.value).toBe("keep me");
+		});
+
+		it("does nothing without queued messages", async () => {
+			const { field, dequeue } = queued("", true, []);
+			await pressUp(field);
+			expect(dequeue).not.toHaveBeenCalled();
+			expect(field.value).toBe("");
+		});
+
+		it("navigates the slash list instead of dequeuing", async () => {
+			const { field, dequeue } = queued("/dr");
+			await pressUp(field);
+			expect(dequeue).not.toHaveBeenCalled();
+			expect(highlighted()).toBe("/dreamproject");
+		});
+
+		it("leaves the composer empty when the message was already delivered", async () => {
+			const { field, dequeue } = queued("", false);
+			await pressUp(field);
+			expect(dequeue).toHaveBeenCalledWith("1", 1, "second");
+			expect(field.value).toBe("");
 		});
 	});
 });

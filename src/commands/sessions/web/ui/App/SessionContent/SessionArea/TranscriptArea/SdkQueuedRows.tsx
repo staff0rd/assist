@@ -1,16 +1,12 @@
 import type { SessionInfo } from "../../../../types";
-import { useComposerDraft } from "../SdkComposer/useComposerDraft";
 import { QueuedRowActions } from "./QueuedRowActions";
 import { TextRow } from "./TranscriptPane/TranscriptRow/TextRow";
 import { useDequeueMessage } from "./useDequeueMessage";
+import { useEditQueuedMessage } from "./useEditQueuedMessage";
 
 export function SdkQueuedRows({ session }: { session: SessionInfo }) {
 	const dequeue = useDequeueMessage();
-	const drafts = useComposerDraft();
-	const edit = (index: number, text: string) =>
-		dequeue?.(session.id, index, text).then((removed) => {
-			if (removed) drafts?.append(session.id, text);
-		});
+	const edit = useEditQueuedMessage(session.id);
 	return session.sdkQueued?.map((text, i) => (
 		<TextRow
 			key={`${i}:${text}`}
@@ -21,7 +17,7 @@ export function SdkQueuedRows({ session }: { session: SessionInfo }) {
 			actions={
 				dequeue && (
 					<QueuedRowActions
-						onEdit={drafts && (() => void edit(i, text))}
+						onEdit={edit && (() => void edit(i, text))}
 						onRemove={() => void dequeue(session.id, i, text)}
 					/>
 				)

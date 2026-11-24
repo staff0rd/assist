@@ -11,6 +11,7 @@ type Keys = {
 	running: boolean;
 	send: () => void;
 	stop: () => void;
+	recallQueued: (() => void) | undefined;
 };
 
 export function sdkComposerOnKeyDown({ text, shell, ...keys }: Keys) {
