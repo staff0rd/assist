@@ -32,6 +32,7 @@ export function nudgeIdleRunMembers(
 		started.nudges.set(member.sessionId, {
 			waitingSince: member.waitingSince,
 			count: count + 1,
+			handedOff: seen?.handedOff,
 		});
 		if (sent) {
 			daemonLog(

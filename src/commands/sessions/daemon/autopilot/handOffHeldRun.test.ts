@@ -189,6 +189,23 @@ describe("autopilot tick held by a background wait", () => {
 		});
 	});
 
+	it("pauses instead of a second hand-off after a nudge in between", () => {
+		startWait("2026-11-24T19:20:03Z");
+		at("2026-11-24T19:56:00Z");
+		tick();
+		applySdkTaskList(member, { kind: "background", tasks: [] });
+		at("2026-11-24T19:58:00Z");
+		member.waitingSince = Date.now();
+		at("2026-11-24T20:01:00Z");
+		tick();
+		expect(memberPrompts()).toHaveLength(2);
+		startWait("2026-11-24T20:05:00Z");
+		at("2026-11-24T20:56:00Z");
+		tick();
+		expect(memberPrompts()).toHaveLength(2);
+		expect(store.repo(target.cwd).paused).toBe(true);
+	});
+
 	it("pauses when the held member can't take the hand-off", () => {
 		canPrompt = false;
 		startWait("2026-11-24T19:20:03Z");
