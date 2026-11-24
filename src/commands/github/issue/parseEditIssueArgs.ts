@@ -5,20 +5,24 @@ export type EditIssueOptions = {
 	body?: string;
 	title?: string;
 	parent?: string;
+	type?: string;
 	screenshot?: string[];
 };
 
 const USAGE =
-	"Usage: assist github issue edit <number> [-R <owner>/<repo>] [--body <body>] [--title <title>] [--fetch] [--parent <issue>] [--screenshot '[Group/]Caption=path']";
+	"Usage: assist github issue edit <number> [-R <owner>/<repo>] [--body <body>] [--title <title>] [--fetch] [--parent <issue>] [--type <name>] [--screenshot '[Group/]Caption=path']";
 
 export function parseEditIssueArgs(
 	numberArg: string,
 	options: EditIssueOptions,
 ): number {
 	const number = Number.parseInt(numberArg, 10);
-	const badTitle = options.title !== undefined && !options.title.trim();
+	const badTitle =
+		(options.title !== undefined && !options.title.trim()) ||
+		(options.type !== undefined && !options.type.trim());
 	const badFetch =
-		options.fetch && (options.title !== undefined || options.parent);
+		options.fetch &&
+		(options.title !== undefined || options.parent || options.type);
 	if (!Number.isInteger(number) || number <= 0 || badTitle || badFetch) {
 		console.error(USAGE);
 		process.exit(1);

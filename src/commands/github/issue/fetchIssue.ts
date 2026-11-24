@@ -6,19 +6,22 @@ type FetchedIssue = {
 	updatedAt: string;
 	url: string;
 	parent?: { number: number; url: string } | null;
+	issueType?: { name: string } | null;
 };
+
+export type IssueMetadataField = "parent" | "issueType";
 
 export function fetchIssue(
 	number: number,
 	repo: string | undefined,
-	withParent = false,
+	metadataFields: IssueMetadataField[] = [],
 ): FetchedIssue {
 	const args = [
 		"issue",
 		"view",
 		String(number),
 		"--json",
-		withParent ? "title,body,updatedAt,url,parent" : "title,body,updatedAt,url",
+		["title", "body", "updatedAt", "url", ...metadataFields].join(","),
 	];
 	if (repo) args.push("--repo", repo);
 

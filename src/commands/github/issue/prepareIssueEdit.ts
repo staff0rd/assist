@@ -1,11 +1,16 @@
-import { fetchIssue } from "./fetchIssue";
+import { fetchIssue, type IssueMetadataField } from "./fetchIssue";
 import { resumeIssueBody } from "./resumeIssueBody";
 import { validateIssueBody } from "./validateIssueBody";
 import { writeIssueWorkingFile } from "./writeIssueWorkingFile";
 import { slugFromUrl } from "./slugFromUrl";
 
+export type CurrentIssueMetadata = {
+	parent?: string;
+	issueType?: string;
+};
+
 type PreparedIssueEdit = {
-	parent: string | undefined;
+	current: CurrentIssueMetadata;
 	title: string;
 	target: string;
 	updatedAt: string;
@@ -20,9 +25,9 @@ export function prepareIssueEdit(
 	repo: string | undefined,
 	fresh: boolean | undefined,
 	proposed: string | undefined,
-	withParent = false,
+	metadataFields: IssueMetadataField[] = [],
 ): PreparedIssueEdit {
-	const issue = fetchIssue(number, repo, withParent);
+	const issue = fetchIssue(number, repo, metadataFields);
 	const slug = repo ?? slugFromUrl(issue.url);
 	const target = `${slug}#${number}`;
 	const resumed =
@@ -41,9 +46,12 @@ export function prepareIssueEdit(
 
 	return {
 		title: issue.title,
-		parent: issue.parent
-			? `${slugFromUrl(issue.parent.url)}#${issue.parent.number}`
-			: undefined,
+		current: {
+			parent: issue.parent
+				? `${slugFromUrl(issue.parent.url)}#${issue.parent.number}`
+				: undefined,
+			issueType: issue.issueType?.name,
+		},
 		target,
 		updatedAt: issue.updatedAt,
 		body,

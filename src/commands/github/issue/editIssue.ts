@@ -4,11 +4,11 @@ import {
 	type EditIssueOptions,
 } from "./parseEditIssueArgs";
 import { inWebSession } from "../../sessions/shared/inWebSession";
-import { applyEditIssueParent } from "./applyEditIssueParent";
+import { applyEditIssueMetadata } from "./applyEditIssueMetadata";
 import { applyIssueEdit } from "./applyIssueEdit";
 import { fetchIssueToWorkingFile } from "./fetchIssueToWorkingFile";
 import { previewIssueEdit } from "./previewIssueEdit";
-import { resolveEditIssueParent } from "./resolveEditIssueParent";
+import { resolveEditIssueMetadata } from "./resolveEditIssueMetadata";
 import { viewIssue } from "./viewIssue";
 
 export async function editIssue(
@@ -24,16 +24,14 @@ export async function editIssue(
 		return;
 	}
 
-	const parent = options.parent
-		? resolveEditIssueParent(number, options.repo, options.parent)
-		: undefined;
+	const metadata = resolveEditIssueMetadata(number, options.repo, options);
 
 	if (inWebSession()) {
-		await previewIssueEdit(number, { ...options, screenshots, parent });
+		await previewIssueEdit(number, { ...options, screenshots, metadata });
 		return;
 	}
 
-	const bodyGiven = parent !== undefined && options.body !== undefined;
+	const bodyGiven = metadata !== undefined && options.body !== undefined;
 	if (screenshots.length > 0 || options.title !== undefined || bodyGiven) {
 		await applyIssueEdit(
 			number,
@@ -42,8 +40,8 @@ export async function editIssue(
 			screenshots,
 			options.title,
 		);
-	} else if (!parent) {
+	} else if (!metadata) {
 		viewIssue(number, options.repo);
 	}
-	if (parent) applyEditIssueParent(parent);
+	if (metadata) applyEditIssueMetadata(metadata);
 }

@@ -1,14 +1,14 @@
 import type { PreviewAttachment } from "../../sessions/shared/PreviewAttachment";
-import { applyEditIssueParent } from "./applyEditIssueParent";
+import { applyEditIssueMetadata } from "./applyEditIssueMetadata";
 import { fetchIssue } from "./fetchIssue";
 import { pushIssueBody } from "./pushIssueBody";
 import { pushIssueTitle } from "./pushIssueTitle";
-import type { EditIssueParent } from "./resolveEditIssueParent";
+import type { EditIssueMetadata } from "./resolveEditIssueMetadata";
 
 type IssueEditChanges = {
 	title?: string;
 	bodyChanged: boolean;
-	parent?: EditIssueParent;
+	metadata?: EditIssueMetadata;
 };
 
 export function pushUnchangedIssue(
@@ -27,11 +27,11 @@ export function pushUnchangedIssue(
 		process.exit(1);
 	}
 
-	const { title, parent } = changes;
+	const { title, metadata } = changes;
 	const pushBody =
 		changes.bodyChanged ||
 		attachments.length > 0 ||
-		(title === undefined && !parent);
+		(title === undefined && !metadata);
 
 	if (pushBody) {
 		pushIssueBody(number, repo, bodyPath, attachments, title);
@@ -45,5 +45,5 @@ export function pushUnchangedIssue(
 		console.log(`Issue renamed on ${target}`);
 	}
 
-	if (parent) applyEditIssueParent(parent);
+	if (metadata) applyEditIssueMetadata(metadata);
 }

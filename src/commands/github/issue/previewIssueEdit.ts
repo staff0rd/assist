@@ -1,9 +1,10 @@
 import type { PreviewAttachment } from "../../sessions/shared/PreviewAttachment";
 import { editIssuePreviewMetadata } from "./editIssuePreviewMetadata";
+import { metadataFields } from "./metadataFields";
 import { prepareIssueEdit } from "./prepareIssueEdit";
 import { pushUnchangedIssue } from "./pushUnchangedIssue";
 import { readProposedIssueBody } from "./readProposedIssueBody";
-import type { EditIssueParent } from "./resolveEditIssueParent";
+import type { EditIssueMetadata } from "./resolveEditIssueMetadata";
 import { reviewProposedIssueEdit } from "./reviewProposedIssueEdit";
 import { validateIssueBody } from "./validateIssueBody";
 
@@ -13,21 +14,21 @@ type IssueEditRequest = {
 	body?: string;
 	screenshots?: PreviewAttachment[];
 	title?: string;
-	parent?: EditIssueParent;
+	metadata?: EditIssueMetadata;
 };
 
 export async function previewIssueEdit(
 	number: number,
 	request: IssueEditRequest,
 ): Promise<void> {
-	const { repo, title, parent } = request;
+	const { repo, title, metadata } = request;
 	const proposed = await readProposedIssueBody(title, request.body);
 	const issue = prepareIssueEdit(
 		number,
 		repo,
 		request.fresh,
 		proposed,
-		parent !== undefined,
+		metadataFields(metadata),
 	);
 	const heading =
 		title === undefined ? issue.title : `${issue.title} → ${title}`;
@@ -36,7 +37,7 @@ export async function previewIssueEdit(
 		issue.body,
 		{ path: issue.bodyPath, save: issue.save },
 		request.screenshots,
-		editIssuePreviewMetadata(issue.parent, parent),
+		editIssuePreviewMetadata(issue.current, metadata),
 	);
 	validateIssueBody(title ?? issue.title, edited.body);
 
@@ -49,9 +50,9 @@ export async function previewIssueEdit(
 		edited.screenshots,
 		{
 			title,
-			parent,
+			metadata,
 			bodyChanged:
-				(title === undefined && !parent) || edited.body !== issue.fetchedBody,
+				(title === undefined && !metadata) || edited.body !== issue.fetchedBody,
 		},
 	);
 }
