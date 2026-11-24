@@ -581,3 +581,27 @@ describe("NextView repo switch", () => {
 		expect(screen.queryByRole("progressbar")).toBeNull();
 	});
 });
+
+describe("NextView refresh", () => {
+	it("keeps items visible with inline progress until the refetch resolves", async () => {
+		renderView({ peerPrs: { items: [pr(1)], error: null } });
+		await heroCard();
+		const resolvers: (() => void)[] = [];
+		const original = vi.mocked(fetch).getMockImplementation();
+		vi.mocked(fetch).mockImplementation((url) => {
+			const reply = original?.(url as string);
+			return new Promise((resolve) => {
+				resolvers.push(() => resolve(reply as never));
+			});
+		});
+		fireEvent.click(screen.getByRole("button", { name: "Refresh" }));
+		const button = await screen.findByRole("button", { name: /Refreshing/ });
+		expect((button as HTMLButtonElement).disabled).toBe(true);
+		expect(screen.getByRole("progressbar", { name: "Refreshing Next items" }));
+		expect(screen.getAllByText("PR 1").length).toBeGreaterThan(0);
+		for (const resolve of resolvers) resolve();
+		await waitFor(() => expect(screen.queryByRole("progressbar")).toBeNull());
+		expect(screen.getByRole("button", { name: "Refresh" })).toBeTruthy();
+		expect(screen.getAllByText("PR 1").length).toBeGreaterThan(0);
+	});
+});
