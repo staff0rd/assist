@@ -1,3 +1,10 @@
+## [0.1268.4](https://github.com/staff0rd/assist/compare/v0.1268.3...v0.1268.4) (2026-11-24)
+
+
+### Bug Fixes
+
+* announce raised PR from own session ([0b0d6e1](https://github.com/staff0rd/assist/commit/0b0d6e1f43d439d6ddbb0127f4182ed684358975))
+
 ## [0.1268.3](https://github.com/staff0rd/assist/compare/v0.1268.2...v0.1268.3) (2026-11-23)
 
 
