@@ -9,6 +9,13 @@ type HighLevelTestSources = {
 };
 
 function fileTests(file: HighLevelFile, sources: HighLevelTestSources) {
+	if (file.status === "removed")
+		return diffTestHierarchies(
+			file.path,
+			[],
+			extractTestHierarchy(file.path, sources.base(file)),
+			"",
+		);
 	const head = extractTestHierarchy(file.path, sources.head(file.path));
 	if (file.patch === undefined) return head;
 	const base =

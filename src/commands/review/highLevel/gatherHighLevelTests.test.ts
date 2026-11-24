@@ -78,4 +78,24 @@ describe("gatherHighLevelTests", () => {
 			["added", "new"],
 		]);
 	});
+
+	it("reads a deleted test file only at the merge-base", async () => {
+		vi.mocked(fetchFileAtSha).mockReset();
+		vi.mocked(fetchFileAtSha).mockImplementation(
+			async () => 'it("gone", () => {});\n',
+		);
+
+		const tests = await gatherHighLevelTests(
+			[{ ...file("src/gone.test.ts"), status: "removed" }],
+			["**/*.test.ts"],
+			head,
+		);
+
+		expect(vi.mocked(fetchFileAtSha).mock.calls).toEqual([
+			["org/repo", "base", "src/gone.test.ts"],
+		]);
+		expect(tests[0]?.tests).toMatchObject([
+			{ name: "gone", change: "removed", source: 'it("gone", () => {})' },
+		]);
+	});
 });

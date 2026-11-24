@@ -12,6 +12,7 @@ const FETCH_CONCURRENCY = 8;
 type SourceRequest = { key: string; sha: string; path: string };
 
 function needsBase(file: HighLevelFile): boolean {
+	if (file.status === "removed") return true;
 	return file.patch !== undefined && file.status !== "added";
 }
 
@@ -23,11 +24,9 @@ async function sourceRequests(
 	candidates: HighLevelFile[],
 	head: Pick<HighLevelGatherHead, "repo" | "prNumber" | "headSha">,
 ): Promise<SourceRequest[]> {
-	const heads = candidates.map((file) => ({
-		key: file.path,
-		sha: head.headSha,
-		path: file.path,
-	}));
+	const heads = candidates
+		.filter((file) => file.status !== "removed")
+		.map((file) => ({ key: file.path, sha: head.headSha, path: file.path }));
 	const withBase = candidates.filter(needsBase);
 	if (withBase.length === 0) return heads;
 	const mergeBase = await fetchHighLevelMergeBase(

@@ -1,5 +1,7 @@
+import chalk from "chalk";
 import { describe, expect, it } from "vitest";
 import { collectHighLevelTests } from "./collectHighLevelTests";
+import { formatHighLevelTests } from "./formatHighLevelTests";
 import type { HighLevelFile } from "./types";
 
 function file(
@@ -74,6 +76,49 @@ describe("collectHighLevelTests", () => {
 				change: "removed",
 				source: 'it("gone", () => {})',
 			},
+		]);
+	});
+
+	it("lists every test in a deleted test file as removed, read only at the base", () => {
+		const headRead: string[] = [];
+		const tests = collectHighLevelTests(
+			[file("src/gone.test.ts", "removed")],
+			["**/*.test.ts"],
+			{
+				head: (path) => {
+					headRead.push(path);
+					return "";
+				},
+				base: () =>
+					'describe("suite", () => {\n\tit("one", () => {});\n\tit("two", () => {});\n});\nit("top", () => {});\n',
+			},
+		);
+
+		expect(headRead).toEqual([]);
+		expect(tests[0]).toMatchObject({
+			path: "src/gone.test.ts",
+			status: "removed",
+		});
+		expect(tests[0]?.tests).toMatchObject([
+			{
+				kind: "describe",
+				name: "suite",
+				children: [
+					{ id: "src/gone.test.ts:base:2", name: "one", change: "removed" },
+					{ id: "src/gone.test.ts:base:3", name: "two", change: "removed" },
+				],
+			},
+			{ id: "src/gone.test.ts:base:5", name: "top", change: "removed" },
+		]);
+		chalk.level = 0;
+		expect(
+			formatHighLevelTests(tests, ["**/*.test.ts"]).split("\n").slice(2),
+		).toEqual([
+			"  src/gone.test.ts (removed)",
+			"    suite",
+			"      D one",
+			"      D two",
+			"    D top",
 		]);
 	});
 });

@@ -5,9 +5,7 @@ export function highLevelTestCandidates(
 	files: HighLevelFile[],
 	testPaths: string[],
 ): HighLevelFile[] {
-	return files.filter(
-		(file) =>
-			file.status !== "removed" &&
-			testPaths.some((glob) => minimatch(file.path, glob)),
+	return files.filter((file) =>
+		testPaths.some((glob) => minimatch(file.path, glob)),
 	);
 }
