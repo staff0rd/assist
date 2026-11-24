@@ -10,6 +10,15 @@ export function branchHoldsLocalWork(cwd: string, ref: string): boolean {
 		"--remotes",
 	]);
 	if (unpushed === "0") return false;
+	const unpushedWork = gitSyncOrNull(cwd, [
+		"rev-list",
+		"--count",
+		"--no-merges",
+		ref,
+		"--not",
+		"--remotes",
+	]);
+	if (unpushedWork === "0") return false;
 	const lastMove = gitSyncOrNull(cwd, [
 		"reflog",
 		"show",

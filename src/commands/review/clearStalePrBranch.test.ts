@@ -3,6 +3,7 @@ import { mkdtempSync, realpathSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
 import { clearStalePrBranch } from "./clearStalePrBranch";
 
 vi.mock("../sessions/daemon/appendDaemonLog", () => ({
@@ -54,7 +55,24 @@ function cloneWithStalePrBranch() {
 		runGit(author, "push", "-q", "--force", "origin", "feat");
 		runGit(clone, "fetch", "-q", "origin");
 	};
-	return { clone, forcePush };
+	const pushToMain = () => {
+		runGit(author, "checkout", "-q", "main");
+		commit(author, "main-2");
+		runGit(author, "push", "-q", "origin", "main");
+		runGit(author, "checkout", "-q", "feat");
+		runGit(clone, "fetch", "-q", "origin");
+	};
+	const pushToFeat = () => {
+		commit(author, "reviewer-fix");
+		runGit(author, "push", "-q", "origin", "feat");
+		runGit(clone, "fetch", "-q", "origin");
+	};
+	const onFeat = (work: () => void) => {
+		runGit(clone, "checkout", "-q", "feat");
+		work();
+		runGit(clone, "checkout", "-q", "main");
+	};
+	return { clone, forcePush, pushToMain, pushToFeat, onFeat };
 }
 
 function branchExists(cwd: string, branch: string): boolean {
@@ -96,6 +114,33 @@ describe("clearStalePrBranch", () => {
 		commit(clone, "local-work");
 		runGit(clone, "checkout", "-q", "main");
 		forcePush();
+
+		expect(clearStalePrBranch(clone, "feat")).toBe("local-work");
+		expect(branchExists(clone, "feat")).toBe(true);
+	});
+
+	it("clears a branch whose only unpushed commit merges the default branch", () => {
+		const { clone, pushToMain, pushToFeat, onFeat } = cloneWithStalePrBranch();
+		pushToMain();
+		onFeat(() => runGit(clone, "merge", "-q", "--no-edit", "origin/main"));
+		const tip = runGit(clone, "rev-parse", "refs/heads/feat");
+		pushToFeat();
+
+		expect(clearStalePrBranch(clone, "feat")).toBe("cleared");
+		expect(branchExists(clone, "feat")).toBe(false);
+		expect(appendDaemonLog).toHaveBeenCalledWith(
+			expect.stringContaining(`feat at ${tip}`),
+		);
+	});
+
+	it("keeps a branch mixing an unpushed merge with a local commit", () => {
+		const { clone, pushToMain, pushToFeat, onFeat } = cloneWithStalePrBranch();
+		pushToMain();
+		onFeat(() => {
+			runGit(clone, "merge", "-q", "--no-edit", "origin/main");
+			commit(clone, "local-work");
+		});
+		pushToFeat();
 
 		expect(clearStalePrBranch(clone, "feat")).toBe("local-work");
 		expect(branchExists(clone, "feat")).toBe(true);

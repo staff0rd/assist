@@ -6,10 +6,12 @@ export type StalePrBranch = "absent" | "cleared" | "local-work";
 
 export function clearStalePrBranch(cwd: string, branch: string): StalePrBranch {
 	const ref = `refs/heads/${branch}`;
-	if (!gitSyncOrNull(cwd, ["rev-parse", "--verify", "--quiet", ref]))
-		return "absent";
+	const tip = gitSyncOrNull(cwd, ["rev-parse", "--verify", "--quiet", ref]);
+	if (!tip) return "absent";
 	if (branchHoldsLocalWork(cwd, ref)) return "local-work";
 	if (!gitSyncResult(cwd, ["branch", "-D", branch]).ok) return "absent";
-	appendDaemonLog(`cleared stale local pr branch ${branch} in ${cwd}`);
+	appendDaemonLog(
+		`cleared stale local pr branch ${branch} at ${tip} in ${cwd}`,
+	);
 	return "cleared";
 }
