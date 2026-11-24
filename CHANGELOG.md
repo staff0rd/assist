@@ -1,3 +1,10 @@
+## [0.1268.5](https://github.com/staff0rd/assist/compare/v0.1268.4...v0.1268.5) (2026-11-24)
+
+
+### Bug Fixes
+
+* clear merge-only stale PR branches ([0febb8e](https://github.com/staff0rd/assist/commit/0febb8ed2333f8ce71dc3ca1daac4bc2dd54afca))
+
 ## [0.1268.4](https://github.com/staff0rd/assist/compare/v0.1268.3...v0.1268.4) (2026-11-24)
 
 
