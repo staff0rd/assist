@@ -53,7 +53,7 @@ const composerBar = (composer: HTMLElement) =>
 	composer.closest(".MuiInputBase-root")?.parentElement as HTMLElement;
 
 describe("SdkTranscriptOverlay", () => {
-	it("sends the restate-concisely prompt from the too-verbose button", () => {
+	function clickTooVerbose(index: number) {
 		const sendInput = vi.fn();
 		render(
 			<ThemeProvider theme={createDesignTheme("dark")}>
@@ -62,7 +62,11 @@ describe("SdkTranscriptOverlay", () => {
 						session={makeSessionInfo({ id: "s1", sdk: true })}
 						transcript={{
 							sessionId: "s1",
-							messages: [{ role: "assistant", text: "a long reply" }],
+							messages: [
+								{ role: "assistant", text: "an earlier long reply" },
+								{ role: "user", text: "next" },
+								{ role: "assistant", text: "a long reply" },
+							],
 						}}
 						fetchSessionTranscript={vi.fn()}
 						sendInput={sendInput}
@@ -72,13 +76,24 @@ describe("SdkTranscriptOverlay", () => {
 			</ThemeProvider>,
 		);
 		fireEvent.click(
-			screen.getByRole("button", {
+			screen.getAllByRole("button", {
 				name: "Too verbose: say it again, shorter",
-			}),
+			})[index],
 		);
-		expect(sendInput).toHaveBeenCalledWith(
+		return sendInput;
+	}
+
+	it("sends the unquoted too-verbose prompt for the last reply", () => {
+		expect(clickTooVerbose(1)).toHaveBeenCalledWith(
 			"s1",
 			bracketedPaste(tooVerbosePrompt),
+		);
+	});
+
+	it("quotes an earlier reply before the too-verbose prompt", () => {
+		expect(clickTooVerbose(0)).toHaveBeenCalledWith(
+			"s1",
+			bracketedPaste(`> an earlier long reply\n\n${tooVerbosePrompt}`),
 		);
 	});
 

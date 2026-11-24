@@ -9,7 +9,7 @@ import {
 import { SdkComposer } from "./SdkComposer";
 import { useFocusOnEmptyClick } from "./SdkTranscriptOverlay/useFocusOnEmptyClick";
 import { TranscriptCommentLayer } from "./TranscriptCommentLayer";
-import { tooVerbosePrompt } from "./tooVerbosePrompt";
+import { tooVerboseMessage } from "./tooVerboseMessage";
 import { pasteAndSubmit } from "../../../../../shared/pasteAndSubmit";
 
 const overlaySx = {
@@ -41,8 +41,12 @@ export function SdkTranscriptOverlay({
 			<Box sx={transcriptSx}>
 				<LiveTranscriptArea
 					{...transcript}
-					onTooVerbose={() =>
-						pasteAndSubmit(sendInput, transcript.session.id, tooVerbosePrompt)
+					onTooVerbose={(text, isLast) =>
+						pasteAndSubmit(
+							sendInput,
+							transcript.session.id,
+							tooVerboseMessage(text, isLast),
+						)
 					}
 					commentLayer={(content) => (
 						<TranscriptCommentLayer

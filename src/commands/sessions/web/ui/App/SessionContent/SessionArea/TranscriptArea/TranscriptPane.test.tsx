@@ -28,24 +28,29 @@ function renderPane(messages: TranscriptMessage[], onTooVerbose = vi.fn()) {
 const buttons = () => screen.queryAllByRole("button", { name: NAME });
 
 describe("TranscriptPane too-verbose button", () => {
-	it("shows only on the last assistant text row", () => {
+	const rowText = (button: HTMLElement) =>
+		button.closest("div")?.parentElement?.textContent;
+
+	it("shows on every assistant text row", () => {
 		renderPane([
 			{ role: "user", text: "q" },
 			{ role: "assistant", text: "first reply" },
 			{ role: "tool", tool: "Read", target: "a.ts" },
 			{ role: "assistant", text: "second reply" },
 		]);
-		expect(buttons()).toHaveLength(1);
-		const row = buttons()[0].closest("div")?.parentElement;
-		expect(row?.textContent).toContain("second reply");
+		expect(buttons().map(rowText)).toEqual([
+			expect.stringContaining("first reply"),
+			expect.stringContaining("second reply"),
+		]);
 	});
 
 	it.each<[string, TranscriptMessage]>([
 		["user", { role: "user", text: "q" }],
 		["tool", { role: "tool", tool: "Read", target: "a.ts" }],
 		["shell", { role: "shell", command: "ls", stdout: "", stderr: "" }],
-	])("is absent when the last row is a %s row", (_, last) => {
-		renderPane([{ role: "assistant", text: "reply" }, last]);
+		["interrupt", { role: "interrupt" }],
+	])("never shows on a %s row", (_, row) => {
+		renderPane([row]);
 		expect(buttons()).toHaveLength(0);
 	});
 
@@ -54,27 +59,39 @@ describe("TranscriptPane too-verbose button", () => {
 		expect(skipsSelection(buttons()[0])).toBe(true);
 	});
 
-	it("calls onTooVerbose and hides until a new reply is last", () => {
-		const reply: TranscriptMessage = { role: "assistant", text: "long" };
-		const { onTooVerbose, view } = renderPane([reply]);
+	it("passes the reply text and whether it is the last item", () => {
+		const { onTooVerbose } = renderPane([
+			{ role: "assistant", text: "earlier" },
+			{ role: "user", text: "q" },
+			{ role: "assistant", text: "latest" },
+		]);
+		fireEvent.click(buttons()[1]);
 		fireEvent.click(buttons()[0]);
-		expect(onTooVerbose).toHaveBeenCalledOnce();
-		expect(buttons()).toHaveLength(0);
+		expect(onTooVerbose.mock.calls).toEqual([
+			["latest", true],
+			["earlier", false],
+		]);
+	});
 
-		view.rerender(
-			<ThemeProvider theme={createDesignTheme("dark")}>
-				<TranscriptPane
-					messages={[
-						reply,
-						{ role: "user", text: "shorter" },
-						{ role: "assistant", text: "short" },
-					]}
-					loading={false}
-					term=""
-					onTooVerbose={onTooVerbose}
-				/>
-			</ThemeProvider>,
-		);
-		expect(buttons()).toHaveLength(1);
+	it("treats a reply followed by tool runs as earlier", () => {
+		const { onTooVerbose } = renderPane([
+			{ role: "assistant", text: "narration" },
+			{ role: "tool", tool: "Read", target: "a.ts" },
+		]);
+		fireEvent.click(buttons()[0]);
+		expect(onTooVerbose).toHaveBeenCalledWith("narration", false);
+	});
+
+	it("hides only the clicked message's button", () => {
+		renderPane([
+			{ role: "assistant", text: "one" },
+			{ role: "assistant", text: "two" },
+			{ role: "assistant", text: "three" },
+		]);
+		fireEvent.click(buttons()[1]);
+		expect(buttons().map(rowText)).toEqual([
+			expect.stringContaining("one"),
+			expect.stringContaining("three"),
+		]);
 	});
 });

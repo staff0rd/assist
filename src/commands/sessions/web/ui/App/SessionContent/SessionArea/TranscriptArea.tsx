@@ -1,3 +1,4 @@
+import type { OnTooVerbose } from "./TranscriptArea/TranscriptPane/useReplyActions";
 import Box from "@mui/material/Box";
 import type { ReactNode } from "react";
 import { TranscriptPane } from "./TranscriptArea/TranscriptPane";
@@ -17,7 +18,7 @@ export function TranscriptArea({
 	tail?: ReactNode;
 	follow?: boolean;
 	commentLayer?: (content: ReactNode) => ReactNode;
-	onTooVerbose?: () => void;
+	onTooVerbose?: OnTooVerbose;
 }) {
 	const term = useTranscriptHighlightTerm();
 	const ready = transcript?.sessionId === sessionId;

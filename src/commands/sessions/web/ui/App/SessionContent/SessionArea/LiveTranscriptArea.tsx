@@ -1,3 +1,4 @@
+import type { OnTooVerbose } from "./TranscriptArea/TranscriptPane/useReplyActions";
 import { type ReactNode, useEffect } from "react";
 import type { SessionInfo, Transcript } from "../../../types";
 import { TranscriptArea } from "./TranscriptArea";
@@ -17,7 +18,7 @@ export function LiveTranscriptArea({
 	transcript: Transcript | null;
 	fetchSessionTranscript: FetchSessionTranscript;
 	commentLayer?: (content: ReactNode) => ReactNode;
-	onTooVerbose?: () => void;
+	onTooVerbose?: OnTooVerbose;
 }) {
 	const {
 		id,
