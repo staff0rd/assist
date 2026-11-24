@@ -7,9 +7,11 @@ import { StarAction } from "./StarAction";
 export function CardActions({
 	item,
 	onReload,
+	reorderable,
 }: {
 	item: BacklogItemSummary;
 	onReload: () => Promise<void>;
+	reorderable?: boolean;
 }) {
 	return (
 		<>
@@ -28,7 +30,7 @@ export function CardActions({
 						totalPhases: item.totalPhases,
 						onClosed: onReload,
 					}}
-					orderEnds={item}
+					orderEnds={reorderable ? item : undefined}
 				/>
 			)}
 		</>

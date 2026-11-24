@@ -34,6 +34,7 @@ function LocationProbe() {
 function renderCard(
 	item: Partial<BacklogItemSummary> = {},
 	sessions: SessionInfo[] = [],
+	reorderable = true,
 ) {
 	return render(
 		<MoveItemContext.Provider value={moveItem}>
@@ -43,6 +44,7 @@ function renderCard(
 					to={itemPath}
 					socket={socketWith(sessions)}
 					onReload={() => Promise.resolve()}
+					reorderable={reorderable}
 				/>
 				<LocationProbe />
 			</MemoryRouter>
@@ -321,5 +323,13 @@ describe("ItemCard move menu items", () => {
 		expect(isDisabled(screen.getByRole("menuitem", { name: enabled }))).toBe(
 			false,
 		);
+	});
+
+	it("omits the move items when the card is not reorderable", () => {
+		renderCard({}, [], false);
+
+		fireEvent.click(screen.getByRole("button", { name: "More actions" }));
+
+		expect(screen.queryByRole("menuitem", { name: /^Move to / })).toBeNull();
 	});
 });

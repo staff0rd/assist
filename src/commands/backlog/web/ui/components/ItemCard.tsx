@@ -1,12 +1,11 @@
-import { Box, Link } from "@mui/material";
+import { Box } from "@mui/material";
 import type { ReactNode } from "react";
-import { Link as RouterLink } from "react-router";
 import type { SessionSocket } from "../../../../sessions/web/ui/useSessionSocket";
 import type { BacklogItemSummary } from "../types";
 import { draggingCardClass } from "./draggingCardClass";
 import { itemCardStyles } from "./itemCardStyles";
 import { itemCardSx } from "./itemCardSx";
-import { ItemCardMeta } from "./ItemCardMeta";
+import { ItemCardMain } from "./ItemCardMain";
 import { mostRecentOpenSession } from "./mostRecentOpenSession";
 import { StatusIcon } from "./StatusIcon";
 import { CardActions } from "./CardActions";
@@ -25,7 +24,12 @@ export function ItemCard({
 	onReload,
 	grip,
 	dragging,
-}: ItemCardProps & { grip?: ReactNode; dragging?: boolean }) {
+	reorderable,
+}: ItemCardProps & {
+	grip?: ReactNode;
+	dragging?: boolean;
+	reorderable?: boolean;
+}) {
 	const openSession = mostRecentOpenSession(socket.sessions, item.id);
 	const inProgress = item.status === "in-progress";
 	const running = inProgress && openSession?.status === "running";
@@ -38,24 +42,18 @@ export function ItemCard({
 				{grip}
 				<StatusIcon status={item.status} />
 			</Box>
-			<Box sx={itemCardStyles.main}>
-				<Link
-					component={RouterLink}
-					to={to}
-					underline="none"
-					title={item.name}
-					sx={itemCardStyles.stretchedNameLink}
-				>
-					{item.name}
-				</Link>
-				<ItemCardMeta
-					item={item}
-					openSession={openSession}
-					onSelectSession={socket.selectSession}
-				/>
-			</Box>
+			<ItemCardMain
+				item={item}
+				to={to}
+				openSession={openSession}
+				onSelectSession={socket.selectSession}
+			/>
 			<Box sx={itemCardStyles.actions}>
-				<CardActions item={item} onReload={onReload} />
+				<CardActions
+					item={item}
+					onReload={onReload}
+					reorderable={reorderable}
+				/>
 			</Box>
 		</Box>
 	);

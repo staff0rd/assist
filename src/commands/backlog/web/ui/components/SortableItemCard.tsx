@@ -26,6 +26,7 @@ export function SortableItemCard(props: ItemCardProps) {
 			<ItemCard
 				{...props}
 				dragging={isDragging}
+				reorderable
 				grip={
 					<DragGrip
 						name={props.item.name}

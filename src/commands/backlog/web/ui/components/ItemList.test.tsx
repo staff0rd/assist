@@ -242,3 +242,32 @@ describe("ItemList drag grips", () => {
 		expect(grips()).toHaveLength(0);
 	});
 });
+
+describe("ItemList move menu items", () => {
+	const items = [
+		makeBacklogItemSummary({ id: 1, type: "story", name: "Login flow" }),
+		makeBacklogItemSummary({ id: 2, type: "bug", name: "Crash on save" }),
+	];
+	const onMove: OptimisticMove = () => Promise.resolve();
+	const openFirstMenu = () =>
+		fireEvent.click(screen.getAllByRole("button", { name: "More actions" })[0]);
+	const moveItems = () =>
+		screen.queryAllByRole("menuitem", { name: /^Move to / });
+
+	it("offers the move items in the unfiltered todo view", () => {
+		renderList(items, onMove);
+
+		openFirstMenu();
+
+		expect(moveItems()).toHaveLength(2);
+	});
+
+	it("omits the move items under a type filter", () => {
+		renderList(items, onMove);
+		clickFilter("Bugs");
+
+		openFirstMenu();
+
+		expect(moveItems()).toHaveLength(0);
+	});
+});
