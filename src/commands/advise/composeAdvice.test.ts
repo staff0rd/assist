@@ -42,6 +42,7 @@ const alwaysNames = [
 	"fixing-commands",
 	"link-urls",
 	"markdown",
+	"session-ids",
 	"show-links",
 ];
 
@@ -164,6 +165,7 @@ describe("composeAdvice", () => {
 			"Editing Jira issues with Smart Links",
 			"Linking to web pages and settings",
 			"Writing markdown",
+			"Session IDs",
 			"Showing long links, paths and snippets",
 		]);
 	});
