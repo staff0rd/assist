@@ -69,7 +69,7 @@ function renderArea(
 					}}
 					viewingTranscriptSessionId={null}
 					transcript={null}
-					sendPrDecision={() => {}}
+					sendPrDecision={() => true}
 					fetchSessionTranscript={() => {}}
 					interruptSession={() => {}}
 				/>
@@ -129,7 +129,7 @@ describe("SessionArea transcript view", () => {
 				sendInput={() => {}}
 				sendResize={() => {}}
 				viewingTranscriptSessionId="abc"
-				sendPrDecision={() => {}}
+				sendPrDecision={() => true}
 				fetchSessionTranscript={() => {}}
 				interruptSession={() => {}}
 				lifecycle={{
@@ -165,7 +165,7 @@ describe("SessionArea transcript view", () => {
 				sendInput={() => {}}
 				sendResize={() => {}}
 				viewingTranscriptSessionId="abc"
-				sendPrDecision={() => {}}
+				sendPrDecision={() => true}
 				fetchSessionTranscript={() => {}}
 				interruptSession={() => {}}
 				lifecycle={{

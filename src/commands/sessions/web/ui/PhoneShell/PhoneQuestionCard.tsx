@@ -1,6 +1,7 @@
 import Box from "@mui/material/Box";
 import type { PrPreview } from "../../../shared/SessionInfoBase";
 import type { QuestionDecision } from "../App/SessionContent/PrPreviewSlideInPane/QuestionPane/useQuestionPreview";
+import { UnsentAlert } from "../App/SessionContent/PrPreviewSlideInPane/QuestionPane/UnsentAlert";
 import { safeAreaInsets } from "../designSystem/safeAreaInsets";
 import { phoneCardSx } from "./phoneCardSx";
 import { PhoneQuestionActions } from "./PhoneQuestionCard/PhoneQuestionActions";
@@ -28,6 +29,7 @@ export function PhoneQuestionCard({
 		<Box sx={{ ...cardSx, pb }} data-testid="phone-question-card">
 			<PhoneQuestionPage model={model} />
 			<Box sx={{ flex: 1 }} />
+			{model.unsent && <UnsentAlert />}
 			<PhoneQuestionAutoSubmit {...model.autoSubmit} />
 			<PhoneQuestionActions {...model.actions} />
 		</Box>

@@ -6,6 +6,7 @@ import {
 	useQuestionPreview,
 } from "../../App/SessionContent/PrPreviewSlideInPane/QuestionPane/useQuestionPreview";
 import { usePhoneAutoSubmit } from "./usePhoneAutoSubmit";
+import { usePhoneDecision } from "./usePhoneDecision";
 
 export function usePhoneQuestion(
 	preview: PrPreview,
@@ -14,21 +15,17 @@ export function usePhoneQuestion(
 ) {
 	const { questions, state } = useQuestionPreview(preview);
 	const [page, setPage] = useState(0);
-	const [sending, setSending] = useState(false);
+	const { decide, sending, unsent } = usePhoneDecision(onDecision);
 	const question = questions[page];
 	const last = page === questions.length - 1;
 
-	const decide: QuestionDecision = (decision, details) => {
-		setSending(true);
-		onDecision(decision, details);
-	};
 	const answer = (answers: Record<string, string>) =>
 		decide("approve", { ...miroDecisionDetails(), answers });
 
 	const auto = usePhoneAutoSubmit({
 		cwd,
 		questions,
-		answers: state.answers,
+		state,
 		onSubmit: answer,
 		onAdvance: (index) => {
 			if (index === page && !last) setPage(page + 1);
@@ -38,10 +35,9 @@ export function usePhoneQuestion(
 	return {
 		questions,
 		state,
-		pick: (index: number, label: string) => {
-			state.pick(index, label);
-			auto.afterPick(index, label);
-		},
+		pick: auto.pick,
+		pickOther: auto.pickOther,
+		unsent,
 		page,
 		setPage,
 		question,

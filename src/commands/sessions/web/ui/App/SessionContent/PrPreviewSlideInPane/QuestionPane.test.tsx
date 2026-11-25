@@ -9,7 +9,12 @@ const toggle = vi.hoisted(() => ({ enabled: false }));
 vi.mock("./QuestionPane/useAskQuestionAutoSubmit", () => ({
 	useAskQuestionAutoSubmit: () => {
 		const [enabled, setEnabled] = useState(toggle.enabled);
-		return [enabled, setEnabled];
+		return {
+			enabled,
+			setEnabled,
+			whenLoaded: (run: (on: boolean) => void) => run(enabled),
+			cancel: () => {},
+		};
 	},
 }));
 

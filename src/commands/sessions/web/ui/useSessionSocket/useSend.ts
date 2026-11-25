@@ -7,11 +7,13 @@ export function useSend(
 	addPendingLaunch: (input: NewLaunchInput) => void,
 ) {
 	return useCallback(
-		(msg: object) => {
+		(msg: object): boolean => {
 			const ws = wsRef.current;
-			if (ws?.readyState === WebSocket.OPEN) ws.send(JSON.stringify(msg));
+			const open = ws?.readyState === WebSocket.OPEN;
+			if (open) ws.send(JSON.stringify(msg));
 			const pending = pendingLaunchFromMessage(msg);
 			if (pending) addPendingLaunch(pending);
+			return open;
 		},
 		[wsRef, addPendingLaunch],
 	);

@@ -19,7 +19,7 @@ import { stopShellCommandAction } from "../stopShellCommandAction";
 import { discardShellResultAction } from "../discardShellResultAction";
 import { resizeAction } from "../resizeAction";
 
-type SendFn = (msg: object) => void;
+type SendFn = (msg: object) => boolean;
 type OutputHandler = (data: string) => void;
 
 export function useSessionActions(

@@ -10,7 +10,7 @@ export type SendPrDecision = (
 	requestId: string,
 	decision: "approve" | "reject",
 	details: PrDecisionDetails,
-) => void;
+) => boolean;
 
 export function SessionPreviewSplit({
 	session,
@@ -37,9 +37,11 @@ export function SessionPreviewSplit({
 			sessionId={session?.id}
 			cwd={session?.cwd}
 			sendInput={sendInput}
-			onDecision={(requestId, decision, details) => {
-				if (session) sendPrDecision(session.id, requestId, decision, details);
-			}}
+			onDecision={(requestId, decision, details) =>
+				session
+					? sendPrDecision(session.id, requestId, decision, details)
+					: false
+			}
 		>
 			{children}
 		</PrPreviewSplit>

@@ -11,5 +11,5 @@ export type PrPreviewPaneProps = {
 	onDecision: (
 		decision: "approve" | "reject",
 		details: PrDecisionDetails,
-	) => void;
+	) => boolean | void;
 };

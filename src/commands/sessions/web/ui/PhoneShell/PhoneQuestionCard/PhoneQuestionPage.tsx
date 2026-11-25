@@ -3,7 +3,7 @@ import { PhoneQuestionFields } from "./PhoneQuestionFields";
 import { PhoneQuestionHead } from "./PhoneQuestionHead";
 
 export function PhoneQuestionPage({
-	model: { questions, state, pick, page, setPage, question },
+	model: { questions, state, pick, pickOther, page, setPage, question },
 }: {
 	model: ReturnType<typeof usePhoneQuestion>;
 }) {
@@ -23,7 +23,7 @@ export function PhoneQuestionPage({
 				question={question}
 				choice={state.choices[page]}
 				onPick={(label) => pick(page, label)}
-				onPickOther={() => state.pickOther(page)}
+				onPickOther={() => pickOther(page)}
 				onOtherText={(text) => state.setOtherText(page, text)}
 			/>
 		</>

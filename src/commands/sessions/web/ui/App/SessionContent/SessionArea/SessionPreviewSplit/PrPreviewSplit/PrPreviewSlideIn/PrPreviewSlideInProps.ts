@@ -17,5 +17,5 @@ export type PrPreviewSlideInProps = {
 		requestId: string,
 		decision: "approve" | "reject",
 		details: PrDecisionDetails,
-	) => void;
+	) => boolean | void;
 };

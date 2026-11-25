@@ -14,7 +14,7 @@ export type PrPreviewSplitProps = {
 		requestId: string,
 		decision: "approve" | "reject",
 		details: PrDecisionDetails,
-	) => void;
+	) => boolean | void;
 	placeholder?: ReactNode;
 	children: ReactNode;
 };

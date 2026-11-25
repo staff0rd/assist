@@ -9,20 +9,25 @@ export function useGlobalConfigValue<T>(
 	cwd: string | undefined,
 	parse: (raw: unknown) => T,
 	localOnly = false,
-): [T, (next: T) => void] {
+): [T, (next: T) => void, boolean] {
 	const apiNode = useApiNode();
 	const node = localOnly ? undefined : apiNode;
 	const [value, setValue] = useState<T>(() => parse(undefined));
+	const [loaded, setLoaded] = useState(false);
 
 	useEffect(() => {
 		if (!cwd) return;
 		let cancelled = false;
+		setLoaded(false);
 		fetchEntries(cwd, node)
 			.then((entries) => {
 				const entry = entries.find((e) => e.key === key);
 				if (!cancelled) setValue(parse(entry?.value));
 			})
-			.catch((error: unknown) => reportCaughtError(error, key));
+			.catch((error: unknown) => reportCaughtError(error, key))
+			.finally(() => {
+				if (!cancelled) setLoaded(true);
+			});
 		return () => {
 			cancelled = true;
 		};
@@ -43,5 +48,5 @@ export function useGlobalConfigValue<T>(
 		[key, cwd, node, value],
 	);
 
-	return [value, save];
+	return [value, save, loaded];
 }

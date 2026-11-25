@@ -1,6 +1,6 @@
 import type { PrDecisionDetails } from "../../PrDecisionDetails";
 
-type SendFn = (msg: object) => void;
+type SendFn = (msg: object) => boolean;
 
 export function prDecisionAction(send: SendFn) {
 	return (

@@ -7,7 +7,7 @@ import { useQuestionAnswers } from "./useQuestionAnswers";
 export type QuestionDecision = (
 	decision: "approve" | "reject",
 	details: PrDecisionDetails,
-) => void;
+) => boolean | void;
 
 export function useQuestionPreview(preview: PrPreview) {
 	const questions = useMemo(

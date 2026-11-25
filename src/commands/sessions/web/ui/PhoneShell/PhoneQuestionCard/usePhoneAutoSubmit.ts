@@ -1,5 +1,8 @@
 import type { AskQuestion } from "../../../../shared/askQuestionInputSchema";
+import type { useQuestionAnswers } from "../../App/SessionContent/PrPreviewSlideInPane/QuestionPane/useQuestionAnswers";
 import { useAskQuestionAutoSubmit } from "../../App/SessionContent/PrPreviewSlideInPane/QuestionPane/useAskQuestionAutoSubmit";
+
+type QuestionState = ReturnType<typeof useQuestionAnswers>;
 
 function completedAnswers(
 	questions: AskQuestion[],
@@ -19,24 +22,37 @@ function completedAnswers(
 export function usePhoneAutoSubmit({
 	cwd,
 	questions,
-	answers,
+	state,
 	onSubmit,
 	onAdvance,
 }: {
 	cwd: string | undefined;
 	questions: AskQuestion[];
-	answers: Record<string, string>;
+	state: QuestionState;
 	onSubmit: (answers: Record<string, string>) => void;
 	onAdvance: (index: number) => void;
 }) {
-	const [checked, onChange] = useAskQuestionAutoSubmit(cwd);
+	const auto = useAskQuestionAutoSubmit(cwd);
 
 	const afterPick = (index: number, label: string) => {
-		if (!checked || questions[index]?.multiSelect) return;
-		const completed = completedAnswers(questions, answers, index, label);
-		if (completed) onSubmit(completed);
-		else onAdvance(index);
+		if (questions[index]?.multiSelect) return;
+		const completed = completedAnswers(questions, state.answers, index, label);
+		auto.whenLoaded((enabled) => {
+			if (!enabled) return;
+			if (completed) onSubmit(completed);
+			else onAdvance(index);
+		});
 	};
 
-	return { toggle: { checked, onChange }, afterPick };
+	return {
+		toggle: { checked: auto.enabled, onChange: auto.setEnabled },
+		pick: (index: number, label: string) => {
+			state.pick(index, label);
+			afterPick(index, label);
+		},
+		pickOther: (index: number) => {
+			auto.cancel();
+			state.pickOther(index);
+		},
+	};
 }

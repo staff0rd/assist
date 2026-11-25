@@ -40,7 +40,7 @@ describe("useAskQuestionAutoSubmit", () => {
 		fetchMock.mockResolvedValue(entries(true));
 		const { result } = renderToggle("laptop");
 
-		await waitFor(() => expect(result.current[0]).toBe(true));
+		await waitFor(() => expect(result.current.enabled).toBe(true));
 		expect(fetchMock).toHaveBeenCalledWith("/repo", "laptop");
 	});
 
@@ -50,9 +50,9 @@ describe("useAskQuestionAutoSubmit", () => {
 		const { result } = renderToggle("laptop");
 		await waitFor(() => expect(fetchMock).toHaveBeenCalled());
 
-		act(() => result.current[1](true));
+		act(() => result.current.setEnabled(true));
 
-		expect(result.current[0]).toBe(true);
+		expect(result.current.enabled).toBe(true);
 		expect(saveMock).toHaveBeenCalledWith(
 			{
 				key: "sessions.askQuestionAutoSubmit",
@@ -70,8 +70,55 @@ describe("useAskQuestionAutoSubmit", () => {
 		const { result } = renderToggle();
 		await waitFor(() => expect(fetchMock).toHaveBeenCalled());
 
-		act(() => result.current[1](true));
+		act(() => result.current.setEnabled(true));
 
-		await waitFor(() => expect(result.current[0]).toBe(false));
+		await waitFor(() => expect(result.current.enabled).toBe(false));
+	});
+
+	it("holds a pick made before the flag loads until it arrives", async () => {
+		let resolve: (value: ReturnType<typeof entries>) => void = () => {};
+		fetchMock.mockReturnValue(
+			new Promise((r) => {
+				resolve = r;
+			}),
+		);
+		const { result } = renderToggle();
+		const run = vi.fn();
+
+		act(() => result.current.whenLoaded(run));
+		expect(run).not.toHaveBeenCalled();
+
+		await act(async () => resolve(entries(true)));
+
+		expect(run).toHaveBeenCalledExactlyOnceWith(true);
+	});
+
+	it("drops a held pick when cancelled", async () => {
+		let resolve: (value: ReturnType<typeof entries>) => void = () => {};
+		fetchMock.mockReturnValue(
+			new Promise((r) => {
+				resolve = r;
+			}),
+		);
+		const { result } = renderToggle();
+		const run = vi.fn();
+
+		act(() => {
+			result.current.whenLoaded(run);
+			result.current.cancel();
+		});
+		await act(async () => resolve(entries(true)));
+
+		expect(run).not.toHaveBeenCalled();
+	});
+
+	it("still runs a held pick with auto submit off when the load fails", async () => {
+		fetchMock.mockRejectedValue(new Error("down"));
+		const { result } = renderToggle();
+		const run = vi.fn();
+
+		act(() => result.current.whenLoaded(run));
+
+		await waitFor(() => expect(run).toHaveBeenCalledExactlyOnceWith(false));
 	});
 });
