@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process";
 import * as path from "node:path";
 import { getInstallDir, isGitRepo } from "../shared/getInstallDir";
+import { installDirEnv } from "./installDirEnv";
 import { migrateAfterUpdate } from "./migrateAfterUpdate";
 import { restartDaemonAfterUpdate } from "./restartDaemonAfterUpdate";
 
@@ -29,19 +30,21 @@ export async function update(): Promise<void> {
 	if (isGitRepo(installDir)) {
 		console.log("Detected git repo installation, pulling latest...");
 		execSync("git pull", { cwd: installDir, stdio: "inherit" });
+		const env = installDirEnv(installDir);
 
 		console.log("Installing dependencies...");
 		execSync("pnpm install --frozen-lockfile", {
 			cwd: installDir,
+			env,
 			stdio: "inherit",
 		});
 
 		console.log("Building...");
-		execSync("npm run build", { cwd: installDir, stdio: "inherit" });
+		execSync("npm run build", { cwd: installDir, env, stdio: "inherit" });
 		migrateAfterUpdate();
 
 		console.log("Syncing commands...");
-		execSync("assist sync", { stdio: "inherit" });
+		execSync("assist sync", { env, stdio: "inherit" });
 	} else if (isGlobalNpmInstall(installDir)) {
 		console.log("Detected global npm installation, updating...");
 		execSync("npm i -g @staff0rd/assist@latest", { stdio: "inherit" });

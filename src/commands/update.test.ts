@@ -1,4 +1,5 @@
 import { execFileSync, execSync } from "node:child_process";
+import { delimiter } from "node:path";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../test/mocks/childProcessMock";
 
@@ -20,6 +21,11 @@ vi.mock("node:child_process", async () =>
 vi.mock("../shared/getInstallDir", () => ({
 	getInstallDir: () => mockGetInstallDir(),
 	isGitRepo: (dir: string) => mockIsGitRepo(dir),
+}));
+
+const mockRepoNode = vi.fn();
+vi.mock("../shared/nodeRuntime/repoNode", () => ({
+	repoNode: (dir: string) => mockRepoNode(dir),
 }));
 
 vi.mock("../shared/loadConfig", () => ({
@@ -44,6 +50,7 @@ describe("update", () => {
 		mockGetInstallDir.mockReturnValue("/some/dir");
 		mockIsDaemonRunning.mockResolvedValue(false);
 		mockRestartDaemon.mockResolvedValue(undefined);
+		mockRepoNode.mockReturnValue(undefined);
 	});
 
 	it("should call assist sync without --yes for git repo install", async () => {
@@ -74,6 +81,64 @@ describe("update", () => {
 		);
 		expect(syncCall).toBeDefined();
 		expect(syncCall?.[0]).toBe("assist sync");
+	});
+
+	describe("install repo's pinned node", () => {
+		const STEPS = [
+			"pnpm install --frozen-lockfile",
+			"npm run build",
+			"assist sync",
+		];
+		const pathFor = (cmd: string) => {
+			const call = mockExecSync.mock.calls.find((c) => c[0] === cmd);
+			const env = (call?.[1] as { env?: NodeJS.ProcessEnv } | undefined)?.env;
+			if (!env) return undefined;
+			const key = Object.keys(env).find((k) => k.toUpperCase() === "PATH");
+			return key ? env[key] : undefined;
+		};
+
+		beforeEach(() => {
+			mockIsGitRepo.mockReturnValue(true);
+			vi.spyOn(console, "log").mockImplementation(() => {});
+			vi.spyOn(console, "warn").mockImplementation(() => {});
+		});
+
+		it("puts the pinned node's bin dir first on PATH for install, build and sync", async () => {
+			mockRepoNode.mockReturnValue({
+				pin: { file: "/some/dir/.node-version", spec: "v24" },
+				ok: true,
+				node: { path: "/n24/node", binDir: "/n24", version: "v24.1.0" },
+			});
+
+			await update();
+
+			expect(mockRepoNode).toHaveBeenCalledWith("/some/dir");
+			for (const step of STEPS)
+				expect(pathFor(step)?.split(delimiter)[0]).toBe("/n24");
+		});
+
+		it("logs the unresolved pin and keeps the inherited PATH", async () => {
+			mockRepoNode.mockReturnValue({
+				pin: { file: "/some/dir/.node-version", spec: "v24" },
+				ok: false,
+				error: "no installed node matches",
+			});
+
+			await update();
+
+			for (const step of STEPS) expect(pathFor(step)).toBe(process.env.PATH);
+			expect(String(vi.mocked(console.warn).mock.calls[0]?.[0])).toContain(
+				'/some/dir/.node-version wants node "v24" but no installed node matches',
+			);
+		});
+
+		it("keeps the inherited PATH when the install dir has no pin", async () => {
+			mockRepoNode.mockReturnValue(undefined);
+
+			await update();
+
+			for (const step of STEPS) expect(pathFor(step)).toBe(process.env.PATH);
+		});
 	});
 
 	describe("sessions daemon", () => {
