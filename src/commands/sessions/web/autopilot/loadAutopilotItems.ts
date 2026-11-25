@@ -20,7 +20,7 @@ export async function loadAutopilotItems(
 			return toAutopilotItemView(
 				item,
 				recorded,
-				commitDiffStat(status.cwd, shas),
+				await commitDiffStat(status.cwd, shas),
 			);
 		}),
 	);
