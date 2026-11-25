@@ -78,6 +78,7 @@
 			"SlashCommand(/miro)",
 			"Skill(slack-post)",
 			"SlashCommand(/slack-post)",
+			"mcp__claude_ai_Slack__slack_send_message",
 			"Bash(git ls-files:*)",
 			"Bash(gh pr checks:*)",
 			"Bash(ls ~/.assist/pr-comments:*)",

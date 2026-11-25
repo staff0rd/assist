@@ -18,6 +18,12 @@ describe("claude/settings.json invariants", () => {
 		expect(assistEntries).toEqual([]);
 	});
 
+	it("allows the Slack send tool so assist's Slack posts skip the auto mode classifier", () => {
+		expect(settings.permissions?.allow ?? []).toContain(
+			"mcp__claude_ai_Slack__slack_send_message",
+		);
+	});
+
 	it("ships none of the author preferences", () => {
 		for (const key of [
 			"autoMemoryEnabled",

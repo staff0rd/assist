@@ -1,6 +1,6 @@
 import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
-import { join } from "node:path";
+import { join, resolve } from "node:path";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { autoConfirmHintCommand } from "./autoConfirmHintCommand";
 import { syncSettings } from "./syncSettings";
@@ -57,6 +57,18 @@ describe("syncSettings", () => {
 		const result = readTarget();
 		expect(result.enabledPlugins).toEqual({ "my-plugin": true });
 		expect(result.permissions).toEqual({ allow: ["Bash", "Read"] });
+	});
+
+	it("adds the shipped Slack send rule alongside existing user allow entries", async () => {
+		writeTarget({ permissions: { allow: ["Bash(ls:*)", "WebSearch"] } });
+
+		await syncSettings(resolve(__dirname, "../../../claude"), targetBase, {
+			yes: true,
+		});
+
+		const { allow } = readTarget().permissions as { allow: string[] };
+		expect(allow.slice(0, 2)).toEqual(["Bash(ls:*)", "WebSearch"]);
+		expect(allow).toContain("mcp__claude_ai_Slack__slack_send_message");
 	});
 
 	it("preserves arbitrary marketplace keys absent from the repo source", async () => {
