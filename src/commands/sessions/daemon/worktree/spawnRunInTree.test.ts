@@ -48,6 +48,31 @@ describe("spawnRunInTree", () => {
 		);
 	});
 
+	it("registers the run already held so its first broadcast carries the waiting text", () => {
+		const seeding = makeSession({
+			id: "20",
+			cwd: "/git/repo-2",
+			pendingStart: vi.fn(),
+			awaitingSeed: true,
+			worktree,
+		});
+		const sessions = new Map([[seeding.id, seeding]]);
+		let registered: Partial<Session> = {};
+		spawnRunInTree(
+			sessions,
+			(create) => {
+				const session = create("21");
+				registered = { ...session };
+				sessions.set(session.id, session);
+				return session.id;
+			},
+			{ runName: "dev-api", runArgs: [], cwd: "/git/repo-2" },
+		);
+
+		expect(registered.awaitingSeed).toBe(true);
+		expect(registered.seeding).toMatch(/^Waiting for repo-2/);
+	});
+
 	it("spawns at once when the worktree has finished seeding", () => {
 		vi.mocked(spawnRun).mockClear();
 		const seeded = makeSession({ id: "20", cwd: "/git/repo-2", worktree });

@@ -11,11 +11,9 @@ export function spawnRunInTree(
 	context?: SpawnContext,
 ): string {
 	const tree = seedingTreeFor(sessions, request.cwd);
-	const id = spawnWith(
-		(sid) => createRunSession(sid, request, tree !== undefined),
-		context,
-	);
-	const run = sessions.get(id);
-	if (tree && run) holdRunUntilSeeded(run, tree);
-	return id;
+	return spawnWith((sid) => {
+		const run = createRunSession(sid, request, tree !== undefined);
+		if (tree) holdRunUntilSeeded(run, tree);
+		return run;
+	}, context);
 }
