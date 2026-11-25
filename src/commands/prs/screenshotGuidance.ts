@@ -10,5 +10,11 @@ falls back to the file name. A missing file or unsupported extension fails the
 command before anything is previewed or sent. Never author ## Screenshots in a
 section option yourself.
 
+If screenshots are wanted but this session has captured none, ask the user with
+'assist ask-question' how to get them before using any browser or capture tool:
+drive their Chrome, capture them with /screenshot, or let them drop images into
+the PR preview pane. If the user stops a browser or capture call, do not retry
+it; ask again instead.
+
   --screenshot 'Profile/Career Connect light=shots/profile-light.png'
   --screenshot 'Profile/Career Connect dark=shots/profile-dark.png'`;
