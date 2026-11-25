@@ -17,6 +17,7 @@ export function startHeldSession(
 	if (!start) return;
 	session.pendingStart = undefined;
 	session.awaitingSeed = undefined;
+	session.seeding = undefined;
 	if (heldStartBlocked(session, sessions)) return;
 	session.startedAt = Date.now();
 	if (session.status === "running") session.runningSince = session.startedAt;

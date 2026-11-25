@@ -1,5 +1,6 @@
 import { type ServerRunMeta, serverRunMeta } from "./serverRunMeta";
 import { spawnRun } from "./spawnRun";
+import { startOrHoldPty } from "./startOrHoldPty";
 import type { Session } from "./types";
 import { sessionBase } from "./sessionBase";
 
@@ -13,13 +14,17 @@ export type RunSpawnRequest = {
 export function createRunSession(
 	id: string,
 	{ runName, runArgs, cwd, meta }: RunSpawnRequest,
+	hold?: boolean,
 ): Session {
 	const serverMeta = meta ?? serverRunMeta(runName, cwd);
 	return {
 		...sessionBase(id, "running"),
 		name: `run: ${runName}`,
 		commandType: "run",
-		pty: spawnRun({ name: runName, args: runArgs, cwd }),
+		...startOrHoldPty(
+			() => spawnRun({ name: runName, args: runArgs, cwd }),
+			hold,
+		),
 		runName,
 		runArgs,
 		cwd,

@@ -1,9 +1,9 @@
-import { createAssistSession } from "./createAssistSession";
-import { createSession, type Session } from "./createSession";
+import { type Session } from "./createSession";
 import { errorSession } from "./errorSession";
 import type { PersistedSession } from "./loadPersistedSessions";
 import { restoreBase } from "./restoreBase";
 import { detectExistingWorktree } from "./worktree/detectExistingWorktree";
+import { createHeld } from "./createHeld";
 
 export function relaunchHeldSession(
 	id: string,
@@ -33,31 +33,4 @@ export function relaunchHeldSession(
 		worktree,
 		awaitingSeed: true,
 	};
-}
-
-function createHeld(
-	id: string,
-	persisted: PersistedSession,
-): Session | undefined {
-	if (persisted.commandType === "assist")
-		return persisted.assistArgs
-			? createAssistSession(
-					id,
-					persisted.assistArgs,
-					persisted.cwd,
-					undefined,
-					true,
-				)
-			: undefined;
-	if (persisted.commandType === "claude")
-		return createSession(id, {
-			prompt: persisted.initialPrompt,
-			cwd: persisted.cwd,
-			design: persisted.design,
-			auto: persisted.auto,
-			harness: persisted.harness,
-			model: persisted.model,
-			holdPty: true,
-		});
-	return undefined;
 }

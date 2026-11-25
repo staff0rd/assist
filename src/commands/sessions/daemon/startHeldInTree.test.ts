@@ -97,4 +97,74 @@ describe("startHeldInTree", () => {
 		expect(joined.status).toBe("error");
 		expect(joined.error).toBe(failure);
 	});
+
+	describe("a run held on a seeding worktree", () => {
+		const worktree = { path: "/git/repo-2", clone: "/git/repo" };
+		const held = (startRun: () => ReturnType<typeof pendingStart>) => ({
+			seeded: makeSession({
+				id: "20",
+				name: "repo-2/agent",
+				cwd: "/git/repo-2",
+				pty: null,
+				pendingStart,
+				worktree,
+			}),
+			run: makeSession({
+				id: "21",
+				name: "run: dev-api",
+				commandType: "run",
+				cwd: "/git/repo-2/api",
+				pty: null,
+				pendingStart: startRun,
+				awaitingSeed: true,
+				seeding: "Waiting for repo-2 to finish installing dependencies…",
+				worktree,
+			}),
+		});
+
+		it("starts the run once the install succeeds", () => {
+			const startRun = vi.fn(pendingStart);
+			const { seeded, run } = held(startRun);
+
+			startHeldInTree(
+				seeded,
+				new Map([
+					[seeded.id, seeded],
+					[run.id, run],
+				]),
+				new Set<SessionClient>(),
+				vi.fn(),
+				vi.fn(),
+			);
+
+			expect(startRun).toHaveBeenCalledOnce();
+			expect(run.pty).not.toBeNull();
+			expect(run.awaitingSeed).toBeUndefined();
+			expect(run.seeding).toBeUndefined();
+		});
+
+		it("does not start the run when the install failed, naming the directory and the agent session", () => {
+			const startRun = vi.fn(pendingStart);
+			const { seeded, run } = held(startRun);
+
+			startHeldInTree(
+				seeded,
+				new Map([
+					[seeded.id, seeded],
+					[run.id, run],
+				]),
+				new Set<SessionClient>(),
+				(session, status) => {
+					session.status = status;
+				},
+				vi.fn(),
+				"worktree /git/repo-2 install in api failed (exit 1)",
+			);
+
+			expect(startRun).not.toHaveBeenCalled();
+			expect(run.status).toBe("error");
+			expect(run.error).toContain("install in api failed");
+			expect(run.error).toContain('session 20 ("repo-2/agent")');
+		});
+	});
 });

@@ -18,9 +18,25 @@ export function startHeldInTree(
 		if (
 			session !== seeded &&
 			session.pendingStart &&
-			session.cwd === seeded.cwd
+			heldOnSameTree(session, seeded)
 		) {
-			if (failure) failHeldStart(session, failure);
+			if (failure)
+				failHeldStart(session, heldFailure(session, seeded, failure));
 			start(session);
 		}
+}
+
+function heldOnSameTree(session: Session, seeded: Session): boolean {
+	if (session.cwd === seeded.cwd) return true;
+	const path = seeded.worktree?.path;
+	return (
+		session.awaitingSeed === true &&
+		path !== undefined &&
+		session.worktree?.path === path
+	);
+}
+
+function heldFailure(session: Session, seeded: Session, failure: string) {
+	if (session.commandType !== "run") return failure;
+	return `${failure}\nFix the install on session ${seeded.id} ("${seeded.name}"), then launch this run again.`;
 }

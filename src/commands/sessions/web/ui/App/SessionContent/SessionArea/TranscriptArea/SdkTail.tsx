@@ -22,6 +22,7 @@ export function SdkTail({
 	transcript?: Transcript | null;
 }) {
 	const row = useActivityRow(session);
+	if (session.seeding) return <SdkTailRow text={session.seeding} />;
 	if (sdkComposerState(session).resuming)
 		return (
 			<>

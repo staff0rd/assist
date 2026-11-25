@@ -370,4 +370,19 @@ describe("SdkTail", () => {
 		);
 		expect(container.textContent).not.toContain("second");
 	});
+
+	it("shows the worktree install while the session is held for seeding", () => {
+		render(
+			<SdkTail
+				session={makeSessionInfo({
+					sdk: true,
+					status: "running",
+					seeding: "Installing dependencies in api, web…",
+				})}
+			/>,
+		);
+		const [row] = screen.getAllByRole("status");
+		expect(screen.getAllByRole("status")).toHaveLength(1);
+		expect(row.textContent).toContain("Installing dependencies in api, web…");
+	});
 });

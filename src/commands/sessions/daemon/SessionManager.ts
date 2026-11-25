@@ -41,7 +41,8 @@ import {
 	type TreeSpawnContext,
 } from "./worktree/spawnInTree";
 import { resumeInTree } from "./worktree/resumeInTree";
-import { createRunSession, type RunSpawnRequest } from "./createRunSession";
+import type { RunSpawnRequest } from "./createRunSession";
+import { spawnRunInTree } from "./worktree/spawnRunInTree";
 import { mergeNodeSessions } from "./mergeNodeSessions";
 
 export class SessionManager {
@@ -130,7 +131,7 @@ export class SessionManager {
 	}
 
 	spawnRun(request: RunSpawnRequest, context?: SpawnContext): string {
-		return this.spawnWith((id) => createRunSession(id, request), context);
+		return spawnRunInTree(this.sessions, this.spawnWith, request, context);
 	}
 
 	liveServerRun(meta: ServerRunMeta, excludeId?: string) {
