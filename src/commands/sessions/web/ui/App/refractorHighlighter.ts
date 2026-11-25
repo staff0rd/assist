@@ -1,5 +1,20 @@
 import refractor from "refractor/core";
 import bash from "refractor/lang/bash";
+import bicep from "refractor/lang/bicep";
+import csharp from "refractor/lang/csharp";
+import cshtml from "refractor/lang/cshtml";
+import diff from "refractor/lang/diff";
+import docker from "refractor/lang/docker";
+import go from "refractor/lang/go";
+import hcl from "refractor/lang/hcl";
+import ini from "refractor/lang/ini";
+import java from "refractor/lang/java";
+import kotlin from "refractor/lang/kotlin";
+import powershell from "refractor/lang/powershell";
+import rust from "refractor/lang/rust";
+import sql from "refractor/lang/sql";
+import swift from "refractor/lang/swift";
+import toml from "refractor/lang/toml";
 import css from "refractor/lang/css";
 import graphql from "refractor/lang/graphql";
 import json from "refractor/lang/json";
@@ -21,40 +36,22 @@ for (const grammar of [
 	yaml,
 	bash,
 	graphql,
+	bicep,
+	csharp,
+	cshtml,
+	diff,
+	docker,
+	go,
+	hcl,
+	ini,
+	java,
+	kotlin,
+	powershell,
+	rust,
+	sql,
+	swift,
+	toml,
 ]) {
 	refractor.register(grammar);
 }
-
-const EXTENSION_LANGUAGE: Record<string, string> = {
-	ts: "typescript",
-	mts: "typescript",
-	cts: "typescript",
-	tsx: "tsx",
-	js: "tsx",
-	jsx: "tsx",
-	mjs: "tsx",
-	cjs: "tsx",
-	json: "json",
-	css: "css",
-	py: "python",
-	md: "markdown",
-	markdown: "markdown",
-	yml: "yaml",
-	yaml: "yaml",
-	sh: "bash",
-	bash: "bash",
-	html: "markup",
-	htm: "markup",
-	xml: "markup",
-	svg: "markup",
-	graphql: "graphql",
-	graphqls: "graphql",
-	gql: "graphql",
-};
-
-export function languageForPath(path: string): string | undefined {
-	const ext = path.split(".").pop()?.toLowerCase();
-	return ext ? EXTENSION_LANGUAGE[ext] : undefined;
-}
-
 export { refractor as refractorHighlighter };

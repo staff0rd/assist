@@ -26,6 +26,13 @@ export const syntaxTokenSx = (theme: Theme) => {
 		"& .token.scalar, & .token.atom-input": { color: info.main },
 		"& .token.fragment, & .token.definition-query, & .token.definition-mutation, & .token.property-query, & .token.object":
 			{ color: info.main },
+		"& .token.annotation, & .token.attribute, & .token.decorator, & .token.preprocessor":
+			{ color: secondary.main },
+		"& .token.date, & .token.lifetime-annotation": { color: warning.main },
+		"& .token.datatype, & .token.type, & .token.macro, & .token.coord": {
+			color: info.main,
+		},
+		"& .token.bold": { fontWeight: theme.typography.fontWeightBold },
 		"& .token.deleted": { color: error.main },
 		"& .token.inserted": { color: success.main },
 	};

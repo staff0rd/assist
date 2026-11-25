@@ -2,13 +2,13 @@ import { useState } from "react";
 import { useSearchParams } from "react-router";
 import type { FileContentState } from "../../../../fetchFileContent";
 import type { FileViewMode } from "./FileViewMode";
-import { languageForPath } from "../../../../refractorHighlighter";
 import type { SessionInfo } from "../../../../../types";
 import { useFileBuffer } from "./useFileViewState/useFileBuffer";
 import { type FileComments, useFileComments } from "./useFileComments";
 import { useFileContent } from "../../../../useFileContent";
 import { useRepoSelectionContext } from "../../../../../useRepoSelectionContext";
 import { useSaveHotkey } from "./useFileViewState/useSaveHotkey";
+import { languageForPath } from "../../../../languageForPath";
 
 export function useFileViewState(
 	sessions: SessionInfo[],

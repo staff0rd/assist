@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
-import { languageForPath, refractorHighlighter } from "./refractorHighlighter";
+import { refractorHighlighter } from "./refractorHighlighter";
+import { languageForPath } from "./languageForPath";
 
 type Node = {
 	type: string;
@@ -26,9 +27,53 @@ describe("languageForPath", () => {
 		expect(languageForPath(path)).toBe("graphql");
 	});
 
-	it("returns undefined for unknown extensions", () => {
-		expect(languageForPath("data.unknownext")).toBeUndefined();
+	it.each([
+		["Program.cs", "csharp"],
+		["scripts/run.csx", "csharp"],
+		["Views/Index.cshtml", "cshtml"],
+		["Pages/App.razor", "cshtml"],
+		["db/migrate.sql", "sql"],
+		["build.ps1", "powershell"],
+		["Module.psm1", "powershell"],
+		["Module.psd1", "powershell"],
+		["Cargo.toml", "toml"],
+		["setup.ini", "ini"],
+		["main.go", "go"],
+		["src/lib.rs", "rust"],
+		["App.swift", "swift"],
+		["Main.kt", "kotlin"],
+		["build.gradle.kts", "kotlin"],
+		["Main.java", "java"],
+		["infra/main.bicep", "bicep"],
+		["main.tf", "hcl"],
+		["prod.tfvars", "hcl"],
+		["config.hcl", "hcl"],
+		["fix.diff", "diff"],
+		["fix.patch", "diff"],
+	])("maps %s to %s", (path, language) => {
+		expect(languageForPath(path)).toBe(language);
 	});
+
+	it.each([
+		["Dockerfile", "docker"],
+		["api/Dockerfile", "docker"],
+		["api/Dockerfile.dev", "docker"],
+		[String.raw`C:\repo\Dockerfile`, "docker"],
+		["web/app.dockerfile", "docker"],
+		[".editorconfig", "ini"],
+		["src/.editorconfig", "ini"],
+		[".env", "ini"],
+		["api/.env.local", "ini"],
+	])("detects %s by file name as %s", (path, language) => {
+		expect(languageForPath(path)).toBe(language);
+	});
+
+	it.each(["Makefile", "data.unknownext", "notes/Dockerfiles.txt"])(
+		"returns undefined for %s",
+		(path) => {
+			expect(languageForPath(path)).toBeUndefined();
+		},
+	);
 });
 
 describe("refractorHighlighter", () => {
@@ -53,5 +98,16 @@ type User @key(fields: "id") {
 		]) {
 			expect(classes).toContain(name);
 		}
+	});
+
+	it.each([
+		["csharp", 'public class A { string X => "x"; }'],
+		["sql", "SELECT id FROM users WHERE name = 'x'"],
+		["docker", "FROM node:20\nRUN echo hi"],
+		["hcl", 'resource "a" "b" { x = true }'],
+		["diff", "-old\n+new"],
+	])("tokenizes a %s snippet", (language, source) => {
+		const nodes = refractorHighlighter.highlight(source, language) as Node[];
+		expect(tokenClasses(nodes).size).toBeGreaterThan(1);
 	});
 });

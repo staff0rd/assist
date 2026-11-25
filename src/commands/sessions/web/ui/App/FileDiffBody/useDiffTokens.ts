@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { type HunkData, markEdits, tokenize } from "react-diff-view";
-import { languageForPath, refractorHighlighter } from "../refractorHighlighter";
+import { refractorHighlighter } from "../refractorHighlighter";
 import { exceedsTokenizeLimits } from "./useDiffTokens/exceedsTokenizeLimits";
+import { languageForPath } from "../languageForPath";
 
 export function useDiffTokens(hunks: HunkData[], path: string) {
 	return useMemo(() => {
