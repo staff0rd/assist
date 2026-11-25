@@ -1,7 +1,8 @@
 import type { Theme } from "@mui/material/styles";
 
 export const syntaxTokenSx = (theme: Theme) => {
-	const { success, error, warning, info, text, primary } = theme.palette;
+	const { success, error, warning, info, text, primary, secondary } =
+		theme.palette;
 	return {
 		"& .token.comment, & .token.prolog, & .token.doctype, & .token.cdata": {
 			color: text.disabled,
@@ -20,6 +21,11 @@ export const syntaxTokenSx = (theme: Theme) => {
 		},
 		"& .token.property, & .token.attr-name, & .token.variable, & .token.namespace, & .token.operator, & .token.entity":
 			{ color: text.primary },
+		"& .token.description": { color: success.main, fontStyle: "italic" },
+		"& .token.directive": { color: secondary.main },
+		"& .token.scalar, & .token.atom-input": { color: info.main },
+		"& .token.fragment, & .token.definition-query, & .token.definition-mutation, & .token.property-query, & .token.object":
+			{ color: info.main },
 		"& .token.deleted": { color: error.main },
 		"& .token.inserted": { color: success.main },
 	};

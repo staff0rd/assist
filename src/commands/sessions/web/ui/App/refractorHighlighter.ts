@@ -1,6 +1,7 @@
 import refractor from "refractor/core";
 import bash from "refractor/lang/bash";
 import css from "refractor/lang/css";
+import graphql from "refractor/lang/graphql";
 import json from "refractor/lang/json";
 import markdown from "refractor/lang/markdown";
 import markup from "refractor/lang/markup";
@@ -19,6 +20,7 @@ for (const grammar of [
 	markdown,
 	yaml,
 	bash,
+	graphql,
 ]) {
 	refractor.register(grammar);
 }
@@ -45,6 +47,9 @@ const EXTENSION_LANGUAGE: Record<string, string> = {
 	htm: "markup",
 	xml: "markup",
 	svg: "markup",
+	graphql: "graphql",
+	graphqls: "graphql",
+	gql: "graphql",
 };
 
 export function languageForPath(path: string): string | undefined {
