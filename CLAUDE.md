@@ -46,5 +46,6 @@ Start with `assist sessions nodes doctor [name]`: it probes each hop and names t
 - **R10** — **Deploy iOS builds yourself** — Before asking the user to test an iOS app change, run ios:build and deploy it to the simulator or connected device yourself; never tell the user to build, open or run it.
 - **R11** — **Docs need explicit approval** — Change docs only when the user explicitly asks, and get their explicit approval of the change before committing it
 - **R16** — **Commit before manual tests** — Commit the change before asking the user to manually test it.
+- **R21** — **Structured config values** — Model a config value with its own named key in a nested object or a map keyed by the thing it configures, never packed into a string (no `repo:2`-style suffixes or mini-syntax)
 
 Directories with their own `## Rules`: `docs/`, `src/commands/extension/`, `src/commands/sessions/web/ui/`
