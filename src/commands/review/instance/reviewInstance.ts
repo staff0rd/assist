@@ -7,6 +7,8 @@ import { printKeptInstance } from "./printKeptInstance";
 import { requireInstanceConfig } from "./requireInstanceConfig";
 import { resolvePrHead } from "./resolvePrHead";
 import { runInheritedCommand } from "./runInheritedCommand";
+import { loadManualTesting } from "./steps/loadManualTesting";
+import { runInstanceSteps } from "./steps/runInstanceSteps";
 import { watchInterrupt } from "./watchInterrupt";
 
 export async function reviewInstance(
@@ -14,8 +16,10 @@ export async function reviewInstance(
 	options: { keep?: boolean },
 ): Promise<void> {
 	const head = resolvePrHead(pr);
+	const config = requireInstanceConfig();
+	const manualTesting = loadManualTesting(head);
 	const instance = await planReviewInstance({
-		config: requireInstanceConfig(),
+		config,
 		repoRoot: resolveRepoRoot(),
 		repo: head.repo,
 		prNumber: head.number,
@@ -32,10 +36,7 @@ export async function reviewInstance(
 		console.log(
 			`PR #${head.number} (${head.sha.slice(0, 7)}) is up as ${instance.project}: ${instance.url}`,
 		);
-		if (!options.keep) {
-			console.log("Press Ctrl+C to tear it down.");
-			await interrupt.untilInterrupted();
-		}
+		await runInstanceSteps(instance, manualTesting, interrupt.abort);
 	} catch (error) {
 		console.error(
 			`Error: ${error instanceof Error ? error.message : String(error)}`,

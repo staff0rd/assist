@@ -5,6 +5,7 @@ import { addReviewModeOptions } from "./review/addReviewModeOptions";
 import { addReviewRunOptions } from "./review/addReviewRunOptions";
 import type { ReviewOptions } from "./review/ReviewOptions";
 import { reviewConfigHelp } from "./review/reviewConfigHelp";
+import { registerReviewInstance } from "./registerReviewInstance";
 
 type ReviewFlags = Omit<Required<ReviewOptions>, "harness"> & {
 	harness?: string;
@@ -39,22 +40,9 @@ export function registerReview(program: Command): void {
 		"the Review menu",
 	);
 
-	const instanceCommand = reviewCommand
-		.command("instance")
-		.description(
-			"Bring a PR up as an isolated, throwaway instance via the repo's review.instance compose file, print its URL, and tear it down (compose down -v and worktree removal) on Ctrl+C or failure",
-		)
-		.argument("<pr>", "PR number to bring up at its head SHA")
-		.option("--keep", "Leave the instance and its worktree up on exit")
-		.action(async (pr: string, options: { keep?: boolean }) => {
-			const { reviewInstance } =
-				await import("./review/instance/reviewInstance");
-			return reviewInstance(pr, options);
-		});
-
 	const isInstanceKey = (entry: { key: string }) =>
 		entry.key.startsWith("review.instance.");
-	configHelp(instanceCommand, reviewConfigHelp.filter(isInstanceKey));
+	registerReviewInstance(reviewCommand, reviewConfigHelp.filter(isInstanceKey));
 	configHelp(
 		reviewCommand,
 		reviewConfigHelp.filter((entry) => !isInstanceKey(entry)),

@@ -1,6 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { runInheritedCommand } from "./runInheritedCommand";
 import { reviewInstance } from "./reviewInstance";
+import { loadManualTesting } from "./steps/loadManualTesting";
+import { runManualSteps } from "./steps/runManualSteps";
+import type { StepVerdict } from "./steps/StepVerdict";
 
 vi.mock("../../../shared/loadConfig", () => ({
 	loadConfig: () => ({
@@ -17,7 +20,12 @@ vi.mock("../../prs/shared", () => ({
 	getRepoInfo: () => ({ org: "acme", repo: "app" }),
 }));
 vi.mock("../highLevel/ghPrView", () => ({
-	ghPrView: () => ({ headRefOid: "0123456789abcdef" }),
+	ghPrView: () => ({ headRefOid: "0123456789abcdef", headRefName: "feat" }),
+}));
+vi.mock("./steps/loadManualTesting", () => ({ loadManualTesting: vi.fn() }));
+vi.mock("./steps/runManualSteps", () => ({ runManualSteps: vi.fn() }));
+vi.mock("./steps/instanceReportDir", () => ({
+	instanceReportDir: () => "/reports/x",
 }));
 vi.mock("../resolveRepoRoot", () => ({ resolveRepoRoot: () => "/repo" }));
 vi.mock("../../../shared/findFreePort", () => ({
@@ -26,6 +34,19 @@ vi.mock("../../../shared/findFreePort", () => ({
 vi.mock("./runInheritedCommand", () => ({ runInheritedCommand: vi.fn() }));
 
 const run = vi.mocked(runInheritedCommand);
+const runSteps = vi.mocked(runManualSteps);
+const load = vi.mocked(loadManualTesting);
+
+function verdict(value: StepVerdict["verdict"]): StepVerdict {
+	return {
+		step: 1,
+		action: "Open /",
+		expect: "Home shows",
+		verdict: value,
+		note: "Saw it",
+		screenshot: "/reports/x/step-01.png",
+	};
+}
 
 function commandsRun(): string[] {
 	return run.mock.calls.map(([command, args]) =>
@@ -35,6 +56,11 @@ function commandsRun(): string[] {
 
 beforeEach(() => {
 	run.mockReset().mockResolvedValue();
+	load.mockReset().mockReturnValue({
+		setup: [],
+		steps: [{ action: "Open /", expect: "Home shows" }],
+	});
+	runSteps.mockReset().mockResolvedValue([verdict("pass")]);
 	vi.spyOn(console, "log").mockImplementation(() => {});
 	vi.spyOn(console, "error").mockImplementation(() => {});
 });
@@ -45,13 +71,8 @@ afterEach(() => {
 });
 
 describe("reviewInstance", () => {
-	it("brings the PR up, waits for Ctrl+C, then tears it down", async () => {
-		const done = reviewInstance("7", {});
-		await vi.waitFor(() =>
-			expect(console.log).toHaveBeenCalledWith("Press Ctrl+C to tear it down."),
-		);
-		process.emit("SIGINT");
-		await done;
+	it("brings the PR up, runs the saved steps, then tears it down", async () => {
+		await reviewInstance("7", {});
 		expect(commandsRun()).toEqual([
 			"git fetch origin pull/7/head",
 			"git worktree add --detach 0123456789abcdef",
@@ -61,7 +82,42 @@ describe("reviewInstance", () => {
 			expect.stringMatching(/^docker compose -p \S+ -f down -v$/),
 			"git worktree remove --force",
 		]);
+		expect(runSteps).toHaveBeenCalledWith(
+			expect.objectContaining({
+				url: "http://localhost:6000/",
+				reportDir: "/reports/x",
+			}),
+		);
+		expect(console.log).toHaveBeenCalledWith(
+			expect.stringContaining("Report: /reports/x/report.json"),
+		);
 		expect(process.exitCode).toBeUndefined();
+	});
+
+	it("exits non-zero when a step fails", async () => {
+		runSteps.mockResolvedValue([verdict("fail")]);
+		await reviewInstance("7", {});
+		expect(commandsRun()).toContain("git worktree remove --force");
+		expect(process.exitCode).toBe(1);
+	});
+
+	it("tears down and exits non-zero when the steps throw", async () => {
+		runSteps.mockRejectedValue(new Error("browser crashed"));
+		await reviewInstance("7", {});
+		expect(commandsRun().at(-1)).toBe("git worktree remove --force");
+		expect(console.error).toHaveBeenCalledWith("Error: browser crashed");
+		expect(process.exitCode).toBe(1);
+	});
+
+	it("loads the saved steps before bringing anything up", async () => {
+		load.mockImplementation(() => {
+			throw new Error("exit");
+		});
+		await expect(reviewInstance("7", {})).rejects.toThrow("exit");
+		expect(load).toHaveBeenCalledWith(
+			expect.objectContaining({ fullName: "acme/app", headRef: "feat" }),
+		);
+		expect(run).not.toHaveBeenCalled();
 	});
 
 	it("tears down and exits non-zero when bring-up fails", async () => {

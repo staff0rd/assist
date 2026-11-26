@@ -24,6 +24,7 @@ export default defineConfig({
 		"node-pty",
 		"pg",
 		"@anthropic-ai/claude-agent-sdk",
+		"playwright",
 	],
 	plugins: [
 		{
