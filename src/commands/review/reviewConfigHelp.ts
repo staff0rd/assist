@@ -45,4 +45,25 @@ export const reviewConfigHelp: ConfigHelpEntry[] = [
 		setter: "assist config set review.highLevel.requireLinkedIssue false",
 		note: "false drops the high-level check that the PR links the GitHub issue it resolves, for repos that do not track work in GitHub issues (default true)",
 	},
+	{
+		key: "review.instance.composeFile",
+		setter:
+			"assist config set review.instance.composeFile docker-compose.review.yml",
+		note: "compose file, relative to the repo root, that review instance brings a PR up with; it reads ASSIST_SRC_<SERVICE> (the PR checkout) and ASSIST_PORT_<SERVICE> (a free host port) for each configured service",
+	},
+	{
+		key: "review.instance.services",
+		setter: "assist config set review.instance.services.<service>.port 3000",
+		note: "compose services review instance passes a checkout to; a service with a port (the one it listens on in its container) also gets a free host port in ASSIST_PORT_<SERVICE>",
+	},
+	{
+		key: "review.instance.entry.service",
+		setter: "assist config set review.instance.entry.service web",
+		note: "service (with a port in review.instance.services) whose host port review instance prints as the instance URL",
+	},
+	{
+		key: "review.instance.entry.path",
+		setter: "assist config set review.instance.entry.path /app",
+		note: "path appended to the instance URL (default /)",
+	},
 ];

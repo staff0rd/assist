@@ -39,9 +39,25 @@ export function registerReview(program: Command): void {
 		"the Review menu",
 	);
 
+	const instanceCommand = reviewCommand
+		.command("instance")
+		.description(
+			"Bring a PR up as an isolated, throwaway instance via the repo's review.instance compose file, print its URL, and tear it down (compose down -v and worktree removal) on Ctrl+C or failure",
+		)
+		.argument("<pr>", "PR number to bring up at its head SHA")
+		.option("--keep", "Leave the instance and its worktree up on exit")
+		.action(async (pr: string, options: { keep?: boolean }) => {
+			const { reviewInstance } =
+				await import("./review/instance/reviewInstance");
+			return reviewInstance(pr, options);
+		});
+
+	const isInstanceKey = (entry: { key: string }) =>
+		entry.key.startsWith("review.instance.");
+	configHelp(instanceCommand, reviewConfigHelp.filter(isInstanceKey));
 	configHelp(
 		reviewCommand,
-		reviewConfigHelp,
+		reviewConfigHelp.filter((entry) => !isInstanceKey(entry)),
 		"With review.codexModel unset or codex-default the codex reviewer runs on the user's own codex auth and configured model (set codex-default in a repo to override an inherited value); when it is set but the LiteLLM proxy is not configured, the reviewer falls back to that plain codex run. A reviewer whose harness is unavailable is skipped with its reason, and the review stops before reviewing when the review.synthesisHarness cannot synthesise.",
 	);
 }

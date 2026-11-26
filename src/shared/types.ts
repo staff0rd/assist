@@ -183,6 +183,25 @@ const assistConfigShape = {
 					requireLinkedIssue: z.boolean().default(true),
 				})
 				.optional(),
+			instance: z
+				.strictObject({
+					composeFile: z.string().optional(),
+					services: z
+						.record(
+							z.string(),
+							z.strictObject({
+								port: z.number().int().positive().optional(),
+							}),
+						)
+						.default({}),
+					entry: z
+						.strictObject({
+							service: z.string().optional(),
+							path: z.string().default("/"),
+						})
+						.default({ path: "/" }),
+				})
+				.optional(),
 		})
 		.optional(),
 	readTime: z

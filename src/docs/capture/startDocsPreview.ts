@@ -2,7 +2,7 @@ import { spawn } from "node:child_process";
 import { closeSync, openSync, rmSync } from "node:fs";
 import { join } from "node:path";
 import type { DocsEdit } from "../docsPageSchema";
-import { findFreePort } from "./findFreePort";
+import { findFreePort } from "../../shared/findFreePort";
 import { stageDocsSite } from "./stageDocsSite";
 import { waitForHttp } from "./waitForHttp";
 

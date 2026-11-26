@@ -3,7 +3,7 @@ import { join } from "node:path";
 import { runAssist } from "./runAssist";
 import { spawnAssist } from "./spawnAssist";
 import type { CaptureHome } from "./createCaptureHome";
-import { findFreePort } from "./findFreePort";
+import { findFreePort } from "../../shared/findFreePort";
 import { waitForHttp } from "./waitForHttp";
 
 const READY_TIMEOUT_MS = 30_000;

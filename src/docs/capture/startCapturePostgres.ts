@@ -1,5 +1,5 @@
 import { execFileSync, spawnSync } from "node:child_process";
-import { findFreePort } from "./findFreePort";
+import { findFreePort } from "../../shared/findFreePort";
 
 const IMAGE = "postgres:17-alpine";
 const READY_TIMEOUT_MS = 60_000;
