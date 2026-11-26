@@ -22,8 +22,9 @@ export async function gatherFreshHighLevelSubject(
 ): Promise<HighLevelGathered> {
 	const fetched = fetchHighLevelFiles(head.prNumber, head.repo);
 	const files = capHighLevelPatches(fetched, config.criticalPaths);
+	const tests = await gatherHighLevelTests(fetched, config.testPaths, head);
 	const sliced = slicing
-		? gatherHighLevelSlices(head, files, slicing)
+		? gatherHighLevelSlices(head, files, slicing, tests)
 		: undefined;
 	const cache: HighLevelSubjectCache = {
 		criticalPaths: config.criticalPaths,
@@ -31,7 +32,7 @@ export async function gatherFreshHighLevelSubject(
 		changedFiles: files.map((file) => file.path),
 		structure: buildHighLevelStructure(files),
 		criticalDiffs: selectCriticalDiffs(files, config.criticalPaths),
-		tests: await gatherHighLevelTests(fetched, config.testPaths, head),
+		tests,
 	};
 	saveHighLevelSubjectCache(head, cache);
 	return { cache, sliced };

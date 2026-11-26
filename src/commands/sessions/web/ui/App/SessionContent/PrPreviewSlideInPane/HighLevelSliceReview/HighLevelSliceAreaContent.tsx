@@ -35,6 +35,7 @@ export function HighLevelSliceAreaContent({
 				files={view.tests}
 				subject={subject}
 				comments={comments}
+				regrouping={payload.testRegrouping}
 			/>
 		);
 	return (

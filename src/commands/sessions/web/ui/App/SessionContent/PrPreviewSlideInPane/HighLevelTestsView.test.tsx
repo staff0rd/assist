@@ -1,6 +1,6 @@
 // @vitest-environment jsdom
-import { cleanup, render } from "@testing-library/react";
-import { afterEach, beforeEach } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import type { HighLevelTestFile } from "../../../../../../review/highLevel/types";
 import { describeHeaderClicks } from "./describeHeaderClicks";
 import { HighLevelTestsView } from "./HighLevelTestsView";
@@ -27,4 +27,47 @@ describeHeaderClicks("HighLevelTestsView", () => {
 			subject="tests-header-clicks"
 		/>,
 	);
+});
+
+describe("HighLevelTestsView regrouping", () => {
+	const file = testFile("a.test.ts");
+	const regrouping = {
+		"a.test.ts": [
+			{
+				describe: "when ready",
+				children: [{ id: "a.test.ts:1", it: "passes" }],
+			},
+		],
+	};
+	const view = (withRegrouping: boolean) =>
+		render(
+			<HighLevelTestsView
+				files={[file]}
+				testPaths={[]}
+				subject="tests-regrouping"
+				{...(withRegrouping ? { regrouping } : {})}
+			/>,
+		);
+
+	it("opens on the By when view with the written name on hover", () => {
+		view(true);
+		expect(screen.getByText("ready", { exact: false })).toBeTruthy();
+		expect(screen.getByTitle("As written: works").textContent).toBe(
+			"it passes",
+		);
+	});
+
+	it("switches to the tests as written and remembers it", () => {
+		view(true);
+		fireEvent.click(screen.getByRole("button", { name: "As written" }));
+		expect(screen.getByTitle("works").textContent).toBe("works");
+		cleanup();
+		view(true);
+		expect(screen.queryByText("passes", { exact: false })).toBeNull();
+	});
+
+	it("shows no toggle without a regrouping", () => {
+		view(false);
+		expect(screen.queryByRole("button", { name: "By when" })).toBeNull();
+	});
 });

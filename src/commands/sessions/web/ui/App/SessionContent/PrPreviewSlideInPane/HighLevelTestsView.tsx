@@ -1,11 +1,14 @@
-import { Box, Typography } from "@mui/material";
-import type { HighLevelTestFile } from "../../../../../../review/highLevel/types";
-import { HighLevelCriticalDiffHeader } from "./HighLevelCriticalDiffHeader";
+import { Box } from "@mui/material";
+import type {
+	HighLevelTestFile,
+	HighLevelTestRegrouping,
+} from "../../../../../../review/highLevel/types";
 import type { HighLevelDiffComments } from "./HighLevelDiffComments";
-import { highLevelDiffFileSx } from "./highLevelDiffFileSx";
 import { HighLevelDiffNote } from "./HighLevelDiffNote";
-import { HighLevelTestNodes } from "./HighLevelTestsView/HighLevelTestNodes";
+import { HighLevelTestFileTree } from "./HighLevelTestsView/HighLevelTestFileTree";
 import { highLevelTestChangeSummary } from "./HighLevelTestsView/highLevelTestChangeSummary";
+import { HighLevelTestsToolbar } from "./HighLevelTestsView/HighLevelTestsToolbar";
+import { useRegroupedTests } from "./HighLevelTestsView/useRegroupedTests";
 import { useHighLevelCollapse } from "./useHighLevelCollapse";
 
 export function HighLevelTestsView({
@@ -13,15 +16,22 @@ export function HighLevelTestsView({
 	testPaths,
 	subject,
 	comments,
+	regrouping,
 	hideSummary = false,
 }: {
 	files: HighLevelTestFile[];
 	testPaths: string[];
 	subject: string;
 	comments?: HighLevelDiffComments | undefined;
+	regrouping?: HighLevelTestRegrouping | undefined;
 	hideSummary?: boolean;
 }) {
 	const { collapsed, onToggle } = useHighLevelCollapse(`tests:${subject}`);
+	const { shown, grouping, setGrouping } = useRegroupedTests(
+		files,
+		regrouping,
+		subject,
+	);
 
 	if (files.length === 0)
 		return (
@@ -29,31 +39,19 @@ export function HighLevelTestsView({
 		);
 	return (
 		<Box sx={{ minWidth: 0 }}>
-			{!hideSummary && (
-				<Typography
-					variant="caption"
-					component="div"
-					sx={{ color: "text.secondary", mb: 0.5 }}
-				>
-					{highLevelTestChangeSummary(files)}
-				</Typography>
-			)}
-			{files.map((file) => (
-				<Box key={file.path} sx={highLevelDiffFileSx}>
-					<HighLevelCriticalDiffHeader
-						diff={file}
-						collapsed={collapsed.has(file.path)}
-						onToggle={() => onToggle(file.path)}
-					/>
-					{!collapsed.has(file.path) && (
-						<HighLevelTestNodes
-							nodes={file.tests}
-							path={file.path}
-							depth={1}
-							comments={comments}
-						/>
-					)}
-				</Box>
+			<HighLevelTestsToolbar
+				summary={hideSummary ? undefined : highLevelTestChangeSummary(files)}
+				grouping={grouping}
+				onGrouping={setGrouping}
+			/>
+			{shown.map((file) => (
+				<HighLevelTestFileTree
+					key={file.path}
+					file={file}
+					collapsed={collapsed.has(file.path)}
+					onToggle={() => onToggle(file.path)}
+					comments={comments}
+				/>
 			))}
 		</Box>
 	);

@@ -1,9 +1,9 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import type { HighLevelTestNode } from "../../../../../../../review/highLevel/types";
 import type { HighLevelDiffComments } from "../HighLevelDiffComments";
 import { HIGH_LEVEL_TREE_INDENT } from "../highLevelTreeRowSx";
 import { HighLevelTestRow } from "./HighLevelTestNodes/HighLevelTestRow";
-import { highLevelTestNameSx } from "./HighLevelTestNodes/highLevelTestNameSx";
+import { HighLevelTestSuiteName } from "./HighLevelTestNodes/HighLevelTestSuiteName";
 
 export function HighLevelTestNodes({
 	nodes,
@@ -28,13 +28,7 @@ export function HighLevelTestNodes({
 			/>
 		) : (
 			<Box key={`${node.line}:${node.name}`} sx={{ minWidth: 0 }}>
-				<Typography
-					component="div"
-					sx={{ ...highLevelTestNameSx, pl: indent, py: 0.15, fontWeight: 600 }}
-					title={node.name}
-				>
-					{node.name}
-				</Typography>
+				<HighLevelTestSuiteName suite={node} indent={indent} />
 				<HighLevelTestNodes
 					nodes={node.children}
 					path={path}

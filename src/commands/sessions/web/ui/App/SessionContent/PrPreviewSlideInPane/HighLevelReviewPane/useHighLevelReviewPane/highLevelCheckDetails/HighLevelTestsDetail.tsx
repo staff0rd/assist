@@ -22,6 +22,7 @@ export function HighLevelTestsDetail({
 				testPaths={payload.testPaths}
 				subject={subject}
 				comments={comments}
+				regrouping={payload.testRegrouping}
 			/>
 		</HighLevelCheckDetail>
 	);

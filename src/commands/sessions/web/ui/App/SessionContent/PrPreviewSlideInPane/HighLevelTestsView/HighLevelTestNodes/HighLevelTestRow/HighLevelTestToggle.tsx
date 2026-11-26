@@ -3,16 +3,19 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Box, Typography } from "@mui/material";
 import { highLevelButtonResetSx } from "../../../highLevelTreeRowSx";
 import type { HighLevelTestCase } from "../../../../../../../../../review/highLevel/types";
+import { HighLevelTestKeyword } from "../HighLevelTestKeyword";
 import { highLevelTestNameSx } from "../highLevelTestNameSx";
 import { HighLevelTestChange } from "./HighLevelTestToggle/HighLevelTestChange";
 
 export function HighLevelTestToggle({
 	name,
+	writtenName,
 	change,
 	open,
 	onToggle,
 }: {
 	name: string;
+	writtenName?: string | undefined;
 	change: HighLevelTestCase["change"];
 	open: boolean;
 	onToggle: () => void;
@@ -24,7 +27,7 @@ export function HighLevelTestToggle({
 			type="button"
 			onClick={onToggle}
 			aria-expanded={open}
-			aria-label={`Show the source of ${name}`}
+			aria-label={`Show the source of ${writtenName ?? name}`}
 			sx={{
 				display: "flex",
 				alignItems: "center",
@@ -43,9 +46,15 @@ export function HighLevelTestToggle({
 					...highLevelTestNameSx,
 					...(change === "removed" ? { color: "text.secondary" } : {}),
 				}}
-				title={name}
+				title={writtenName === undefined ? name : `As written: ${writtenName}`}
 			>
-				{name}
+				{writtenName === undefined ? (
+					name
+				) : (
+					<>
+						<HighLevelTestKeyword word="it" /> {name}
+					</>
+				)}
 			</Typography>
 		</Box>
 	);

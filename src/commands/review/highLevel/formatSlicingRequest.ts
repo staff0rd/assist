@@ -1,4 +1,7 @@
+import { slicingRequestExample } from "./slicingRequestExample";
 import type { HighLevelHunk } from "./listHighLevelHunks";
+import type { HighLevelTestFile } from "./types";
+import { formatChangedTests } from "./formatChangedTests";
 
 const RULES = [
 	"Each slice is one behaviour end to end: the code, wiring, config, tests and docs that deliver it, so a reviewer can judge whether that behaviour is right.",
@@ -19,33 +22,16 @@ const MANUAL_TESTING_RULES = [
 	"Each step's `expect` says what the reviewer should see when the change works.",
 	"Name repo files by their path from the repo root, and give URLs in full.",
 ];
-
-const EXAMPLE = {
-	slices: [
-		{
-			title: "Short imperative title",
-			summary: "One or two sentences on what the slice changes.",
-			hunks: ["path/to/file.ts#0"],
-		},
-	],
-	manualTesting: {
-		setup: ["Restart the web server"],
-		steps: [
-			{
-				action: "Open http://localhost:3000/settings",
-				expect: "The new toggle shows under Display",
-			},
-		],
-	},
-};
-
-export function formatSlicingRequest(hunks: HighLevelHunk[]): string {
+export function formatSlicingRequest(
+	hunks: HighLevelHunk[],
+	tests: HighLevelTestFile[],
+): string {
 	return [
 		"Slicing required: this PR must be split into slices before the review opens.",
 		"",
-		"Write the slices and the manual testing steps as JSON to a scratch file, then re-run this command with the same arguments plus `--slices <file>`:",
+		"Write the slices, the manual testing steps and the test regrouping as JSON to a scratch file, then re-run this command with the same arguments plus `--slices <file>`:",
 		"",
-		JSON.stringify(EXAMPLE, null, 2),
+		JSON.stringify(slicingRequestExample(tests.length > 0), null, 2),
 		"",
 		'Refer to hunks by the `path#index` labels below. Unknown refs are dropped, and every hunk no slice claims goes into an "Everything else" slice.',
 		"",
@@ -54,6 +40,7 @@ export function formatSlicingRequest(hunks: HighLevelHunk[]): string {
 		"",
 		"Manual testing rules:",
 		...MANUAL_TESTING_RULES.map((rule) => `- ${rule}`),
+		...(tests.length > 0 ? formatChangedTests(tests) : []),
 		"",
 		`Hunks (${hunks.length}):`,
 		...hunks.flatMap((hunk) => ["", `### ${hunk.ref}`, hunk.text]),

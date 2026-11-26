@@ -3,6 +3,7 @@ import type { HighLevelTestCase } from "../../../../../../../../../review/highLe
 import type { HighLevelDiffComments } from "../../../HighLevelDiffComments";
 import { HighLevelDiffNote } from "../../../HighLevelDiffNote";
 import { HighLevelNativeDiff } from "../../../HighLevelNativeDiff";
+import { HighLevelTestWrittenName } from "./HighLevelTestSource/HighLevelTestWrittenName";
 import { testSourcePatch } from "./HighLevelTestSource/testSourcePatch";
 
 export function HighLevelTestSource({
@@ -23,6 +24,7 @@ export function HighLevelTestSource({
 			: [{ line: test.line, source: test.source }]);
 	return (
 		<Box sx={{ pl: `calc(${indent} + 20px)`, minWidth: 0 }}>
+			<HighLevelTestWrittenName test={test} />
 			{excerpts === undefined ? (
 				<HighLevelDiffNote>
 					{test.truncated

@@ -109,11 +109,13 @@ export type HighLevelTestCase = HighLevelTestBase & {
 	excerpts?: HighLevelTestExcerpt[];
 	truncated?: boolean;
 	overBudget?: boolean;
+	writtenName?: string;
 };
 
 export type HighLevelTestSuite = HighLevelTestBase & {
 	kind: "describe";
 	children: HighLevelTestNode[];
+	ungrouped?: boolean;
 };
 
 export type HighLevelTestNode = HighLevelTestSuite | HighLevelTestCase;
@@ -170,9 +172,24 @@ export type HighLevelManualTesting = {
 	steps: { action: string; expect: string }[];
 };
 
+type HighLevelRegroupedTest = { id: string; it: string };
+
+type HighLevelRegroupedSuite = {
+	describe: string;
+	children: HighLevelRegroupedNode[];
+	ungrouped?: boolean;
+};
+
+export type HighLevelRegroupedNode =
+	| HighLevelRegroupedSuite
+	| HighLevelRegroupedTest;
+
+export type HighLevelTestRegrouping = Record<string, HighLevelRegroupedNode[]>;
+
 export type HighLevelSliceSet = {
 	slices: HighLevelSlice[];
 	manualTesting?: HighLevelManualTesting;
+	testRegrouping?: HighLevelTestRegrouping;
 };
 
 export type HighLevelPreviewPayload = {
@@ -189,6 +206,7 @@ export type HighLevelPreviewPayload = {
 	collapsedPaths: string[];
 	slices?: HighLevelSlice[];
 	manualTesting?: HighLevelManualTesting;
+	testRegrouping?: HighLevelTestRegrouping;
 	saved?: HighLevelReviewRecord;
 	progress?: HighLevelPaneProgress;
 };

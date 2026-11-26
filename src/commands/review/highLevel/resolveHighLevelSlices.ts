@@ -1,28 +1,20 @@
 import type { HighLevelHunk } from "./listHighLevelHunks";
-import {
-	type HighLevelSliceInput,
-	parseHighLevelSlicesInput,
-} from "./parseHighLevelSlicesInput";
+import { parseHighLevelSlicesInput } from "./parseHighLevelSlicesInput";
+import { withTestRegrouping } from "./withTestRegrouping";
 import { sliceTotals } from "./sliceTotals";
-import type { HighLevelSlice, HighLevelSliceSet } from "./types";
+import type {
+	HighLevelSlice,
+	HighLevelSliceSet,
+	HighLevelTestFile,
+} from "./types";
+import { knownRefs } from "./knownRefs";
 
 type ResolvedSlices = HighLevelSliceSet & { warnings: string[] };
-
-function knownRefs(
-	input: HighLevelSliceInput,
-	byRef: Map<string, HighLevelHunk>,
-	warnings: string[],
-): string[] {
-	return [...new Set(input.hunks)].filter((ref) => {
-		if (byRef.has(ref)) return true;
-		warnings.push(`Dropped unknown hunk ${ref} from "${input.title}".`);
-		return false;
-	});
-}
 
 export function resolveHighLevelSlices(
 	raw: unknown,
 	hunks: HighLevelHunk[],
+	tests: HighLevelTestFile[] = [],
 ): ResolvedSlices {
 	const byRef = new Map(hunks.map((hunk) => [hunk.ref, hunk]));
 	const claimed = new Set<string>();
@@ -30,7 +22,11 @@ export function resolveHighLevelSlices(
 	const slices: HighLevelSlice[] = [];
 	const add = (title: string, summary: string, refs: string[]) =>
 		slices.push({ title, summary, hunks: refs, ...sliceTotals(refs, byRef) });
-	const { slices: inputs, manualTesting } = parseHighLevelSlicesInput(raw);
+	const {
+		slices: inputs,
+		manualTesting,
+		tests: regrouping,
+	} = parseHighLevelSlicesInput(raw);
 	for (const input of inputs) {
 		const known = knownRefs(input, byRef, warnings);
 		if (known.length === 0)
@@ -47,5 +43,10 @@ export function resolveHighLevelSlices(
 			...sliceTotals(rest, byRef),
 			rest: true,
 		});
-	return { slices, ...(manualTesting ? { manualTesting } : {}), warnings };
+	return {
+		slices,
+		...(manualTesting ? { manualTesting } : {}),
+		...withTestRegrouping(regrouping, tests, warnings),
+		warnings,
+	};
 }

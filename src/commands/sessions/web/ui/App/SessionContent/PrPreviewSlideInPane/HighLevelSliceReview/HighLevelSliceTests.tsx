@@ -1,6 +1,9 @@
 import { Box, Typography } from "@mui/material";
 import { highLevelTestCount } from "../../../../../../../review/highLevel/highLevelTestCount";
-import type { HighLevelTestFile } from "../../../../../../../review/highLevel/types";
+import type {
+	HighLevelTestFile,
+	HighLevelTestRegrouping,
+} from "../../../../../../../review/highLevel/types";
 import type { HighLevelDiffComments } from "../HighLevelDiffComments";
 import { HighLevelDiffNote } from "../HighLevelDiffNote";
 import { HighLevelTestsView } from "../HighLevelTestsView";
@@ -11,11 +14,13 @@ export function HighLevelSliceTests({
 	files,
 	subject,
 	comments,
+	regrouping,
 }: {
 	number: number;
 	files: HighLevelTestFile[];
 	subject: string;
 	comments?: HighLevelDiffComments | undefined;
+	regrouping?: HighLevelTestRegrouping | undefined;
 }) {
 	return (
 		<Box
@@ -46,6 +51,7 @@ export function HighLevelSliceTests({
 					testPaths={[]}
 					subject={subject}
 					comments={comments}
+					regrouping={regrouping}
 					hideSummary
 				/>
 			)}

@@ -19,6 +19,6 @@ While it runs, the user may send diff comments from the pane: a file path and li
 
 When the review's output arrives, read it:
 
-- **Slicing required** (exit code 2, output starts with `Slicing required:`) — the review has not opened yet. Read the hunks, slicing rules and manual testing rules it printed, write the `{slices, manualTesting}` JSON it describes to a file in your scratchpad directory, and re-run the same command with `--slices <file>` added, launched the same way as above. Do this yourself without asking the user or summarising the slices. `Warning:` lines about dropped hunks or slices in the re-run's output need no action.
+- **Slicing required** (exit code 2, output starts with `Slicing required:`) — the review has not opened yet. Read the hunks, changed tests and the rules it printed, write the `{slices, manualTesting, tests}` JSON it describes to a file in your scratchpad directory, and re-run the same command with `--slices <file>` added, launched the same way as above. Do this yourself without asking the user or summarising the slices. `Warning:` lines about dropped hunks, slices or tests in the re-run's output need no action.
 - **Printed checklist** (it ends by suggesting running inside an assist session, and has no `Verdict:` line) — there was no preview pane. Show the user the printed checklist in full, and do not mention a pane.
 - **Otherwise** — report the verdict and the path it saved the review to, quoting the command's own output. If the user left comments on any item, list them.
