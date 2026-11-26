@@ -36,6 +36,7 @@ export function HighLevelSliceAreaContent({
 				subject={subject}
 				comments={comments}
 				regrouping={payload.testRegrouping}
+				groupingSubject={`${payload.repo}#${payload.prNumber}`}
 			/>
 		);
 	return (

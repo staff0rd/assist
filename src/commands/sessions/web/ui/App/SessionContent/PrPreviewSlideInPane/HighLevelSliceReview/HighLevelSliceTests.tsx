@@ -15,12 +15,14 @@ export function HighLevelSliceTests({
 	subject,
 	comments,
 	regrouping,
+	groupingSubject,
 }: {
 	number: number;
 	files: HighLevelTestFile[];
 	subject: string;
 	comments?: HighLevelDiffComments | undefined;
 	regrouping?: HighLevelTestRegrouping | undefined;
+	groupingSubject?: string | undefined;
 }) {
 	return (
 		<Box
@@ -52,6 +54,7 @@ export function HighLevelSliceTests({
 					subject={subject}
 					comments={comments}
 					regrouping={regrouping}
+					groupingSubject={groupingSubject}
 					hideSummary
 				/>
 			)}

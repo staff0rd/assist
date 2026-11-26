@@ -17,6 +17,7 @@ export function HighLevelTestsView({
 	subject,
 	comments,
 	regrouping,
+	groupingSubject = subject,
 	hideSummary = false,
 }: {
 	files: HighLevelTestFile[];
@@ -24,13 +25,14 @@ export function HighLevelTestsView({
 	subject: string;
 	comments?: HighLevelDiffComments | undefined;
 	regrouping?: HighLevelTestRegrouping | undefined;
+	groupingSubject?: string | undefined;
 	hideSummary?: boolean;
 }) {
 	const { collapsed, onToggle } = useHighLevelCollapse(`tests:${subject}`);
 	const { shown, grouping, setGrouping } = useRegroupedTests(
 		files,
 		regrouping,
-		subject,
+		groupingSubject,
 	);
 
 	if (files.length === 0)

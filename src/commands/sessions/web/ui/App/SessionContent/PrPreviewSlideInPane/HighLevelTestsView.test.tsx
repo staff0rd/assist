@@ -76,6 +76,24 @@ describe("HighLevelTestsView regrouping", () => {
 		expect(screen.queryByText("passes", { exact: false })).toBeNull();
 	});
 
+	it("shares the choice across slices of the same PR", () => {
+		const sliceView = (number: number) =>
+			render(
+				<HighLevelTestsView
+					files={[file]}
+					testPaths={[]}
+					subject={`pr-grouping:slice:${number}`}
+					groupingSubject="pr-grouping"
+					regrouping={regrouping}
+				/>,
+			);
+		sliceView(1);
+		fireEvent.click(screen.getByRole("button", { name: "As written" }));
+		cleanup();
+		sliceView(2);
+		expect(screen.queryByText("passes", { exact: false })).toBeNull();
+	});
+
 	it("shows no toggle without a regrouping", () => {
 		view(false);
 		expect(screen.queryByRole("button", { name: "By when" })).toBeNull();
