@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import type { CloneBaseRepo } from "../../../shared/CloneBaseRepo";
 import { reportCaughtError } from "../clientFailures/reportCaughtError";
 import type { HistoricalSession } from "../types";
 import { fetchCloneBaseRepos } from "./useCloneBaseRepos/fetchCloneBaseRepos";
 
-export function useCloneBaseRepos(history: HistoricalSession[]): string[] {
-	const [repos, setRepos] = useState<string[]>([]);
+export function useCloneBaseRepos(
+	history: HistoricalSession[],
+): CloneBaseRepo[] {
+	const [repos, setRepos] = useState<CloneBaseRepo[]>([]);
 
 	useEffect(() => {
 		// Refetch whenever history refreshes so newly cloned repos appear.

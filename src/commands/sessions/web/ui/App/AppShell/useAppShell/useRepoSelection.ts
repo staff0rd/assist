@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import type { CloneBaseRepo } from "../../../../../shared/CloneBaseRepo";
 import type { HistoricalSession, SessionInfo } from "../../../types";
 import type { RepoSelection } from "../../../useRepoSelectionContext";
 import type { NodeSelection } from "../../../useNodeSelection";
@@ -16,7 +17,7 @@ export function useRepoSelection(
 	activeId: string | null,
 	sessions: SessionInfo[],
 	nodeSelection: NodeSelection,
-	cloneBaseRepos: string[],
+	cloneBaseRepos: CloneBaseRepo[],
 ): RepoSelection {
 	const localNode = nodeSelection.nodes?.local;
 	const machine = nodeKey(nodeSelection.selected, localNode);

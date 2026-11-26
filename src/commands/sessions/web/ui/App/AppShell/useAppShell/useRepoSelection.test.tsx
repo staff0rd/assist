@@ -1,4 +1,5 @@
 // @vitest-environment jsdom
+import type { CloneBaseRepo } from "../../../../../shared/CloneBaseRepo";
 import { act, renderHook } from "@testing-library/react";
 import { useCallback, useState } from "react";
 import { MemoryRouter } from "react-router";
@@ -19,7 +20,7 @@ const singleNode: NodeSelection = {
 	select: () => {},
 };
 
-const noCloneBaseRepos: string[] = [];
+const noCloneBaseRepos: CloneBaseRepo[] = [];
 const clone = "/repos/live";
 const group = { origin: "host/org/live", clone };
 const otherClone = "/repos/other";

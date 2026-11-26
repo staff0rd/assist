@@ -1,3 +1,4 @@
+import type { CloneBaseRepo } from "../../../shared/CloneBaseRepo";
 import type { HistoricalSession } from "../types";
 
 type Repo = { key: string; clones: Record<string, string> };
@@ -26,16 +27,21 @@ function knownLocalCwds(
 export function appendCloneBaseRepos(
 	byKey: Map<string, Repo>,
 	localHistory: HistoricalSession[],
-	cloneBaseRepos: string[],
+	cloneBaseRepos: CloneBaseRepo[],
 	localNode: string,
 ): void {
 	const known = knownLocalCwds(byKey, localHistory, localNode);
 	const sorted = [...cloneBaseRepos].sort((a, b) =>
-		repoName(a).localeCompare(repoName(b)),
+		repoName(a.cwd).localeCompare(repoName(b.cwd)),
 	);
-	for (const cwd of sorted) {
+	for (const { cwd, origin } of sorted) {
 		if (known.has(cwd)) continue;
 		known.add(cwd);
+		const sameOrigin = origin ? byKey.get(origin) : undefined;
+		if (sameOrigin) {
+			sameOrigin.clones[localNode] ??= cwd;
+			continue;
+		}
 		const repo = byKey.get(cwd) ?? { key: cwd, clones: {} };
 		repo.clones[localNode] = cwd;
 		byKey.set(cwd, repo);

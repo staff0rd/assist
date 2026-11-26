@@ -1,3 +1,4 @@
+import type { CloneBaseRepo } from "../../shared/CloneBaseRepo";
 import { repoKeyForCwd } from "./repoGroupKey";
 import type { HistoricalSession } from "./types";
 import { appendCloneBaseRepos } from "./mergeRepos/appendCloneBaseRepos";
@@ -25,7 +26,7 @@ function historyByNode(
 export function mergeRepos(
 	currentCwd: string,
 	history: HistoricalSession[],
-	cloneBaseRepos: string[] = [],
+	cloneBaseRepos: CloneBaseRepo[] = [],
 ): MergedRepo[] {
 	const byKey = new Map<string, MergedRepo>();
 	const byNode = historyByNode(history);
