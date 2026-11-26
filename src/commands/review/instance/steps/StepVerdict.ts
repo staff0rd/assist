@@ -7,4 +7,5 @@ export type StepVerdict = {
 	verdict: Verdict;
 	note: string;
 	screenshot: string;
+	videoOffsetMs?: number;
 };

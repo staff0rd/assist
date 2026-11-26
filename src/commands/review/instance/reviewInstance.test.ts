@@ -60,7 +60,7 @@ beforeEach(() => {
 		setup: [],
 		steps: [{ action: "Open /", expect: "Home shows" }],
 	});
-	runSteps.mockReset().mockResolvedValue([verdict("pass")]);
+	runSteps.mockReset().mockResolvedValue({ verdicts: [verdict("pass")] });
 	vi.spyOn(console, "log").mockImplementation(() => {});
 	vi.spyOn(console, "error").mockImplementation(() => {});
 });
@@ -94,8 +94,15 @@ describe("reviewInstance", () => {
 		expect(process.exitCode).toBeUndefined();
 	});
 
+	it("runs the steps headed with --headed", async () => {
+		await reviewInstance("7", { headed: true });
+		expect(runSteps).toHaveBeenCalledWith(
+			expect.objectContaining({ headed: true }),
+		);
+	});
+
 	it("exits non-zero when a step fails", async () => {
-		runSteps.mockResolvedValue([verdict("fail")]);
+		runSteps.mockResolvedValue({ verdicts: [verdict("fail")] });
 		await reviewInstance("7", {});
 		expect(commandsRun()).toContain("git worktree remove --force");
 		expect(process.exitCode).toBe(1);

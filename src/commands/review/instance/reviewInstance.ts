@@ -13,7 +13,7 @@ import { watchInterrupt } from "./watchInterrupt";
 
 export async function reviewInstance(
 	pr: string,
-	options: { keep?: boolean },
+	options: { keep?: boolean; headed?: boolean },
 ): Promise<void> {
 	const head = resolvePrHead(pr);
 	const config = requireInstanceConfig();
@@ -36,7 +36,12 @@ export async function reviewInstance(
 		console.log(
 			`PR #${head.number} (${head.sha.slice(0, 7)}) is up as ${instance.project}: ${instance.url}`,
 		);
-		await runInstanceSteps(instance, manualTesting, interrupt.abort);
+		await runInstanceSteps(
+			instance,
+			manualTesting,
+			interrupt.abort,
+			options.headed,
+		);
 	} catch (error) {
 		console.error(
 			`Error: ${error instanceof Error ? error.message : String(error)}`,

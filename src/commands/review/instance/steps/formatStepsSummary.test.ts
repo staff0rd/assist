@@ -40,6 +40,29 @@ describe("formatStepsSummary", () => {
 	});
 });
 
+describe("formatStepsSummary with a video", () => {
+	it("lists each step's start offset in the video and the video path", () => {
+		const steps = [
+			{ ...step(1, "pass"), videoOffsetMs: 0 },
+			{ ...step(2, "pass"), videoOffsetMs: 74_250 },
+		];
+		expect(formatStepsSummary(steps, "/r", "/r/session.webm")).toBe(
+			[
+				"Manual testing:",
+				"  ✓ 1. PASS Action 1 (video 0:00)",
+				"      Note 1",
+				"      /r/step-01.png",
+				"  ✓ 2. PASS Action 2 (video 1:14)",
+				"      Note 2",
+				"      /r/step-02.png",
+				"2 passed, 0 failed, 0 unsure",
+				"Video: /r/session.webm",
+				"Report: /r/report.json",
+			].join("\n"),
+		);
+	});
+});
+
 describe("stepsExitCode", () => {
 	it("is 1 when any step fails", () => {
 		expect(stepsExitCode([step(1, "pass"), step(2, "fail")])).toBe(1);

@@ -13,6 +13,7 @@ export type ManualStepsInput = {
 	manualTesting: HighLevelManualTesting;
 	reportDir: string;
 	abort: AbortController;
+	headed?: boolean;
 };
 
 export async function runManualStep(

@@ -8,14 +8,16 @@ export async function runInstanceSteps(
 	instance: { project: string; url: string },
 	manualTesting: HighLevelManualTesting,
 	abort: AbortController,
+	headed = false,
 ): Promise<void> {
 	const reportDir = instanceReportDir(instance.project);
-	const verdicts = await runManualSteps({
+	const { verdicts, video } = await runManualSteps({
 		url: instance.url,
 		manualTesting,
 		reportDir,
 		abort,
+		headed,
 	});
-	console.log(formatStepsSummary(verdicts, reportDir));
+	console.log(formatStepsSummary(verdicts, reportDir, video));
 	if (stepsExitCode(verdicts) !== 0) process.exitCode = 1;
 }

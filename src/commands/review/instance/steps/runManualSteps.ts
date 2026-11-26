@@ -1,33 +1,43 @@
-import { writeFileSync } from "node:fs";
-import { join } from "node:path";
 import { chromium } from "playwright";
 import { resolveClaudeExecutable } from "../../../sessions/daemon/resolveClaudeExecutable";
-import { type ManualStepsInput, runManualStep } from "./runManualStep";
-import type { StepVerdict } from "./StepVerdict";
+import {
+	browserContextOptions,
+	browserLaunchOptions,
+} from "./browserLaunchOptions";
+import { createVideoClock } from "./createVideoClock";
+import type { ManualStepsResult } from "./ManualStepsResult";
+import type { ManualStepsInput } from "./runManualStep";
+import { runStepsOnPage } from "./runStepsOnPage";
+import { saveSessionVideo } from "./saveSessionVideo";
+import { writeStepsReport } from "./writeStepsReport";
 
 export async function runManualSteps(
 	input: ManualStepsInput,
-): Promise<StepVerdict[]> {
+): Promise<ManualStepsResult> {
 	const executable = resolveClaudeExecutable();
-	const browser = await chromium.launch();
-	const verdicts: StepVerdict[] = [];
+	const headed = input.headed ?? false;
+	const browser = await chromium.launch(browserLaunchOptions(headed));
+	const result: ManualStepsResult = { verdicts: [] };
 	try {
-		const page = await browser.newPage({
-			viewport: { width: 1280, height: 800 },
-		});
-		await page.goto(input.url);
-		for (const [index, { action }] of input.manualTesting.steps.entries()) {
-			console.log(`Step ${index + 1}: ${action}`);
-			verdicts.push(
-				await runManualStep(page, input, index, verdicts, executable),
+		const context = await browser.newContext(
+			browserContextOptions(headed, input.reportDir),
+		);
+		const page = await context.newPage();
+		try {
+			await runStepsOnPage(
+				page,
+				input,
+				executable,
+				createVideoClock(!headed),
+				result,
 			);
-			writeFileSync(
-				join(input.reportDir, "report.json"),
-				`${JSON.stringify({ url: input.url, steps: verdicts }, null, 2)}\n`,
-			);
+		} finally {
+			await context.close();
+			result.video = await saveSessionVideo(page, input.reportDir);
+			writeStepsReport(input.reportDir, input.url, result);
 		}
 	} finally {
 		await browser.close();
 	}
-	return verdicts;
+	return result;
 }
