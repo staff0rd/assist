@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { getDb } from "../../../shared/db/getDb";
-import { items } from "../../../shared/db/schema";
+import { comments, items } from "../../../shared/db/schema";
 import { replacePlan } from "../updatePlan/replacePlan";
 import type { ProposedItem } from "./proposedItemSchema";
 
@@ -11,13 +11,14 @@ const BUG_DEFAULT_PLAN = [
 export async function reviseProposedItem(
 	itemId: number,
 	item: ProposedItem,
-): Promise<boolean> {
+): Promise<"revised" | "missing" | "started"> {
 	const orm = await getDb();
 	const [existing] = await orm
-		.select({ currentPhase: items.currentPhase })
+		.select({ currentPhase: items.currentPhase, status: items.status })
 		.from(items)
 		.where(eq(items.id, itemId));
-	if (!existing) return false;
+	if (!existing) return "missing";
+	if (existing.status !== "todo") return "started";
 
 	await orm
 		.update(items)
@@ -34,5 +35,8 @@ export async function reviseProposedItem(
 			? item.phases
 			: BUG_DEFAULT_PLAN;
 	await replacePlan(orm, itemId, phases, existing.currentPhase ?? undefined);
-	return true;
+	await orm
+		.delete(comments)
+		.where(and(eq(comments.itemId, itemId), eq(comments.type, "why")));
+	return "revised";
 }

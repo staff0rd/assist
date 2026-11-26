@@ -1,7 +1,7 @@
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { asc, eq } from "drizzle-orm";
+import { and, asc, eq } from "drizzle-orm";
 import {
 	afterEach,
 	beforeEach,
@@ -13,7 +13,7 @@ import {
 } from "vitest";
 import { createTestDb } from "../../shared/db/createTestDb";
 import type { Db } from "../../shared/db/Db";
-import { items, planPhases, planTasks } from "../../shared/db/schema";
+import { comments, items, planPhases, planTasks } from "../../shared/db/schema";
 import { loadConfig } from "../../shared/loadConfig";
 import { makeAssistConfig } from "../../test/mothers/makeAssistConfig";
 import type * as loadConfigMockModule from "../../test/mocks/loadConfigMock";
@@ -471,7 +471,7 @@ describe("propose inside a web session", () => {
 });
 
 describe("re-propose after the earlier preview was approved", () => {
-	type Decision = { decision: "approve" };
+	type Decision = { decision: "approve"; autostart?: boolean };
 	const revised = {
 		...bug,
 		description: "**Repro:**\n\n1. File a bug\n2. Approve it",
@@ -529,19 +529,104 @@ describe("re-propose after the earlier preview was approved", () => {
 		expect(output).toContain(`Updated item a${rows[0].id} with the revision`);
 	});
 
-	it("shows a re-propose that lands just after creation as an update", async () => {
-		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+	it("creates a new item for a propose started just after the previous one was approved and closed", async () => {
+		mockRequestPreviewDecision.mockResolvedValue({
+			decision: "approve",
+			autostart: true,
+		});
+		mockRequestAssistSession.mockResolvedValue("8");
 
 		await propose({ json: writePayload(bug) });
-		const [created] = await itemRows();
-		await propose({ json: writePayload(revised) });
+		await propose({ json: writePayload(story) });
 
 		expect(mockRequestPreviewDecision.mock.calls[1][0].title).toBe(
-			`Update a${created.id}: Preview never opens`,
+			"Preview backlog items",
 		);
 		const rows = await itemRows();
-		expect(rows).toHaveLength(1);
-		expect(rows[0].description).toBe(revised.description);
+		expect(rows.map((r) => r.name)).toEqual([
+			"Preview never opens",
+			"Preview backlog items",
+		]);
+		expect(mockRequestAssistSession.mock.calls.map((c) => c[0])).toEqual([
+			["backlog", "run", `a${rows[0].id}`],
+			["backlog", "run", `a${rows[1].id}`],
+		]);
+	});
+
+	it("leaves an item whose run already started and adds the revision as a new item", async () => {
+		const resolvers = deferDecisions();
+		mockRequestAssistSession.mockResolvedValue("8");
+
+		const first = propose({ json: writePayload(bug) });
+		await vi.waitFor(() => expect(resolvers).toHaveLength(1));
+		const second = propose({ json: writePayload(revised) });
+		await vi.waitFor(() => expect(resolvers).toHaveLength(2));
+
+		resolvers[0]({ decision: "approve", autostart: true });
+		await first;
+		resolvers[1]({ decision: "approve", autostart: true });
+		await second;
+
+		const rows = await itemRows();
+		expect(rows).toHaveLength(2);
+		expect(rows[0].description).toBe(bug.description);
+		expect(rows[1].description).toBe(revised.description);
+		expect(mockRequestAssistSession.mock.calls.map((c) => c[0])).toEqual([
+			["backlog", "run", `a${rows[0].id}`],
+			["backlog", "run", `a${rows[1].id}`],
+		]);
+		expect(logSpy.mock.calls.map((c) => c.join(" ")).join("\n")).toContain(
+			`Item a${rows[0].id} was already started from the earlier preview`,
+		);
+	});
+
+	it("leaves an item already in progress and adds the revision as a new item", async () => {
+		const resolvers = deferDecisions();
+
+		const first = propose({ json: writePayload(bug) });
+		await vi.waitFor(() => expect(resolvers).toHaveLength(1));
+		const second = propose({ json: writePayload(revised) });
+		await vi.waitFor(() => expect(resolvers).toHaveLength(2));
+
+		resolvers[0]({ decision: "approve" });
+		await first;
+		const [created] = await itemRows();
+		await orm
+			.update(items)
+			.set({ status: "in-progress" })
+			.where(eq(items.id, created.id));
+		resolvers[1]({ decision: "approve" });
+		await second;
+
+		const rows = await itemRows();
+		expect(rows).toHaveLength(2);
+		expect(rows[0].description).toBe(bug.description);
+	});
+
+	it("replaces the earlier why comment when revising", async () => {
+		const resolvers = deferDecisions();
+
+		const first = propose({
+			json: writePayload({ ...bug, summary: "Old why" }),
+		});
+		await vi.waitFor(() => expect(resolvers).toHaveLength(1));
+		const second = propose({
+			json: writePayload({ ...revised, summary: "New why" }),
+		});
+		await vi.waitFor(() => expect(resolvers).toHaveLength(2));
+
+		resolvers[0]({ decision: "approve" });
+		await first;
+		resolvers[1]({ decision: "approve" });
+		await second;
+
+		const [row] = await itemRows();
+		expect(
+			await orm
+				.select({ text: comments.text })
+				.from(comments)
+				.where(and(eq(comments.itemId, row.id), eq(comments.type, "why"))),
+		).toEqual([{ text: "New why" }]);
 	});
 
 	it("creates a separate item for a proposal made well after the last one", async () => {

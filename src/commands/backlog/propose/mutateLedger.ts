@@ -2,7 +2,11 @@ import { mkdirSync, readFileSync, renameSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 
 type OpenProposal = { token: string; startedAt: number };
-type CreatedItem = { itemId: number; at: number; startedAt: number };
+export type CreatedItem = {
+	itemId: number;
+	token: string;
+	runStarted?: boolean;
+};
 type Ledger = { open: OpenProposal[]; created?: CreatedItem };
 
 export function readLedger(path: string): Ledger {
