@@ -57,6 +57,16 @@ describe("HighLevelTestsView regrouping", () => {
 		);
 	});
 
+	it("leads the opened source with the written name and line", () => {
+		view(true);
+		fireEvent.click(
+			screen.getByRole("button", { name: "Show the source of works" }),
+		);
+		expect(screen.getByText("As written:", { exact: false }).textContent).toBe(
+			"As written: works · line 1",
+		);
+	});
+
 	it("switches to the tests as written and remembers it", () => {
 		view(true);
 		fireEvent.click(screen.getByRole("button", { name: "As written" }));
