@@ -394,6 +394,14 @@ const assistConfigShape = {
 			pickStatuses: z.array(z.string()).optional(),
 			excludeLabels: z.array(z.string()).optional(),
 			excludeTypes: z.array(z.string()).optional(),
+			repoRules: z
+				.record(
+					z.string(),
+					z.strictObject({
+						hideReviewAfterApprovals: z.number().int().positive().optional(),
+					}),
+				)
+				.optional(),
 		})
 		.optional(),
 	deny: z

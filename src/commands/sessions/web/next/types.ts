@@ -41,7 +41,12 @@ export type NextScope = {
 	pickStatuses: string[];
 	excludeLabels: string[];
 	excludeTypes: string[];
+	repoRules: NextRepoRules;
 };
+
+export type NextRepoRule = { hideReviewAfterApprovals?: number };
+
+export type NextRepoRules = Record<string, NextRepoRule>;
 
 export type PickupFilter = Pick<
 	NextScope,

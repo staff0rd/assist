@@ -23,7 +23,7 @@ export async function nextItems(
 	const openPrs = new Map(
 		repos.map((repo): [string, Promise<OpenPrs>] => [
 			repo,
-			fetchOpenPrs(cwd, repo, scope.peers),
+			fetchOpenPrs(cwd, repo, scope.peers, scope.repoRules),
 		]),
 	);
 	const openPrsOf = (repo: string) => openPrs.get(repo) as Promise<OpenPrs>;

@@ -31,4 +31,10 @@ export const nextConfigHelp: ConfigHelpEntry[] = [
 		setter: "assist config set next.excludeTypes Epic --repo",
 		note: "GitHub issue types whose project items the web /next view never offers to pick up (case-insensitive)",
 	},
+	{
+		key: "next.repoRules",
+		setter:
+			"assist config set next.repoRules.<owner>/<name>.hideReviewAfterApprovals 1 --repo",
+		note: "Per-repo rules for the web /next view, keyed by owner/name or a bare owner (an exact repo wins); hideReviewAfterApprovals hides a PR requesting your review once it has that many current approvals from others",
+	},
 ];

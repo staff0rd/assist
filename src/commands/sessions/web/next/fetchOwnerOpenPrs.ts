@@ -1,7 +1,7 @@
 import { ghJson } from "../releases/ghJson";
 import { ownerOpenPrsQuery } from "./ownerOpenPrsQuery";
 import { splitOpenPrs } from "./splitOpenPrs";
-import type { GhPeerPrNode, OpenPrs } from "./types";
+import type { GhPeerPrNode, NextRepoRules, OpenPrs } from "./types";
 
 type SearchResult = { nodes?: (GhPeerPrNode | null)[] } | null;
 
@@ -25,6 +25,7 @@ export async function fetchOwnerOpenPrs(
 	cwd: string,
 	owner: string,
 	peers: string[],
+	rules: NextRepoRules,
 ): Promise<OpenPrs> {
 	const base = `user:${owner} is:pr is:open archived:false`;
 	const authors = peers.map((peer) => `author:${peer}`).join(" ");
@@ -55,5 +56,6 @@ export async function fetchOwnerOpenPrs(
 		viewer,
 		peers,
 		(pr) => repoOf.get(pr.url) ?? owner,
+		rules,
 	);
 }

@@ -197,4 +197,94 @@ describe("selectPeerPrs", () => {
 			null,
 		]);
 	});
+
+	describe("repo approval rules", () => {
+		const approvedBy = (...logins: string[]) => ({
+			latestReviews: {
+				nodes: logins.map((login) => ({
+					author: { login },
+					state: "APPROVED",
+				})),
+			},
+		});
+		const ruled = (
+			nodes: GhPeerPrNode[],
+			rules: Record<string, { hideReviewAfterApprovals?: number }>,
+		) =>
+			selectPeerPrs(nodes, "me", ["alice"], rules, () => "o/r").map(
+				(p) => p.number,
+			);
+
+		it("keeps requested PRs below the bar and hides them at it", () => {
+			expect(
+				ruled(
+					[
+						pr(1, { requested: ["me"], ...approvedBy("bob") }),
+						pr(2, { requested: ["me"], ...approvedBy("bob", "carol") }),
+					],
+					{ "o/r": { hideReviewAfterApprovals: 2 } },
+				),
+			).toEqual([1]);
+		});
+
+		it("hides requested PRs from non-peers once the bar is met", () => {
+			const carol = { author: { login: "carol" }, requested: ["me"] };
+			expect(
+				ruled([pr(1, carol), pr(2, { ...carol, ...approvedBy("bob") })], {
+					"o/r": { hideReviewAfterApprovals: 1 },
+				}),
+			).toEqual([1]);
+		});
+
+		it("hides peer PRs requesting my review once the bar is met", () => {
+			expect(
+				ruled([pr(1, { requested: ["me"], ...approvedBy("bob") })], {
+					"o/r": { hideReviewAfterApprovals: 1 },
+				}),
+			).toEqual([]);
+		});
+
+		it("does not count my own approval or dismissed approvals", () => {
+			expect(
+				ruled(
+					[
+						pr(1, { requested: ["me"], ...approvedBy("Me") }),
+						pr(2, {
+							requested: ["me"],
+							latestReviews: {
+								nodes: [{ author: { login: "bob" }, state: "DISMISSED" }],
+							},
+						}),
+					],
+					{ "o/r": { hideReviewAfterApprovals: 1 } },
+				),
+			).toEqual([1, 2]);
+		});
+
+		it("applies a bare owner rule to all its repos", () => {
+			expect(
+				ruled([pr(1, { requested: ["me"], ...approvedBy("bob") })], {
+					O: { hideReviewAfterApprovals: 1 },
+				}),
+			).toEqual([]);
+		});
+
+		it("prefers an exact repo rule over its owner rule", () => {
+			expect(
+				ruled([pr(1, { requested: ["me"], ...approvedBy("bob") })], {
+					o: { hideReviewAfterApprovals: 1 },
+					"o/r": { hideReviewAfterApprovals: 2 },
+				}),
+			).toEqual([1]);
+		});
+
+		it("leaves repos without a matching rule unchanged", () => {
+			expect(
+				ruled([pr(1, { requested: ["me"], ...approvedBy("bob") })], {
+					"o/other": { hideReviewAfterApprovals: 1 },
+					x: { hideReviewAfterApprovals: 1 },
+				}),
+			).toEqual([1]);
+		});
+	});
 });

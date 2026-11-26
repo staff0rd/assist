@@ -3,7 +3,7 @@ import { fetchOwnerOpenPrs } from "./fetchOwnerOpenPrs";
 import { isOwnerEntry } from "./isOwnerEntry";
 import { peerPrsQuery } from "./peerPrsQuery";
 import { splitOpenPrs } from "./splitOpenPrs";
-import type { GhPeerPrNode, OpenPrs } from "./types";
+import type { GhPeerPrNode, NextRepoRules, OpenPrs } from "./types";
 
 type PeerPrsResponse = {
 	data?: {
@@ -18,8 +18,9 @@ export async function fetchOpenPrs(
 	cwd: string,
 	repo: string,
 	peers: string[],
+	rules: NextRepoRules,
 ): Promise<OpenPrs> {
-	if (isOwnerEntry(repo)) return fetchOwnerOpenPrs(cwd, repo, peers);
+	if (isOwnerEntry(repo)) return fetchOwnerOpenPrs(cwd, repo, peers, rules);
 	const [owner, name] = repo.split("/");
 	const response = await ghJson<PeerPrsResponse>(cwd, [
 		"api",
@@ -37,5 +38,5 @@ export async function fetchOpenPrs(
 	const nodes = (repository.pullRequests?.nodes ?? []).filter(
 		(node): node is GhPeerPrNode => !!node,
 	);
-	return splitOpenPrs(nodes, viewer, peers, () => repo);
+	return splitOpenPrs(nodes, viewer, peers, () => repo, rules);
 }

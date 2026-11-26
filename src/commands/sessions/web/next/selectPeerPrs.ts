@@ -1,7 +1,9 @@
 import { isDoNotMerge } from "../../../prs/status/isDoNotMerge";
+import { meetsApprovalBar } from "./meetsApprovalBar";
+import { resolveRepoRule } from "./resolveRepoRule";
 import { sameLogin } from "./sameLogin";
 import { toNextPr } from "./toNextPr";
-import type { GhPeerPrNode, RepolessPr } from "./types";
+import type { GhPeerPrNode, NextRepoRules, RepolessPr } from "./types";
 
 function isRequested(node: GhPeerPrNode, viewer: string): boolean {
 	return (node.reviewRequests?.nodes ?? []).some((request) =>
@@ -27,6 +29,8 @@ export function selectPeerPrs(
 	nodes: GhPeerPrNode[],
 	viewer: string,
 	peers: string[],
+	rules: NextRepoRules = {},
+	repoOf: (pr: { url: string }) => string = () => "",
 ): RepolessPr[] {
 	const selected: RepolessPr[] = [];
 	for (const node of nodes) {
@@ -39,6 +43,8 @@ export function selectPeerPrs(
 			!requested &&
 			(!byPeer || isApproved(node) || requestedChanges(node, viewer))
 		)
+			continue;
+		if (meetsApprovalBar(node, viewer, resolveRepoRule(rules, repoOf(node))))
 			continue;
 		selected.push(toNextPr(node, author, requested, viewer));
 	}

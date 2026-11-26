@@ -79,6 +79,7 @@ const defaultScope: NextScope = {
 	pickStatuses: ["Ready", "Todo"],
 	excludeLabels: [],
 	excludeTypes: [],
+	repoRules: {},
 };
 
 type Reply = { ok: boolean; json: () => Promise<unknown> };
