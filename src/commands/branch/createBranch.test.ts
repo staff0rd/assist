@@ -24,8 +24,9 @@ vi.mock("../../shared/loadConfig", async () =>
 const mockExecSync = vi.mocked(execSync);
 const mockExecFileSync = vi.mocked(execFileSync);
 
-vi.mock("./resolveDefaultBranch", () => ({
-	resolveDefaultBranch: (override?: string) => override ?? "main",
+const mockResolveBranchBase = vi.fn();
+vi.mock("./resolveBranchBase", () => ({
+	resolveBranchBase: (...args: unknown[]) => mockResolveBranchBase(...args),
 }));
 
 vi.mock("./freeBranchName", () => ({
@@ -51,6 +52,56 @@ describe("createBranch", () => {
 		vi.clearAllMocks();
 		mockExecFileSync.mockReset();
 		vi.mocked(loadConfig).mockReturnValue(makeAssistConfig());
+		mockResolveBranchBase.mockImplementation((defaultBranch?: string) => ({
+			baseRef: `origin/${defaultBranch ?? "main"}`,
+		}));
+	});
+
+	describe("in a fork clone", () => {
+		beforeEach(() => {
+			mockResolveBranchBase.mockReturnValue({
+				baseRef: "upstream/main",
+				pushRef: "origin/main",
+			});
+		});
+
+		it("bases off the parent's default without tracking the parent remote", async () => {
+			const result = await createBranch({ slug: "add-login-form" });
+
+			expect(result.baseRef).toBe("upstream/main");
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"git",
+				["switch", "-c", "add-login-form", "--no-track", "upstream/main"],
+				expect.anything(),
+			);
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"git",
+				["branch", "--set-upstream-to", "origin/main"],
+				expect.anything(),
+			);
+		});
+
+		it("still bases off --from verbatim", async () => {
+			const result = await createBranch({ slug: "stacked", from: "HEAD" });
+
+			expect(result.baseRef).toBe("HEAD");
+			expect(mockResolveBranchBase).not.toHaveBeenCalled();
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"git",
+				["switch", "-c", "stacked", "HEAD"],
+				expect.anything(),
+			);
+		});
+	});
+
+	it("passes branch.defaultBranch through to the base", async () => {
+		vi.mocked(loadConfig).mockReturnValue(
+			makeAssistConfig({ branch: { defaultBranch: "develop" } }),
+		);
+
+		const result = await createBranch({ slug: "add-login-form" });
+
+		expect(result.baseRef).toBe("origin/develop");
 	});
 
 	it("bases off the fresh remote default when --from is omitted", async () => {

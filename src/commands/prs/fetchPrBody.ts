@@ -1,5 +1,6 @@
 import { execFileSync } from "node:child_process";
-import { getRepoInfo, isGhNotInstalled } from "./shared";
+import { getBaseRepoInfo } from "./getBaseRepoInfo";
+import { isGhNotInstalled } from "./shared";
 import { isNotFound } from "./isNotFound";
 
 function exitGhNotInstalled(): never {
@@ -10,7 +11,7 @@ function exitGhNotInstalled(): never {
 
 function currentRepo(): { org: string; repo: string } {
 	try {
-		return getRepoInfo();
+		return getBaseRepoInfo();
 	} catch (error) {
 		if (isGhNotInstalled(error)) exitGhNotInstalled();
 		console.error("Error: Could not resolve the current GitHub repository.");

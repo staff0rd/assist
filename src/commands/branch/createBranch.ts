@@ -5,7 +5,7 @@ import { loadConfig } from "../../shared/loadConfig";
 import { resolveSessionItemId } from "../../shared/resolveSessionItemId";
 import { buildBranchName } from "./buildBranchName";
 import { freeBranchName } from "./freeBranchName";
-import { resolveDefaultBranch } from "./resolveDefaultBranch";
+import { resolveBranchBase } from "./resolveBranchBase";
 
 export async function createBranch({
 	slug,
@@ -27,25 +27,37 @@ export async function createBranch({
 	execSync("git fetch", { stdio: "inherit" });
 	const branchName = unique ? freeBranchName(generatedName) : generatedName;
 
-	let baseRef: string;
-	if (from) {
-		try {
-			execFileSync("git", ["rev-parse", "--verify", from], {
-				stdio: ["pipe", "pipe", "pipe"],
-			});
-		} catch {
-			throw new Error(`Ref "${from}" does not resolve to a valid git ref`);
-		}
-		baseRef = from;
-	} else {
-		baseRef = `origin/${resolveDefaultBranch(config.branch?.defaultBranch)}`;
-	}
+	const { baseRef, pushRef } = from
+		? { baseRef: verifiedRef(from) }
+		: resolveBranchBase(config.branch?.defaultBranch);
 
-	execFileSync("git", ["switch", "-c", branchName, baseRef], {
-		stdio: "inherit",
-	});
+	execFileSync(
+		"git",
+		["switch", "-c", branchName, ...(pushRef ? ["--no-track"] : []), baseRef],
+		{ stdio: "inherit" },
+	);
+	if (pushRef) keepPushesOnOrigin(pushRef);
 	await recordBranchActivity(branchName);
 	return { branchName, baseRef };
+}
+
+function verifiedRef(from: string): string {
+	try {
+		execFileSync("git", ["rev-parse", "--verify", from], {
+			stdio: ["pipe", "pipe", "pipe"],
+		});
+	} catch {
+		throw new Error(`Ref "${from}" does not resolve to a valid git ref`);
+	}
+	return from;
+}
+
+function keepPushesOnOrigin(pushRef: string): void {
+	try {
+		execFileSync("git", ["branch", "--set-upstream-to", pushRef], {
+			stdio: "ignore",
+		});
+	} catch {}
 }
 
 async function recordBranchActivity(branchName: string): Promise<void> {

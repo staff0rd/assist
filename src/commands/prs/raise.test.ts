@@ -18,8 +18,16 @@ vi.mock("node:child_process", async () =>
 );
 
 const mockFindCurrentPr = vi.fn();
+vi.mock("./findCurrentPr", () => ({
+	findCurrentPr: (...args: unknown[]) => mockFindCurrentPr(...args),
+}));
 vi.mock("./shared", () => ({
-	findCurrentPr: () => mockFindCurrentPr(),
+	getCurrentBranch: () => "fix-poll",
+}));
+
+const mockResolveBaseRepo = vi.fn();
+vi.mock("./resolveBaseRepo", () => ({
+	resolveBaseRepo: (...args: unknown[]) => mockResolveBaseRepo(...args),
 }));
 
 vi.mock("../../shared/loadJson", () => ({
@@ -56,6 +64,7 @@ beforeEach(() => {
 	vi.clearAllMocks();
 	mockExecFileSync.mockReset().mockReturnValue("");
 	mockFindCurrentPr.mockReturnValue(null);
+	mockResolveBaseRepo.mockReturnValue(null);
 	mockLoadConfig.mockReturnValue(makeAssistConfig());
 	delete process.env.ASSIST_SESSION;
 	delete process.env.ASSIST_SESSION_ID;
@@ -195,6 +204,142 @@ describe("raise", () => {
 				]),
 				GH_OPTIONS,
 			);
+		});
+	});
+
+	describe("in a clone whose origin is a fork", () => {
+		const ORIGIN = { org: "Turtlator", repo: "assist" };
+		const PARENT = { org: "staff0rd", repo: "assist" };
+		const BODY = "## What\n\nw\n\n## Why\n\ny";
+		let logSpy: ReturnType<typeof vi.spyOn>;
+
+		beforeEach(() => {
+			logSpy = vi.spyOn(console, "log").mockImplementation(() => {});
+			mockResolveBaseRepo.mockImplementation((override?: string) =>
+				override === "origin"
+					? { base: ORIGIN, origin: ORIGIN, mode: "origin" }
+					: { base: PARENT, origin: ORIGIN, mode: override ?? "auto" },
+			);
+		});
+
+		afterEach(() => {
+			logSpy.mockRestore();
+		});
+
+		it("creates the PR in the parent with a fork-qualified head", async () => {
+			await raise({ title: "t", what: "w", why: "y" });
+
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				[
+					"pr",
+					"create",
+					"--title",
+					"t",
+					"--body",
+					BODY,
+					"--repo",
+					"staff0rd/assist",
+					"--head",
+					"Turtlator:fix-poll",
+				],
+				GH_OPTIONS,
+			);
+		});
+
+		it("still pushes the branch to origin", async () => {
+			mockExecFileSync.mockImplementation((file, args) => {
+				if (file === "git" && args?.[0] === "rev-parse")
+					throw new Error("no upstream");
+				return "";
+			});
+
+			await raise({ title: "t", what: "w", why: "y" });
+
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"git",
+				["push", "--set-upstream", "origin", "HEAD"],
+				expect.anything(),
+			);
+		});
+
+		it("names the repo the PR is raised against", async () => {
+			await raise({ title: "t", what: "w", why: "y" });
+
+			expect(logSpy).toHaveBeenCalledWith(
+				"Raising pull request against staff0rd/assist",
+			);
+		});
+
+		it("edits an existing parent-repo PR with --force", async () => {
+			mockFindCurrentPr.mockReturnValue(OPEN_PR);
+
+			await raise({ title: "t", what: "w", why: "y", force: true });
+
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				[
+					"pr",
+					"edit",
+					"42",
+					"--title",
+					"t",
+					"--body",
+					BODY,
+					"-R",
+					"staff0rd/assist",
+				],
+				GH_OPTIONS,
+			);
+		});
+
+		it("raises in the fork for --base-repo origin", async () => {
+			await raise({ title: "t", what: "w", why: "y", baseRepo: "origin" });
+
+			expect(mockFindCurrentPr).toHaveBeenCalledWith("origin");
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				[
+					"pr",
+					"create",
+					"--title",
+					"t",
+					"--body",
+					BODY,
+					"--repo",
+					"Turtlator/assist",
+				],
+				GH_OPTIONS,
+			);
+		});
+
+		it("raises in the parent for --base-repo parent", async () => {
+			await raise({ title: "t", what: "w", why: "y", baseRepo: "parent" });
+
+			expect(mockResolveBaseRepo).toHaveBeenCalledWith("parent");
+			expect(mockFindCurrentPr).toHaveBeenCalledWith("parent");
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				expect.arrayContaining(["--repo", "staff0rd/assist"]),
+				GH_OPTIONS,
+			);
+		});
+
+		it("exits when --base-repo parent finds no parent", async () => {
+			const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+			mockResolveBaseRepo.mockImplementation(() => {
+				throw new Error("Turtlator/assist is not a fork");
+			});
+
+			await expect(
+				raise({ title: "t", what: "w", why: "y", baseRepo: "parent" }),
+			).rejects.toThrow("process.exit");
+
+			expect(errorSpy).toHaveBeenCalledWith(
+				"Error: Turtlator/assist is not a fork",
+			);
+			expect(mockExecFileSync).not.toHaveBeenCalled();
+			errorSpy.mockRestore();
 		});
 	});
 

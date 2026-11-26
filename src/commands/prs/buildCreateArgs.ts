@@ -1,5 +1,6 @@
 import type { PreviewAttachment } from "../sessions/shared/PreviewAttachment";
 import { attachArgs } from "./attachArgs";
+import type { BaseRepoMode } from "./resolveBaseRepo";
 
 export type CreateOptions = {
 	title?: string;
@@ -12,6 +13,9 @@ export type CreateOptions = {
 	assignee?: string[];
 	reviewer?: string[];
 	milestone?: string;
+	repo?: string;
+	forkHead?: string;
+	baseRepo?: BaseRepoMode;
 };
 
 export function buildCreateArgs(
@@ -31,8 +35,9 @@ export function buildCreateArgs(
 	];
 
 	const valueFlags = [
+		["--repo", options.repo],
 		["--base", options.base],
-		["--head", options.head],
+		["--head", options.head ?? options.forkHead],
 		["--milestone", options.milestone],
 	] as const;
 	for (const [flag, value] of valueFlags) {

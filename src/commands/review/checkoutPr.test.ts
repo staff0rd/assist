@@ -1,6 +1,8 @@
 import { execFileSync } from "node:child_process";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
+import { baseRepoFetchSource } from "../prs/baseRepoFetchSource";
+import { resolveBaseRepo } from "../prs/resolveBaseRepo";
 import { gitSyncOrNull } from "../sessions/daemon/worktree/git";
 import { azCliProblem } from "./azCliProblem";
 import { azureDevopsRemote } from "./azureDevopsRemote";
@@ -35,6 +37,10 @@ vi.mock("./moveToPrCheckoutTree", () => ({
 	moveToPrCheckoutTree: vi.fn(),
 }));
 vi.mock("./prHeadBranch", () => ({ prHeadBranch: vi.fn() }));
+vi.mock("../prs/resolveBaseRepo", () => ({ resolveBaseRepo: vi.fn() }));
+vi.mock("../prs/baseRepoFetchSource", () => ({
+	baseRepoFetchSource: vi.fn(),
+}));
 vi.mock("./reinstallChangedDeps", () => ({ reinstallChangedDeps: vi.fn() }));
 vi.mock("./reportCwdToDaemon", () => ({ reportCwdToDaemon: vi.fn() }));
 vi.mock("./syncReusedCheckout", () => ({ syncReusedCheckout: vi.fn() }));
@@ -48,6 +54,10 @@ const staleMock = vi.mocked(clearStalePrBranch);
 const holderMock = vi.mocked(worktreeHoldingBranch);
 const moveMock = vi.mocked(moveToPrCheckoutTree);
 const remoteMock = vi.mocked(azureDevopsRemote);
+const baseRepoMock = vi.mocked(resolveBaseRepo);
+const fetchSourceMock = vi.mocked(baseRepoFetchSource);
+
+const ORIGIN = { org: "Turtlator", repo: "assist" };
 
 let chdir: ReturnType<typeof vi.spyOn>;
 
@@ -60,6 +70,8 @@ beforeEach(() => {
 	gitMock.mockReturnValue("other-branch");
 	staleMock.mockReturnValue("absent");
 	remoteMock.mockReturnValue(null);
+	baseRepoMock.mockReturnValue({ base: ORIGIN, origin: ORIGIN, mode: "auto" });
+	fetchSourceMock.mockReturnValue("origin");
 });
 
 afterEach(() => {
@@ -85,11 +97,45 @@ describe("checkoutPr", () => {
 
 			await checkoutPr("123");
 
-			expect(syncReusedCheckout).toHaveBeenCalledWith(
-				"123",
-				"feature",
-				"refs/pull/123/head",
+			expect(syncReusedCheckout).toHaveBeenCalledWith("123", "feature", {
+				remote: "origin",
+				ref: "refs/pull/123/head",
+			});
+		});
+	});
+
+	describe("in a fork clone", () => {
+		beforeEach(() => {
+			baseRepoMock.mockReturnValue({
+				base: { org: "staff0rd", repo: "assist" },
+				origin: ORIGIN,
+				mode: "auto",
+			});
+			fetchSourceMock.mockReturnValue("upstream");
+		});
+
+		it("checks out the parent repo's PR", async () => {
+			await checkoutPr("123");
+
+			expect(headBranchMock.mock.calls[0][0].headBranch.args.slice(-2)).toEqual(
+				["-R", "staff0rd/assist"],
 			);
+			expect(mockExecFileSync).toHaveBeenCalledWith(
+				"gh",
+				["pr", "checkout", "123", "-R", "staff0rd/assist"],
+				{ stdio: "inherit" },
+			);
+		});
+
+		it("syncs a reused checkout from the remote that points at the parent", async () => {
+			gitMock.mockReturnValue("feature");
+
+			await checkoutPr("123");
+
+			expect(syncReusedCheckout).toHaveBeenCalledWith("123", "feature", {
+				remote: "upstream",
+				ref: "refs/pull/123/head",
+			});
 		});
 	});
 
@@ -111,11 +157,10 @@ describe("checkoutPr", () => {
 
 			await checkoutPr("42");
 
-			expect(syncReusedCheckout).toHaveBeenCalledWith(
-				"42",
-				"feature",
-				"refs/heads/feature",
-			);
+			expect(syncReusedCheckout).toHaveBeenCalledWith("42", "feature", {
+				remote: "origin",
+				ref: "refs/heads/feature",
+			});
 		});
 	});
 
@@ -127,7 +172,7 @@ describe("checkoutPr", () => {
 			expect(syncReusedCheckout).not.toHaveBeenCalled();
 			expect(mockExecFileSync).toHaveBeenCalledWith(
 				"gh",
-				["pr", "checkout", "123"],
+				["pr", "checkout", "123", "-R", "Turtlator/assist"],
 				{ stdio: "inherit" },
 			);
 		});
@@ -155,7 +200,7 @@ describe("checkoutPr", () => {
 			expect(moveMock).toHaveBeenCalled();
 			expect(mockExecFileSync).toHaveBeenCalledWith(
 				"gh",
-				["pr", "checkout", "123"],
+				["pr", "checkout", "123", "-R", "Turtlator/assist"],
 				{ stdio: "inherit" },
 			);
 		});

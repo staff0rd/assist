@@ -4,6 +4,7 @@ import type * as childProcessMockModule from "../../test/mocks/childProcessMock"
 
 const mockExecFileSync = vi.mocked(execFileSync);
 const mockGetPreferredRemoteRepo = vi.fn();
+const mockFindForkParent = vi.fn();
 
 vi.mock("node:child_process", async () =>
 	(
@@ -15,6 +16,10 @@ vi.mock("node:child_process", async () =>
 vi.mock("./getPreferredRemoteRepo", () => ({
 	getPreferredRemoteRepo: () => mockGetPreferredRemoteRepo(),
 }));
+vi.mock("./findForkParent", () => ({
+	findForkParent: (...args: unknown[]) => mockFindForkParent(...args),
+}));
+vi.mock("../../shared/loadConfig", () => ({ loadConfig: () => ({}) }));
 
 import { fetchPrBody } from "./fetchPrBody";
 
@@ -24,6 +29,8 @@ beforeEach(() => {
 	mockExecFileSync.mockReset();
 	mockGetPreferredRemoteRepo.mockReset();
 	mockGetPreferredRemoteRepo.mockReturnValue({ org: "acme", repo: "widgets" });
+	mockFindForkParent.mockReset();
+	mockFindForkParent.mockReturnValue("not-a-fork");
 	errors = [];
 	vi.spyOn(console, "error").mockImplementation((line: string) => {
 		errors.push(line);
@@ -41,6 +48,19 @@ describe("fetchPrBody", () => {
 		expect(mockExecFileSync).toHaveBeenCalledWith(
 			"gh",
 			["pr", "view", "42", "--json", "body", "-R", "acme/widgets"],
+			expect.anything(),
+		);
+	});
+
+	it("should read a numbered pull request from the parent in a fork clone", () => {
+		mockFindForkParent.mockReturnValue({ org: "upstream", repo: "widgets" });
+		mockExecFileSync.mockReturnValue(JSON.stringify({ body: "a body" }));
+
+		fetchPrBody(42, null);
+
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"gh",
+			["pr", "view", "42", "--json", "body", "-R", "upstream/widgets"],
 			expect.anything(),
 		);
 	});

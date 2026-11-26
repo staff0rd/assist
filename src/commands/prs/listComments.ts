@@ -2,7 +2,8 @@ import { azureDevopsRemote } from "../review/azureDevopsRemote";
 import { listAzureDevopsComments } from "./azureDevops/listAzureDevopsComments";
 import { commentsCachePath } from "./commentsCachePath";
 import { fetchThreadIds } from "./fetchThreadIds";
-import { getCurrentPrNumber, getRepoInfo, isGhNotInstalled } from "./shared";
+import { getBaseRepoInfo } from "./getBaseRepoInfo";
+import { getCurrentPrNumber, isGhNotInstalled } from "./shared";
 import type { PrComment } from "./types";
 import {
 	fetchLineComments,
@@ -30,7 +31,7 @@ export async function listComments(): Promise<ListCommentsResult> {
 	if (azure) return listAzureDevopsComments(azure);
 	try {
 		const prNumber = getCurrentPrNumber();
-		const { org, repo } = getRepoInfo();
+		const { org, repo } = getBaseRepoInfo();
 		const threadInfo = fetchThreadIds(org, repo, prNumber);
 		const allComments = [
 			...fetchReviewComments(org, repo, prNumber),

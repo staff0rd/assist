@@ -1,5 +1,5 @@
 import { loadConfig } from "../../../shared/loadConfig";
-import { getRepoInfo } from "../../prs/shared";
+import { getBaseRepoInfo } from "../../prs/getBaseRepoInfo";
 import { evaluateHighLevelChecks } from "./evaluateHighLevelChecks";
 import { fetchHighLevelPr } from "./fetchHighLevelPr";
 import { gatherFreshHighLevelSubject } from "./gatherFreshHighLevelSubject";
@@ -14,7 +14,7 @@ export async function gatherHighLevelSubject(
 	force: boolean,
 	slicing?: HighLevelSlicing,
 ): Promise<HighLevelOverlaySubject> {
-	const { org, repo } = getRepoInfo();
+	const { org, repo } = getBaseRepoInfo();
 	const pr = fetchHighLevelPr(prNumber, { org, repo });
 	const config = resolveHighLevelConfig(loadConfig());
 	const head = {

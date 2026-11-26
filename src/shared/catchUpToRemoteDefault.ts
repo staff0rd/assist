@@ -1,5 +1,7 @@
 import { execSync } from "node:child_process";
 import chalk from "chalk";
+import { resolveDefaultBranch } from "../commands/branch/resolveDefaultBranch";
+import { ensureBaseRepoRemote } from "../commands/prs/ensureBaseRepoRemote";
 import { remoteDefaultBranch } from "../commands/sessions/daemon/worktree/remoteDefaultBranch";
 import { fastForwardTo } from "./fastForwardTo";
 
@@ -10,7 +12,11 @@ export async function catchUpToRemoteDefault(): Promise<void> {
 		skip("git fetch failed");
 		return;
 	}
-	const ref = `origin/${await remoteDefaultBranch(process.cwd())}`;
+	const ref = await remoteDefaultRef();
+	if (!ref) {
+		skip("fetching the parent repo failed");
+		return;
+	}
 	if (!succeeds(`git rev-parse --verify --quiet ${ref}`)) {
 		skip(`the current branch has no upstream and there is no ${ref}`);
 		return;
@@ -26,6 +32,22 @@ export async function catchUpToRemoteDefault(): Promise<void> {
 	} catch {
 		console.error(chalk.red(`git fast-forward to ${ref} failed; aborting.`));
 		process.exit(1);
+	}
+}
+
+async function remoteDefaultRef(): Promise<string | null> {
+	const remote = baseRepoRemote();
+	if (remote === "origin")
+		return `origin/${await remoteDefaultBranch(process.cwd())}`;
+	if (!succeeds(`git fetch ${remote}`)) return null;
+	return `${remote}/${resolveDefaultBranch(undefined, undefined, remote)}`;
+}
+
+function baseRepoRemote(): string {
+	try {
+		return ensureBaseRepoRemote();
+	} catch {
+		return "origin";
 	}
 }
 

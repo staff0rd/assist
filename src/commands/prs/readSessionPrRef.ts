@@ -1,23 +1,14 @@
-import { execFileSync, execSync } from "node:child_process";
 import type { GitRef } from "../backlog/types";
+import type { BaseRepoMode } from "./resolveBaseRepo";
+import { getCurrentBranch, viewCurrentPr } from "./shared";
 
-export function readSessionPrRef(): GitRef | null {
+type PrView = { number?: number; title?: string; url?: string; state?: string };
+
+export function readSessionPrRef(baseRepo?: BaseRepoMode): GitRef | null {
 	try {
-		const branch = execSync("git rev-parse --abbrev-ref HEAD", {
-			encoding: "utf8",
-			stdio: ["pipe", "pipe", "pipe"],
-		}).trim();
+		const branch = getCurrentBranch();
 		if (!branch || branch === "HEAD") return null;
-		const pr = JSON.parse(
-			execFileSync(
-				"gh",
-				["pr", "view", branch, "--json", "number,title,url,state"],
-				{
-					encoding: "utf8",
-					stdio: ["pipe", "pipe", "pipe"],
-				},
-			),
-		);
+		const pr = viewCurrentPr<PrView>("number,title,url,state", baseRepo);
 		if (typeof pr.number !== "number") return null;
 		const ref: GitRef = { kind: "pr", ref: String(pr.number) };
 		if (pr.title) ref.title = pr.title;

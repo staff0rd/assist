@@ -1,5 +1,6 @@
 import { execFileSync, execSync } from "node:child_process";
-import { getRepoInfo } from "../prs/shared";
+import { currentPrSelector } from "../prs/currentPrSelector";
+import { getBaseRepoInfo } from "../prs/getBaseRepoInfo";
 
 type PrDiffInfo = {
 	prNumber: number;
@@ -32,11 +33,26 @@ function runGh(...args: string[]): string {
 	});
 }
 
+function fetchPrBySelector(repo: string, selector: string): RawPr | undefined {
+	try {
+		const pr = JSON.parse(
+			runGh("pr", "view", selector, "--json", `${FIELDS},state`, "-R", repo),
+		) as RawPr & { state: string };
+		return pr.state === "OPEN" ? pr : undefined;
+	} catch (error) {
+		if (error instanceof Error && error.message.includes("no pull requests"))
+			return undefined;
+		throw error;
+	}
+}
+
 function fetchRawPr(
 	org: string,
 	repo: string,
 	branch: string,
 ): RawPr | undefined {
+	const selector = currentPrSelector(branch, org);
+	if (selector !== branch) return fetchPrBySelector(`${org}/${repo}`, selector);
 	const parsed = JSON.parse(
 		runGh(
 			"pr",
@@ -55,7 +71,7 @@ function fetchRawPr(
 }
 
 export function fetchPrDiffInfo(): PrDiffInfo {
-	const { org, repo } = getRepoInfo();
+	const { org, repo } = getBaseRepoInfo();
 	const branch = getCurrentBranch();
 	const pr = fetchRawPr(org, repo, branch);
 	if (!pr) {
@@ -71,23 +87,4 @@ export function fetchPrDiffInfo(): PrDiffInfo {
 		headRef: pr.headRefName,
 		headSha: pr.headRefOid,
 	};
-}
-
-export function fetchPrChangedFiles(prNumber: number): string[] {
-	const { org, repo } = getRepoInfo();
-	const out = execFileSync(
-		"gh",
-		[
-			"api",
-			`repos/${org}/${repo}/pulls/${prNumber}/files`,
-			"--paginate",
-			"--jq",
-			".[].filename",
-		],
-		{
-			encoding: "utf8",
-			maxBuffer: 64 * 1024 * 1024,
-		},
-	);
-	return out.trim().split("\n").filter(Boolean);
 }

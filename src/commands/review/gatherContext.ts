@@ -1,6 +1,7 @@
 import { execSync } from "node:child_process";
 import { fetchPrDiff } from "./fetchPrDiff";
-import { fetchPrChangedFiles, fetchPrDiffInfo } from "./fetchPrDiffInfo";
+import { fetchPrDiffInfo } from "./fetchPrDiffInfo";
+import { fetchPrChangedFiles } from "./fetchPrChangedFiles";
 
 export type ReviewContext = {
 	branch: string;

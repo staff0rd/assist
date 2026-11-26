@@ -1,4 +1,5 @@
 import { chainReviewAndPost } from "./chainReviewAndPost";
+import type { BaseRepoMode } from "./resolveBaseRepo";
 import { findCurrentPrNumber } from "./shared";
 
 type ChainChoice = {
@@ -9,13 +10,14 @@ type ChainChoice = {
 export async function chainAfterRaise(
 	prNumber: number | null,
 	choice: ChainChoice,
+	baseRepo?: BaseRepoMode,
 ): Promise<void> {
 	const review = choice.reviewAfter === true;
 	const announce = choice.announceAfter === true;
 	if (!review && !announce) return;
 	if (process.env.ASSIST_SESSION !== "1") return;
 
-	const number = resolvePrNumber(prNumber);
+	const number = resolvePrNumber(prNumber, baseRepo);
 	if (number === null) return;
 
 	if (review) await chainReviewAndPost(number, announce);
@@ -28,10 +30,13 @@ function printAnnounceInstruction(prNumber: number): void {
 	);
 }
 
-function resolvePrNumber(prNumber: number | null): number | null {
+function resolvePrNumber(
+	prNumber: number | null,
+	baseRepo?: BaseRepoMode,
+): number | null {
 	if (prNumber !== null) return prNumber;
 	try {
-		const found = findCurrentPrNumber();
+		const found = findCurrentPrNumber(baseRepo);
 		if (found === null) warn("no pull request found for the current branch");
 		return found;
 	} catch (error) {

@@ -4,7 +4,8 @@ import { azureDevopsCacheRepo } from "./azureDevops/azureDevopsCacheRepo";
 import { azureDevopsThreadActions } from "./azureDevops/azureDevopsThreadActions";
 import type { AzureDevopsThreadStatus } from "./azureDevops/azureDevopsThreadRequests";
 import { replyToComment } from "./replyToComment";
-import { getCurrentPrNumber, getRepoInfo } from "./shared";
+import { getBaseRepoInfo } from "./getBaseRepoInfo";
+import { getCurrentPrNumber } from "./shared";
 import type { LineComment } from "./types";
 
 export type ThreadTarget = {
@@ -26,7 +27,7 @@ function resolveThread(threadId: string): void {
 
 function githubTarget(): ThreadTarget {
 	const prNumber = getCurrentPrNumber();
-	const { org, repo } = getRepoInfo();
+	const { org, repo } = getBaseRepoInfo();
 	return {
 		org,
 		repo,

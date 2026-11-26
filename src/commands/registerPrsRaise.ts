@@ -1,4 +1,4 @@
-import type { Command } from "commander";
+import { type Command, Option } from "commander";
 import { configHelp } from "../shared/configHelp";
 import { internalCommand } from "../shared/internalCommand";
 import { lazyHelpText } from "../shared/lazyHelpText";
@@ -21,6 +21,12 @@ export function registerPrsRaise(prsCommand: Command): void {
 		)
 		.option("-B, --base <branch>", "Branch into which the pull request merges")
 		.option("-H, --head <branch>", "Branch that contains the commits")
+		.addOption(
+			new Option(
+				"--base-repo <repo>",
+				"Repo to raise this pull request in, overriding prs.baseRepo: the fork (origin) or its parent",
+			).choices(["origin", "parent"]),
+		)
 		.option("-d, --draft", "Mark the pull request as a draft")
 		.option(
 			"--no-draft",

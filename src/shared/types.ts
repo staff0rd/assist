@@ -162,6 +162,7 @@ const assistConfigShape = {
 			promptGithub: z.boolean().default(false),
 			draft: z.boolean().default(false),
 			reviewAfterRaise: z.boolean().default(true),
+			baseRepo: z.enum(["auto", "origin", "parent"]).default("auto"),
 			readingWordsPerMinute: z.number().int().positive().optional(),
 		})
 		.optional(),

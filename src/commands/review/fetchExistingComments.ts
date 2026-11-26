@@ -1,6 +1,7 @@
 import { execFileSync } from "node:child_process";
 import { fetchThreadIds } from "../prs/fetchThreadIds";
-import { findCurrentPrNumber, getRepoInfo } from "../prs/shared";
+import { getBaseRepoInfo } from "../prs/getBaseRepoInfo";
+import { findCurrentPrNumber } from "../prs/shared";
 
 export type ExistingComment = {
 	id: number;
@@ -42,7 +43,7 @@ function fetchRawComments(
 export function fetchExistingComments(): ExistingComment[] | null {
 	const prNumber = findCurrentPrNumber();
 	if (prNumber === null) return null;
-	const { org, repo } = getRepoInfo();
+	const { org, repo } = getBaseRepoInfo();
 	const raw = fetchRawComments(org, repo, prNumber);
 	if (raw.length === 0) return [];
 	const threadInfo = fetchThreadIds(org, repo, prNumber);

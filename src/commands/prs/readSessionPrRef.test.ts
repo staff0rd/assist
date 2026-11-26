@@ -1,51 +1,26 @@
-import { execFileSync, execSync } from "node:child_process";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type * as childProcessMockModule from "../../test/mocks/childProcessMock";
 
-vi.mock("node:child_process", async () =>
-	(
-		await vi.importActual<typeof childProcessMockModule>(
-			"../../test/mocks/childProcessMock",
-		)
-	).childProcessMock(),
-);
+const mockGetCurrentBranch = vi.fn();
+const mockViewCurrentPr = vi.fn();
+vi.mock("./shared", () => ({
+	getCurrentBranch: () => mockGetCurrentBranch(),
+	viewCurrentPr: (...args: unknown[]) => mockViewCurrentPr(...args),
+}));
 
 import { readSessionPrRef } from "./readSessionPrRef";
-
-const mockExecSync = vi.mocked(execSync);
-const mockExecFileSync = vi.mocked(execFileSync);
-
-function stubGit(responses: Record<string, string | Error>) {
-	const run = (cmd: string) => {
-		for (const [fragment, value] of Object.entries(responses)) {
-			if (cmd.includes(fragment)) {
-				if (value instanceof Error) throw value;
-				return value;
-			}
-		}
-		throw new Error(`unexpected command: ${cmd}`);
-	};
-	mockExecSync.mockImplementation(run);
-	mockExecFileSync.mockImplementation(
-		(file: string, args?: readonly string[]) =>
-			run([file, ...(args ?? [])].join(" ")),
-	);
-}
 
 describe("readSessionPrRef", () => {
 	beforeEach(() => {
 		vi.clearAllMocks();
+		mockGetCurrentBranch.mockReturnValue("feature");
 	});
 
 	it("reads the current branch PR into a git ref", () => {
-		stubGit({
-			"rev-parse --abbrev-ref HEAD": "feature",
-			"gh pr view": JSON.stringify({
-				number: 42,
-				title: "Add login",
-				url: "https://github.com/acme/widgets/pull/42",
-				state: "OPEN",
-			}),
+		mockViewCurrentPr.mockReturnValue({
+			number: 42,
+			title: "Add login",
+			url: "https://github.com/acme/widgets/pull/42",
+			state: "OPEN",
 		});
 
 		expect(readSessionPrRef()).toEqual({
@@ -55,23 +30,34 @@ describe("readSessionPrRef", () => {
 			url: "https://github.com/acme/widgets/pull/42",
 			state: "OPEN",
 		});
-		expect(mockExecFileSync).toHaveBeenCalledWith(
-			"gh",
-			["pr", "view", "feature", "--json", "number,title,url,state"],
-			expect.anything(),
+		expect(mockViewCurrentPr).toHaveBeenCalledWith(
+			"number,title,url,state",
+			undefined,
+		);
+	});
+
+	it("looks the PR up with a one-off base repo choice", () => {
+		mockViewCurrentPr.mockReturnValue({ number: 42 });
+
+		expect(readSessionPrRef("origin")).toEqual({ kind: "pr", ref: "42" });
+		expect(mockViewCurrentPr).toHaveBeenCalledWith(
+			"number,title,url,state",
+			"origin",
 		);
 	});
 
 	it("returns null on a detached HEAD", () => {
-		stubGit({ "rev-parse --abbrev-ref HEAD": "HEAD" });
+		mockGetCurrentBranch.mockReturnValue("HEAD");
+
 		expect(readSessionPrRef()).toBeNull();
+		expect(mockViewCurrentPr).not.toHaveBeenCalled();
 	});
 
 	it("returns null when gh finds no PR", () => {
-		stubGit({
-			"rev-parse --abbrev-ref HEAD": "feature",
-			"gh pr view": new Error("no pull requests found"),
+		mockViewCurrentPr.mockImplementation(() => {
+			throw new Error("no pull requests found");
 		});
+
 		expect(readSessionPrRef()).toBeNull();
 	});
 });

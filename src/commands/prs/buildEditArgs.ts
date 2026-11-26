@@ -6,6 +6,7 @@ export function buildEditArgs(
 	title: string,
 	body: string,
 	attachments: PreviewAttachment[] = [],
+	repo?: string,
 ) {
 	return [
 		"pr",
@@ -16,5 +17,6 @@ export function buildEditArgs(
 		"--body",
 		body,
 		...attachArgs(attachments),
+		...(repo ? ["-R", repo] : []),
 	];
 }

@@ -12,8 +12,10 @@ vi.mock("./replyToComment", () => ({
 }));
 vi.mock("./shared", () => ({
 	getCurrentPrNumber: () => 7,
-	getRepoInfo: () => ({ org: "acme", repo: "widgets" }),
 	isGhNotInstalled: () => false,
+}));
+vi.mock("./getBaseRepoInfo", () => ({
+	getBaseRepoInfo: () => ({ org: "acme", repo: "widgets" }),
 }));
 
 import { reply } from "./reply";

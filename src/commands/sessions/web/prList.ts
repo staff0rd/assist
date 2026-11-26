@@ -1,6 +1,7 @@
 import type { IncomingMessage, ServerResponse } from "node:http";
 import { respondJson } from "../../../shared/web";
 import { createCachedGhJson } from "./createCachedGhJson";
+import { forkBaseRepo } from "./forkBaseRepo";
 import { getCwdParam } from "./getCwdParam";
 
 export type PrSummary = {
@@ -51,5 +52,7 @@ export async function prList(
 ): Promise<void> {
 	const cwd = getCwdParam(req, res);
 	if (!cwd) return;
-	respondJson(res, 200, { prs: await getOpenPrs(cwd) });
+	const base = forkBaseRepo(cwd);
+	const repoArgs = base ? ["-R", `${base.org}/${base.repo}`] : [];
+	respondJson(res, 200, { prs: await getOpenPrs(cwd, repoArgs) });
 }

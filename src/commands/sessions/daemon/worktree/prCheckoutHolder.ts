@@ -6,8 +6,22 @@ import { gitOrNull } from "./git";
 import { prCheckoutNumber } from "./prCheckoutNumber";
 import { worktreeWithBranch } from "./worktreeWithBranch";
 
+function headBranchCommand(number: string, cwd: string) {
+	try {
+		return prCliCommands(number, cwd).headBranch;
+	} catch (error) {
+		daemonLog(
+			`pr #${number} head branch lookup skipped in ${cwd}: ${
+				error instanceof Error ? error.message : String(error)
+			}`,
+		);
+		return null;
+	}
+}
+
 function prHeadBranch(number: string, cwd: string): Promise<string | null> {
-	const { headBranch } = prCliCommands(number, cwd);
+	const headBranch = headBranchCommand(number, cwd);
+	if (!headBranch) return Promise.resolve(null);
 	return new Promise((resolve) => {
 		execFile(
 			headBranch.file,

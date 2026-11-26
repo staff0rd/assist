@@ -1,3 +1,4 @@
+import { baseRepoFetchSource } from "../prs/baseRepoFetchSource";
 import { appendDaemonLog } from "../sessions/daemon/appendDaemonLog";
 import { gitSyncOrNull } from "../sessions/daemon/worktree/git";
 import type { PrCliCommands } from "./prCliCommands";
@@ -13,8 +14,8 @@ export async function moveToExistingCheckout(
 	if (!(await enterExistingCheckout(number, headRef))) return false;
 	const source =
 		commands.checkout.file === "az"
-			? `refs/heads/${headRef}`
-			: `refs/pull/${number}/head`;
+			? { remote: "origin", ref: `refs/heads/${headRef}` }
+			: { remote: baseRepoFetchSource(), ref: `refs/pull/${number}/head` };
 	await syncReusedCheckout(number, headRef, source);
 	return true;
 }

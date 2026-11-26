@@ -26,7 +26,7 @@ function blocker(cwd: string, ref: string): string | null {
 export async function syncReusedCheckout(
 	number: string,
 	headRef: string,
-	source: string,
+	source: { remote: string; ref: string },
 ): Promise<void> {
 	const cwd = process.cwd();
 	const ref = `refs/heads/${headRef}`;
@@ -35,8 +35,8 @@ export async function syncReusedCheckout(
 	const before = gitSyncOrNull(cwd, ["rev-parse", "HEAD"]);
 	// Fetching straight into the checked-out branch records a `fetch` reflog
 	// entry, which the durability check reads as a tip taken from the remote.
-	const fetch = ["fetch", "--quiet", "--update-head-ok", "origin"];
-	if (!gitSyncResult(cwd, [...fetch, `+${source}:${ref}`]).ok)
+	const fetch = ["fetch", "--quiet", "--update-head-ok", source.remote];
+	if (!gitSyncResult(cwd, [...fetch, `+${source.ref}:${ref}`]).ok)
 		return warnDiffers(number, headRef, "could not be fetched");
 	if (!gitSyncResult(cwd, ["reset", "--quiet", "--hard"]).ok)
 		return warnDiffers(number, headRef, "could not be reset");

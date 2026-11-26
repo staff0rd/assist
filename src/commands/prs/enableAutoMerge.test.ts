@@ -12,8 +12,17 @@ vi.mock("node:child_process", async () =>
 );
 
 const mockGetCurrentBranch = vi.fn();
+const mockGetBaseRepoInfo = vi.fn();
 vi.mock("./shared", () => ({
 	getCurrentBranch: () => mockGetCurrentBranch(),
+}));
+vi.mock("./getBaseRepoInfo", () => ({
+	getBaseRepoInfo: (...args: unknown[]) => mockGetBaseRepoInfo(...args),
+}));
+
+const mockCurrentPrSelector = vi.fn();
+vi.mock("./currentPrSelector", () => ({
+	currentPrSelector: (...args: unknown[]) => mockCurrentPrSelector(...args),
 }));
 
 import { enableAutoMerge } from "./enableAutoMerge";
@@ -21,6 +30,8 @@ import { enableAutoMerge } from "./enableAutoMerge";
 beforeEach(() => {
 	vi.clearAllMocks();
 	mockGetCurrentBranch.mockReturnValue("feat/x");
+	mockGetBaseRepoInfo.mockReturnValue({ org: "acme", repo: "widgets" });
+	mockCurrentPrSelector.mockImplementation((branch: string) => branch);
 });
 
 describe("enableAutoMerge", () => {
@@ -29,9 +40,37 @@ describe("enableAutoMerge", () => {
 
 		expect(mockExecFileSync).toHaveBeenCalledWith(
 			"gh",
-			["pr", "merge", "feat/x", "--auto", "--squash"],
+			["pr", "merge", "feat/x", "--auto", "--squash", "-R", "acme/widgets"],
 			{ stdio: "inherit" },
 		);
+	});
+
+	it("targets the fork branch's PR in the parent repo", () => {
+		mockGetBaseRepoInfo.mockReturnValue({ org: "upstream", repo: "widgets" });
+		mockCurrentPrSelector.mockReturnValue("acme:feat/x");
+
+		enableAutoMerge();
+
+		expect(mockCurrentPrSelector).toHaveBeenCalledWith("feat/x", "upstream");
+		expect(mockExecFileSync).toHaveBeenCalledWith(
+			"gh",
+			[
+				"pr",
+				"merge",
+				"acme:feat/x",
+				"--auto",
+				"--squash",
+				"-R",
+				"upstream/widgets",
+			],
+			{ stdio: "inherit" },
+		);
+	});
+
+	it("resolves the repo with a one-off base repo choice", () => {
+		enableAutoMerge("origin");
+
+		expect(mockGetBaseRepoInfo).toHaveBeenCalledWith("origin");
 	});
 
 	it("warns and returns when the repo refuses auto-merge", () => {
