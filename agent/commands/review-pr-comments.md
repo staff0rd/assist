@@ -9,7 +9,7 @@ Process review comments for the current branch's pull request.
 Fetch all review comments using `assist prs list-comments`. The output is already grouped and filtered — read it directly, and do not parse the YAML cache:
 
 - **Unhandled reviews** print first, in full, each headed `Review by <user>` with its `id` and `html_url`, followed by the review body. These are the review bodies to process.
-- **Handled reviews** print below them as a one-line-per-review index — these already have an `assist prs review-reply`, so do not process them.
+- **Handled reviews** print below them as a one-line-per-review index — these already have an `assist prs review-reply` or `assist prs review-ack`, so do not process them.
 - **Unresolved threads** print next, one block per thread, each headed `Thread on <path>:<line>` and listing every comment in the thread with its author, `id` and `html_url`, followed by the body. These are the threads to process.
 - **Resolved threads** print below as a one-line-per-thread index, for reference only — do not process them.
 - The closing summary reports the unhandled and handled review counts and the unresolved and resolved thread counts.
@@ -25,7 +25,7 @@ Comments are also cached to `~/.assist/pr-comments/{org}/{repo}/pr-{prNumber}-co
 - a finding already covered by an unresolved or resolved inline thread (same file and concern) — the thread handles it
 - anything with nothing to act on: praise, a verdict or approval, a summary of the change, or a restatement of the inline comments
 
-A review left with no units still gets a `review-reply` (see step 5) noting why nothing needed doing, so it stops coming back.
+A review left with no units gets no `review-reply`: run `assist prs review-ack <review-id>` (see step 5), which marks it handled locally without posting anything to the PR, so it stops coming back.
 
 Create a task for each unresolved **thread** (not each comment) and each **review unit**. Collect a decision for every thread and review unit before changing anything — steps 1–4 apply to review units just as to threads:
 
@@ -52,7 +52,7 @@ Create a task for each unresolved **thread** (not each comment) and each **revie
    - For each addressed thread, run `assist prs fixed <comment-id> <sha>` with the SHA of the commit that addressed it — the first one pushes every commit, so do not run `git push` yourself.
    - For each **Do not address** thread, write a **1-sentence** summary of why, max 15 words (must not contain "claude" or "opus"), and run `assist prs wontfix <comment-id> "<reason>"` to reply and resolve the thread — or, if the reason contains backticks, `$(...)` or `$VAR`, use the stdin form below so your shell cannot expand it.
    - Leave skipped threads untouched.
-   - For each unhandled review, once every one of its units has a decision and its addressed units are committed, run `assist prs review-reply <review-id> -` once, with the body on stdin (see [Bodies containing markdown](#bodies-containing-markdown)). It pushes pending commits itself. The body is a bullet list with one line per unit and its outcome — **Fixed** in a commit link, **Won't fix** with a 1-sentence reason (max 15 words), or **Skipped** — followed by any units dropped as already covered by a thread or not actionable, each with a short reason. Do not repeat the review link or add a marker; the command adds both:
+   - For each unhandled review with at least one unit decided **Address** or **Do not address**, once every one of its units has a decision and its addressed units are committed, run `assist prs review-reply <review-id> -` once, with the body on stdin (see [Bodies containing markdown](#bodies-containing-markdown)). It pushes pending commits itself. The body is a bullet list with one line per unit and its outcome — **Fixed** in a commit link, **Won't fix** with a 1-sentence reason (max 15 words), or **Skipped** — followed by any units dropped as already covered by a thread or not actionable, each with a short reason. Do not repeat the review link or add a marker; the command adds both:
 
      ```bash
      assist prs review-reply 123456789 - <<'EOF'
@@ -62,7 +62,9 @@ Create a task for each unresolved **thread** (not each comment) and each **revie
      EOF
      ```
 
-     If every unit of a review was skipped by the user, do not post a `review-reply` for it — it stays unhandled so it is offered again next run.
+     For a review left with no units (everything dropped as covered by a thread or not actionable), run `assist prs review-ack <review-id>` instead — never a `review-reply`. It posts nothing and only marks the review handled for this PR.
+
+     If every unit of a review was skipped by the user, run neither — it stays unhandled so it is offered again next run.
 
    - **Commit references**: Always use full markdown links to the commit on the PR's host, never bare SHAs — `[abc1234](https://github.com/owner/repo/commit/<full-sha>)` on GitHub, `[abc1234](https://dev.azure.com/org/project/_git/repo/commit/<full-sha>)` on Azure DevOps
 
@@ -76,7 +78,7 @@ If `$ARGUMENTS` contains `--auto`, process the threads and review units without 
    - **Address**: implement the fix and run `/commit` — one commit per thread or unit — noting the SHA. Do not push yet and do not run `assist prs fixed` or `assist prs review-reply` yet.
    - **Do not address**: for a thread, run `assist prs wontfix <comment-id> "<reason>"` as in step 5; for a review unit, note the reason for its review's `review-reply`.
 2. If you cannot confidently decide on a thread or review unit — the comment is unclear, the fix is risky or large, or reasonable people would disagree — put that one item to the user with AskUserQuestion exactly as in step 3, act on their choice as above, then continue automatically with the next one.
-3. Once every thread and review unit has been processed, run `assist prs fixed <comment-id> <sha>` for each addressed thread with the SHA of the commit that addressed it — the first one pushes every commit, so do not run `git push` yourself — then run one `assist prs review-reply <review-id> -` per unhandled review as in step 5.
+3. Once every thread and review unit has been processed, run `assist prs fixed <comment-id> <sha>` for each addressed thread with the SHA of the commit that addressed it — the first one pushes every commit, so do not run `git push` yourself — then run one `assist prs review-reply <review-id> -` per unhandled review with at least one Fixed or Won't fix unit, and `assist prs review-ack <review-id>` per review with no units, as in step 5.
 4. Finish with a closing summary listing each thread and each review's units with their outcome, including units dropped as covered by a thread or not actionable, and calling out any thread or unit that was skipped so the user can revisit it.
 
 ## Bodies containing markdown

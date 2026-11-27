@@ -1289,6 +1289,8 @@ Commands:
                                    it from stdin)
   review-reply <review-id> <body>  Post one PR comment answering a review body and mark it handled
                                    (body of - reads it from stdin)
+  review-ack <review-id>           Mark a review handled locally without posting to the PR, for a
+                                   review with nothing to act on
   comment <path> <line> <body>     Add a line comment to the pending review (body of - reads it from
                                    stdin)
   read-time [options] <target>     Estimate how long a document takes to read (target is a pull
@@ -1584,6 +1586,14 @@ Options:
 Usage: assist prs review-reply [options] <review-id> <body>
 
 Post one PR comment answering a review body and mark it handled (body of - reads it from stdin)
+
+Options:
+  -h, --help  display help for command
+
+=== assist prs review-ack --help
+Usage: assist prs review-ack [options] <review-id>
+
+Mark a review handled locally without posting to the PR, for a review with nothing to act on
 
 Options:
   -h, --help  display help for command

@@ -21,4 +21,17 @@ export function registerPrsReviewReply(
 			}),
 		calledBy,
 	);
+
+	internalCommand(
+		prsCommand
+			.command("review-ack <review-id>")
+			.description(
+				"Mark a review handled locally without posting to the PR, for a review with nothing to act on",
+			)
+			.action(async (reviewId: string) => {
+				const { reviewAck } = await import("./prs/reviewAck");
+				reviewAck(Number.parseInt(reviewId, 10));
+			}),
+		calledBy,
+	);
 }
