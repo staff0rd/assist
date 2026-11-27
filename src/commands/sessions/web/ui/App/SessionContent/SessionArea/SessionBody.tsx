@@ -1,5 +1,5 @@
 import Box from "@mui/material/Box";
-import type { SessionInfo, Transcript } from "../../../types";
+import type { LiveTranscripts, SessionInfo } from "../../../types";
 import type {
 	FetchSessionTranscript,
 	InterruptSession,
@@ -18,13 +18,13 @@ const bodySx = {
 
 export function SessionBody({
 	activeSession,
-	transcript,
+	liveTranscripts,
 	fetchSessionTranscript,
 	interruptSession,
 	...terminal
 }: TerminalAreaProps & {
 	activeSession: SessionInfo | undefined;
-	transcript: Transcript | null;
+	liveTranscripts: LiveTranscripts;
 	fetchSessionTranscript: FetchSessionTranscript;
 	interruptSession: InterruptSession;
 }) {
@@ -41,7 +41,7 @@ export function SessionBody({
 			{sdkSession && (
 				<SdkTranscriptOverlay
 					session={sdkSession}
-					transcript={transcript}
+					liveTranscripts={liveTranscripts}
 					fetchSessionTranscript={fetchSessionTranscript}
 					sendInput={terminal.sendInput}
 					interruptSession={interruptSession}

@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import { useRef } from "react";
-import type { SessionInfo, Transcript } from "../../../types";
+import type { LiveTranscripts, SessionInfo } from "../../../types";
 import {
 	type FetchSessionTranscript,
 	type InterruptSession,
@@ -29,7 +29,7 @@ export function SdkTranscriptOverlay({
 	...transcript
 }: {
 	session: SessionInfo;
-	transcript: Transcript | null;
+	liveTranscripts: LiveTranscripts;
 	fetchSessionTranscript: FetchSessionTranscript;
 	sendInput: (sessionId: string, data: string) => void;
 	interruptSession: InterruptSession;

@@ -10,7 +10,7 @@ import {
 } from "./SessionPreviewSplit";
 import { SessionLastMessage } from "./SessionTerminalColumn/SessionLastMessage";
 import type { TerminalAreaProps } from "./TerminalArea";
-import type { SessionInfo, Transcript } from "../../../types";
+import type { LiveTranscripts, SessionInfo } from "../../../types";
 import { useLastMessageHistory } from "../useLastMessageHistory";
 
 const columnSx = {
@@ -28,7 +28,7 @@ export function SessionTerminalColumn({
 }: TerminalAreaProps & {
 	activeSession: SessionInfo | undefined;
 	sendPrDecision: SendPrDecision;
-	transcript: Transcript | null;
+	liveTranscripts: LiveTranscripts;
 	fetchSessionTranscript: FetchSessionTranscript;
 	interruptSession: InterruptSession;
 }) {

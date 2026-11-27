@@ -22,6 +22,7 @@ export type WsDispatch = {
 	setDaemonVersion: (version: string) => void;
 	setNodes: (nodes: NodesState) => void;
 	setTranscript: (t: Transcript | null) => void;
+	setLiveTranscript: (t: Transcript) => void;
 	setUserMessages: (m: UserMessages) => void;
 	setViewingTranscriptSessionId: (id: string | null) => void;
 	setCurrentCwd: (cwd: string) => void;

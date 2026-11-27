@@ -1,38 +1,9 @@
-import {
-	type RefObject,
-	useCallback,
-	useEffect,
-	useRef,
-	useState,
-} from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { connectWithReconnect } from "./useWebSocket/connectWithReconnect";
 import type { WsDispatch } from "./useWebSocket/WsDispatch";
 
-type OutputHandler = (data: string) => void;
-
-type WsDeps = {
+type WsDeps = Omit<WsDispatch, "setSessions"> & {
 	handleSessions: WsDispatch["setSessions"];
-	setHistory: WsDispatch["setHistory"];
-	getActiveId: WsDispatch["getActiveId"];
-	setActiveId: WsDispatch["setActiveId"];
-	handoffTransfer: WsDispatch["handoffTransfer"];
-	setActiveByRepo: WsDispatch["setActiveByRepo"];
-	setDaemonVersion: WsDispatch["setDaemonVersion"];
-	setNodes: WsDispatch["setNodes"];
-	setTranscript: WsDispatch["setTranscript"];
-	setUserMessages: WsDispatch["setUserMessages"];
-	setViewingTranscriptSessionId: WsDispatch["setViewingTranscriptSessionId"];
-	setCurrentCwd: WsDispatch["setCurrentCwd"];
-	setError: WsDispatch["setError"];
-	setSuccess: WsDispatch["setSuccess"];
-	setServerConflict: WsDispatch["setServerConflict"];
-	resolvePendingLaunch: WsDispatch["resolvePendingLaunch"];
-	failPendingLaunch: WsDispatch["failPendingLaunch"];
-	setRateLimits: WsDispatch["setRateLimits"];
-	setHarnessRateLimits?: WsDispatch["setHarnessRateLimits"];
-	markInitialized: WsDispatch["markInitialized"];
-	buffers: RefObject<Map<string, string>>;
-	handlers: RefObject<Map<string, OutputHandler>>;
 };
 
 /** Own the WebSocket lifecycle: connect on mount, expose a history request. */

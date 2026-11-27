@@ -34,7 +34,7 @@ export function CardSessionView({
 						onOutput={socket.onOutput}
 						sendInput={socket.sendInput}
 						sendResize={socket.sendResize}
-						transcript={socket.transcript}
+						liveTranscripts={socket.liveTranscripts}
 						fetchSessionTranscript={socket.fetchSessionTranscript}
 						interruptSession={socket.interruptSession}
 					/>

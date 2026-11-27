@@ -40,7 +40,7 @@ export function PhoneSessionBody(props: {
 					<Box sx={sdkBodySx}>
 						<LiveTranscriptArea
 							session={session}
-							transcript={socket.transcript}
+							liveTranscripts={socket.liveTranscripts}
 							fetchSessionTranscript={socket.fetchSessionTranscript}
 						/>
 					</Box>

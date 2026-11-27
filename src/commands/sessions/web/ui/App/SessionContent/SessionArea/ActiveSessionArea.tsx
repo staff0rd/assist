@@ -1,6 +1,6 @@
 import Box from "@mui/material/Box";
 import { SessionSlashProviders } from "../../../slashSuggestions/SessionSlashProviders";
-import type { SessionListHandlers, Transcript } from "../../../types";
+import type { LiveTranscripts, SessionListHandlers } from "../../../types";
 import { TransferBanner } from "../../../transfer/TransferBanner";
 import { ApiNodeContext } from "../../../useApiNode";
 import type {
@@ -23,7 +23,7 @@ const areaSx = {
 } as const;
 
 export type ActiveSessionAreaProps = TerminalAreaProps & {
-	transcript: Transcript | null;
+	liveTranscripts: LiveTranscripts;
 	fetchSessionTranscript: FetchSessionTranscript;
 	interruptSession: InterruptSession;
 	sendPrDecision: SendPrDecision;

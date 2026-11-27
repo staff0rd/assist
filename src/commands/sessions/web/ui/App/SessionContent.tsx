@@ -27,6 +27,7 @@ export function SessionContent({ socket }: { socket: SessionSocket }) {
 					sendResize={socket.sendResize}
 					viewingTranscriptSessionId={socket.viewingTranscriptSessionId}
 					transcript={socket.transcript}
+					liveTranscripts={socket.liveTranscripts}
 					fetchSessionTranscript={socket.fetchSessionTranscript}
 					interruptSession={socket.interruptSession}
 					sendPrDecision={socket.sendPrDecision}

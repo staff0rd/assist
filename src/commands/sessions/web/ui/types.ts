@@ -114,6 +114,8 @@ export type Transcript = {
 	messages: TranscriptMessage[];
 };
 
+export type LiveTranscripts = Record<string, Transcript>;
+
 export type UserMessages = {
 	sessionId: string;
 	messages: string[];

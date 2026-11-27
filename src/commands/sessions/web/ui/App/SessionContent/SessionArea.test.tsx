@@ -69,6 +69,7 @@ function renderArea(
 					}}
 					viewingTranscriptSessionId={null}
 					transcript={null}
+					liveTranscripts={{}}
 					sendPrDecision={() => true}
 					fetchSessionTranscript={() => {}}
 					interruptSession={() => {}}
@@ -129,6 +130,7 @@ describe("SessionArea transcript view", () => {
 				sendInput={() => {}}
 				sendResize={() => {}}
 				viewingTranscriptSessionId="abc"
+				liveTranscripts={{}}
 				sendPrDecision={() => true}
 				fetchSessionTranscript={() => {}}
 				interruptSession={() => {}}
@@ -165,6 +167,7 @@ describe("SessionArea transcript view", () => {
 				sendInput={() => {}}
 				sendResize={() => {}}
 				viewingTranscriptSessionId="abc"
+				liveTranscripts={{}}
 				sendPrDecision={() => true}
 				fetchSessionTranscript={() => {}}
 				interruptSession={() => {}}
@@ -237,6 +240,7 @@ function renderWithTopBar(
 					sendResize={vi.fn()}
 					viewingTranscriptSessionId={viewingTranscriptSessionId}
 					transcript={null}
+					liveTranscripts={{}}
 					sendPrDecision={vi.fn()}
 					fetchSessionTranscript={() => {}}
 					interruptSession={() => {}}

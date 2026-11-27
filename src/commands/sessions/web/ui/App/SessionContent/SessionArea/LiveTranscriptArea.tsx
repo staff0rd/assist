@@ -1,6 +1,6 @@
 import type { OnTooVerbose } from "./TranscriptArea/TranscriptPane/useReplyActions";
 import { type ReactNode, useEffect } from "react";
-import type { SessionInfo, Transcript } from "../../../types";
+import type { LiveTranscripts, SessionInfo } from "../../../types";
 import { TranscriptArea } from "./TranscriptArea";
 import { SdkTail } from "./TranscriptArea/SdkTail";
 import { usePendingSendCount } from "./usePendingSendCount";
@@ -10,13 +10,13 @@ export type InterruptSession = (sessionId: string) => void;
 
 export function LiveTranscriptArea({
 	session,
-	transcript,
+	liveTranscripts,
 	fetchSessionTranscript,
 	commentLayer,
 	onTooVerbose,
 }: {
 	session: SessionInfo;
-	transcript: Transcript | null;
+	liveTranscripts: LiveTranscripts;
 	fetchSessionTranscript: FetchSessionTranscript;
 	commentLayer?: (content: ReactNode) => ReactNode;
 	onTooVerbose?: OnTooVerbose;
@@ -44,6 +44,7 @@ export function LiveTranscriptArea({
 		transcriptRevision,
 	]);
 	const sendCount = usePendingSendCount(session.sdkPending);
+	const transcript = liveTranscripts[id] ?? null;
 	return (
 		<TranscriptArea
 			sessionId={id}

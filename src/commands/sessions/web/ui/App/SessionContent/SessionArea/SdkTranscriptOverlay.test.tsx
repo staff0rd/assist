@@ -31,11 +31,13 @@ function renderOverlay(overrides: Partial<SessionInfo> = {}) {
 			<HistorySearchQueryProvider>
 				<SdkTranscriptOverlay
 					session={makeSessionInfo({ id: "s1", sdk: true, ...overrides })}
-					transcript={{
-						sessionId: "s1",
-						messages: [
-							{ role: "assistant", text: "a long reply\n\nsecond\n\nthird" },
-						],
+					liveTranscripts={{
+						s1: {
+							sessionId: "s1",
+							messages: [
+								{ role: "assistant", text: "a long reply\n\nsecond\n\nthird" },
+							],
+						},
 					}}
 					fetchSessionTranscript={vi.fn()}
 					sendInput={vi.fn()}
@@ -62,16 +64,21 @@ describe("SdkTranscriptOverlay", () => {
 				<HistorySearchQueryProvider>
 					<SdkTranscriptOverlay
 						session={makeSessionInfo({ id: "s1", sdk: true })}
-						transcript={{
-							sessionId: "s1",
-							messages: [
-								{
-									role: "assistant",
-									text: "an earlier long reply\n\nsecond\n\nthird",
-								},
-								{ role: "user", text: "next" },
-								{ role: "assistant", text: "a long reply\n\nsecond\n\nthird" },
-							],
+						liveTranscripts={{
+							s1: {
+								sessionId: "s1",
+								messages: [
+									{
+										role: "assistant",
+										text: "an earlier long reply\n\nsecond\n\nthird",
+									},
+									{ role: "user", text: "next" },
+									{
+										role: "assistant",
+										text: "a long reply\n\nsecond\n\nthird",
+									},
+								],
+							},
 						}}
 						fetchSessionTranscript={vi.fn()}
 						sendInput={sendInput}
