@@ -1,3 +1,5 @@
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { allocateServicePorts } from "./allocateServicePorts";
 import { buildInstanceEnv } from "./buildInstanceEnv";
@@ -87,6 +89,22 @@ const pr = {
 };
 
 describe("planReviewInstance", () => {
+	it("expands a leading ~/ in the compose file to the home directory", async () => {
+		const plan = await planReviewInstance({
+			config: {
+				composeFile: "~/compose/app.review.yml",
+				services: { web: { port: 3000 } },
+				entry: { service: "web", path: "/" },
+				logs: { services: {}, browser: { ignore: [] } },
+			},
+			repoRoot: "/repo",
+			pr,
+			instancesDir: "/instances",
+			nextPort: portSequence(6000),
+		});
+		expect(plan.composeFile).toBe(join(homedir(), "compose/app.review.yml"));
+	});
+
 	it("places the worktree under the project name and resolves the compose file", async () => {
 		const plan = await planReviewInstance({
 			config: {

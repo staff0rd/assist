@@ -45,19 +45,19 @@ describe("loadManualTesting", () => {
 		expect(loadManualTesting(head)).toEqual(manualTesting);
 	});
 
-	it("points at assist review high-level when nothing is saved", () => {
+	it("points at assist review --high-level when nothing is saved", () => {
 		expectExitWith(
-			"No manual testing steps are saved for #7 at 0123456; run `assist review high-level 7` first",
+			"No manual testing steps are saved for #7 at 0123456; run `assist review 7 --high-level` first",
 		);
 	});
 
 	it("errors when the saved slices predate manualTesting", () => {
 		save([]);
-		expectExitWith("assist review high-level 7");
+		expectExitWith("assist review 7 --high-level");
 	});
 
 	it("errors when the saved steps are empty", () => {
 		save({ slices: [], manualTesting: { setup: [], steps: [] } });
-		expectExitWith("assist review high-level 7");
+		expectExitWith("assist review 7 --high-level");
 	});
 });

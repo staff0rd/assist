@@ -1,3 +1,5 @@
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import type { CompanionLookup } from "./CompanionHead";
 import { findLinkedPr } from "./findLinkedPr";
@@ -55,6 +57,17 @@ describe("parseRemoteHead", () => {
 });
 
 describe("planInstanceCheckouts", () => {
+	it("expands a leading ~/ in a companion repo path", () => {
+		const [, web] = planInstanceCheckouts({
+			services: { api: { port: 8080 }, web: { repo: "~/git/frontend" } },
+			repoRoot: "/src/api",
+			pr: { fullName: "acme/api", number: 7, sha: apiSha, body: "" },
+			worktreeBase: "/instances/p",
+			lookup: lookup(),
+		});
+		expect(web.repoRoot).toBe(join(homedir(), "git/frontend"));
+	});
+
 	it("checks a companion out at the PR linked in the reviewed PR's body", () => {
 		const companion = lookup();
 		const [reviewed, web] = plan(

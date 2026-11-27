@@ -1,3 +1,4 @@
+import { expandTilde } from "../../../../shared/expandTilde";
 import { basename, resolve } from "node:path";
 import type { InstanceServices } from "../InstanceConfig";
 import type { CompanionLookup } from "./CompanionHead";
@@ -25,7 +26,7 @@ function servicesByRepoRoot(
 ): Map<string, string[]> {
 	const groups = new Map<string, string[]>([[repoRoot, []]]);
 	for (const [service, { repo }] of Object.entries(services)) {
-		const root = repo ? resolve(repoRoot, repo) : repoRoot;
+		const root = repo ? resolve(repoRoot, expandTilde(repo)) : repoRoot;
 		groups.set(root, [...(groups.get(root) ?? []), service]);
 	}
 	return groups;

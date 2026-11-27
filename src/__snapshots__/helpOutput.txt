@@ -2625,7 +2625,7 @@ Commands:
   instance [options] <pr>  Bring a PR up as an isolated, throwaway instance via the repo's
                            review.instance compose file, sign in once with the review.instance.auth
                            strategy when one is set, have an agent run the manualTesting steps saved
-                           by `assist review high-level <pr>` against it in a headless browser
+                           by `assist review <pr> --high-level` against it in a headless browser
                            (recording a video of the session) or, with --headed, a visible one,
                            watch each compose service's logs and the browser's console errors, page
                            errors and 5xx responses, print a pass/fail/unsure verdict per step with
@@ -2650,7 +2650,7 @@ Usage: assist review instance [options] <pr>
 
 Bring a PR up as an isolated, throwaway instance via the repo's review.instance compose file, sign
 in once with the review.instance.auth strategy when one is set, have an agent run the manualTesting
-steps saved by `assist review high-level <pr>` against it in a headless browser (recording a video
+steps saved by `assist review <pr> --high-level` against it in a headless browser (recording a video
 of the session) or, with --headed, a visible one, watch each compose service's logs and the
 browser's console errors, page errors and 5xx responses, print a pass/fail/unsure verdict per step
 with screenshots and the errors logged during it in a report directory (exit 1 when any step fails

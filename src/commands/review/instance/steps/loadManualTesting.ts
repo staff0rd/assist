@@ -21,7 +21,7 @@ export function loadManualTesting(head: SavedHead): HighLevelManualTesting {
 	const manualTesting = Array.isArray(saved) ? undefined : saved?.manualTesting;
 	if (!manualTesting?.steps.length)
 		exitWithError(
-			`No manual testing steps are saved for #${head.number} at ${head.sha.slice(0, 7)}; run \`assist review high-level ${head.number}\` first to save them.`,
+			`No manual testing steps are saved for #${head.number} at ${head.sha.slice(0, 7)}; run \`assist review ${head.number} --high-level\` first to save them.`,
 		);
 	return manualTesting;
 }

@@ -1,3 +1,5 @@
+import { homedir } from "node:os";
+import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 import { resolveInstanceAuth } from "./resolveInstanceAuth";
 
@@ -27,6 +29,18 @@ describe("resolveInstanceAuth", () => {
 			script: "/repo/review/login.mjs",
 			credentials: { username: "reviewer", password: "s3cret" },
 		});
+	});
+
+	it("expands a leading ~/ in the script path to the home directory", () => {
+		expect(
+			resolveInstanceAuth(
+				{
+					strategy: "login-script",
+					loginScript: { script: "~/review/login.cjs", password: "s3cret" },
+				},
+				"/repo",
+			)?.script,
+		).toBe(join(homedir(), "review/login.cjs"));
 	});
 
 	it("errors when the credentials secret is missing", () => {

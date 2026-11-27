@@ -8,7 +8,7 @@ export function registerReviewInstance(
 	const instanceCommand = reviewCommand
 		.command("instance")
 		.description(
-			"Bring a PR up as an isolated, throwaway instance via the repo's review.instance compose file, sign in once with the review.instance.auth strategy when one is set, have an agent run the manualTesting steps saved by `assist review high-level <pr>` against it in a headless browser (recording a video of the session) or, with --headed, a visible one, watch each compose service's logs and the browser's console errors, page errors and 5xx responses, print a pass/fail/unsure verdict per step with screenshots and the errors logged during it in a report directory (exit 1 when any step fails or logs an unignored error), then tear it down (compose down -v and worktree removal), also on Ctrl+C or failure",
+			"Bring a PR up as an isolated, throwaway instance via the repo's review.instance compose file, sign in once with the review.instance.auth strategy when one is set, have an agent run the manualTesting steps saved by `assist review <pr> --high-level` against it in a headless browser (recording a video of the session) or, with --headed, a visible one, watch each compose service's logs and the browser's console errors, page errors and 5xx responses, print a pass/fail/unsure verdict per step with screenshots and the errors logged during it in a report directory (exit 1 when any step fails or logs an unignored error), then tear it down (compose down -v and worktree removal), also on Ctrl+C or failure",
 		)
 		.argument("<pr>", "PR number to bring up at its head SHA")
 		.option(

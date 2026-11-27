@@ -1,5 +1,6 @@
 import { homedir } from "node:os";
 import { join, resolve } from "node:path";
+import { expandTilde } from "../../../shared/expandTilde";
 import { allocateServicePorts } from "./allocateServicePorts";
 import { buildInstanceEnv } from "./buildInstanceEnv";
 import type { CompanionLookup } from "./checkouts/CompanionHead";
@@ -45,7 +46,7 @@ export async function planReviewInstance(
 	);
 	return {
 		project,
-		composeFile: resolve(input.repoRoot, input.config.composeFile),
+		composeFile: resolve(input.repoRoot, expandTilde(input.config.composeFile)),
 		repoRoot: input.repoRoot,
 		checkouts,
 		env: buildInstanceEnv(checkouts, ports),

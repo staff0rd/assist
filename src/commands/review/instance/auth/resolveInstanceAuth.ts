@@ -1,4 +1,5 @@
 import { resolve } from "node:path";
+import { expandTilde } from "../../../../shared/expandTilde";
 import type { AssistConfig } from "../../../../shared/types";
 import type { InstanceAuth } from "./InstanceAuth";
 
@@ -25,7 +26,7 @@ export function resolveInstanceAuth(
 		);
 	return {
 		strategy: auth.strategy,
-		script: resolve(repoRoot, script),
+		script: resolve(repoRoot, expandTilde(script)),
 		credentials: { username: auth.loginScript?.username, password },
 	};
 }
