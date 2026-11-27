@@ -17,7 +17,7 @@ function sdkSession(stopTask: (taskId: string) => Promise<void>): Session {
 	return makeSession({ id: "1", pty });
 }
 
-function ask(requestId: string, taskId?: string) {
+function ask(requestId: string, taskId?: string, previewKey = "ask") {
 	return {
 		type: "pr-preview",
 		sessionId: "1",
@@ -27,6 +27,7 @@ function ask(requestId: string, taskId?: string) {
 		prNumber: null,
 		kind: "ask",
 		taskId,
+		previewKey,
 	};
 }
 
@@ -80,5 +81,47 @@ describe("supersedePendingPreview", () => {
 		expect(oldWaiter.sent).toEqual([
 			{ type: "pr-superseded", requestId: "r1", supersededBy: "r2" },
 		]);
+	});
+
+	it("refuses a preview from another command and keeps the pending one", () => {
+		const stopTask = vi.fn();
+		const session = sdkSession(stopTask);
+		const coord = new PrPreviewCoordinator(new Map([["1", session]]), vi.fn());
+		const oldWaiter = makeClient();
+		coord.set(oldWaiter, ask("r1", "bold00001", "prs wontfix 11"));
+		const newClient = makeClient();
+
+		coord.set(newClient, ask("r2", "bnew00002", "prs review-reply 42"));
+
+		expect(stopTask).not.toHaveBeenCalled();
+		expect(oldWaiter.sent).toEqual([]);
+		expect(newClient.sent).toEqual([
+			{
+				type: "pr-preview-pending",
+				requestId: "r2",
+				pending: "prs wontfix 11",
+			},
+		]);
+		expect(session.pendingPrPreview?.requestId).toBe("r1");
+
+		coord.decide({ sessionId: "1", requestId: "r1", decision: "approve" });
+		expect(oldWaiter.sent).toEqual([
+			expect.objectContaining({ type: "pr-decision", requestId: "r1" }),
+		]);
+	});
+
+	it("refuses the same command for another target", () => {
+		const coord = new PrPreviewCoordinator(
+			new Map([["1", sdkSession(vi.fn())]]),
+			vi.fn(),
+		);
+		const oldWaiter = makeClient();
+		coord.set(oldWaiter, ask("r1", undefined, "prs wontfix 11"));
+		const newClient = makeClient();
+
+		coord.set(newClient, ask("r2", undefined, "prs wontfix 12"));
+
+		expect(oldWaiter.sent).toEqual([]);
+		expect(newClient.sent[0]).toMatchObject({ type: "pr-preview-pending" });
 	});
 });

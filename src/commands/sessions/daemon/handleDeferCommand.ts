@@ -3,6 +3,7 @@ import { daemonLog } from "./daemonLog";
 import { deferredCommandEnv } from "./deferredCommandEnv";
 import { deferredCommandLabel } from "./deferredCommandLabel";
 import type { Handler } from "./routed";
+import { refuseConflictingPreview } from "./refuseConflictingPreview";
 import { runDeferredCommand } from "./runDeferredCommand";
 import { trackDeferredCommand } from "./trackDeferredCommand";
 import { deliverDeferredResult } from "./deliverDeferredResult";
@@ -24,9 +25,11 @@ export const handleDeferCommand: Handler = (client, m, d) => {
 		sendTo(client, { type: "defer-command-result", accepted: false });
 		return;
 	}
+	if (refuseConflictingPreview(session, client, d, label)) return;
 	const env = (d.env ?? {}) as Record<string, string>;
 	const command = {
 		argv,
+		previewKey: typeof d.previewKey === "string" ? d.previewKey : undefined,
 		stdin: typeof d.stdin === "string" ? d.stdin : undefined,
 		cwd: String(d.cwd),
 		env: deferredCommandEnv(env),

@@ -115,6 +115,7 @@ export type Session = SdkViewState & {
 	usageSeeded?: boolean;
 	pendingPrPreview?: PrPreview;
 	pendingPreviewTaskId?: string;
+	pendingPreviewKey?: string;
 	pendingShow?: PrPreview;
 	highLevelReviewHead?: string;
 	resumedOverPreview?: string;

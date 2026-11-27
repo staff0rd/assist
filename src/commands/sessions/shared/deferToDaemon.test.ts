@@ -64,6 +64,26 @@ describe("deferToDaemon", () => {
 		expect(logged).toEqual([]);
 	});
 
+	it("exits non-zero when another preview is already pending", async () => {
+		mockReply.mockResolvedValue({
+			accepted: false,
+			pendingPreview: "prs wontfix 11",
+		});
+		const errors: string[] = [];
+		vi.spyOn(console, "error").mockImplementation((message: string) => {
+			errors.push(message);
+		});
+		vi.spyOn(process, "exit").mockImplementation((code) => {
+			throw new Error(`exit ${code}`);
+		});
+
+		await expect(deferToDaemon()).rejects.toThrow("exit 1");
+		expect(errors.join("\n")).toContain(
+			"a preview is already pending in the session's web preview pane (prs wontfix 11)",
+		);
+		expect(logged).toEqual([]);
+	});
+
 	it("keeps the blocking path when the daemon is unreachable", async () => {
 		mockReply.mockResolvedValue(undefined);
 

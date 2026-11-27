@@ -314,3 +314,87 @@ describe("defer-command handler", () => {
 		});
 	});
 });
+
+describe("defer-command with a pending preview", () => {
+	const wontfix = {
+		...request,
+		argv: ["prs", "wontfix", "11", "out of scope"],
+		previewKey: "prs wontfix 11",
+	};
+
+	beforeEach(() => {
+		mockRun.mockReset().mockReturnValue(123);
+	});
+
+	it("refuses another command's preview and keeps the pending one", () => {
+		const sdk = { send: vi.fn() };
+		const { sessions, manager } = managerWith(sdk);
+		handleDeferCommand({ send: vi.fn() }, manager, wontfix);
+		const client = { send: vi.fn() };
+
+		handleDeferCommand(client, manager, {
+			...request,
+			argv: ["prs", "review-reply", "42", "-"],
+			previewKey: "prs review-reply 42",
+		});
+
+		expect(mockRun).toHaveBeenCalledTimes(1);
+		expect(replies(client)).toEqual([
+			{
+				type: "defer-command-result",
+				accepted: false,
+				pendingPreview: "prs wontfix 11",
+			},
+		]);
+		expect(sessions.get("7")?.deferredCommands).toHaveLength(1);
+		finishWith({ output: "Replied and resolved.\n", exitCode: 0 });
+		expect(sdk.send).toHaveBeenCalledWith(
+			expect.stringContaining("Replied and resolved."),
+		);
+	});
+
+	it("refuses the same command for another target", () => {
+		const { manager } = managerWith({ send: vi.fn() });
+		handleDeferCommand({ send: vi.fn() }, manager, wontfix);
+		const client = { send: vi.fn() };
+
+		handleDeferCommand(client, manager, {
+			...wontfix,
+			argv: ["prs", "wontfix", "12", "dup"],
+			previewKey: "prs wontfix 12",
+		});
+
+		expect(mockRun).toHaveBeenCalledTimes(1);
+		expect(replies(client)[0].accepted).toBe(false);
+	});
+
+	it("refuses while a blocking preview from another command is open", () => {
+		const { sessions, manager } = managerWith({ send: vi.fn() });
+		const session = sessions.get("7") as Session;
+		session.pendingPrPreview = { kind: "ask", title: "Plan" } as never;
+		session.pendingPreviewKey = "ask";
+		const client = { send: vi.fn() };
+
+		handleDeferCommand(client, manager, wontfix);
+
+		expect(mockRun).not.toHaveBeenCalled();
+		expect(replies(client)[0]).toMatchObject({ pendingPreview: "ask" });
+	});
+
+	it("accepts the same command for the same target so it can supersede", () => {
+		const { sessions, manager } = managerWith({ send: vi.fn() });
+		handleDeferCommand({ send: vi.fn() }, manager, wontfix);
+		const client = { send: vi.fn() };
+
+		handleDeferCommand(client, manager, {
+			...wontfix,
+			argv: ["prs", "wontfix", "11", "revised reason"],
+		});
+
+		expect(mockRun).toHaveBeenCalledTimes(2);
+		expect(replies(client)).toEqual([
+			{ type: "defer-command-result", accepted: true },
+		]);
+		expect(sessions.get("7")?.deferredCommands).toHaveLength(2);
+	});
+});

@@ -10,7 +10,7 @@ export function holdBlockingPreview(
 	waiters: Map<string, SessionClient>,
 	client: SessionClient,
 	preview: PrPreview,
-	taskId: unknown,
+	{ taskId, previewKey }: Record<string, unknown>,
 ): void {
 	const supersedes = supersedePendingPreview(
 		session,
@@ -23,6 +23,8 @@ export function holdBlockingPreview(
 		session.highLevelReviewHead = head;
 		daemonLog(`pr-preview high-level head: id=${session.id} head=${head}`);
 	}
+	session.pendingPreviewKey =
+		typeof previewKey === "string" ? previewKey : undefined;
 	session.pendingPreviewTaskId =
 		typeof taskId === "string" ? taskId : undefined;
 	if (session.pendingShow) {

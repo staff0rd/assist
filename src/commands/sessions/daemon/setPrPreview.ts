@@ -7,6 +7,7 @@ import { isPreviewKind } from "./isPreviewKind";
 import { previewTargetLabel } from "./previewTargetLabel";
 import { placeShowPreview } from "./placeShowPreview";
 import { holdBlockingPreview } from "./holdBlockingPreview";
+import { refuseConflictingPreview } from "./refuseConflictingPreview";
 
 type Msg = Record<string, unknown>;
 
@@ -30,10 +31,11 @@ export function setPrPreview(
 	const prNumber = typeof d.prNumber === "number" ? d.prNumber : null;
 	const kind = isPreviewKind(d.kind) ? d.kind : "pr";
 	const preview = buildPrPreview(d, kind, prNumber);
+	if (kind !== "show" && refuseConflictingPreview(session, client, d)) return;
 	if (kind === "show") {
 		sendTo(client, { type: "show-ack", requestId: d.requestId });
 		if (placeShowPreview(session, preview)) return notify();
-	} else holdBlockingPreview(session, waiters, client, preview, d.taskId);
+	} else holdBlockingPreview(session, waiters, client, preview, d);
 	const target = previewTargetLabel(
 		kind,
 		d.itemType === "bug" ? "bug" : "story",

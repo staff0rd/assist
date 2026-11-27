@@ -1,6 +1,7 @@
 import type { PreviewDecision } from "./PreviewDecision";
 import { deferToDaemon } from "./deferToDaemon";
 import { exitNoPreview } from "./exitNoPreview";
+import { pendingPreviewMessage } from "./pendingPreviewMessage";
 import { previewAwaitingMessage } from "./previewAwaitingMessage";
 import { reportPreviewRejection } from "./reportPreviewRejection";
 import { supersededPreviewMessage } from "./supersededPreviewMessage";
@@ -34,6 +35,11 @@ export async function awaitPreviewApproval(
 	if (outcome === "superseded") {
 		console.log(supersededPreviewMessage);
 		process.exit(0);
+	}
+
+	if ("pendingPreview" in outcome) {
+		console.error(pendingPreviewMessage(outcome.pendingPreview));
+		process.exit(1);
 	}
 
 	if (outcome.body !== undefined) options.saveEditedBody?.(outcome.body);
