@@ -1,5 +1,5 @@
-import { useSearchParams } from "react-router";
 import type { NextIssue } from "../../../../../next/types";
+import { useRequestNewSession } from "../../../../useRequestNewSession";
 
 export type StartableIssue = Pick<
 	NextIssue,
@@ -7,17 +7,10 @@ export type StartableIssue = Pick<
 >;
 
 export function useStartIssue(): (issue: StartableIssue, cwd: string) => void {
-	const [, setSearchParams] = useSearchParams();
+	const request = useRequestNewSession();
 	return (issue, cwd) =>
-		setSearchParams(
-			(params) => {
-				params.set(
-					"new",
-					`Issue ${issue.repo}#${issue.number}: ${issue.title}\n${issue.url}`,
-				);
-				params.set("newCwd", cwd);
-				return params;
-			},
-			{ replace: true },
-		);
+		request({
+			prompt: `Issue ${issue.repo}#${issue.number}: ${issue.title}\n${issue.url}`,
+			cwd,
+		});
 }

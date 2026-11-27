@@ -127,6 +127,26 @@ describe("NewSessionLayer ?new", () => {
 		expect(router.state.location.search).toBe("");
 	});
 
+	it("opens in the mode from the newMode param and strips it", async () => {
+		const router = renderAt(
+			`/sessions?new=${encodeURIComponent("From session 38")}&newCwd=${encodeURIComponent("/git/beta")}&newMode=draft`,
+		);
+
+		await screen.findByRole("textbox", { name: "Prompt" });
+		expect(checkedMode()).toBe("draft · Claude");
+		expect(repoInput().value).toBe("beta");
+		expect(promptInput().value).toBe("From session 38");
+		expect(promptInput().selectionStart).toBe(15);
+		expect(router.state.location.search).toBe("");
+	});
+
+	it("ignores an unknown newMode", async () => {
+		renderAt("/sessions?new=hi&newMode=nope");
+
+		await screen.findByRole("textbox", { name: "Prompt" });
+		expect(checkedMode()).toBe("bug · Claude");
+	});
+
 	it("stays closed without the new param", async () => {
 		renderAt("/sessions");
 

@@ -1,7 +1,14 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router";
 import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
+import { type NewSessionMode, newSessionModes } from "./newSessionModes";
 import type { NewSessionDraft } from "./useNewSessionDraft";
+
+function parseMode(value: string | null): NewSessionMode | undefined {
+	return value && value in newSessionModes
+		? (value as NewSessionMode)
+		: undefined;
+}
 
 export function useNewSessionRequest(
 	draft: NewSessionDraft | null,
@@ -11,10 +18,12 @@ export function useNewSessionRequest(
 	const [searchParams, setSearchParams] = useSearchParams();
 	const prefill = searchParams.get("new");
 	const cwd = searchParams.get("newCwd") ?? selectedCwd;
-	const { setPrompt, setCwd, setFocus } = draft ?? {};
+	const mode = parseMode(searchParams.get("newMode"));
+	const { setPrompt, setCwd, setMode, setFocus } = draft ?? {};
 
 	useEffect(() => {
-		if (prefill === null || !setPrompt || !setCwd || !setFocus) return;
+		if (prefill === null || !setPrompt || !setCwd || !setMode || !setFocus)
+			return;
 		if (prefill) {
 			setPrompt(prefill);
 			setCwd(cwd);
@@ -24,14 +33,26 @@ export function useNewSessionRequest(
 				selectionEnd: prefill.length,
 			});
 		}
+		if (mode) setMode(mode);
 		open();
 		setSearchParams(
 			(params) => {
 				params.delete("new");
 				params.delete("newCwd");
+				params.delete("newMode");
 				return params;
 			},
 			{ replace: true },
 		);
-	}, [prefill, cwd, setPrompt, setCwd, setFocus, open, setSearchParams]);
+	}, [
+		prefill,
+		cwd,
+		mode,
+		setPrompt,
+		setCwd,
+		setMode,
+		setFocus,
+		open,
+		setSearchParams,
+	]);
 }

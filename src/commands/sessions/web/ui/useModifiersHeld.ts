@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-type Modifiers = { shiftKey: boolean; ctrlKey: boolean };
+type Modifiers = { shiftKey: boolean; ctrlKey: boolean; altKey: boolean };
 
 export function useModifiersHeld(test: (e: Modifiers) => boolean): boolean {
 	const [held, setHeld] = useState(false);
