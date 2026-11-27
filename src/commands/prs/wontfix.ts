@@ -1,6 +1,7 @@
 import { cachedCommentUrl } from "./cachedCommentUrl";
 import { rejectHarnessNames } from "./rejectHarnessNames";
 import { resolveCommentWithReply } from "./resolveCommentWithReply";
+import { previewTitleLink } from "./previewTitleLink";
 import { reviewProposedPrComment } from "./reviewProposedPrComment";
 import { isGhNotInstalled } from "./shared";
 import { threadTarget } from "./threadTarget";
@@ -21,7 +22,7 @@ export async function wontfix(
 			`Won't fix comment ${reference}`,
 			reason,
 			null,
-			url ? { reference, url } : undefined,
+			previewTitleLink(reference, url),
 		);
 		resolveCommentWithReply(target, commentId, reason);
 	} catch (error) {

@@ -6,7 +6,7 @@ export async function reviewProposedPrComment(
 	title: string,
 	body: string,
 	prNumber: number | null,
-	titleLink?: PreviewTitleLink,
+	titleLink?: PreviewTitleLink | (() => PreviewTitleLink | undefined),
 ): Promise<void> {
 	const sessionId = process.env.ASSIST_SESSION_ID;
 	if (process.env.ASSIST_SESSION !== "1" || !sessionId) return;
@@ -15,7 +15,7 @@ export async function reviewProposedPrComment(
 		sessionId,
 		requestId: randomUUID(),
 		title,
-		titleLink,
+		titleLink: typeof titleLink === "function" ? titleLink() : titleLink,
 		body,
 		prNumber,
 		kind: "pr-comment",

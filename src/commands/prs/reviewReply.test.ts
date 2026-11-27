@@ -118,6 +118,7 @@ describe("reviewReply", () => {
 		expect(mockRequestPreviewDecision).toHaveBeenCalledWith(
 			expect.objectContaining({
 				title: "Reply to review #99",
+				titleLink: { reference: "#99", url: reviewUrl },
 				body: expect.stringContaining("<!-- assist-review-handled: 99 -->"),
 				kind: "pr-comment",
 				prNumber: 5,

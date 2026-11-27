@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
 const mockRequestPreviewDecision = vi.fn();
 const replyToComment = vi.fn();
+const execFileSync = vi.fn();
+const loadCommentsCache = vi.fn();
 
 vi.mock("../sessions/shared/requestPreviewDecision", () => ({
 	requestPreviewDecision: (...args: unknown[]) =>
@@ -9,6 +11,15 @@ vi.mock("../sessions/shared/requestPreviewDecision", () => ({
 }));
 vi.mock("./replyToComment", () => ({
 	replyToComment: (...args: unknown[]) => replyToComment(...args),
+}));
+vi.mock("node:child_process", () => ({
+	execFileSync: (...args: unknown[]) => execFileSync(...args),
+}));
+vi.mock("../review/azureDevopsRemote", () => ({
+	azureDevopsRemote: () => null,
+}));
+vi.mock("./loadCommentsCache", () => ({
+	loadCommentsCache: (...args: unknown[]) => loadCommentsCache(...args),
 }));
 vi.mock("./shared", () => ({
 	getCurrentPrNumber: () => 7,
@@ -18,6 +29,18 @@ vi.mock("./shared", () => ({
 
 import { reply } from "./reply";
 
+const commentUrl = "https://github.com/acme/widgets/pull/7#discussion_r123";
+
+function inWebSession(): void {
+	process.env.ASSIST_SESSION = "1";
+	process.env.ASSIST_SESSION_ID = "s1";
+	mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+}
+
+function previewTitleLink(): unknown {
+	return mockRequestPreviewDecision.mock.calls[0]?.[0]?.titleLink;
+}
+
 const mockExit = vi.spyOn(process, "exit").mockImplementation(() => {
 	throw new Error("process.exit");
 });
@@ -25,6 +48,12 @@ const mockExit = vi.spyOn(process, "exit").mockImplementation(() => {
 beforeEach(() => {
 	mockRequestPreviewDecision.mockReset();
 	replyToComment.mockReset();
+	execFileSync.mockReset();
+	execFileSync.mockImplementation(() => {
+		throw new Error("gh failed");
+	});
+	loadCommentsCache.mockReset();
+	loadCommentsCache.mockReturnValue(null);
 	vi.spyOn(console, "log").mockImplementation(() => {});
 	delete process.env.ASSIST_SESSION;
 	delete process.env.ASSIST_SESSION_ID;
@@ -120,5 +149,50 @@ describe("reply", () => {
 		expect(output).toContain("> Good catch");
 		expect(output).toContain("say what was caught");
 		expect(replyToComment).not.toHaveBeenCalled();
+	});
+
+	it("does not look up the comment URL outside a web session", async () => {
+		await reply(123, "Good catch");
+
+		expect(execFileSync).not.toHaveBeenCalled();
+	});
+
+	it("links the comment number to the cached comment's URL", async () => {
+		inWebSession();
+		loadCommentsCache.mockReturnValue({
+			comments: [{ type: "line", id: 123, html_url: commentUrl }],
+		});
+
+		await reply(123, "Good catch");
+
+		expect(loadCommentsCache).toHaveBeenCalledWith("acme", "widgets", 7);
+		expect(execFileSync).not.toHaveBeenCalled();
+		expect(previewTitleLink()).toEqual({ reference: "#123", url: commentUrl });
+	});
+
+	it("looks up the comment URL on GitHub when it is not cached", async () => {
+		inWebSession();
+		execFileSync.mockReturnValue(JSON.stringify({ html_url: commentUrl }));
+
+		await reply(123, "Good catch");
+
+		expect(execFileSync).toHaveBeenCalledWith(
+			"gh",
+			["api", "repos/acme/widgets/pulls/comments/123"],
+			expect.anything(),
+		);
+		expect(previewTitleLink()).toEqual({ reference: "#123", url: commentUrl });
+	});
+
+	it("leaves the title unlinked when the lookup fails", async () => {
+		inWebSession();
+
+		await reply(123, "Good catch");
+
+		expect(previewTitleLink()).toBeUndefined();
+		expect(mockRequestPreviewDecision).toHaveBeenCalledWith(
+			expect.objectContaining({ title: "Reply to comment #123" }),
+		);
+		expect(replyToComment).toHaveBeenCalled();
 	});
 });

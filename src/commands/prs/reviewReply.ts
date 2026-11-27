@@ -3,6 +3,7 @@ import { pushCommit } from "../commit/pushCommit";
 import { azureDevopsRemote } from "../review/azureDevopsRemote";
 import { buildReviewReplyBody } from "./buildReviewReplyBody";
 import { rejectHarnessNames } from "./rejectHarnessNames";
+import { previewTitleLink } from "./previewTitleLink";
 import { reviewProposedPrComment } from "./reviewProposedPrComment";
 import { getCurrentPrNumber, getRepoInfo, isGhNotInstalled } from "./shared";
 import { validateShaReferences } from "./validateShaReferences";
@@ -36,10 +37,12 @@ export async function reviewReply(
 		const fullBody = buildReviewReplyBody(review, body);
 
 		pushCommit(loadConfig().worktree?.trunk === true);
+		const reference = `#${reviewId}`;
 		await reviewProposedPrComment(
-			`Reply to review #${reviewId}`,
+			`Reply to review ${reference}`,
 			fullBody,
 			prNumber,
+			previewTitleLink(reference, review.html_url),
 		);
 		const url = postIssueComment(
 			`repos/${org}/${repo}/issues/${prNumber}/comments`,
