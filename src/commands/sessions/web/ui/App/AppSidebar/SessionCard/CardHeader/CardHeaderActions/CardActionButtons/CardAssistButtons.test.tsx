@@ -9,6 +9,7 @@ import {
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { makeSessionInfo } from "../../../../../../../../../../test/mothers/makeSessionInfo";
+import { NodeSelectionContext } from "../../../../../../useNodeSelectionContext";
 import { RepoSelectionContext } from "../../../../../../useRepoSelectionContext";
 import { StopCardActivation } from "../../../../../../StopCardActivation";
 import { CardAssistButtons } from "./CardAssistButtons";
@@ -16,6 +17,11 @@ import { CardAssistButtons } from "./CardAssistButtons";
 afterEach(cleanup);
 
 const ASSIST = "/git/assist";
+const NODE_CLONES: Record<string, string | undefined> = {
+	mac: ASSIST,
+	win: "C:/git/assist",
+	bare: undefined,
+};
 
 function renderCard({
 	origin = "github.com/staff0rd/assist",
@@ -33,17 +39,27 @@ function renderCard({
 							selectedCwd: "/git/alpha",
 							worktreeCwd: "/git/alpha",
 							setSelectedCwd: vi.fn(),
-							cloneOn: (cwd) => cwd,
+							cloneOn: (cwd, onNode) => (onNode ? NODE_CLONES[onNode] : cwd),
 							originOf: (cwd) => (cwd === ASSIST ? origin : undefined),
 						}}
 					>
-						<div onClick={onCardClick}>
-							<StopCardActivation>
-								<CardAssistButtons
-									session={makeSessionInfo({ id: "38", node })}
-								/>
-							</StopCardActivation>
-						</div>
+						<NodeSelectionContext.Provider
+							value={{
+								nodes: { local: "mac", links: [] },
+								names: ["mac", "win", "bare"],
+								visible: true,
+								selected: "win",
+								select: vi.fn(),
+							}}
+						>
+							<div onClick={onCardClick}>
+								<StopCardActivation>
+									<CardAssistButtons
+										session={makeSessionInfo({ id: "38", node })}
+									/>
+								</StopCardActivation>
+							</div>
+						</NodeSelectionContext.Provider>
 					</RepoSelectionContext.Provider>
 				),
 			},
@@ -119,5 +135,36 @@ describe("CardAssistButtons", () => {
 		expect(params.get("newCwd")).toBe(ASSIST);
 		expect(params.get("newMode")).toBe(mode);
 		expect(router.onCardClick).not.toHaveBeenCalled();
+	});
+
+	it("carries the local node for a local card", () => {
+		const router = renderCard();
+		holdChord();
+
+		fireEvent.click(screen.getByLabelText("Draft in assist"));
+
+		const params = new URLSearchParams(router.state.location.search);
+		expect(params.get("newNode")).toBe("mac");
+		expect(params.get("newCwd")).toBe(ASSIST);
+	});
+
+	it("targets the assist clone on a linked-node card's node", () => {
+		const router = renderCard({ node: "win" });
+		holdChord();
+
+		fireEvent.click(screen.getByLabelText("Bug in assist"));
+
+		const params = new URLSearchParams(router.state.location.search);
+		expect(params.get("newNode")).toBe("win");
+		expect(params.get("newCwd")).toBe("C:/git/assist");
+		expect(params.get("newMode")).toBe("bug");
+		expect(router.onCardClick).not.toHaveBeenCalled();
+	});
+
+	it("hides the buttons when the card's node has no assist clone", () => {
+		renderCard({ node: "bare" });
+		holdChord();
+		expect(draftButton()).toBeNull();
+		expect(bugButton()).toBeNull();
 	});
 });

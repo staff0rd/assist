@@ -10,6 +10,7 @@ import {
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { NewSessionLayer } from "./NewSessionLayer";
+import { NodeSelectionContext } from "../../../useNodeSelectionContext";
 import { RepoSelectionContext } from "../../../useRepoSelectionContext";
 
 beforeAll(() => {
@@ -28,6 +29,7 @@ function renderAt(path: string) {
 	);
 	const onCreate = vi.fn();
 	const onCreateAssist = vi.fn();
+	const selectNode = vi.fn();
 	const router = createMemoryRouter(
 		[
 			{
@@ -43,15 +45,25 @@ function renderAt(path: string) {
 							originOf: () => undefined,
 						}}
 					>
-						<NewSessionLayer
-							launchers={{
-								onCreateDesign: vi.fn(),
-								onCreateHarness: (harness: string, ...rest: unknown[]) => {
-									if (harness === "claude") onCreate(...rest);
-								},
-								onCreateAssist,
+						<NodeSelectionContext.Provider
+							value={{
+								nodes: null,
+								names: [],
+								visible: false,
+								selected: undefined,
+								select: selectNode,
 							}}
-						/>
+						>
+							<NewSessionLayer
+								launchers={{
+									onCreateDesign: vi.fn(),
+									onCreateHarness: (harness: string, ...rest: unknown[]) => {
+										if (harness === "claude") onCreate(...rest);
+									},
+									onCreateAssist,
+								}}
+							/>
+						</NodeSelectionContext.Provider>
 					</RepoSelectionContext.Provider>
 				),
 			},
@@ -59,7 +71,7 @@ function renderAt(path: string) {
 		{ initialEntries: [path] },
 	);
 	render(<RouterProvider router={router} />);
-	return Object.assign(router, { onCreate, onCreateAssist });
+	return Object.assign(router, { onCreate, onCreateAssist, selectNode });
 }
 
 function checkedMode() {
@@ -138,6 +150,23 @@ describe("NewSessionLayer ?new", () => {
 		expect(promptInput().value).toBe("From session 38");
 		expect(promptInput().selectionStart).toBe(15);
 		expect(router.state.location.search).toBe("");
+	});
+
+	it("selects the node from the newNode param and strips it", async () => {
+		const router = renderAt(
+			`/sessions?new=${encodeURIComponent("From session 38")}&newCwd=${encodeURIComponent("/git/beta")}&newNode=win`,
+		);
+
+		await screen.findByRole("textbox", { name: "Prompt" });
+		expect(router.selectNode).toHaveBeenCalledWith("win");
+		expect(router.state.location.search).toBe("");
+	});
+
+	it("leaves the node alone without the newNode param", async () => {
+		const router = renderAt("/sessions?new=hi");
+
+		await screen.findByRole("textbox", { name: "Prompt" });
+		expect(router.selectNode).not.toHaveBeenCalled();
 	});
 
 	it("ignores an unknown newMode", async () => {

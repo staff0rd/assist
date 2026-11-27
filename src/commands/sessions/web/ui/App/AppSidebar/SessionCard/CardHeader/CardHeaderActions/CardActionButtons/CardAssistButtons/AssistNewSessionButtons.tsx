@@ -17,13 +17,15 @@ const separatorSx = {
 export function AssistNewSessionButtons({
 	id,
 	cwd,
+	node,
 }: {
 	id: string;
 	cwd: string;
+	node: string | undefined;
 }) {
 	const request = useRequestNewSession();
 	const open = (mode: "draft" | "bug") =>
-		request({ prompt: `From session ${id}`, cwd, mode });
+		request({ prompt: `From session ${id}`, cwd, mode, node });
 	return (
 		<>
 			<IconButton

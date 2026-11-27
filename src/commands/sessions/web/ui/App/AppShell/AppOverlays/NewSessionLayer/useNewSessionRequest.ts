@@ -1,14 +1,11 @@
 import { useEffect } from "react";
 import { useSearchParams } from "react-router";
 import { useRepoSelectionContext } from "../../../../useRepoSelectionContext";
-import { type NewSessionMode, newSessionModes } from "./newSessionModes";
+import {
+	newSessionParamNames,
+	readNewSessionParams,
+} from "./readNewSessionParams";
 import type { NewSessionDraft } from "./useNewSessionDraft";
-
-function parseMode(value: string | null): NewSessionMode | undefined {
-	return value && value in newSessionModes
-		? (value as NewSessionMode)
-		: undefined;
-}
 
 export function useNewSessionRequest(
 	draft: NewSessionDraft | null,
@@ -16,14 +13,13 @@ export function useNewSessionRequest(
 ): void {
 	const { selectedCwd } = useRepoSelectionContext();
 	const [searchParams, setSearchParams] = useSearchParams();
-	const prefill = searchParams.get("new");
-	const cwd = searchParams.get("newCwd") ?? selectedCwd;
-	const mode = parseMode(searchParams.get("newMode"));
-	const { setPrompt, setCwd, setMode, setFocus } = draft ?? {};
+	const request = readNewSessionParams(searchParams);
+	const { prefill, mode, node } = request;
+	const cwd = request.cwd ?? selectedCwd;
+	const { setPrompt, setCwd, setMode, setNode, setFocus } = draft ?? {};
 
 	useEffect(() => {
-		if (prefill === null || !setPrompt || !setCwd || !setMode || !setFocus)
-			return;
+		if (prefill === null || !setPrompt || !setCwd || !setFocus) return;
 		if (prefill) {
 			setPrompt(prefill);
 			setCwd(cwd);
@@ -33,13 +29,12 @@ export function useNewSessionRequest(
 				selectionEnd: prefill.length,
 			});
 		}
-		if (mode) setMode(mode);
+		if (mode) setMode?.(mode);
+		if (node) setNode?.(node);
 		open();
 		setSearchParams(
 			(params) => {
-				params.delete("new");
-				params.delete("newCwd");
-				params.delete("newMode");
+				for (const name of newSessionParamNames) params.delete(name);
 				return params;
 			},
 			{ replace: true },
@@ -48,9 +43,11 @@ export function useNewSessionRequest(
 		prefill,
 		cwd,
 		mode,
+		node,
 		setPrompt,
 		setCwd,
 		setMode,
+		setNode,
 		setFocus,
 		open,
 		setSearchParams,
