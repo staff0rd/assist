@@ -28,7 +28,9 @@ const ownText = (text: string) => splitShellBlocks(text)?.text ?? text;
  * rows, so only the message's own text is matched. A
  * tagged restart nudge is recorded as a restart row with no text, so it
  * matches that row instead. A row showing a pane reply in place of the
- * delivered deferred result is matched by the text that was sent. */
+ * delivered deferred result is matched by the text that was sent. Messages
+ * land in send order, so once a later entry is seen any older unseen entry was
+ * recorded out of the matched window and is dropped rather than left stuck. */
 export function unseenPendingTexts(
 	pending: string[] | undefined,
 	rows: TranscriptRole[],
@@ -36,9 +38,11 @@ export function unseenPendingTexts(
 	if (!pending?.length) return [];
 	const latest = latestUserRows(rows);
 	const seen = latest.texts.map(normalize);
-	return pending.filter((text) =>
+	const isSeen = (text: string) =>
 		parseRestartNudge(text) === null
-			? !seen.some((t) => t.includes(normalize(ownText(text))))
-			: !latest.restart,
-	);
+			? seen.some((t) => t.includes(normalize(ownText(text))))
+			: latest.restart;
+	const flags = pending.map(isSeen);
+	const lastSeen = flags.lastIndexOf(true);
+	return pending.filter((_, i) => i > lastSeen && !flags[i]);
 }

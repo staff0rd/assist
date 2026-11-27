@@ -1,9 +1,9 @@
 import { lookupConversation } from "../shared/conversationOf";
-import { readTranscriptTail } from "../shared/readTranscriptTail";
 import { applyTranscriptChange } from "./applyTranscriptChange";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { isSdkSession } from "./isSdkSession";
+import { readReconcileTail } from "./readReconcileTail";
 import type { OnStatusChange } from "./types";
 import { resolveTranscriptPath } from "./resolveTranscriptPath";
 
@@ -27,7 +27,7 @@ export async function reconcileTranscriptStatus(
 	const filePath = await resolveTranscriptPath(session);
 	if (!filePath) return;
 
-	const entries = await readTranscriptTail(filePath);
+	const entries = await readReconcileTail(session, reader, filePath);
 	const fingerprint = reader.fingerprint(entries);
 	if (fingerprint !== null && fingerprint === session.transcriptFingerprint)
 		return;
