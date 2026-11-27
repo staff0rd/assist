@@ -3,15 +3,21 @@ import Link from "@mui/material/Link";
 import type { SessionMessage } from "../../../../../../../../../shared/parseSessionMessage";
 import { useNavigate } from "react-router";
 import { isNativeApp } from "../../../../../../../isNativeApp";
+import { useNodeSelectionContext } from "../../../../../../../useNodeSelectionContext";
 import { useSessionLaunchContext } from "../../../../../../../useSessionLaunchContext";
+import { useTranscriptNodeContext } from "../../../useTranscriptNodeContext";
+import { senderSessionId } from "./senderSessionId";
 
 export function SessionMessageLabel({ sender }: { sender: SessionMessage }) {
 	const { activateSession } = useSessionLaunchContext();
 	const navigate = useNavigate();
+	const id = senderSessionId(
+		sender.from,
+		useTranscriptNodeContext(),
+		useNodeSelectionContext().nodes?.local,
+	);
 	const open = () =>
-		isNativeApp
-			? navigate(`/session/${sender.from}`)
-			: activateSession(sender.from);
+		isNativeApp ? navigate(`/session/${id}`) : activateSession(id);
 	return (
 		<>
 			From{" "}
@@ -29,7 +35,7 @@ export function SessionMessageLabel({ sender }: { sender: SessionMessage }) {
 					"&:hover": { borderBottomStyle: "solid" },
 				}}
 			>
-				session {sender.from}
+				session {id}
 			</Link>
 			{sender.agent && (
 				<Box

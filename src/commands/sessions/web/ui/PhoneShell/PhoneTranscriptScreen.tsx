@@ -44,7 +44,11 @@ export function PhoneTranscriptScreen({ socket }: { socket: SessionSocket }) {
 			/>
 			{entry && <PhoneTranscriptMeta entry={entry} />}
 			<Box sx={bodySx}>
-				<TranscriptArea sessionId={id} transcript={socket.transcript} />
+				<TranscriptArea
+					sessionId={id}
+					node={node}
+					transcript={socket.transcript}
+				/>
 			</Box>
 			<PhoneResumingToast open={resuming} />
 		</>
