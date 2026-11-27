@@ -1,5 +1,6 @@
-import { buildPhasePrompt } from "./buildPhasePrompt";
+import { buildPhasePrompt, REVIEW_PHASE_NAME } from "./buildPhasePrompt";
 import { fetchAutopilotRunContract } from "./fetchAutopilotRunContract";
+import { fetchSessionYolo } from "./fetchSessionYolo";
 import { launchPhaseHarness } from "./launchPhaseHarness";
 import { resumeNudge } from "./resumeNudge";
 import type { BacklogItem, BacklogRunOptions, PlanPhase } from "./types";
@@ -10,7 +11,8 @@ async function phasePrompt(
 	phase: PlanPhase,
 	harness: BacklogRunOptions["harness"],
 ): Promise<string> {
-	const prompt = buildPhasePrompt(item, phaseNumber, phase, harness);
+	const yolo = phase.name === REVIEW_PHASE_NAME && (await fetchSessionYolo());
+	const prompt = buildPhasePrompt(item, phaseNumber, phase, harness, yolo);
 	const contract = await fetchAutopilotRunContract(item.id);
 	return contract ? `${prompt}\n\n${contract}` : prompt;
 }

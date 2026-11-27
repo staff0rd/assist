@@ -39,6 +39,11 @@ vi.mock("./src/commands/backlog/fetchAutopilotRunContract", () => ({
 	fetchAutopilotRunContract: () => Promise.resolve(undefined),
 }));
 
+// why: tests run inside assist sessions, whose env would ask the live daemon whether the session is yolo
+vi.mock("./src/commands/backlog/fetchSessionYolo", () => ({
+	fetchSessionYolo: () => Promise.resolve(false),
+}));
+
 // why: a parallel build of this repo holds its build lock, which would stall any test that reaches a restart or daemon spawn
 vi.mock("./src/build/waitForBuild", () => ({
 	waitForBuild: () => Promise.resolve(),

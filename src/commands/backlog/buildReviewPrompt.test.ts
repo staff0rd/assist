@@ -78,4 +78,42 @@ describe("buildReviewPrompt", () => {
 			expect(prompt).not.toContain("assist ask-check");
 		});
 	});
+
+	describe("yolo", () => {
+		it("leaves the prompt unchanged outside yolo", () => {
+			const prompt = buildReviewPrompt(makeBacklogItem(), 3, {
+				commitBeforePhaseEnd: false,
+				askCheck: true,
+				yolo: false,
+			});
+
+			expect(prompt).toBe(
+				buildReviewPrompt(makeBacklogItem(), 3, {
+					commitBeforePhaseEnd: false,
+					askCheck: true,
+				}),
+			);
+			expect(prompt).toContain(
+				"Wait for the user to confirm before proceeding.",
+			);
+			expect(prompt).toContain(
+				"Once the user gives that explicit completion instruction:",
+			);
+		});
+
+		it("makes yolo the completion instruction and does not wait in chat", () => {
+			const prompt = buildReviewPrompt(makeBacklogItem(), 3, {
+				commitBeforePhaseEnd: false,
+				askCheck: true,
+				yolo: true,
+			});
+
+			expect(prompt).toContain("yolo mode is the completion instruction");
+			expect(prompt).toContain("yolo mode answers them");
+			expect(prompt).not.toContain(
+				"Wait for the user to confirm before proceeding.",
+			);
+			expect(prompt).not.toContain("explicit completion instruction:");
+		});
+	});
 });

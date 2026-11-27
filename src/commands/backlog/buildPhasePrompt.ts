@@ -15,6 +15,7 @@ export function buildPhasePrompt(
 	phaseNumber: number,
 	phase: PlanPhase,
 	harness?: HarnessKind,
+	yolo = false,
 ): string {
 	const config = loadConfig();
 	const worktree = config.worktree;
@@ -31,6 +32,7 @@ export function buildPhasePrompt(
 			commitBeforePhaseEnd,
 			askCheck,
 			manualChecks: phase.manualChecks,
+			yolo,
 		});
 	}
 	return buildAuthoredPhasePrompt(item, phaseNumber, phase, {

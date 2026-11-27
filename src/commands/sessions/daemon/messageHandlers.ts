@@ -21,6 +21,7 @@ import { handleDismiss } from "./handleDismiss";
 import { handleOutputRequest } from "./handleOutputRequest";
 import { handleReloadLinks } from "./handleReloadLinks";
 import { handleRestartWebServer } from "./handleRestartWebServer";
+import { handleSessionYolo } from "./handleSessionYolo";
 import { handleSetStatus } from "./handleSetStatus";
 import { handleSubscribeLogs } from "./handleSubscribeLogs";
 import { handleTypeKeys } from "./handleTypeKeys";
@@ -99,6 +100,7 @@ export const messageHandlers: Record<string, Handler> = {
 	"verify-started": routed((client, m, d) =>
 		m.verify.start(client, d.sessionId as string),
 	),
+	"session-yolo": handleSessionYolo,
 	"session-live": (client, m, d) => {
 		const live = m.hasSession(d.sessionId as string);
 		if (!live) daemonLog(`session-live: unknown session id=${d.sessionId}`);

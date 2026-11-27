@@ -27,6 +27,7 @@ vi.mock("./verifyPhaseResume", () => ({
 }));
 vi.mock("./buildPhasePrompt", () => ({
 	buildPhasePrompt: () => "PHASE_PROMPT",
+	REVIEW_PHASE_NAME: "Review",
 }));
 vi.mock("../sessions/daemon/ensureHooksSettings", () => ({
 	ensureHooksSettings: () => "hooks.json",
