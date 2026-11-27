@@ -54,7 +54,7 @@ export const reviewConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "review.instance.services",
 		setter: "assist config set review.instance.services.<service>.port 3000",
-		note: "compose services review instance passes a checkout to; a service with a port (the one it listens on in its container) also gets a free host port in ASSIST_PORT_<SERVICE>",
+		note: "compose services review instance passes a checkout to in ASSIST_SRC_<SERVICE>; a service with a port (the one it listens on in its container) also gets a free host port in ASSIST_PORT_<SERVICE>. A service with a repo (path to a local clone of a companion repo, e.g. `review.instance.services.web.repo ../frontend`) builds from that repo at the head of its PR linked in the reviewed PR's body, else its default branch; others build from the reviewed PR",
 	},
 	{
 		key: "review.instance.entry.service",

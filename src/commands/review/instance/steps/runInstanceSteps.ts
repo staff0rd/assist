@@ -38,6 +38,12 @@ export async function runInstanceSteps(
 		headed: input.headed ?? false,
 		errorLog,
 		auth: input.auth,
+		checkouts: instance.checkouts.map(({ services, repo, sha, source }) => ({
+			services,
+			repo,
+			sha,
+			source,
+		})),
 	}).finally(() => composeLogs.stop());
 	const checked = withStepErrors(result, errorLog);
 	writeStepsReport(reportDir, instance.url, checked);

@@ -1,5 +1,6 @@
 import type { Page } from "playwright";
 import type { HighLevelManualTesting } from "../../highLevel/types";
+import type { ReportedCheckout } from "../checkouts/ReportedCheckout";
 import type { InstanceAuth } from "../auth/InstanceAuth";
 import type { StepErrorLog } from "../logs/createStepErrorLog";
 import { buildStepPrompt } from "./buildStepPrompt";
@@ -18,6 +19,7 @@ export type ManualStepsInput = {
 	headed?: boolean;
 	errorLog: StepErrorLog;
 	auth?: InstanceAuth;
+	checkouts?: ReportedCheckout[];
 };
 
 export async function runManualStep(

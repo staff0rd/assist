@@ -4,6 +4,17 @@ import { buildInstanceEnv } from "./buildInstanceEnv";
 import { instanceEntryUrl } from "./instanceEntryUrl";
 import { instanceProjectName } from "./instanceProjectName";
 import { planReviewInstance } from "./planReviewInstance";
+import type { InstanceCheckout } from "./checkouts/InstanceCheckout";
+
+const checkout: InstanceCheckout = {
+	repo: "acme/app",
+	repoRoot: "/repo",
+	dir: "/tmp/tree",
+	sha: "abc",
+	fetchRef: "pull/1/head",
+	source: "PR #1",
+	services: [],
+};
 
 function portSequence(...ports: number[]) {
 	let index = 0;
@@ -35,15 +46,20 @@ describe("allocateServicePorts", () => {
 });
 
 describe("buildInstanceEnv", () => {
-	it("passes the checkout to every service and ports to those that have one", () => {
+	it("passes each service its checkout and ports to those that have one", () => {
 		expect(
-			buildInstanceEnv({ web: { port: 3000 }, "bg-worker": {} }, "/tmp/tree", {
-				web: 5001,
-			}),
+			buildInstanceEnv(
+				[
+					{ ...checkout, dir: "/tmp/tree", services: ["api", "bg-worker"] },
+					{ ...checkout, dir: "/tmp/front", services: ["web"] },
+				],
+				{ api: 5001 },
+			),
 		).toEqual({
-			ASSIST_SRC_WEB: "/tmp/tree",
-			ASSIST_PORT_WEB: "5001",
+			ASSIST_SRC_API: "/tmp/tree",
+			ASSIST_PORT_API: "5001",
 			ASSIST_SRC_BG_WORKER: "/tmp/tree",
+			ASSIST_SRC_WEB: "/tmp/front",
 		});
 	});
 });
@@ -62,6 +78,14 @@ describe("instanceEntryUrl", () => {
 	});
 });
 
+const pr = {
+	repo: "app",
+	fullName: "acme/app",
+	number: 7,
+	sha: "a".repeat(40),
+	body: "",
+};
+
 describe("planReviewInstance", () => {
 	it("places the worktree under the project name and resolves the compose file", async () => {
 		const plan = await planReviewInstance({
@@ -72,16 +96,26 @@ describe("planReviewInstance", () => {
 				logs: { services: {}, browser: { ignore: [] } },
 			},
 			repoRoot: "/repo",
-			repo: "app",
-			prNumber: 7,
+			pr,
 			instancesDir: "/instances",
 			nextPort: portSequence(6000),
 		});
 		expect(plan.project).toMatch(/^assist-review-app-pr7-[0-9a-f]{6}$/);
-		expect(plan.worktree).toBe(`/instances/${plan.project}`);
+		const worktree = `/instances/${plan.project}`;
+		expect(plan.checkouts).toEqual([
+			{
+				repo: "acme/app",
+				repoRoot: "/repo",
+				dir: worktree,
+				sha: pr.sha,
+				fetchRef: "pull/7/head",
+				source: "PR #7",
+				services: ["web"],
+			},
+		]);
 		expect(plan.composeFile).toBe("/repo/docker-compose.review.yml");
 		expect(plan.env).toEqual({
-			ASSIST_SRC_WEB: plan.worktree,
+			ASSIST_SRC_WEB: worktree,
 			ASSIST_PORT_WEB: "6000",
 		});
 		expect(plan.url).toBe("http://localhost:6000/");

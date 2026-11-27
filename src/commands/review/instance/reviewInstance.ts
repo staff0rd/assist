@@ -1,4 +1,5 @@
 import { bringUpInstance } from "./bringUpInstance";
+import { formatCheckouts } from "./checkouts/formatCheckouts";
 import { createInstanceTeardown } from "./createInstanceTeardown";
 import { prepareReviewInstance } from "./prepareReviewInstance";
 import { printKeptInstance } from "./printKeptInstance";
@@ -18,11 +19,10 @@ export async function reviewInstance(
 		await bringUpInstance(
 			runInheritedCommand,
 			instance,
-			head,
 			() => interrupt.interrupted,
 		);
 		console.log(
-			`PR #${head.number} (${head.sha.slice(0, 7)}) is up as ${instance.project}: ${instance.url}`,
+			`PR #${head.number} (${head.sha.slice(0, 7)}) is up as ${instance.project}: ${instance.url}\n${formatCheckouts(instance.checkouts)}`,
 		);
 		await runInstanceSteps({
 			instance,

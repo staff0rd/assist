@@ -6,6 +6,7 @@ export function resolvePrHead(pr: string): {
 	number: number;
 	sha: string;
 	headRef: string;
+	body: string;
 	repo: string;
 	fullName: string;
 } {
@@ -13,14 +14,16 @@ export function resolvePrHead(pr: string): {
 	if (!Number.isInteger(number) || number <= 0)
 		exitWithError(`\`${pr}\` is not a pull request number.`);
 	const repo = getRepoInfo();
-	const { headRefOid, headRefName } = ghPrView<{
+	const { headRefOid, headRefName, body } = ghPrView<{
 		headRefOid: string;
 		headRefName: string;
-	}>(number, repo, "headRefOid,headRefName");
+		body: string;
+	}>(number, repo, "headRefOid,headRefName,body");
 	return {
 		number,
 		sha: headRefOid,
 		headRef: headRefName,
+		body,
 		repo: repo.repo,
 		fullName: `${repo.org}/${repo.repo}`,
 	};

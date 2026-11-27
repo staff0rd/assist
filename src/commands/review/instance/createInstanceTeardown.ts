@@ -26,11 +26,12 @@ export function createInstanceTeardown(
 				{ cwd: instance.repoRoot, env: instance.env },
 			),
 		);
-		await attempt("worktree removal", () =>
-			run("git", ["worktree", "remove", "--force", instance.worktree], {
-				cwd: instance.repoRoot,
-			}),
-		);
+		for (const checkout of instance.checkouts)
+			await attempt(`worktree removal (${checkout.dir})`, () =>
+				run("git", ["worktree", "remove", "--force", checkout.dir], {
+					cwd: checkout.repoRoot,
+				}),
+			);
 	};
 	return () => {
 		done ??= teardown();

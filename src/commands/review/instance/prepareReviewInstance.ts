@@ -15,8 +15,7 @@ export async function prepareReviewInstance(pr: string) {
 	const instance = await planReviewInstance({
 		config,
 		repoRoot,
-		repo: head.repo,
-		prNumber: head.number,
+		pr: head,
 	}).catch((error: Error) => exitWithError(error.message));
 	return { head, config, manualTesting, auth, instance };
 }

@@ -19,7 +19,10 @@ export async function runManualSteps(
 	const executable = resolveClaudeExecutable();
 	const headed = input.headed ?? false;
 	const browser = await chromium.launch(browserLaunchOptions(headed));
-	const result: ManualStepsResult = { verdicts: [] };
+	const result: ManualStepsResult = {
+		checkouts: input.checkouts,
+		verdicts: [],
+	};
 	try {
 		const storageState = await signIn(browser, input.auth, input.url);
 		const context = await browser.newContext(
