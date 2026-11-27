@@ -1,6 +1,7 @@
 import type { PrPreview, PreviewKind } from "../shared/SessionInfoBase";
 import { toAttachments } from "../shared/toAttachments";
 import { parsePreviewMetadata } from "./parsePreviewMetadata";
+import { parsePreviewTitleLink } from "./parsePreviewTitleLink";
 
 export function buildPrPreview(
 	d: Record<string, unknown>,
@@ -11,6 +12,7 @@ export function buildPrPreview(
 	return {
 		requestId: d.requestId as string,
 		title: d.title as string,
+		titleLink: parsePreviewTitleLink(d.titleLink),
 		body: d.body as string,
 		prNumber,
 		kind,

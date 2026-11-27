@@ -5,6 +5,7 @@ import { azureDevopsRemote } from "../review/azureDevopsRemote";
 import { azureDevopsRepoUrl } from "./azureDevops/azureDevopsRepoUrl";
 import { resolveCommentWithReply } from "./resolveCommentWithReply";
 import { getRepoInfo, isGhNotInstalled } from "./shared";
+import { threadTarget } from "./threadTarget";
 
 function verifySha(sha: string): string {
 	try {
@@ -30,7 +31,7 @@ export function fixed(commentId: number, sha: string): void {
 		const message = `Fixed in [${fullSha}](${repoUrl()}/commit/${fullSha})`;
 
 		pushCommit(loadConfig().worktree?.trunk === true);
-		resolveCommentWithReply(commentId, message, "fixed");
+		resolveCommentWithReply(threadTarget("fixed"), commentId, message);
 	} catch (error) {
 		if (isGhNotInstalled(error)) {
 			console.error("Error: GitHub CLI (gh) is not installed.");

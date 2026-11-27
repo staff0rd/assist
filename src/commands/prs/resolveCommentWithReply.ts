@@ -1,6 +1,5 @@
-import type { AzureDevopsThreadStatus } from "./azureDevops/azureDevopsThreadRequests";
 import { deleteCommentsCache, loadCommentsCache } from "./loadCommentsCache";
-import { type ThreadTarget, threadTarget } from "./threadTarget";
+import type { ThreadTarget } from "./threadTarget";
 import type { LineComment, PrComment } from "./types";
 
 function requireCache(org: string, repo: string, prNumber: number) {
@@ -47,11 +46,10 @@ function cleanupCacheIfDone(
 }
 
 export function resolveCommentWithReply(
+	target: ThreadTarget,
 	commentId: number,
 	message: string,
-	status: AzureDevopsThreadStatus,
 ): void {
-	const target = threadTarget(status);
 	const cache = requireCache(target.org, target.repo, target.prNumber);
 	const comment = requireLineComment(cache, commentId);
 

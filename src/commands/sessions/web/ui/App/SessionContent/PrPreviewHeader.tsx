@@ -2,7 +2,7 @@ import { Box, Chip, Link, Typography } from "@mui/material";
 import type { PrPreview } from "../../../../shared/SessionInfoBase";
 import { PreviewWidthToggle } from "./PrPreviewHeader/PreviewWidthToggle";
 import { previewChip } from "./PrPreviewHeader/previewChip";
-import { splitGithubRef } from "./PrPreviewHeader/splitGithubRef";
+import { splitPreviewTitle } from "./PrPreviewHeader/splitPreviewTitle";
 
 export function PrPreviewHeader({
 	preview,
@@ -12,7 +12,7 @@ export function PrPreviewHeader({
 	draft: boolean;
 }) {
 	const chip = previewChip(preview, draft);
-	const titled = splitGithubRef(preview.title);
+	const titled = splitPreviewTitle(preview);
 	return (
 		<Box sx={{ p: 2, display: "flex", alignItems: "center", gap: 1 }}>
 			<Typography variant="subtitle1" sx={{ flex: 1, fontWeight: 600 }}>

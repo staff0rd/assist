@@ -37,10 +37,16 @@ export type PreviewMetadata = {
 	url?: string;
 };
 
+export type PreviewTitleLink = {
+	reference: string;
+	url: string;
+};
+
 export type PrPreview = {
 	requestId: string;
 	supersedes?: string;
 	title: string;
+	titleLink?: PreviewTitleLink;
 	body: string;
 	prNumber: number | null;
 	kind?: PreviewKind;

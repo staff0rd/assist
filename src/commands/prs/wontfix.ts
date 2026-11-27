@@ -1,7 +1,9 @@
+import { cachedCommentUrl } from "./cachedCommentUrl";
 import { rejectHarnessNames } from "./rejectHarnessNames";
 import { resolveCommentWithReply } from "./resolveCommentWithReply";
 import { reviewProposedPrComment } from "./reviewProposedPrComment";
 import { isGhNotInstalled } from "./shared";
+import { threadTarget } from "./threadTarget";
 import { validateShaReferences } from "./validateShaReferences";
 
 export async function wontfix(
@@ -11,14 +13,17 @@ export async function wontfix(
 	rejectHarnessNames("Reason", reason);
 	validateShaReferences(reason);
 
-	await reviewProposedPrComment(
-		`Won't fix comment #${commentId}`,
-		reason,
-		null,
-	);
-
 	try {
-		resolveCommentWithReply(commentId, reason, "wontFix");
+		const target = threadTarget("wontFix");
+		const reference = `#${commentId}`;
+		const url = cachedCommentUrl(target, commentId);
+		await reviewProposedPrComment(
+			`Won't fix comment ${reference}`,
+			reason,
+			null,
+			url ? { reference, url } : undefined,
+		);
+		resolveCommentWithReply(target, commentId, reason);
 	} catch (error) {
 		if (isGhNotInstalled(error)) {
 			console.error("Error: GitHub CLI (gh) is not installed.");

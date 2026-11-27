@@ -12,12 +12,22 @@ vi.mock("./resolveCommentWithReply", () => ({
 		resolveCommentWithReply(...args),
 }));
 vi.mock("./shared", () => ({ isGhNotInstalled: () => false }));
+const target = { org: "acme", repo: "widgets", prNumber: 7 };
+vi.mock("./threadTarget", () => ({ threadTarget: () => target }));
+const loadCommentsCache = vi.fn();
+vi.mock("./loadCommentsCache", () => ({
+	loadCommentsCache: (...args: unknown[]) => loadCommentsCache(...args),
+}));
+
+const commentUrl = "https://github.com/acme/widgets/pull/7#discussion_r123";
 
 import { wontfix } from "./wontfix";
 
 beforeEach(() => {
 	mockRequestPreviewDecision.mockReset();
 	resolveCommentWithReply.mockReset();
+	loadCommentsCache.mockReset();
+	loadCommentsCache.mockReturnValue(null);
 	delete process.env.ASSIST_SESSION;
 	delete process.env.ASSIST_SESSION_ID;
 });
@@ -34,9 +44,9 @@ describe("wontfix", () => {
 
 		expect(mockRequestPreviewDecision).not.toHaveBeenCalled();
 		expect(resolveCommentWithReply).toHaveBeenCalledWith(
+			target,
 			123,
 			"Out of scope for this PR",
-			"wontFix",
 		);
 	});
 
@@ -55,9 +65,29 @@ describe("wontfix", () => {
 				body: "Out of scope for this PR",
 				kind: "pr-comment",
 				prNumber: null,
+				titleLink: undefined,
 			}),
 		);
 		expect(resolveCommentWithReply).toHaveBeenCalled();
+	});
+
+	it("links the comment number to the cached comment's URL", async () => {
+		process.env.ASSIST_SESSION = "1";
+		process.env.ASSIST_SESSION_ID = "s1";
+		vi.spyOn(console, "log").mockImplementation(() => {});
+		mockRequestPreviewDecision.mockResolvedValue({ decision: "approve" });
+		loadCommentsCache.mockReturnValue({
+			comments: [{ type: "line", id: 123, html_url: commentUrl }],
+		});
+
+		await wontfix(123, "Out of scope for this PR");
+
+		expect(loadCommentsCache).toHaveBeenCalledWith("acme", "widgets", 7);
+		expect(mockRequestPreviewDecision).toHaveBeenCalledWith(
+			expect.objectContaining({
+				titleLink: { reference: "#123", url: commentUrl },
+			}),
+		);
 	});
 
 	it("exits non-zero without resolving when the preview is rejected", async () => {

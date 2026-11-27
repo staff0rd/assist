@@ -1,6 +1,6 @@
 import { githubIssueUrl } from "../../../../../../../shared/githubIssueUrl";
 
-type TitleWithRef = {
+export type TitleWithRef = {
 	before: string;
 	reference: string;
 	url: string;
