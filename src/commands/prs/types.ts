@@ -29,6 +29,8 @@ export type ReviewComment = {
 	user: string;
 	state: string;
 	body: string;
+	html_url: string;
+	handled: boolean;
 };
 
 export type PrComment = LineComment | ReviewComment;

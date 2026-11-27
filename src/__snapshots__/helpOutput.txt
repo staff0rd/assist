@@ -1270,27 +1270,30 @@ Usage: assist prs [options] [command]
 Pull request utilities
 
 Options:
-  --open                         List only open pull requests
-  --closed                       List only closed pull requests
-  -h, --help                     display help for command
+  --open                           List only open pull requests
+  --closed                         List only closed pull requests
+  -h, --help                       display help for command
 
 Commands:
-  raise [options]                Raise a pull request, assembling the body from discrete sections
-  status [options] <repo...>     Report every open pull request in each owner/repo, grouped by repo
-  slack-channel                  Print the Slack channel PRs are announced to (prs.slack, else
-                                 slack.channel)
-  edit [options]                 Update individual sections of the current branch's pull request
-  list-comments                  List all comments on the current branch's pull request
-  fixed <comment-id> <sha>       Reply with commit link and resolve thread
-  wontfix <comment-id> <reason>  Reply with reason and resolve thread (reason of - reads it from
-                                 stdin)
-  reply <comment-id> <body>      Reply to a comment thread without resolving it (body of - reads it
-                                 from stdin)
-  comment <path> <line> <body>   Add a line comment to the pending review (body of - reads it from
-                                 stdin)
-  read-time [options] <target>   Estimate how long a document takes to read (target is a pull
-                                 request number, a GitHub pull request URL, - for stdin, or a file
-                                 path)
+  raise [options]                  Raise a pull request, assembling the body from discrete sections
+  status [options] <repo...>       Report every open pull request in each owner/repo, grouped by
+                                   repo
+  slack-channel                    Print the Slack channel PRs are announced to (prs.slack, else
+                                   slack.channel)
+  edit [options]                   Update individual sections of the current branch's pull request
+  list-comments                    List all comments on the current branch's pull request
+  fixed <comment-id> <sha>         Reply with commit link and resolve thread
+  wontfix <comment-id> <reason>    Reply with reason and resolve thread (reason of - reads it from
+                                   stdin)
+  reply <comment-id> <body>        Reply to a comment thread without resolving it (body of - reads
+                                   it from stdin)
+  review-reply <review-id> <body>  Post one PR comment answering a review body and mark it handled
+                                   (body of - reads it from stdin)
+  comment <path> <line> <body>     Add a line comment to the pending review (body of - reads it from
+                                   stdin)
+  read-time [options] <target>     Estimate how long a document takes to read (target is a pull
+                                   request number, a GitHub pull request URL, - for stdin, or a file
+                                   path)
 
 Config:
   assist config set prs.slack "#pull-requests" # Slack channel PRs are announced to, falling back to slack.channel (read by 'assist prs slack-channel', used by /prs-slack)
@@ -1573,6 +1576,14 @@ Options:
 Usage: assist prs reply [options] <comment-id> <body>
 
 Reply to a comment thread without resolving it (body of - reads it from stdin)
+
+Options:
+  -h, --help  display help for command
+
+=== assist prs review-reply --help
+Usage: assist prs review-reply [options] <review-id> <body>
+
+Post one PR comment answering a review body and mark it handled (body of - reads it from stdin)
 
 Options:
   -h, --help  display help for command

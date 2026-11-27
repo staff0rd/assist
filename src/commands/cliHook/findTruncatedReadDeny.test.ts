@@ -225,6 +225,7 @@ describe("findTruncatedReadDeny", () => {
 		["assist prs comment src/a.ts 3 hi", "assist prs comment"],
 		["assist prs reply 12 hi", "assist prs reply"],
 		["assist prs wontfix 12 because", "assist prs wontfix"],
+		["assist prs review-reply 12 -", "assist prs review-reply"],
 		["assist miro extract", "assist miro extract"],
 	])("denies approval-gated command %s piped to tail", (command, named) => {
 		const decision = findTruncatedReadDeny([command, "tail -20"]);

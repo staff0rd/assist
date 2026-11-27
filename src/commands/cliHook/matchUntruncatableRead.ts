@@ -48,6 +48,7 @@ const APPROVAL_GATED_COMMANDS = [
 	"assist prs comment",
 	"assist prs reply",
 	"assist prs wontfix",
+	"assist prs review-reply",
 	"assist miro extract",
 ];
 

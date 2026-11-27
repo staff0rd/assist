@@ -1,27 +1,26 @@
-import { execFileSync } from "node:child_process";
 import type { ThreadInfo } from "../fetchThreadIds";
 import type { PrComment } from "../types";
+import { fetchJson } from "./fetchJson";
+import { fetchHandledReviewIds } from "./fetchHandledReviewIds";
 
-function fetchJson(endpoint: string): unknown[] {
-	const result = execFileSync("gh", ["api", "--paginate", endpoint], {
-		encoding: "utf8",
-	});
-	if (!result.trim()) return [];
-	return JSON.parse(result);
-}
-
-function mapReview(r: {
-	id: number;
-	user: { login: string };
-	state: string;
-	body: string;
-}): PrComment {
+function mapReview(
+	r: {
+		id: number;
+		user: { login: string };
+		state: string;
+		body: string;
+		html_url: string;
+	},
+	handledIds: Set<number>,
+): PrComment {
 	return {
 		type: "review",
 		id: r.id,
 		user: r.user.login,
 		state: r.state,
 		body: r.body,
+		html_url: r.html_url,
+		handled: handledIds.has(r.id),
 	};
 }
 
@@ -31,9 +30,10 @@ export function fetchReviewComments(
 	prNumber: number,
 ): PrComment[] {
 	const reviews = fetchJson(`repos/${org}/${repo}/pulls/${prNumber}/reviews`);
+	const handledIds = fetchHandledReviewIds(org, repo, prNumber);
 	return (reviews as Parameters<typeof mapReview>[0][])
 		.filter((r) => r.body)
-		.map(mapReview);
+		.map((r) => mapReview(r, handledIds));
 }
 
 function mapLineComment(

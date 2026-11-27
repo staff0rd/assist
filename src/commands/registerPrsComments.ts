@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { internalCommand } from "../shared/internalCommand";
+import { registerPrsReviewReply } from "./registerPrsReviewReply";
 import { registerPrsThreadReplies } from "./registerPrsThreadReplies";
 
 const reviewComments = "/review-pr-comments";
@@ -20,6 +21,7 @@ export function registerPrsComments(prsCommand: Command): void {
 	);
 
 	registerPrsThreadReplies(prsCommand, reviewComments);
+	registerPrsReviewReply(prsCommand, reviewComments);
 
 	internalCommand(
 		prsCommand

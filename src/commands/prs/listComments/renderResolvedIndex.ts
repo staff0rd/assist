@@ -1,14 +1,6 @@
 import type { Style } from "./commentStyle";
+import { firstLine } from "./firstLine";
 import { type Thread, threadLocation } from "./groupThreads";
-
-const summaryLimit = 100;
-
-function firstLine(body: string): string {
-	const line = body.trim().split("\n")[0] ?? "";
-	return line.length > summaryLimit
-		? `${line.slice(0, summaryLimit - 1)}…`
-		: line;
-}
 
 export function renderResolvedIndex(threads: Thread[], style: Style): string {
 	const lines = [style.cyan(`Resolved threads (${threads.length})`)];

@@ -2,9 +2,9 @@ import type { LineComment, PrComment, ReviewComment } from "../types";
 import { agentFooter } from "./agentFooter";
 import { commentStyle } from "./commentStyle";
 import { groupThreads } from "./groupThreads";
+import { printReviews } from "./printReviews";
 import { renderResolvedIndex } from "./renderResolvedIndex";
 import { renderThreadBlock } from "./renderThreadBlock";
-import { renderReview } from "./renderReview";
 import { summarise } from "./summarise";
 
 export type ListCommentsResult = {
@@ -19,18 +19,16 @@ export function printComments(result: ListCommentsResult): void {
 		return;
 	}
 	const style = commentStyle();
-	const reviews = comments.filter(
-		(c): c is ReviewComment => c.type === "review",
-	);
 	const threads = groupThreads(
 		comments.filter((c): c is LineComment => c.type === "line"),
 	);
 	const unresolved = threads.filter((t) => !t.resolved);
 	const resolved = threads.filter((t) => t.resolved);
 
-	for (const review of reviews) {
-		console.log(renderReview(review, style));
-	}
+	const reviewCounts = printReviews(
+		comments.filter((c): c is ReviewComment => c.type === "review"),
+		style,
+	);
 	if (unresolved.length > 0) {
 		console.log(`${style.cyan(`Unresolved threads (${unresolved.length})`)}\n`);
 		for (const thread of unresolved) {
@@ -40,9 +38,16 @@ export function printComments(result: ListCommentsResult): void {
 	if (resolved.length > 0) {
 		console.log(renderResolvedIndex(resolved, style));
 	}
-	console.log(summarise(reviews.length, unresolved, resolved));
+	console.log(
+		summarise({
+			unhandledReviews: reviewCounts.unhandled,
+			handledReviews: reviewCounts.handled,
+			unresolved,
+			resolved,
+		}),
+	);
 	if (style.agent) {
-		console.log(agentFooter(unresolved.length));
+		console.log(agentFooter(unresolved.length, reviewCounts.unhandled));
 		return;
 	}
 	if (cachePath) {

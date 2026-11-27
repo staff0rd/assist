@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import type { PrComment } from "../types";
+import type { PrComment, ReviewComment } from "../types";
 import { printComments } from "./printComments";
 
 let output: string[] = [];
@@ -17,6 +17,19 @@ function lineComment(overrides: Partial<Extract<PrComment, { type: "line" }>>) {
 		diff_hunk: "@@ -1 +1 @@\n-old\n+new",
 		html_url: "https://github.com/o/r/pull/1#discussion_r1",
 		resolved: false,
+		...overrides,
+	};
+}
+
+function review(overrides: Partial<ReviewComment>): ReviewComment {
+	return {
+		type: "review",
+		id: 9,
+		user: "carol",
+		state: "COMMENTED",
+		body: "Looks fine.",
+		html_url: "https://github.com/o/r/pull/1#pullrequestreview-9",
+		handled: false,
 		...overrides,
 	};
 }
@@ -130,13 +143,10 @@ describe("printComments", () => {
 		it("should print them in full ahead of the line-comment threads", () => {
 			printComments({
 				comments: [
-					{
-						type: "review",
-						id: 9,
-						user: "carol",
+					review({
 						state: "CHANGES_REQUESTED",
 						body: "Overall this needs work.",
-					},
+					}),
 					lineComment({}),
 				],
 				cachePath: null,
@@ -146,6 +156,35 @@ describe("printComments", () => {
 			expect(text).toContain("Overall this needs work.");
 			expect(text.indexOf("Review by carol")).toBeLessThan(
 				text.indexOf("Thread on"),
+			);
+		});
+	});
+
+	describe("when a review has been handled", () => {
+		it("should list it as a one-line index rather than its full body", () => {
+			printComments({
+				comments: [
+					review({
+						id: 77,
+						handled: true,
+						body: "Findings outside the diff\nSECOND_LINE detail.",
+					}),
+				],
+				cachePath: null,
+			});
+
+			expect(printed()).toContain("Handled reviews (1)");
+			expect(printed()).toContain("carol id 77: Findings outside the diff");
+			expect(printed()).not.toContain("SECOND_LINE");
+			expect(printed()).not.toContain("Review by carol");
+		});
+
+		it("should print the unhandled review's id and url so review-reply can target it", () => {
+			printComments({ comments: [review({ id: 55 })], cachePath: null });
+
+			expect(printed()).toContain("id 55");
+			expect(printed()).toContain(
+				"https://github.com/o/r/pull/1#pullrequestreview-9",
 			);
 		});
 	});
@@ -237,20 +276,15 @@ describe("printComments", () => {
 		it("should report the review comment count alongside", () => {
 			printComments({
 				comments: [
-					{
-						type: "review",
-						id: 9,
-						user: "carol",
-						state: "COMMENTED",
-						body: "Looks fine.",
-					},
+					review({}),
+					review({ id: 10, handled: true }),
 					lineComment({}),
 				],
 				cachePath: null,
 			});
 
 			expect(printed()).toContain(
-				"Found 1 review comment, 1 unresolved and 0 resolved threads.",
+				"Found 1 unhandled and 1 handled reviews, 1 unresolved and 0 resolved threads.",
 			);
 		});
 	});
@@ -271,13 +305,21 @@ describe("printComments", () => {
 			expect(lastLines).toContain("do not read or parse the YAML cache");
 		});
 
+		it("should still point at unhandled reviews when no thread is unresolved", () => {
+			printComments({ comments: [review({})], cachePath: null });
+
+			expect(printed()).toContain("printed in full above");
+		});
+
 		it("should say there is nothing to process when no thread is unresolved", () => {
 			printComments({
 				comments: [lineComment({ resolved: true })],
 				cachePath: "/cache.yaml",
 			});
 
-			expect(printed()).toContain("No unresolved threads to process.");
+			expect(printed()).toContain(
+				"No unresolved threads or unhandled reviews to process.",
+			);
 			expect(printed()).not.toContain("printed in full above");
 		});
 	});
