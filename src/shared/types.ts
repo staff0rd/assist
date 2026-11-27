@@ -191,6 +191,7 @@ const assistConfigShape = {
 							z.string(),
 							z.strictObject({
 								port: z.number().int().positive().optional(),
+								hostPort: z.number().int().positive().optional(),
 								repo: z.string().optional(),
 							}),
 						)

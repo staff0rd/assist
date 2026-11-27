@@ -45,6 +45,14 @@ describe("allocateServicePorts", () => {
 		);
 		expect(ports).toEqual({ web: 5001, api: 5002 });
 	});
+
+	it("uses a fixed hostPort and keeps it out of the free ports", async () => {
+		const ports = await allocateServicePorts(
+			{ web: { port: 5173, hostPort: 5173 }, api: { port: 4000 } },
+			portSequence(5173, 6001),
+		);
+		expect(ports).toEqual({ web: 5173, api: 6001 });
+	});
 });
 
 describe("buildInstanceEnv", () => {
