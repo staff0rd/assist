@@ -7,6 +7,7 @@ import { releaseViewer } from "./releaseViewer";
 import type { OnStatusChange, Session } from "./types";
 import { type ResizeViewer, resizeSession } from "./resizeSession";
 import { flushPendingPrompts } from "./flushPendingPrompts";
+import { type SessionSender, sessionSender } from "./sessionSender";
 import { typeKeysIntoSession } from "./typeKeysIntoSession";
 import { typePromptIntoSession } from "./typePromptIntoSession";
 import { type TypePromptReply, typePromptReply } from "./typePromptReply";
@@ -54,6 +55,10 @@ export class SessionIo {
 		);
 		if ("queued" in result && result.queued) this.notify();
 		return typePromptReply(id, result);
+	}
+
+	sender(id: string): SessionSender | undefined {
+		return sessionSender(this.sessions, id);
 	}
 
 	typeKeys(id: string, keys: string): TypePromptReply {

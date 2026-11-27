@@ -9,6 +9,7 @@ type TypeRequest = {
 	type: "type-prompt" | "type-keys";
 	sessionId: string;
 	text: string;
+	fromSessionId?: string;
 };
 
 export function requestTypeIntoSession(

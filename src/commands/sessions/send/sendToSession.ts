@@ -12,13 +12,18 @@ export async function sendToSession(
 		const reply = await requestTypeIntoSession(
 			options.keys
 				? { type: "type-keys", sessionId, text: decodeKeys(text) }
-				: { type: "type-prompt", sessionId, text },
+				: { type: "type-prompt", sessionId, text, ...sender() },
 		);
 		if (reply.ok) console.log(reply.message);
 		else fail(reply.message);
 	} catch (error) {
 		fail(error instanceof Error ? error.message : String(error));
 	}
+}
+
+function sender(): { fromSessionId?: string } {
+	const fromSessionId = process.env.ASSIST_SESSION_ID;
+	return fromSessionId ? { fromSessionId } : {};
 }
 
 function fail(message: string): void {

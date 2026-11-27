@@ -14,10 +14,12 @@ describe("sendToSession", () => {
 	beforeEach(() => {
 		vi.spyOn(console, "log").mockImplementation(() => {});
 		vi.spyOn(console, "error").mockImplementation(() => {});
+		vi.stubEnv("ASSIST_SESSION_ID", "");
 	});
 
 	afterEach(() => {
 		vi.restoreAllMocks();
+		vi.unstubAllEnvs();
 		vi.clearAllMocks();
 		process.exitCode = undefined;
 	});
@@ -34,6 +36,33 @@ describe("sendToSession", () => {
 		});
 		expect(console.log).toHaveBeenCalledWith("Sent");
 		expect(process.exitCode).toBeUndefined();
+	});
+
+	it("names the sending session when run inside one", async () => {
+		vi.stubEnv("ASSIST_SESSION_ID", "2");
+		requestMock.mockResolvedValue({ ok: true, message: "Sent" });
+
+		await sendToSession("11", "run the tests", {});
+
+		expect(requestMock).toHaveBeenCalledWith({
+			type: "type-prompt",
+			sessionId: "11",
+			text: "run the tests",
+			fromSessionId: "2",
+		});
+	});
+
+	it("never names the sender for --keys", async () => {
+		vi.stubEnv("ASSIST_SESSION_ID", "2");
+		requestMock.mockResolvedValue({ ok: true, message: "Sent keys" });
+
+		await sendToSession("11", "y", { keys: true });
+
+		expect(requestMock).toHaveBeenCalledWith({
+			type: "type-keys",
+			sessionId: "11",
+			text: "y",
+		});
 	});
 
 	it("sends decoded raw keystrokes with --keys", async () => {

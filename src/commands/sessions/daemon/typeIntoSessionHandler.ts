@@ -5,6 +5,8 @@ import type { Handler } from "./routed";
 import type { SessionManager } from "./SessionManager";
 import type { TypePromptReply } from "./typePromptReply";
 
+type Msg = Record<string, unknown>;
+
 type TypeIntoSession = (
 	m: SessionManager,
 	id: string,
@@ -14,8 +16,10 @@ type TypeIntoSession = (
 export function typeIntoSessionHandler(
 	label: string,
 	typeInto: TypeIntoSession,
+	prepare: (m: SessionManager, request: Msg) => Msg = (_, request) => request,
 ): Handler {
-	return (client, m, request) => {
+	return (client, m, data) => {
+		const request = prepare(m, data);
 		const requestId = request.requestId;
 		const d = routeToLinkedSession(
 			client,
