@@ -40,7 +40,7 @@ function coerceValue(key: string, raw: unknown): CoerceConfigValueResult {
 	return coerceConfigScalar(key, raw, leaf.type as ConfigScalarLeafType);
 }
 
-function coerceScalarList(
+export function coerceScalarList(
 	key: string,
 	raw: unknown,
 	itemType: ConfigScalarLeafType,

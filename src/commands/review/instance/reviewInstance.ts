@@ -36,12 +36,13 @@ export async function reviewInstance(
 		console.log(
 			`PR #${head.number} (${head.sha.slice(0, 7)}) is up as ${instance.project}: ${instance.url}`,
 		);
-		await runInstanceSteps(
+		await runInstanceSteps({
 			instance,
 			manualTesting,
-			interrupt.abort,
-			options.headed,
-		);
+			logs: config.logs,
+			abort: interrupt.abort,
+			headed: options.headed,
+		});
 	} catch (error) {
 		console.error(
 			`Error: ${error instanceof Error ? error.message : String(error)}`,

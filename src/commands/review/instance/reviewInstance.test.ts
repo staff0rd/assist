@@ -12,6 +12,7 @@ vi.mock("../../../shared/loadConfig", () => ({
 				composeFile: "compose.yml",
 				services: { web: { port: 3000 } },
 				entry: { service: "web", path: "/" },
+				logs: { services: {}, browser: { ignore: [] } },
 			},
 		},
 	}),
@@ -32,6 +33,10 @@ vi.mock("../../../shared/findFreePort", () => ({
 	findFreePort: () => Promise.resolve(6000),
 }));
 vi.mock("./runInheritedCommand", () => ({ runInheritedCommand: vi.fn() }));
+vi.mock("./steps/writeStepsReport", () => ({ writeStepsReport: vi.fn() }));
+vi.mock("./logs/streamComposeLogs", () => ({
+	streamComposeLogs: () => ({ stop: () => Promise.resolve() }),
+}));
 
 const run = vi.mocked(runInheritedCommand);
 const runSteps = vi.mocked(runManualSteps);
@@ -105,6 +110,20 @@ describe("reviewInstance", () => {
 		runSteps.mockResolvedValue({ verdicts: [verdict("fail")] });
 		await reviewInstance("7", {});
 		expect(commandsRun()).toContain("git worktree remove --force");
+		expect(process.exitCode).toBe(1);
+	});
+
+	it("lists errors logged during a step and exits non-zero", async () => {
+		runSteps.mockImplementation(async ({ errorLog }) => {
+			errorLog.startStep(1);
+			errorLog.record("browser", "pageerror: x is undefined");
+			errorLog.endStep();
+			return { verdicts: [verdict("pass")] };
+		});
+		await reviewInstance("7", {});
+		expect(console.log).toHaveBeenCalledWith(
+			expect.stringContaining("! browser: pageerror: x is undefined"),
+		);
 		expect(process.exitCode).toBe(1);
 	});
 

@@ -9,6 +9,6 @@ export function writeStepsReport(
 ): void {
 	writeFileSync(
 		join(reportDir, "report.json"),
-		`${JSON.stringify({ url, video: result.video, steps: result.verdicts }, null, 2)}\n`,
+		`${JSON.stringify({ url, video: result.video, ignoredErrors: result.ignoredErrors, steps: result.verdicts }, null, 2)}\n`,
 	);
 }

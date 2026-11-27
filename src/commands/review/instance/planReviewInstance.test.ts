@@ -69,6 +69,7 @@ describe("planReviewInstance", () => {
 				composeFile: "docker-compose.review.yml",
 				services: { web: { port: 3000 } },
 				entry: { service: "web", path: "/" },
+				logs: { services: {}, browser: { ignore: [] } },
 			},
 			repoRoot: "/repo",
 			repo: "app",

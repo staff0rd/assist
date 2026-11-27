@@ -311,6 +311,20 @@ describe("configSet", () => {
 			});
 		});
 
+		it("should write a list field of a record entry from comma-separated input", () => {
+			configSet("review.instance.logs.services.api.ignore", "favicon, retry", {
+				node: true,
+			});
+
+			expect(mockSaveGlobalConfig.mock.lastCall?.[0]).toEqual({
+				review: {
+					instance: {
+						logs: { services: { api: { ignore: ["favicon", "retry"] } } },
+					},
+				},
+			});
+		});
+
 		it("should write an array key under --repo", async () => {
 			await configSet("worktree.copy", ".env,.env.local", { repo: true });
 

@@ -4,6 +4,7 @@ import {
 	browserContextOptions,
 	browserLaunchOptions,
 } from "./browserLaunchOptions";
+import { watchBrowserErrors } from "../logs/watchBrowserErrors";
 import { createVideoClock } from "./createVideoClock";
 import type { ManualStepsResult } from "./ManualStepsResult";
 import type { ManualStepsInput } from "./runManualStep";
@@ -23,6 +24,7 @@ export async function runManualSteps(
 			browserContextOptions(headed, input.reportDir),
 		);
 		const page = await context.newPage();
+		watchBrowserErrors(page, input.errorLog.record);
 		try {
 			await runStepsOnPage(
 				page,

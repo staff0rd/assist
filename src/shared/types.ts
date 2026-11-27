@@ -200,6 +200,24 @@ const assistConfigShape = {
 							path: z.string().default("/"),
 						})
 						.default({ path: "/" }),
+					logs: z
+						.strictObject({
+							services: z
+								.record(
+									z.string(),
+									z.strictObject({
+										errorPatterns: z.array(z.string()).optional(),
+										ignore: z.array(z.string()).default([]),
+									}),
+								)
+								.default({}),
+							browser: z
+								.strictObject({
+									ignore: z.array(z.string()).default([]),
+								})
+								.default({ ignore: [] }),
+						})
+						.default({ services: {}, browser: { ignore: [] } }),
 				})
 				.optional(),
 		})

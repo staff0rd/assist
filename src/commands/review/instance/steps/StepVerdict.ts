@@ -1,3 +1,5 @@
+import type { StepError } from "../logs/StepError";
+
 export type Verdict = "pass" | "fail" | "unsure";
 
 export type StepVerdict = {
@@ -8,4 +10,5 @@ export type StepVerdict = {
 	note: string;
 	screenshot: string;
 	videoOffsetMs?: number;
+	errors?: StepError[];
 };

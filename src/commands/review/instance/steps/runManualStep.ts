@@ -1,5 +1,6 @@
 import type { Page } from "playwright";
 import type { HighLevelManualTesting } from "../../highLevel/types";
+import type { StepErrorLog } from "../logs/createStepErrorLog";
 import { buildStepPrompt } from "./buildStepPrompt";
 import { createInputTools } from "./createInputTools";
 import { createPageTools } from "./createPageTools";
@@ -14,6 +15,7 @@ export type ManualStepsInput = {
 	reportDir: string;
 	abort: AbortController;
 	headed?: boolean;
+	errorLog: StepErrorLog;
 };
 
 export async function runManualStep(

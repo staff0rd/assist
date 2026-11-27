@@ -2626,9 +2626,11 @@ Commands:
                            review.instance compose file, have an agent run the manualTesting steps
                            saved by `assist review high-level <pr>` against it in a headless browser
                            (recording a video of the session) or, with --headed, a visible one,
-                           print a pass/fail/unsure verdict per step with screenshots in a report
-                           directory (exit 1 when any step fails), then tear it down (compose down
-                           -v and worktree removal), also on Ctrl+C or failure
+                           watch each compose service's logs and the browser's console errors, page
+                           errors and 5xx responses, print a pass/fail/unsure verdict per step with
+                           screenshots and the errors logged during it in a report directory (exit 1
+                           when any step fails or logs an unignored error), then tear it down
+                           (compose down -v and worktree removal), also on Ctrl+C or failure
 
 With review.codexModel unset or codex-default the codex reviewer runs on the user's own codex auth and configured model (set codex-default in a repo to override an inherited value); when it is set but the LiteLLM proxy is not configured, the reviewer falls back to that plain codex run. A reviewer whose harness is unavailable is skipped with its reason, and the review stops before reviewing when the review.synthesisHarness cannot synthesise.
 
@@ -2647,9 +2649,11 @@ Usage: assist review instance [options] <pr>
 
 Bring a PR up as an isolated, throwaway instance via the repo's review.instance compose file, have
 an agent run the manualTesting steps saved by `assist review high-level <pr>` against it in a
-headless browser (recording a video of the session) or, with --headed, a visible one, print a
-pass/fail/unsure verdict per step with screenshots in a report directory (exit 1 when any step
-fails), then tear it down (compose down -v and worktree removal), also on Ctrl+C or failure
+headless browser (recording a video of the session) or, with --headed, a visible one, watch each
+compose service's logs and the browser's console errors, page errors and 5xx responses, print a
+pass/fail/unsure verdict per step with screenshots and the errors logged during it in a report
+directory (exit 1 when any step fails or logs an unignored error), then tear it down (compose down
+-v and worktree removal), also on Ctrl+C or failure
 
 Arguments:
   pr          PR number to bring up at its head SHA
@@ -2661,10 +2665,12 @@ Options:
   -h, --help  display help for command
 
 Config:
-  assist config set review.instance.composeFile docker-compose.review.yml # compose file, relative to the repo root, that review instance brings a PR up with; it reads ASSIST_SRC_<SERVICE> (the PR checkout) and ASSIST_PORT_<SERVICE> (a free host port) for each configured service
-  assist config set review.instance.services.<service>.port 3000          # compose services review instance passes a checkout to; a service with a port (the one it listens on in its container) also gets a free host port in ASSIST_PORT_<SERVICE>
-  assist config set review.instance.entry.service web                     # service (with a port in review.instance.services) whose host port review instance prints as the instance URL
-  assist config set review.instance.entry.path /app                       # path appended to the instance URL (default /)
+  assist config set review.instance.composeFile docker-compose.review.yml             # compose file, relative to the repo root, that review instance brings a PR up with; it reads ASSIST_SRC_<SERVICE> (the PR checkout) and ASSIST_PORT_<SERVICE> (a free host port) for each configured service
+  assist config set review.instance.services.<service>.port 3000                      # compose services review instance passes a checkout to; a service with a port (the one it listens on in its container) also gets a free host port in ASSIST_PORT_<SERVICE>
+  assist config set review.instance.entry.service web                                 # service (with a port in review.instance.services) whose host port review instance prints as the instance URL
+  assist config set review.instance.entry.path /app                                   # path appended to the instance URL (default /)
+  assist config set review.instance.logs.services.<service>.ignore "favicon,retrying" # per compose service log monitoring while review instance runs the steps: errorPatterns (case-insensitive regexes, default error,exception,fatal) flag a log line as an error that fails the step it was logged during, unless it also matches one of the service's ignore patterns
+  assist config set review.instance.logs.browser.ignore "ResizeObserver loop"         # case-insensitive regexes for browser console errors, uncaught page errors and 5xx responses (e.g. 500 GET <url>) that review instance ignores instead of failing the step
 
 === assist rules --help
 Usage: assist rules [options] [command]

@@ -1,7 +1,11 @@
 import { describeConfigLeaves } from "../../shared/describeConfigLeaves";
 import { assistConfigSchema } from "../../shared/types";
 import type { ConfigWritableValue } from "./applyConfigSet";
-import { coerceConfigValue, coerceUnion } from "./coerceConfigValue";
+import {
+	coerceConfigValue,
+	coerceScalarList,
+	coerceUnion,
+} from "./coerceConfigValue";
 import { configKeyNode } from "./configKeyNode";
 
 type CoerceCliConfigValueResult =
@@ -25,6 +29,8 @@ function coerceIndexedValue(
 	raw: string,
 ): CoerceCliConfigValueResult {
 	const node = configKeyNode(key.replace(/\.(\d+)(?=\.|$)/g, "[$1]"));
+	if (node?.kind === "scalarList")
+		return coerceScalarList(key, splitList(raw), node.itemType);
 	if (node?.kind !== "scalar")
 		return { ok: true, value: coerceWithoutSchemaLeaf(raw) };
 	return coerceUnion(

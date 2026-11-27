@@ -66,4 +66,16 @@ export const reviewConfigHelp: ConfigHelpEntry[] = [
 		setter: "assist config set review.instance.entry.path /app",
 		note: "path appended to the instance URL (default /)",
 	},
+	{
+		key: "review.instance.logs.services",
+		setter:
+			'assist config set review.instance.logs.services.<service>.ignore "favicon,retrying"',
+		note: "per compose service log monitoring while review instance runs the steps: errorPatterns (case-insensitive regexes, default error,exception,fatal) flag a log line as an error that fails the step it was logged during, unless it also matches one of the service's ignore patterns",
+	},
+	{
+		key: "review.instance.logs.browser.ignore",
+		setter:
+			'assist config set review.instance.logs.browser.ignore "ResizeObserver loop"',
+		note: "case-insensitive regexes for browser console errors, uncaught page errors and 5xx responses (e.g. 500 GET <url>) that review instance ignores instead of failing the step",
+	},
 ];

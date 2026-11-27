@@ -14,6 +14,7 @@ export async function runStepsOnPage(
 	for (const [index, { action }] of input.manualTesting.steps.entries()) {
 		console.log(`Step ${index + 1}: ${action}`);
 		const videoOffsetMs = videoOffset();
+		input.errorLog.startStep(index + 1);
 		const verdict = await runManualStep(
 			page,
 			input,
@@ -21,6 +22,7 @@ export async function runStepsOnPage(
 			result.verdicts,
 			executable,
 		);
+		input.errorLog.endStep();
 		result.verdicts.push({ ...verdict, videoOffsetMs });
 		writeStepsReport(input.reportDir, input.url, result);
 	}
