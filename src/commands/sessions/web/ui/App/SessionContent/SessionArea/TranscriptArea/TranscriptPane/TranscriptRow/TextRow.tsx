@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import type { ReactNode } from "react";
+import { parseSessionMessage } from "../../../../../../../../shared/parseSessionMessage";
 import { queuedRowActionsClassName } from "../../QueuedRowActions";
 import { TextRowBody } from "./TextRow/TextRowBody";
 import { TextRowLabel } from "./TextRow/TextRowLabel";
@@ -26,7 +27,12 @@ export function TextRow({
 	actions?: ReactNode;
 }) {
 	const isUser = role === "user";
-	const accent = isUser ? "info.main" : "success.main";
+	const sender = isUser ? parseSessionMessage(text) : null;
+	const accent = sender
+		? "secondary.main"
+		: isUser
+			? "info.main"
+			: "success.main";
 	return (
 		<Box
 			sx={{
@@ -46,11 +52,12 @@ export function TextRow({
 			<TextRowLabel
 				isUser={isUser}
 				accent={accent}
+				sender={sender}
 				queued={queued}
 				actions={actions}
 			/>
 			<Box sx={{ opacity: queued ? 0.65 : 1 }}>
-				<TextRowBody isUser={isUser} text={text} term={term} />
+				<TextRowBody isUser={isUser} text={sender?.body ?? text} term={term} />
 			</Box>
 		</Box>
 	);

@@ -2,15 +2,19 @@ import Box from "@mui/material/Box";
 import { sessionTypeSize } from "../../../../../../sessionTypeSize";
 import Typography from "@mui/material/Typography";
 import type { ReactNode } from "react";
+import type { SessionMessage } from "../../../../../../../../../shared/parseSessionMessage";
+import { SessionMessageLabel } from "./SessionMessageLabel";
 
 export function TextRowLabel({
 	isUser,
 	accent,
+	sender,
 	queued,
 	actions,
 }: {
 	isUser: boolean;
 	accent: string;
+	sender?: SessionMessage | null;
 	queued?: boolean;
 	actions?: ReactNode;
 }) {
@@ -28,7 +32,13 @@ export function TextRowLabel({
 			}}
 		>
 			<Box component="span" sx={{ opacity: queued ? 0.65 : 1 }}>
-				{isUser ? "User" : "Assistant"}
+				{sender ? (
+					<SessionMessageLabel sender={sender} />
+				) : isUser ? (
+					"User"
+				) : (
+					"Assistant"
+				)}
 				{queued && (
 					<Box
 						component="span"
