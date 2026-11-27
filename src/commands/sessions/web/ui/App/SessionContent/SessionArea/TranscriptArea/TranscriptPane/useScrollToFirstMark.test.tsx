@@ -36,12 +36,14 @@ function Pane({
 	messages,
 	term = "",
 	follow = true,
+	followSignal,
 }: {
 	messages: TranscriptMessage[];
 	term?: string;
 	follow?: boolean;
+	followSignal?: number;
 }) {
-	const ref = useScrollToFirstMark(messages, term, follow);
+	const ref = useScrollToFirstMark(messages, term, follow, followSignal);
 	return (
 		<div data-testid="pane" ref={ref}>
 			<div>{term && <mark>{term}</mark>}</div>
@@ -108,6 +110,31 @@ describe("useScrollToFirstMark with follow", () => {
 		sized(pane, 1200);
 		resize();
 		expect(pane.scrollTop).toBe(200);
+	});
+
+	it("keeps following when content grows before its own pin's scroll event lands", () => {
+		const { getByTestId } = render(<Pane messages={rows(1)} />);
+		const pane = getByTestId("pane");
+		sized(pane, 1000);
+		resize();
+		expect(pane.scrollTop).toBe(1000);
+		sized(pane, 1300);
+		fireEvent.scroll(pane);
+		resize();
+		expect(pane.scrollTop).toBe(1300);
+	});
+
+	it("re-follows to the bottom on send after the reader scrolled up", () => {
+		const { getByTestId, rerender } = render(<Pane messages={rows(1)} />);
+		const pane = getByTestId("pane");
+		sized(pane, 1000);
+		pane.scrollTop = 200;
+		fireEvent.scroll(pane);
+		rerender(<Pane messages={rows(1)} followSignal={1} />);
+		expect(pane.scrollTop).toBe(1000);
+		sized(pane, 1200);
+		resize();
+		expect(pane.scrollTop).toBe(1200);
 	});
 });
 

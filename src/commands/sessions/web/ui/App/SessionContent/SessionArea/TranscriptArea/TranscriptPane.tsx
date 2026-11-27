@@ -12,6 +12,7 @@ export function TranscriptPane({
 	term,
 	tail,
 	follow,
+	followSignal,
 	commentLayer = (content) => content,
 	onTooVerbose,
 }: {
@@ -20,10 +21,11 @@ export function TranscriptPane({
 	term: string;
 	tail?: ReactNode;
 	follow?: boolean;
+	followSignal?: number;
 	commentLayer?: (content: ReactNode) => ReactNode;
 	onTooVerbose?: OnTooVerbose;
 }) {
-	const scrollRef = useScrollToFirstMark(messages, term, follow);
+	const scrollRef = useScrollToFirstMark(messages, term, follow, followSignal);
 
 	if (loading || (messages.length === 0 && !tail))
 		return <TranscriptPlaceholder loading={loading} />;

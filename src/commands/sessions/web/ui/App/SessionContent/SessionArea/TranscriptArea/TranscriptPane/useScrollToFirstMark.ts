@@ -1,48 +1,35 @@
 import { useEffect, useLayoutEffect, useRef } from "react";
 import type { TranscriptMessage } from "../../../../../types";
-
-const BOTTOM_SLACK_PX = 40;
-
-function pinWhileAtBottom(
-	el: HTMLDivElement,
-	atBottom: { current: boolean },
-): () => void {
-	const pin = () => {
-		if (atBottom.current) el.scrollTop = el.scrollHeight;
-	};
-	const onScroll = () => {
-		atBottom.current =
-			el.scrollHeight - el.scrollTop - el.clientHeight <= BOTTOM_SLACK_PX;
-	};
-	el.addEventListener("scroll", onScroll);
-	const observer =
-		typeof ResizeObserver === "undefined" ? undefined : new ResizeObserver(pin);
-	observer?.observe(el);
-	if (el.firstElementChild) observer?.observe(el.firstElementChild);
-	return () => {
-		el.removeEventListener("scroll", onScroll);
-		observer?.disconnect();
-	};
-}
+import { pinToBottom } from "./pinToBottom";
+import { pinWhileAtBottom } from "./pinWhileAtBottom";
 
 export function useScrollToFirstMark(
 	messages: TranscriptMessage[],
 	term: string,
 	follow?: boolean,
+	followSignal?: number,
 ) {
 	const ref = useRef<HTMLDivElement>(null);
 	const atBottom = useRef(true);
+	const pinned = useRef<number | null>(null);
 
 	useLayoutEffect(() => {
 		const el = ref.current;
 		if (!el || !follow) return;
-		return pinWhileAtBottom(el, atBottom);
+		return pinWhileAtBottom(el, atBottom, pinned);
 	});
 
 	useLayoutEffect(() => {
 		const el = ref.current;
-		if (follow && el && atBottom.current) el.scrollTop = el.scrollHeight;
+		if (follow && el && atBottom.current) pinToBottom(el, pinned);
 	}, [messages, follow]);
+
+	useLayoutEffect(() => {
+		const el = ref.current;
+		if (!follow || !el || !followSignal) return;
+		atBottom.current = true;
+		pinToBottom(el, pinned);
+	}, [followSignal, follow]);
 
 	useEffect(() => {
 		if (!follow && term && messages.length > 0)

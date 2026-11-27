@@ -10,6 +10,7 @@ export function TranscriptArea({
 	transcript,
 	tail,
 	follow,
+	followSignal,
 	commentLayer,
 	onTooVerbose,
 }: {
@@ -17,6 +18,7 @@ export function TranscriptArea({
 	transcript: Transcript | null;
 	tail?: ReactNode;
 	follow?: boolean;
+	followSignal?: number;
 	commentLayer?: (content: ReactNode) => ReactNode;
 	onTooVerbose?: OnTooVerbose;
 }) {
@@ -30,6 +32,7 @@ export function TranscriptArea({
 				term={term}
 				tail={tail}
 				follow={follow}
+				followSignal={followSignal}
 				commentLayer={commentLayer}
 				onTooVerbose={onTooVerbose}
 			/>
