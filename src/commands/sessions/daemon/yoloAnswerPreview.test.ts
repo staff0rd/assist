@@ -36,11 +36,16 @@ function preview(questions: unknown[], kind = "question") {
 	};
 }
 
-function run(d: Record<string, unknown>, yoloSession = false) {
+function run(
+	d: Record<string, unknown>,
+	yoloSession = false,
+	reviewStarted = false,
+) {
 	const session = makeSession({
 		id: "1",
 		cwd: "/repo",
 		...(yoloSession && { yolo: true }),
+		...(reviewStarted && { reviewStarted: true }),
 	});
 	const coord = new PrPreviewCoordinator(new Map([["1", session]]), vi.fn());
 	const waiter = makeClient();
@@ -196,8 +201,28 @@ describe("yoloAnswerPreview", () => {
 			]);
 		});
 
-		it("leaves a Review-phase check with no later phases for the user", () => {
+		it("leaves a check with no later phases outside Review for the user", () => {
 			const { session, waiter } = run(check([]));
+			expect(session.pendingPrPreview?.requestId).toBe("r1");
+			expect(waiter.sent).toEqual([]);
+		});
+
+		it("marks a Review-phase check Works", () => {
+			const { session, waiter } = run(check([]), false, true);
+			expect(session.pendingPrPreview).toBeUndefined();
+			expect(waiter.sent).toEqual([
+				expect.objectContaining({
+					type: "pr-decision",
+					decision: "approve",
+					yolo: true,
+					answers: { result: "works" },
+				}),
+			]);
+		});
+
+		it("leaves a Review-phase check for the user when yolo is off", () => {
+			yolo.on = false;
+			const { session, waiter } = run(check([]), false, true);
 			expect(session.pendingPrPreview?.requestId).toBe("r1");
 			expect(waiter.sent).toEqual([]);
 		});

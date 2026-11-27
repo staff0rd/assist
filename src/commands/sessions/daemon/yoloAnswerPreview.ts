@@ -2,16 +2,16 @@ import type { SessionClient } from "./broadcast";
 import type { Session } from "./createSession";
 import { daemonLog } from "./daemonLog";
 import { decidePrPreview } from "./decidePrPreview";
-import { midPlanCheckAnswers } from "./midPlanCheckAnswers";
+import { yoloCheckAnswers } from "./yoloCheckAnswers";
 import { recommendedAnswers } from "./recommendedAnswers";
 import { yoloEnabled } from "./yoloEnabled";
 
 const yoloRules: Record<
 	string,
-	(body: string) => Record<string, string> | undefined
+	(body: string, session: Session) => Record<string, string> | undefined
 > = {
 	question: recommendedAnswers,
-	check: midPlanCheckAnswers,
+	check: yoloCheckAnswers,
 };
 
 export function yoloAnswerPreview(
@@ -23,10 +23,10 @@ export function yoloAnswerPreview(
 	const preview = session.pendingPrPreview;
 	const rule = preview?.kind ? yoloRules[preview.kind] : undefined;
 	if (!preview || !rule) return false;
-	const answers = rule(preview.body);
+	const answers = rule(preview.body, session);
 	if (!answers || !(session.yolo || yoloEnabled(session.cwd))) return false;
 	daemonLog(
-		`pr-preview yolo answer: id=${session.id} requestId=${preview.requestId} kind=${preview.kind} answers=${JSON.stringify(answers)}`,
+		`pr-preview yolo answer: id=${session.id} requestId=${preview.requestId} kind=${preview.kind}${session.reviewStarted ? " phase=review" : ""} answers=${JSON.stringify(answers)}`,
 	);
 	decidePrPreview(sessions, waiters, notify, {
 		sessionId: session.id,

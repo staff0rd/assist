@@ -44,7 +44,7 @@ export const sessionsConfigHelp: ConfigHelpEntry[] = [
 	{
 		key: "sessions.yolo",
 		setter: "assist config set sessions.yolo true",
-		note: "default off: the daemon answers an ask-question form itself, without showing it, when every question is single-select with a (Recommended) option, picking those options, and marks a manual check raised in a backlog phase with later phases Works. Set globally or per repo (--repo)",
+		note: "default off: the daemon answers an ask-question form itself, without showing it, when every question is single-select with a (Recommended) option, picking those options, and marks a manual check raised in a backlog phase with later phases, or during Review, Works; a backlog run whose criteria all pass completes Review itself and its session dismisses. Set globally or per repo (--repo)",
 	},
 	{
 		key: "worktree.enabled",

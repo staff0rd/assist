@@ -1,4 +1,5 @@
 import { CHECK_RESULT_KEY } from "../shared/askCheckInputSchema";
+import type { Session } from "./createSession";
 
 function hasLaterPhases(body: string): boolean {
 	try {
@@ -9,8 +10,11 @@ function hasLaterPhases(body: string): boolean {
 	}
 }
 
-export function midPlanCheckAnswers(
+export function yoloCheckAnswers(
 	body: string,
+	session: Session,
 ): Record<string, string> | undefined {
-	return hasLaterPhases(body) ? { [CHECK_RESULT_KEY]: "works" } : undefined;
+	return session.reviewStarted || hasLaterPhases(body)
+		? { [CHECK_RESULT_KEY]: "works" }
+		: undefined;
 }
