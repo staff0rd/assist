@@ -78,4 +78,27 @@ export const reviewConfigHelp: ConfigHelpEntry[] = [
 			'assist config set review.instance.logs.browser.ignore "ResizeObserver loop"',
 		note: "case-insensitive regexes for browser console errors, uncaught page errors and 5xx responses (e.g. 500 GET <url>) that review instance ignores instead of failing the step",
 	},
+	{
+		key: "review.instance.auth.strategy",
+		setter: "assist config set review.instance.auth.strategy login-script",
+		note: "how review instance signs in before running the steps; login-script runs review.instance.auth.loginScript.script once and starts every step from the signed-in browser state (unset runs signed out)",
+	},
+	{
+		key: "review.instance.auth.loginScript.script",
+		setter:
+			"assist config set review.instance.auth.loginScript.script review/login.mjs",
+		note: "JS module (ESM or CommonJS), relative to the repo root, whose default export receives { page, url, credentials: { username, password } } and signs in on the Playwright page; review instance fails with the script's error when it throws",
+	},
+	{
+		key: "review.instance.auth.loginScript.username",
+		setter:
+			"assist config set review.instance.auth.loginScript.username reviewer@example.com",
+		note: "username the login script receives as credentials.username",
+	},
+	{
+		key: "review.instance.auth.loginScript.password",
+		setter:
+			"assist config set --node review.instance.auth.loginScript.password <password>",
+		note: "secret the login script receives as credentials.password; required for the login-script strategy",
+	},
 ];

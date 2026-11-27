@@ -218,6 +218,18 @@ const assistConfigShape = {
 								.default({ ignore: [] }),
 						})
 						.default({ services: {}, browser: { ignore: [] } }),
+					auth: z
+						.strictObject({
+							strategy: z.enum(["login-script"]).optional(),
+							loginScript: z
+								.strictObject({
+									script: z.string().optional(),
+									username: z.string().optional(),
+									password: secretConfigValue(z.string()).optional(),
+								})
+								.optional(),
+						})
+						.optional(),
 				})
 				.optional(),
 		})

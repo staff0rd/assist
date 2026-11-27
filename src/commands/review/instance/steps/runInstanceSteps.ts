@@ -1,4 +1,5 @@
 import type { HighLevelManualTesting } from "../../highLevel/types";
+import type { InstanceAuth } from "../auth/InstanceAuth";
 import type { InstancePlan } from "../InstancePlan";
 import { createLogRules } from "../logs/createLogRules";
 import { createStepErrorLog } from "../logs/createStepErrorLog";
@@ -17,6 +18,7 @@ type InstanceStepsInput = {
 	logs: InstanceLogsConfig;
 	abort: AbortController;
 	headed?: boolean;
+	auth?: InstanceAuth;
 };
 
 export async function runInstanceSteps(
@@ -35,6 +37,7 @@ export async function runInstanceSteps(
 		abort: input.abort,
 		headed: input.headed ?? false,
 		errorLog,
+		auth: input.auth,
 	}).finally(() => composeLogs.stop());
 	const checked = withStepErrors(result, errorLog);
 	writeStepsReport(reportDir, instance.url, checked);

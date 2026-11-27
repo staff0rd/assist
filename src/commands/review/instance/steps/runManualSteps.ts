@@ -1,5 +1,6 @@
 import { chromium } from "playwright";
 import { resolveClaudeExecutable } from "../../../sessions/daemon/resolveClaudeExecutable";
+import { signIn } from "../auth/signIn";
 import {
 	browserContextOptions,
 	browserLaunchOptions,
@@ -20,8 +21,9 @@ export async function runManualSteps(
 	const browser = await chromium.launch(browserLaunchOptions(headed));
 	const result: ManualStepsResult = { verdicts: [] };
 	try {
+		const storageState = await signIn(browser, input.auth, input.url);
 		const context = await browser.newContext(
-			browserContextOptions(headed, input.reportDir),
+			browserContextOptions(headed, input.reportDir, storageState),
 		);
 		const page = await context.newPage();
 		watchBrowserErrors(page, input.errorLog.record);

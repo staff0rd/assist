@@ -1,4 +1,5 @@
 import type { BrowserContextOptions, LaunchOptions } from "playwright";
+import type { StorageState } from "../auth/signIn";
 
 const VIEWPORT = { width: 1280, height: 800 };
 const HEADED_SLOW_MO_MS = 250;
@@ -12,8 +13,12 @@ export function browserLaunchOptions(headed: boolean): LaunchOptions {
 export function browserContextOptions(
 	headed: boolean,
 	videoDir: string,
+	storageState?: StorageState,
 ): BrowserContextOptions {
+	const base = storageState
+		? { viewport: VIEWPORT, storageState }
+		: { viewport: VIEWPORT };
 	return headed
-		? { viewport: VIEWPORT }
-		: { viewport: VIEWPORT, recordVideo: { dir: videoDir, size: VIEWPORT } };
+		? base
+		: { ...base, recordVideo: { dir: videoDir, size: VIEWPORT } };
 }

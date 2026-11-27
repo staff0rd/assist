@@ -30,4 +30,13 @@ describe("browserContextOptions", () => {
 			viewport: { width: 1280, height: 800 },
 		});
 	});
+
+	it("starts from the signed-in storage state when given one", () => {
+		const storageState = { cookies: [], origins: [] };
+		expect(browserContextOptions(false, "/r", storageState)).toEqual({
+			viewport: { width: 1280, height: 800 },
+			storageState,
+			recordVideo: { dir: "/r", size: { width: 1280, height: 800 } },
+		});
+	});
 });

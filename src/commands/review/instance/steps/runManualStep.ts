@@ -1,5 +1,6 @@
 import type { Page } from "playwright";
 import type { HighLevelManualTesting } from "../../highLevel/types";
+import type { InstanceAuth } from "../auth/InstanceAuth";
 import type { StepErrorLog } from "../logs/createStepErrorLog";
 import { buildStepPrompt } from "./buildStepPrompt";
 import { createInputTools } from "./createInputTools";
@@ -16,6 +17,7 @@ export type ManualStepsInput = {
 	abort: AbortController;
 	headed?: boolean;
 	errorLog: StepErrorLog;
+	auth?: InstanceAuth;
 };
 
 export async function runManualStep(

@@ -1,13 +1,8 @@
-import { resolveRepoRoot } from "../resolveRepoRoot";
 import { bringUpInstance } from "./bringUpInstance";
 import { createInstanceTeardown } from "./createInstanceTeardown";
-import { exitWithError } from "./exitWithError";
-import { planReviewInstance } from "./planReviewInstance";
+import { prepareReviewInstance } from "./prepareReviewInstance";
 import { printKeptInstance } from "./printKeptInstance";
-import { requireInstanceConfig } from "./requireInstanceConfig";
-import { resolvePrHead } from "./resolvePrHead";
 import { runInheritedCommand } from "./runInheritedCommand";
-import { loadManualTesting } from "./steps/loadManualTesting";
 import { runInstanceSteps } from "./steps/runInstanceSteps";
 import { watchInterrupt } from "./watchInterrupt";
 
@@ -15,15 +10,8 @@ export async function reviewInstance(
 	pr: string,
 	options: { keep?: boolean; headed?: boolean },
 ): Promise<void> {
-	const head = resolvePrHead(pr);
-	const config = requireInstanceConfig();
-	const manualTesting = loadManualTesting(head);
-	const instance = await planReviewInstance({
-		config,
-		repoRoot: resolveRepoRoot(),
-		repo: head.repo,
-		prNumber: head.number,
-	}).catch((error: Error) => exitWithError(error.message));
+	const { head, config, manualTesting, auth, instance } =
+		await prepareReviewInstance(pr);
 	const teardown = createInstanceTeardown(instance, runInheritedCommand);
 	const interrupt = watchInterrupt();
 	try {
@@ -42,6 +30,7 @@ export async function reviewInstance(
 			logs: config.logs,
 			abort: interrupt.abort,
 			headed: options.headed,
+			auth,
 		});
 	} catch (error) {
 		console.error(

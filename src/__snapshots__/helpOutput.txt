@@ -2623,8 +2623,9 @@ Options:
 
 Commands:
   instance [options] <pr>  Bring a PR up as an isolated, throwaway instance via the repo's
-                           review.instance compose file, have an agent run the manualTesting steps
-                           saved by `assist review high-level <pr>` against it in a headless browser
+                           review.instance compose file, sign in once with the review.instance.auth
+                           strategy when one is set, have an agent run the manualTesting steps saved
+                           by `assist review high-level <pr>` against it in a headless browser
                            (recording a video of the session) or, with --headed, a visible one,
                            watch each compose service's logs and the browser's console errors, page
                            errors and 5xx responses, print a pass/fail/unsure verdict per step with
@@ -2647,13 +2648,14 @@ Config:
 === assist review instance --help
 Usage: assist review instance [options] <pr>
 
-Bring a PR up as an isolated, throwaway instance via the repo's review.instance compose file, have
-an agent run the manualTesting steps saved by `assist review high-level <pr>` against it in a
-headless browser (recording a video of the session) or, with --headed, a visible one, watch each
-compose service's logs and the browser's console errors, page errors and 5xx responses, print a
-pass/fail/unsure verdict per step with screenshots and the errors logged during it in a report
-directory (exit 1 when any step fails or logs an unignored error), then tear it down (compose down
--v and worktree removal), also on Ctrl+C or failure
+Bring a PR up as an isolated, throwaway instance via the repo's review.instance compose file, sign
+in once with the review.instance.auth strategy when one is set, have an agent run the manualTesting
+steps saved by `assist review high-level <pr>` against it in a headless browser (recording a video
+of the session) or, with --headed, a visible one, watch each compose service's logs and the
+browser's console errors, page errors and 5xx responses, print a pass/fail/unsure verdict per step
+with screenshots and the errors logged during it in a report directory (exit 1 when any step fails
+or logs an unignored error), then tear it down (compose down -v and worktree removal), also on
+Ctrl+C or failure
 
 Arguments:
   pr          PR number to bring up at its head SHA
@@ -2671,6 +2673,10 @@ Config:
   assist config set review.instance.entry.path /app                                   # path appended to the instance URL (default /)
   assist config set review.instance.logs.services.<service>.ignore "favicon,retrying" # per compose service log monitoring while review instance runs the steps: errorPatterns (case-insensitive regexes, default error,exception,fatal) flag a log line as an error that fails the step it was logged during, unless it also matches one of the service's ignore patterns
   assist config set review.instance.logs.browser.ignore "ResizeObserver loop"         # case-insensitive regexes for browser console errors, uncaught page errors and 5xx responses (e.g. 500 GET <url>) that review instance ignores instead of failing the step
+  assist config set review.instance.auth.strategy login-script                        # how review instance signs in before running the steps; login-script runs review.instance.auth.loginScript.script once and starts every step from the signed-in browser state (unset runs signed out)
+  assist config set review.instance.auth.loginScript.script review/login.mjs          # JS module (ESM or CommonJS), relative to the repo root, whose default export receives { page, url, credentials: { username, password } } and signs in on the Playwright page; review instance fails with the script's error when it throws
+  assist config set review.instance.auth.loginScript.username reviewer@example.com    # username the login script receives as credentials.username
+  assist config set --node review.instance.auth.loginScript.password <password>       # secret the login script receives as credentials.password; required for the login-script strategy
 
 === assist rules --help
 Usage: assist rules [options] [command]
