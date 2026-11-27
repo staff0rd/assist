@@ -1,12 +1,10 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { relayRateLimits } from "./relayRateLimits";
-import { connectToDaemon } from "./sessions/daemon/connectToDaemon";
+import { sendToDaemon } from "./sessions/daemon/sendToDaemon";
 
-vi.mock("./sessions/daemon/connectToDaemon", () => ({
-	connectToDaemon: vi.fn(),
-}));
+vi.mock("./sessions/daemon/sendToDaemon", () => ({ sendToDaemon: vi.fn() }));
 
-const connectMock = connectToDaemon as unknown as ReturnType<typeof vi.fn>;
+const sendMock = vi.mocked(sendToDaemon);
 
 const rateLimits = {
 	five_hour: { used_percentage: 12, resets_at: 100 },
@@ -18,22 +16,19 @@ describe("relayRateLimits", () => {
 		vi.clearAllMocks();
 	});
 
-	it("writes a newline-delimited limits message to the daemon", async () => {
-		const write = vi.fn((_data: string, cb: () => void) => cb());
-		const socket = { write, on: vi.fn(), end: vi.fn(), destroy: vi.fn() };
-		connectMock.mockResolvedValue(socket);
+	it("sends a limits message to the daemon with a short timeout", async () => {
+		sendMock.mockResolvedValue(undefined);
 
 		await relayRateLimits(rateLimits);
 
-		expect(write).toHaveBeenCalledWith(
-			`${JSON.stringify({ type: "limits", rateLimits })}\n`,
-			expect.any(Function),
+		expect(sendMock).toHaveBeenCalledWith(
+			{ type: "limits", rateLimits },
+			1_000,
 		);
-		expect(socket.end).toHaveBeenCalledOnce();
 	});
 
 	it("swallows errors when the daemon is not running", async () => {
-		connectMock.mockRejectedValue(new Error("ECONNREFUSED"));
+		sendMock.mockRejectedValue(new Error("ECONNREFUSED"));
 
 		await expect(relayRateLimits(rateLimits)).resolves.toBeUndefined();
 	});
@@ -41,6 +36,6 @@ describe("relayRateLimits", () => {
 	it("does nothing when there are no limits to relay", async () => {
 		await relayRateLimits(undefined);
 
-		expect(connectMock).not.toHaveBeenCalled();
+		expect(sendMock).not.toHaveBeenCalled();
 	});
 });

@@ -106,6 +106,25 @@ describe("handleConnection", () => {
 		});
 	});
 
+	describe("when the message asks for a delivery ack", () => {
+		it("acks after dispatching, without passing the flag to the handler", async () => {
+			const { socket, feed, write } = createSocket();
+			const dismissSession = vi.fn();
+			const manager = createManager({ dismissSession });
+
+			handleConnection(socket, manager);
+			feed.push(
+				`${JSON.stringify({ type: "dismiss", sessionId: "7", deliveryAck: true })}\n`,
+			);
+			await flush();
+
+			expect(dismissSession).toHaveBeenCalledWith("7", false);
+			expect(write).toHaveBeenLastCalledWith(
+				`${JSON.stringify({ type: "ack" })}\n`,
+			);
+		});
+	});
+
 	it("survives an abrupt disconnect (ECONNRESET)", async () => {
 		const { socket, feed } = createSocket();
 		const manager = createManager({});

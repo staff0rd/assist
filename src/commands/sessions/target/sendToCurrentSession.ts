@@ -1,5 +1,6 @@
 import { appendDaemonLog } from "../daemon/appendDaemonLog";
 import { sendToDaemon } from "../daemon/sendToDaemon";
+import { failWith } from "../previews/failWith";
 import { inWebSession } from "../shared/inWebSession";
 
 export async function sendToCurrentSession(
@@ -14,8 +15,8 @@ export async function sendToCurrentSession(
 	try {
 		await sendToDaemon(build(sessionId));
 	} catch (error) {
-		appendDaemonLog(
-			`${verb} send failed: id=${sessionId}: ${error instanceof Error ? error.message : String(error)}`,
-		);
+		const reason = error instanceof Error ? error.message : String(error);
+		appendDaemonLog(`${verb} send failed: id=${sessionId}: ${reason}`);
+		failWith(new Error(`Failed to ${verb} session ${sessionId}: ${reason}`));
 	}
 }

@@ -1,10 +1,13 @@
 import { connectToDaemon } from "./connectToDaemon";
 import { readSocketLines } from "./readSocketLines";
 
-const ACK_TIMEOUT_MS = 1_000;
+const DEFAULT_ACK_TIMEOUT_MS = 1_000;
+
+type Ack = { type?: string; error?: string };
 
 export function sendToDaemonAwaitAck(
 	message: Record<string, unknown>,
+	timeoutMs = DEFAULT_ACK_TIMEOUT_MS,
 ): Promise<void> {
 	return new Promise((resolve, reject) => {
 		connectToDaemon().then((socket) => {
@@ -19,10 +22,11 @@ export function sendToDaemonAwaitAck(
 			};
 			const timer = setTimeout(
 				() => finish(new Error("timed out awaiting daemon ack")),
-				ACK_TIMEOUT_MS,
+				timeoutMs,
 			);
 			readSocketLines(socket, (line) => {
-				if (isAck(line)) finish();
+				const ack = parseAck(line);
+				if (ack) finish(ack.error ? new Error(ack.error) : undefined);
 			});
 			socket.on("error", (error) => finish(error));
 			socket.on("close", () =>
@@ -33,10 +37,11 @@ export function sendToDaemonAwaitAck(
 	});
 }
 
-function isAck(line: string): boolean {
+function parseAck(line: string): Ack | undefined {
 	try {
-		return (JSON.parse(line) as { type?: string }).type === "ack";
+		const parsed = JSON.parse(line) as Ack;
+		return parsed.type === "ack" ? parsed : undefined;
 	} catch {
-		return false;
+		return undefined;
 	}
 }

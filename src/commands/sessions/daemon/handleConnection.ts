@@ -29,15 +29,22 @@ export function handleConnection(
 		} catch {
 			return;
 		}
+		const { deliveryAck, ...message } = data;
 		try {
-			dispatchMessage(client, manager, data);
+			dispatchMessage(client, manager, message);
+			if (deliveryAck) sendTo(client, { type: "ack" });
 		} catch (error) {
 			const reason = error instanceof Error ? error.message : String(error);
-			daemonLog(`${data.type} failed: ${reason}`);
+			daemonLog(`${message.type} failed: ${reason}`);
 			sendTo(client, {
 				type: "error",
-				message: `${data.type} failed: ${reason}`,
+				message: `${message.type} failed: ${reason}`,
 			});
+			if (deliveryAck)
+				sendTo(client, {
+					type: "ack",
+					error: `${message.type} failed: ${reason}`,
+				});
 		}
 	});
 
