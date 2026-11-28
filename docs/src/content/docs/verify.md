@@ -30,7 +30,7 @@ Checks run in parallel, and only failing checks print their output.
 
 A check is a [run command](../run-commands/) whose name starts with `verify:`.
 
-To start a TypeScript project with the usual checks, run [`assist verify init`](../cli-setup/#setting-up-an-existing-project). It offers the checks the project doesn't have yet, such as lint, formatting, tests, unused code, duplicate code and maintainability, then installs the tools for the ones you pick and adds them.
+To start a TypeScript project with the usual checks, run [`assist verify init`](../cli-setup/#setting-up-an-existing-project). It offers the checks the project doesn't have yet, such as lint, formatting, tests, unused code, duplicate code, maintainability and a dependency audit, then installs the tools for the ones you pick and adds them.
 
 For any other check, run `/verify-new` and describe it: the agent finds the options that keep the tool quiet when it passes, then adds it. Or add one yourself:
 

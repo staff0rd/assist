@@ -6,10 +6,13 @@ const repoRoot = resolve(dirname(fileURLToPath(import.meta.url)), "../..");
 export const docsPaths = {
 	repoRoot,
 	agentDir: join(repoRoot, "agent"),
-	appRoutes: join(
-		repoRoot,
-		"src/commands/sessions/web/ui/App/AppShell/AppRoutes.tsx",
-	),
+	appRoutes: [
+		join(repoRoot, "src/commands/sessions/web/ui/App/AppShell/AppRoutes.tsx"),
+		join(
+			repoRoot,
+			"src/commands/sessions/web/ui/App/AppShell/AppRoutes/scaledPageRoutes.tsx",
+		),
+	],
 	pagesDir: join(repoRoot, "docs/src/content/docs"),
 	screenshotsDir: join(repoRoot, "docs/public/screenshots"),
 	socialCard: join(repoRoot, "docs/public/og.png"),

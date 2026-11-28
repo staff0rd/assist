@@ -27,7 +27,7 @@ screenshots:
       height: 560
     crop: "[data-testid=sidebar]"
   - file: sessions-card-mode.png
-    alt: Card mode's board of session cards in Needs you and Working columns
+    alt: Card mode's board, with a dev server in the Servers strip above session cards in Needs you and Working
     route: /sessions
     scene: dashboard
     setup:
@@ -36,6 +36,19 @@ screenshots:
     viewport:
       width: 1280
       height: 640
+  - file: sessions-card-pane.png
+    alt: An opened card in card mode, with the session's controls in the pane header and the backlog item chip on its card
+    route: /sessions
+    scene: backlog
+    setup:
+      - assist: [config, set, sessions.cardMode, "true", --node]
+      - assistSession: [backlog, run, a1]
+    waitFor: text=Dark mode toggle
+    actions:
+      - click: text=Dark mode toggle
+    viewport:
+      width: 1440
+      height: 720
 ---
 
 ## Session cards
@@ -61,7 +74,6 @@ The detail line shows the repo, then the session type or, for a backlog run, the
 | Badge           | Shown when                                                      |
 | --------------- | --------------------------------------------------------------- |
 | :badge[clone]   | The session runs in the repo's own clone rather than a worktree |
-| :badge[harness] | The session runs a harness other than Claude                    |
 | :badge[serving] | The session is a dev server, linking to its port                |
 | :badge[node]    | The session runs on a linked node                               |
 
@@ -90,6 +102,12 @@ Clicking an entry shows its transcript, and **Resume** starts it again as a live
 
 ## Card mode
 
-:badge[experimental] **Card mode** in the dashboard menu (`sessions.cardMode`) swaps the sidebar and terminal for a board of session cards, sorted into **Needs you** and **Working**.
+:badge[experimental] **Card mode** in the dashboard menu (`sessions.cardMode`) swaps the sidebar and terminal for a board of session cards: **Needs you** holds the sessions waiting on you, **Working** those still running, and the collapsed **Other** group those that are done, stopped or failed. The chips above the board narrow it to one repo. Dev servers sit in the **Servers** strip instead of on cards, each with its port link and **Stop**, or **Restart** once it has exited; click one to read its log.
 
 ::screenshot{file="sessions-card-mode.png"}
+
+A card for a session working on a backlog item shows the item's chip, which opens the item.
+
+Opening a card shows the session above its pending question, plan, check or design, with the session's [top bar](../sessions-session-area/#the-top-bar) controls in the pane's header. **Hide session** leaves just the preview, or, with nothing pending, the agent's last message and a box to reply to it; **Show session** brings the session back.
+
+::screenshot{file="sessions-card-pane.png"}

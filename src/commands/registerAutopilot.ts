@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { configHelp } from "../shared/configHelp";
+import { internalCommand } from "../shared/internalCommand";
 import { lazyAction } from "../shared/lazyAction";
 import { autopilotConfigHelp } from "./autopilot/autopilotConfigHelp";
 
@@ -42,6 +43,9 @@ export function registerAutopilot(program: Command): void {
 		.requiredOption("--started <text>", "the items it started, or none")
 		.requiredOption("--next <text>", "what the next run should do")
 		.action(lazyAction(() => import("./autopilot/summary"), "summary"));
+
+	for (const command of autopilotCommand.commands)
+		internalCommand(command, "/autopilot");
 
 	configHelp(autopilotCommand, autopilotConfigHelp);
 }

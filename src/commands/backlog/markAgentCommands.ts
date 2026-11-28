@@ -27,6 +27,8 @@ const agentCommands: Record<string, string> = {
 	run: "the dashboard's Build and assist next",
 	refine: AGENTS,
 	rewind: "the review phase of a backlog run",
+	delivered: "the review phase of a backlog run",
+	result: AGENTS,
 };
 
 export function markAgentCommands(cmd: Command): void {

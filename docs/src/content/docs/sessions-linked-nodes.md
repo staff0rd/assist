@@ -29,7 +29,7 @@ screenshots:
     actions:
       - click: "[aria-label='Node']"
   - file: sessions-transfer.png
-    alt: The Transfer menu on a backlog run's top bar, listing a linked node to move the run to
+    alt: The Transfer menu on a backlog run's top bar, listing a linked node and the directory the run will continue in
     route: /sessions
     scene: backlog
     setup:
@@ -72,7 +72,7 @@ Once a link exists, the toolbar shows a node picker. The node you pick is the on
 
 ::screenshot{file="sessions-machine-picker.png"}
 
-The New session dialog's **Node** choice picks where the session runs. Cards for sessions on a linked node carry a badge naming that node, such as :badge[node]. To move a backlog run that started on the wrong node, use **Transfer** on its [top bar](../sessions-session-area/#the-top-bar).
+The New session dialog's **Node** choice picks where the session runs. Cards for sessions on a linked node carry a badge naming that node, such as :badge[node]. To move a backlog run or a prompt session that started on the wrong node, use **Transfer** on its [top bar](../sessions-session-area/#the-top-bar) and pick a node that has the repo; each node shows the directory the session will continue in. A prompt session carries its conversation with it and picks up where it left off.
 
 ::screenshot{file="sessions-transfer.png"}
 

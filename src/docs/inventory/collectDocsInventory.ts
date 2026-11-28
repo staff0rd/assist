@@ -12,6 +12,8 @@ export function collectDocsInventory(): InventoryItem[] {
 		...collectCliCommands(createProgram()),
 		...collectAgentCommands(docsPaths.agentDir),
 		...collectConfigKeys(),
-		...collectWebRoutes(readFileSync(docsPaths.appRoutes, "utf8")),
+		...docsPaths.appRoutes.flatMap((file) =>
+			collectWebRoutes(readFileSync(file, "utf8")),
+		),
 	];
 }

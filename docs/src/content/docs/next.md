@@ -11,6 +11,7 @@ covers:
   - config:next.pickStatuses
   - config:next.excludeLabels
   - config:next.excludeTypes
+  - config:next.repoRules
 screenshots:
   - file: next.png
     alt: The Next page, recommending a pull request to review, above groups of peer pull requests, your own pull requests, assigned issues and project items to pick up
@@ -58,6 +59,12 @@ Without `next.peers`, **Review** lists only pull requests that request your revi
 
 ```bash
 assist config set next.peers alice,bob
+```
+
+To stop listing a repo's pull requests for your review once others have approved them, set `hideReviewAfterApprovals` for it in `next.repoRules`, keyed by `owner/name` or a bare owner:
+
+```bash
+assist config set next.repoRules.my-org/web.hideReviewAfterApprovals 1
 ```
 
 `next.projects` names the GitHub Projects that **Pick up** reads, as `owner/number` from each project's URL. Reading projects needs the `project` scope on your `gh` token:

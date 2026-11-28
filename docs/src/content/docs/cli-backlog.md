@@ -4,6 +4,8 @@ title: assist backlog
 group: CLI
 order: 8
 covers:
+  - cli:backlog delivered
+  - cli:backlog result
   - cli:backlog
   - cli:backlog web
   - cli:list
@@ -88,6 +90,8 @@ These work on the current repo's [backlog](../backlog/). Item ids are written `a
 ## Comments, links and activity
 
 - `assist backlog comment <id> <text>` :badge[internal] adds a comment. Called by backlog run phases and `/refine`.
+- `assist backlog delivered <id> <text>` :badge[internal] records the item's one-line statement of what now works. Called by the review phase of a backlog run.
+- `assist backlog result <id> <text>` :badge[internal] records the item's one-line result: its predicted effect against the measured one. Called by agents working on backlog items.
 - `assist backlog delete-comment <id> <comment-id>` :badge[internal] deletes a comment other than a phase summary. Called by agents working on backlog items.
 - `assist backlog link <from> <to>` :badge[internal] links two items, `--type depends-on` making `<from>` wait for `<to>` (default `relates-to`). Called by agents working on backlog items.
 - `assist backlog unlink <from> <to>` :badge[internal] removes a link. Called by agents working on backlog items.

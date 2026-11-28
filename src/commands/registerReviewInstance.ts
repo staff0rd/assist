@@ -1,5 +1,6 @@
 import type { Command } from "commander";
 import { type ConfigHelpEntry, configHelp } from "../shared/configHelp";
+import { internalCommand } from "../shared/internalCommand";
 
 export function registerReviewInstance(
 	reviewCommand: Command,
@@ -26,5 +27,9 @@ export function registerReviewInstance(
 				return reviewInstance(pr, options);
 			},
 		);
+	internalCommand(
+		instanceCommand,
+		"agents trying a pull request's manual testing steps",
+	);
 	configHelp(instanceCommand, entries);
 }

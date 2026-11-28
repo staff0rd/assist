@@ -87,7 +87,7 @@ screenshots:
       height: 640
 ---
 
-The session area shows the selected session: the top bar, its terminal or [transcript](#claude-sdk-sessions) and your last message to it, along with its [diff](../sessions-diff/) and [preview panes](../sessions-preview-panes/) when open.
+The session area shows the selected session: the top bar, its terminal or [transcript](#sdk-sessions) and your last message to it, along with its [diff](../sessions-diff/) and [preview panes](../sessions-preview-panes/) when open.
 
 ## The top bar
 
@@ -102,7 +102,7 @@ On the right, the git change counts open the [diff](../sessions-diff/), and togg
 - :icon[RestartAlt] **Restart** ends the agent and resumes its conversation in a fresh process, after asking. Its :icon[ArrowDropDown] dropdown has **Start over**, which discards the conversation and starts a new one with only the session's first prompt.
 - :icon[Replay] **Retry** appears on a [run session](../sessions-creating/#run-sessions), running the command again, and on a backlog run that didn't come back after the daemon restarted, starting it again.
 - **Star** pins the session to the top of the sidebar. For a backlog run, the star belongs to the item, so it carries over to the item's next session.
-- **Transfer**, on a backlog run, moves the run to a [linked node](../sessions-linked-nodes/) that has the repo, or from one back to this node. Uncommitted and unpushed changes go with it.
+- **Transfer** moves a backlog run, or a prompt session with its conversation, to a [linked node](../sessions-linked-nodes/) that has the repo, or from one back to this node. Uncommitted and unpushed changes go with it.
 - **Done** (:kbd[Alt+C]), on a backlog item's session, marks the item done and ends the session, along with any dev server started from it. Hold :kbd[Shift] as you click it or press :kbd[Enter] to skip the confirmation.
 - **×** closes the session, as on its card.
 
@@ -121,24 +121,26 @@ The terminal is the agent itself, such as Claude Code, running live. You give it
 - :kbd[Mod+C] copies the selected text. With nothing selected, it reaches the session as an interrupt.
 - :kbd[Mod+V] pastes.
 
-## Claude (SDK) sessions
+## SDK sessions
 
-A session on the [Claude (SDK)](../harnesses/#claude-sdk) harness has no terminal. Its live transcript takes the terminal's place, with a composer under it for your messages, and its top bar carries an **SDK** badge.
+A session on the [Claude (SDK)](../harnesses/#claude-sdk) or [Codex (SDK)](../harnesses/#codex-sdk) harness has no terminal. Its live transcript takes the terminal's place, with a composer under it for your messages, and its top bar carries a badge naming the harness.
 
 ::screenshot{file="sessions-sdk.png"}
 
 In the composer:
 
 - :kbd[Enter] sends. :kbd[Shift+Enter], or :kbd[Enter] straight after a `\`, adds a line break.
-- While the field is empty after a turn, it shows the prompt Claude expects you to send next. :kbd[Tab] or :kbd[ArrowRight] fills the field with it. On the phone, tap the suggestion above the reply field.
-- **Stop**, or :kbd[Esc], interrupts Claude's turn.
-- A message sent while Claude is working is queued until the turn ends. Hover a queued message to **Remove** it, or **Edit** it to take it back into the composer.
+- While the field is empty after a turn, it shows the prompt Claude expects you to send next. **Send suggestion**, or :kbd[Enter], sends it as it is, and :kbd[Tab] or :kbd[ArrowRight] fills the field with it to edit first. On the phone, **Send** sends the suggestion shown above the reply field, and tapping the suggestion fills the field with it.
+- **Stop**, or :kbd[Esc], interrupts the agent's turn.
+- A message sent while the agent is working is queued until the turn ends. Hover a queued message to **Remove** it, or **Edit** it to take it back into the composer.
 
 ::screenshot{file="sessions-sdk-queued.png"}
 
 Click empty space in the transcript to put the cursor in the composer.
 
 🙄 on Claude's last reply asks it to say the same thing again, much more concisely.
+
+Code in a reply has a copy button that copies it whole.
 
 Select text in the transcript to comment on it, as in the [diff](../sessions-diff/#commenting).
 

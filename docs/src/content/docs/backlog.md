@@ -26,7 +26,7 @@ screenshots:
     actions:
       - click: text=Dark mode toggle
   - file: backlog-plan.png
-    alt: An item's plan, with the first phase done and the second in progress
+    alt: An item's plan, with the first phase done, the second in progress and the third depending only on the first
     route: /backlog
     scene: backlog
     waitFor: text=Cart total rounds to the wrong cent
@@ -105,6 +105,8 @@ It shows the **Description**, **Acceptance Criteria**, **Plan**, **Activity** an
 ### Plan
 
 ::screenshot{file="backlog-plan.png"}
+
+A phase that doesn't just follow the one before it lists the phases it waits for under **Depends on**; with [parallel phases](../backlog-running/#running-phases-in-parallel) on, phases that don't wait for each other run at the same time.
 
 Each phase lists its tasks and any manual checks you'll be asked to confirm, its token and time usage, and the sessions that worked on it. **Rewind** on a finished phase sends the item back to it: give a reason, and the next build picks up from that phase with your reason.
 

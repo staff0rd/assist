@@ -53,6 +53,26 @@ screenshots:
     viewport:
       width: 1280
       height: 640
+  - file: rules-add.png
+    alt: The Add rule box open on a repo's CLAUDE.md scope, with a note to send to the selected session
+    route: /rules
+    setup:
+      - assist:
+          [
+            rules,
+            add,
+            Keep each component in its own file named after it,
+            --title,
+            One component per file,
+          ]
+    waitFor: text=In effect for
+    actions:
+      - click: "nav[aria-label='Rule scopes'] >> text=CLAUDE.md"
+      - click: "text=+ Add rule"
+      - type: Name test files after the module they cover
+    viewport:
+      width: 1280
+      height: 640
 ---
 
 Rules are a repo's written conventions, kept in its `CLAUDE.md` files where agents read them. Written in the form assist reads, they can be cited from a review comment, so a reviewer can point at the rule a change breaks rather than explaining it again.
@@ -74,12 +94,15 @@ Each rule has a code, unique across the repo, a short title and the rule itself.
 
 Run `/add-rule` with what the rule should say, optionally followed by a flag:
 
-| Flag     | The rule goes                                                                        |
-| -------- | ------------------------------------------------------------------------------------ |
-| none     | Where the agent judges it fits, usually the `CLAUDE.md` nearest the files it's about |
-| `--user` | To every repo, on every node                                                         |
-| `--node` | To every repo, on this node only                                                     |
-| `--repo` | To this repo, on every node                                                          |
+| Flag             | The rule goes                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------ |
+| none             | Where the agent judges it fits, usually the `CLAUDE.md` nearest the files it's about |
+| `--scope <path>` | To that `CLAUDE.md`                                                                  |
+| `--user`         | To every repo, on every node                                                         |
+| `--node`         | To every repo, on this node only                                                     |
+| `--repo`         | To this repo, on every node                                                          |
+
+In a web session the rule opens in the [preview pane](../sessions-preview-panes/) with its title, text and where it will land, and nothing is written until you approve it. Reject it with comments and the agent rewords it and asks again.
 
 In the [diff](../sessions-diff/#commenting) and [preview panes](../sessions-preview-panes/), **Add rule** in the comment box runs `/add-rule` with your note and the selected text. The agent adds the rule, then fixes the selected text so it follows it.
 
@@ -97,7 +120,10 @@ The :icon[AccountBalanceOutlined] **Rules** button in the toolbar opens every ru
 
 ::screenshot{file="rules-page.png"}
 
+- **+ Add rule** on a scope opens a box for what agents should do or stop doing. **Send** asks the session you have selected to add it to that scope as a rule, which you then approve in its preview pane.
 - **Move** sends a rule to another scope, and **Delete** removes it. Each change waits under **Awaiting approval** until you **Approve** or **Reject** it.
+  ::screenshot{file="rules-add.png"}
+
 - Select text in a rule and type a note to send it to the session you have selected, for example to have the agent reword the rule.
 
 To see the rules that apply to a path from the command line, see [assist rules](../cli-rules/).

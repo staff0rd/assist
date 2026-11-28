@@ -34,7 +34,7 @@ The **Usage** page tracks how much of your Claude plan's rate limits you use, wh
 
 Each row is one 5-hour or 7-day window, newest first, with the highest usage it reached, the average context the backlog phases in it used, the tokens spent in it and when it reset.
 
-**All**, **5h** and **7d** filter by window. When Codex is installed, **Codex 5h** and **Codex 7d** show its windows.
+**All**, **5h** and **7d** filter by window. When Codex is installed, **Codex 7d** shows its weekly windows.
 
 ## Items
 

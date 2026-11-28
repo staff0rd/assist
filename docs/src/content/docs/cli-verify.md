@@ -18,6 +18,9 @@ covers:
   - config:hardcodedColors.ignore
   - config:blockCodeComments.ignore
   - config:forbiddenStrings
+  - cli:verify audit
+  - config:verify.audit.level
+  - config:verify.audit.ignore
 ---
 
 `assist verify` runs a repo's checks; see [Verify](../verify/).
@@ -53,6 +56,13 @@ These are ready-made checks to add as `verify:*` [run commands](../run-commands/
       paths:
         - ConnectionStrings.Default
       disallowed: "*Password=*"
+  ```
+
+- `assist verify audit` runs `pnpm audit` or `npm audit`, whichever the lockfile shows, and fails on advisories of `high` severity or above, listing each one's severity, package, GHSA id, dependency path and patched versions. `verify.audit.level` sets the lowest severity that fails (`low`, `moderate`, `high` or `critical`), and `verify.audit.ignore` lists GHSA ids to skip, which are still printed as ignored:
+
+  ```bash
+  assist config set verify.audit.level critical
+  assist config set verify.audit.ignore.0 GHSA-7589-6fvf-x4pw
   ```
 
 - `assist verify migrations` fails when database migrations aren't numbered in sequence, when an existing migration was edited, or when one drops data without an acknowledgement marker.

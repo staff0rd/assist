@@ -4,6 +4,7 @@ title: Sessions dashboard
 group: Sessions
 order: 0
 covers:
+  - config:sessions.textSizeOffset
   - route:/sessions
   - cli:sessions
   - cli:sessions web
@@ -72,9 +73,11 @@ From left to right:
 
 Every shortcut can be changed, see [Keyboard shortcuts](../sessions-keyboard/).
 
-The menu has **Toggle dark mode**, **Show render HUD**, **Keyboard shortcuts**, [Connect mobile](../ios-app/#connecting-to-a-home-node) (for the :badge[experimental] iOS app), **Restart daemon** and **Update assist**. Restart and update both ask before acting.
+The menu has **Toggle dark mode**, [Card mode](../sessions-sidebar/#card-mode), **Text size**, **Show render HUD**, **Keyboard shortcuts**, [Connect mobile](../ios-app/#connecting-to-a-home-node) (for the :badge[experimental] iOS app), **Restart daemon** and **Update assist**. Restart and update both ask before acting.
 
 ::screenshot{file="sessions-menu.png"}
+
+**Text size** (`sessions.textSizeOffset`) makes the dashboard's text larger or smaller, a pixel per step from −4 to +8. Terminals keep their size.
 
 ## The status bar
 

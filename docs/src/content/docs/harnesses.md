@@ -7,6 +7,7 @@ covers:
   - config:harness.engine
   - config:harness.exposeCodexActions
   - config:harness.exposePiActions
+  - config:harness.claudeSdkChrome
   - config:harness.defaults.prompt.harness
   - config:harness.defaults.prompt.model
   - config:harness.defaults.draft.harness
@@ -19,7 +20,7 @@ covers:
   - config:harness.defaults.run.model
 ---
 
-assist runs agents in a coding harness: Claude Code, Claude (SDK), the Codex CLI or pi. Claude is the default, and the others work wherever they're installed.
+assist runs agents in a coding harness: Claude Code, Claude (SDK), the Codex CLI, Codex (SDK) or pi. Claude is the default, and the others work wherever they're installed.
 
 ## Setting up Codex and pi
 
@@ -27,11 +28,19 @@ Install the harness, then run `assist sync`. It installs assist's slash commands
 
 ## Claude (SDK)
 
-Claude (SDK) runs your installed, signed-in Claude Code without a terminal: the session shows its [transcript and a composer](../sessions-session-area/#claude-sdk-sessions) instead. It always runs in auto permission mode, so it never stops to ask permission. Pick it as the harness when starting a session, or make it the default with `assist config set harness.engine claude-sdk`. Signed in with a Claude plan, it uses the same plan usage limits as Claude Code.
+Claude (SDK) runs your installed, signed-in Claude Code without a terminal: the session shows its [transcript and a composer](../sessions-session-area/#sdk-sessions) instead. It always runs in auto permission mode, so it never stops to ask permission. Pick it as the harness when starting a session, or make it the default with `assist config set harness.engine claude-sdk`. Signed in with a Claude plan, it uses the same plan usage limits as Claude Code. It starts with Claude in Chrome enabled; to turn that off:
+
+```bash
+assist config set harness.claudeSdkChrome false
+```
+
+## Codex (SDK)
+
+Codex (SDK) does the same for your installed Codex CLI: the session shows its [transcript and a composer](../sessions-session-area/#sdk-sessions), and its usage counts against your Codex limits. Pick it as the harness when starting a session, or make it the default with `assist config set harness.engine codex-sdk`.
 
 ## Choosing a harness
 
-Actions that start an agent offer **with Codex** or **with pi** wherever that harness can run them. On the CLI, every command that starts an agent takes `--harness <claude|claude-sdk|codex|pi>`.
+Actions that start an agent offer **with Codex** or **with pi** wherever that harness can run them. On the CLI, every command that starts an agent takes `--harness <claude|claude-sdk|codex|codex-sdk|pi>`.
 
 To use another harness by default, set `harness.engine`:
 

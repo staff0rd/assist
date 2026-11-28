@@ -49,6 +49,20 @@ screenshots:
     waitFor: text=Dark mode toggle
     actions:
       - click: "[aria-checked] >> text=sandbox"
+  - file: ios-app-new-session-slash.png
+    alt: Skills matching a slash word listed under the iOS app's New session prompt
+    route: /
+    phone: true
+    scene: dashboard
+    setup:
+      - assist: [run, add, release, echo, release]
+      - assist: [run, add, review-api, echo, review]
+    waitFor: text=Dark mode toggle
+    actions:
+      - click: '[aria-label="New session"]'
+      - click: "role=radio[name='Prompt']"
+      - click: '[aria-label="Prompt"]'
+      - type: /re
   - file: ios-app-connect.png
     alt: Connecting the iOS app to a home node on first launch
     route: /
@@ -198,7 +212,7 @@ Tap **⋯** on a session's screen, or long-press its row in the list, for its ac
 
 - **Mark done…** marks a backlog item done and ends its session.
 - **Auto-advance phases** is the dashboard's [Continue](../backlog-running/#steering-a-run) toggle for a backlog run.
-- **Transfer to node** moves a backlog run to another node.
+- **Transfer to node** moves a backlog run, or a prompt session with its conversation, to another node.
 - :icon[Replay] **Start over session**, beside :icon[Replay] **Restart session**, discards the conversation and starts a new one with only the session's first prompt.
 - Tap the `#` number in the header to copy the session's id, or the conversation id beneath it to copy the harness's id for the conversation.
 
@@ -208,9 +222,11 @@ Sessions asking you a question or proposing a backlog item are listed under **An
 
 ## Replying to a session
 
-In a Claude session, typing a word starting with `/` in the reply bar lists your skills and commands that match it, followed by the repo's own. Tap one to put it in your reply.
+Typing a word starting with `/` in a Claude session's reply bar, or in the **New session** prompt, lists your skills and commands that match it, followed by the repo's own. Tap one to put it in your text.
 
-In a [Claude (SDK)](../sessions-session-area/#claude-sdk-sessions) session, tap Claude's suggested next prompt above the reply bar to put it in your reply.
+::screenshot{file="ios-app-new-session-slash.png"}
+
+In a [Claude (SDK)](../sessions-session-area/#sdk-sessions) session, **Send** sends Claude's suggested next prompt, shown above the reply bar, while the reply is empty. Tap the suggestion to put it in your reply to edit first.
 
 ## Reviewing previews
 

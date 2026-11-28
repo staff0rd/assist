@@ -10,6 +10,7 @@ covers:
   - config:review.highLevel.uiPaths
   - config:review.highLevel.descriptionWordCap
   - config:review.highLevel.testPaths
+  - config:review.highLevel.requireLinkedIssue
   - config:review.highLevel.collapsedPaths
 screenshots:
   - file: sessions-high-level-review.png
@@ -233,5 +234,11 @@ assist config set review.highLevel.collapsedPaths "**/*.test.*,**/generated/**"
 | `collapsedPaths`     | `**/*.test.*`, `**/generated/**`   | Files whose diffs start collapsed under **Structure**               |
 
 Unset, `criticalPaths` covers GitHub workflows and actions, `package.json`, Dockerfiles (`Dockerfile`, `Dockerfile.*`, `*.Dockerfile`) and `CLAUDE.md`, anywhere in the repo. Setting it replaces these, so list them too if you still want them.
+
+In a repo that doesn't track its work in GitHub issues, drop the check that the pull request links the issue it resolves:
+
+```bash
+assist config set review.highLevel.requireLinkedIssue false
+```
 
 From the command line, `assist review --high-level --configure` asks for each key in turn, suggesting globs for any that are unset.

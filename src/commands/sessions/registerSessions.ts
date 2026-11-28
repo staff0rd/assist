@@ -1,4 +1,5 @@
 import type { Command } from "commander";
+import { internalCommand } from "../../shared/internalCommand";
 import { configHelp } from "../../shared/configHelp";
 import { registerNodes } from "./nodes/registerNodes";
 import { registerInterruptCommand } from "./registerInterruptCommand";
@@ -29,17 +30,20 @@ export function registerSessions(program: Command): void {
 	registerCloseRenameCommands(cmd);
 	registerInterruptCommand(cmd);
 
-	cmd
-		.command("list")
-		.description(
-			"List every session on this node and linked nodes, with the ids other sessions commands accept",
-		)
-		.option("--json", "Print the sessions as JSON")
-		.option(
-			"--node <name>",
-			"Only list sessions on this node (local for this one)",
-		)
-		.action(lazyAction(() => import("./list/listSessions"), "listSessions"));
+	internalCommand(
+		cmd
+			.command("list")
+			.description(
+				"List every session on this node and linked nodes, with the ids other sessions commands accept",
+			)
+			.option("--json", "Print the sessions as JSON")
+			.option(
+				"--node <name>",
+				"Only list sessions on this node (local for this one)",
+			)
+			.action(lazyAction(() => import("./list/listSessions"), "listSessions")),
+		"agents driving other sessions",
+	);
 
 	registerOutputCommand(cmd);
 	registerPreviewCommands(cmd);
